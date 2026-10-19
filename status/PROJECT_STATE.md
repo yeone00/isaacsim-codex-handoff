@@ -325,3 +325,9 @@ USD/이전956artifacts SHA보존. 이번Isaac/physics/ROScommand/retry/QUAL12/43
 현재sourcewheel6drive는stiffness0/damping100/force, steer4는stiffness836.614136/damping40이며별도brake구현은확인되지않았다. 설치API의jointposition/velocity/effort target지원과현재Twist-onlygraph연결을구분했다. 선정안은기존velocitydrive앞의wheel-position→velocity 외부hold와exclusivecommandmux이며**설계제안/미구현**이다. 공식PhysX Implicit Spring Joint Drives 식(9)를검토했고원본drivegain미변경. 새outergain/한계값·signedhold correction·mux계약은미정이므로실행가능/검증완료로보고하지않았다.
 
 **NOT_READY / MEASURED_ACTUATION_STOP_ENVELOPE_OUTSIDE_TERMINAL_BUDGET 유지.** 이번physics/Isaac/ROScommand/calibration/ENG001/QUAL12/432-run0, retry0. Gain/friction/damping/mass/threshold변경0, caster/physics진단확장0, 기존artifacts와denominator보존. 후속시험은사전계약확정후동일격리공간의단일곡률→감속→hold episode라는계획만작성했다.
+
+## 2026-10-19 wheel-position HOLD engineering implementation — offline PASS / runtime NO-GO
+
+[구현 보고서](../reports/full_e2e_v02_wheel_hold_implementation_20261019_v01.md). 별도 wheel6 position→signed velocity HOLD adapter, single physics-thread owner mux, derived-layer legacy3writer deactivation 함수와 explicit DOF subset writer, PROPOSED 수치 contract를 새 파일로 구현했다. Single latch/unwrap/units/freshness/fault/watchdog/stop·re-arm 금지/owner conflict/Twist overwrite/synthetic replay 및 mock patch·writer mapping **15/15 tests PASS**. 최종 증거 `reports/fe2e_v02_wheel_hold_offline_20261019_v02/`; 최초14tests v01도 보존. 물리 stop/safety 증거 아님.
+
+**NO-GO**: signed 정책·gain/limit/guard 안정성 미승인/미인증, actual physics callback/graph reader·독점 ownership·independent pause guard integration 미완료, 다음 단일 one-shot runner/계측·명시적 실행 승인 필요. 실제 runtime 독점·정지·quiet UNKNOWN. K1s⁻¹/±.02rad/s/slew.2rad/s²/4mm/8s는 사전검토 후보이며 dynamics 인증 false로 runtime 차단. 기존 선정/실패/denominator 유지, Isaac/ROS/motion/ENG001/QUAL12/432/자동retry0. 기존148SHA일치와 append전 workspace 변경0 확인. 최초 graph 경로 읽기 실패 및 .git 부재는 보고서에 남겼으며 보안 설정 변경없음. 기존원본·inventory·protocol·threshold 보존.
