@@ -1,50 +1,33 @@
-# Full E2E v02 — wheel-position feedback HOLD engineering implementation
+# Full E2E v02 — Wheel HOLD runtime integration, offline-only implementation
 
-상태: READY_FOR_MANUAL_APPROVAL (지시문을 로컬에서 확인한 후 Codex에 전달)
-워크스테이션 프로젝트: /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013
+상태: READY_FOR_MANUAL_APPROVAL
+프로젝트: /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013
 
-## 출발점 — 기존 선정 재검토 반복 금지
-최초에 AGENTS.md, docs/PROJECT_STATE.md, 다음 2개 보고서를 읽어라.
-- reports/full_e2e_v02_stopping_hold_method_selection_20261019_v01.md
-- reports/full_e2e_v02_stopping_adapter_actual_validation_20261019_v01.md
+## 출발점
+AGENTS.md, docs/PROJECT_STATE.md, reports/full_e2e_v02_wheel_hold_implementation_20261019_v01.md를 먼저 읽어라.
+HOLD 방식 선정과 분리 구현은 이미 완료됐다. 15/15 offline PASS. 후보 선정, 알고리즘 재탐색, 기존 감사 반복 금지.
 
-이미 완료된 결정:
-- 선정: 기존 wheel velocity drive + 외부 wheel-position→velocity feedback HOLD adapter.
-- 원본 wheel DriveAPI: stiffness=0, damping=100 authored. Native position target만 추가해도 위치 복원 불가.
-- 기존 post-zero wheel 회전·base 34.127289mm 후퇴, raw-root quiet FAIL. Velocity cap은 해당 시험에서 PASS.
-- 공식 근거: PhysX Team, Implicit Spring Joint Drives (2023), 식(9). 외부 cascade는 설계 유도이지 실제 dynamics/stability 보증이 아님.
-- 후보 선정은 끝났다. 이번에 또 후보 비교·광범위 USD audit·새 문헌 탐색만 반복하지 마라.
+완료된 것:
+- evaluation/fe2e_v02_wheel_hold_adapter_v01.py: wheel-position→signed velocity HOLD adapter
+- evaluation/fe2e_v02_wheel_hold_owner_v01.py: single-owner mux 및 legacy writer 비활성화 edit-layer helper
+- evaluation/fe2e_v02_wheel_hold_contract_v01.json: PROPOSED numeric contract, runtime approval=false
+- 기존 148개 SHA 보존. Isaac/ROS/physics 실행0.
 
-## 이번 산출 목표
-**분리된 engineering HOLD adapter + 단일 actuator command owner 계약 + 재현 가능한 오프라인 테스트**를 구현하고, 단일 Isaac Sim 검증의 실행 가능 여부를 GO/NO-GO로 정리하라.
-이번 턴의 실제 Isaac/ROS 물리 주행은 실행하지 않는다. 구현 완료와 실험 성공을 혼동하지 않는다.
+아직 미완료인 것: 실제 graph-output reader/physics callback과 HOLD entry epoch 동기화, 외부 direct articulation writer 배제 검증, 독립 pause/wall watchdog, 단일 시험용 runner·계측.
+K_hold=1s^-1, velocity ±0.020rad/s, slew=.2rad/s², base guard=.004m 등은 PROPOSED이지 안정성 인증이 아니다.
 
-### 1) 구현 (구체적인 변경)
-- 원본 USD, frozen robot_task_controller_goalframe_v04.py, 기존 governor/stopping adapter, 연구 protocol/threshold를 보존한다.
-- 새 evaluation/fe2e_v02_wheel_hold_adapter_v01.py 등 분리된 engineering 파일로 설계한 WheelHoldAdapter를 실제 구현하라.
-- HOLD entry 때 같은 epoch의 fresh synchronized wheel6 unwrapped q/dq, steering4 angle, base pose를 한 번만 latch한다. 이 후 q_hold/base_hold/steer_hold target을 움직이는 상태에 맞춰 갱신하지 마라.
-- HOLD 출력은 6 wheel joint별 signed velocity target(rad/s)과 4 steering position target(rad)을 명시적 joint name으로 돌려라. Wheel position error에 대한 외부 feedback v_target=saturate(K_hold*(q_hold-q), +/-limit)를 사용하되, unwrap, sign, units, sample freshness, nonfinite, time monotonicity, saturation/slew, zero/fault latch를 강제하라.
-- Controller와 ROS publisher가 동일 wheel DOF를 동시에 소유하지 못하도록 **실제 적용 가능한 하나의 owner/mux 계약**을 마련하라. 별도 subscriber 설치만으로 독점 ownership을 주장하지 마라. APPROACH/DECEL→HOLD 전환과 Twist zero가 HOLD target을 overwrite하지 않는 경로를 명시하라.
-- 경로·게이트·footprint·clearance·velocity cap 변경 금지. HOLD correction에서 필요한 음의 signed wheel velocity는 연구용 reverse approach 명령과 별도 상태/한계로 분리하되, 이를 명시적인 정책 승인 없이 실주행에 적용하지 마라.
-- stop 실패 시 fail-latched zero/independent simulation pause guard를 계획하라. Zero는 물리 정지 보증이 아님.
-- Gain K_hold, joint-velocity max, slew, max hold displacement/time은 임의 편의 기본값으로 숨기지 마라. 기존 근거에서 사전에 산정·검토 가능한 수치 후보와 단위/안전 조건을 별도 PROPOSED contract에 명시하고 그 선택 근거를 검증하라. 실제 인증이 안 되는 파라미터는 UNRESOLVED로 남기고 실행을 차단하라. Parameter sweep과 '통과할 때까지 조정' 금지.
+## 이번 작업 목표: runtime integration 코드 구현 (실행 금지)
+1. 현재 derived scene/reference의 graph 3개 articulation writer 경로를 정확히 확인하고, 별도 derived-layer patch를 **테스트할 수 있는 코드**로 완성하라. 원본 USD 및 frozen controller 불변.
+2. APPROACH/DECEL에서 기존 Ackermann graph-output target을 단일 physics-thread writer가 재전달하도록 graph reader/DOF 이름·매핑 검사를 구현하라. HOLD에서는 legacy write를 차단하고 HOLD adapter wheel6/steer4 target만 같은 owner가 적용하도록 명시하라. 실제 exclusivity 검증이 불가능한 환경에선 진입 거부.
+3. 첫 ZERO_SETTLING 동일 epoch에서 fresh synchronized wheel q/dq, steer, base pose를 **zero writer 적용 전에** latch하고, out-of-order·missing sample·duplicate owner·direct writer를 fail-closed로 처리하라.
+4. independent physics observer와 별도 wall-time watchdog/pause interface를 연결할 소규모 코드를 구현하라. 실제 pause guard 미설치 시 runtime 승인 금지. Zero는 안전정지 보장 아님.
+5. One-shot validation runner의 명령·상태·계측·hash·실패 종료 interface를 준비하되, 이번 턴에는 launch도 ROS 명령도 수행하지 마라. 실제 actor control 호출은 전부 gated로 둬라.
+6. 오프라인 테스트를 수행해 실제 구현된 부분과 여전히 실환경 검증이 필요한 부분을 명확히 구분하라. 제안된 수치의 임의 승인/변경, 무단 signed correction 실주행, 속도·clearance·task tolerance 완화 금지.
 
-### 2) 계약과 오프라인 테스트
-- 기작성 frozen mobility drive와 동시 쓰기가 발생하지 않는 실제 graph wiring/derived-scene integration plan을 정하라. 필요시 새로운 derived-scene patch 또는 isolated joint-command publisher를 별도 파일로 구현하되 원본을 수정하지 마라.
-- Tests: hold entry single latch, signed correction both directions, unwrap, joint order/units, K/limit fail-closed, freshness/stale/NaN, watchdog/timeout, duplicate-owner conflict, Twist overwrite prevention, stop/fault/re-arm prohibition, simulated sample replay로 wheel/steer target sequence 확인.
-- 오프라인 replay는 물리학적 stop/safety 성공 증거로 표기하지 마라.
-- 샌드박스/권한 오류가 나면 시스템 보안을 끄거나 우회하지 말고, 해당 단계와 해결에 필요한 최소 조치를 보고하라. 무제한 디버깅 금지.
-
-### 3) 다음 1회 Isaac Sim 실험 진입 조건
-- 위 코드 및 계약 검사 통과, signed HOLD correction의 정책/상한과 하나의 actuator ownership이 명시적으로 승인돼야 한다.
-- 1회 열린공간 isolated nonzero-curvature→정상감속→HOLD에서 실제 q/dq/steer/base pose/root/FD/ROS/target 동일 epoch 기록, post-entry along/XY/yaw drift, quiet(.002m/s, 1s), max planar speed(.03m/s), max clearance/safety/guard 평가.
-- 기준 ±.030m longitudinal/lateral·±2° yaw·clearance≥.10m 불변. 이 단일 시험은 ENG001 full-chain success 증거가 아님.
-- 실제 Isaac/ROS 구동, ENG001, QUAL12, 432-run, 자동 retry는 **이번 턴 실행하지 마라**. GO 조건을 만족했더라도 다음 단계에서 사용자의 명시적 승인 후 1회만 실행한다.
-
-### 4) 종료 산출물
-- 새 engineering adapter, relevant contracts/tests, 최소 derived-scene integration 코드(가능한 경우), unit test 결과.
-- reports/full_e2e_v02_wheel_hold_implementation_20261019_v01.md 작성: 구현 유무, 산정한 PROPOSED 값/UNRESOLVED, owner/mux 실현 여부, 실제 시험 전 남은 blocker를 최대 3개 구체화, GO/NO-GO, 다음 1회 시행 방법.
-- docs/PROJECT_STATE.md 갱신, 기존 파일/hash inventory 보존.
-- 설계 구현이 물리 또는 기술적으로 불가능하면 외부 포장 없이 FAIL/결정 필요 항목과 이유를 명시. 또 다른 선정 보고서만 작성하고 작업을 끝내지 마라.
-- 완료 메시지 마지막 줄에 실제 생성된 보고서만 다음 형식으로 적어 Codex notify 동기화를 활성화하라:
-HANDOFF_REPORT: reports/full_e2e_v02_wheel_hold_implementation_20261019_v01.md
+## 종료 기준
+- 새 engineering integration 코드와 관련 단위·mock 계약 검사 PASS/FAIL를 보고하라.
+- reports/full_e2e_v02_hold_runtime_integration_20261019_v01.md 작성: 구현 파일, 정적 계약 근거, 남은 blocker 최대 3개, 단일 실제 시험 사전조건, GO/NO-GO를 구체적으로 요약.
+- docs/PROJECT_STATE.md 갱신, 원본·기존 결과 hash 보존.
+- Isaac Sim/ROS/physics command, ENG001, QUAL12, 432-run, retry/sweep 모두 금지. 별도 사용자 명시 승인 전에는 runtime flag를 승인으로 바꾸지 마라.
+- 보고서 생성 시 최종 메시지 마지막 줄:
+HANDOFF_REPORT: reports/full_e2e_v02_hold_runtime_integration_20261019_v01.md
