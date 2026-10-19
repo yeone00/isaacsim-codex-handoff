@@ -1,0 +1,23 @@
+name: Workstation runner check
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'handoff/runner_probe.txt'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 3
+    steps:
+      - name: Verify runner can execute locally
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Runner connected; user=$(id -un)"
+          echo "Computer: $(hostname)"
+          echo "Codex path: $(command -v codex || echo missing)"
+          test -f /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/AGENTS.md
+          echo "PASS: project is mounted and commands run on workstation"
