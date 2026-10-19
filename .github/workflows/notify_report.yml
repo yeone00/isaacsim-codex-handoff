@@ -1,0 +1,26 @@
+name: Notify Codex report upload
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'reports/latest_report.md'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Send ntfy push
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          if [ -z "$NTFY_TOPIC" ]; then
+            echo 'NTFY_TOPIC secret is not configured.'
+            exit 1
+          fi
+          curl --fail --silent --show-error --retry 2 --max-time 15 \
+            -H 'Title: Codex report uploaded' \
+            -d 'New Isaac Sim Codex report uploaded to GitHub. Open ChatGPT to review. This is not a research PASS.' \
+            "https://ntfy.sh/$NTFY_TOPIC"
