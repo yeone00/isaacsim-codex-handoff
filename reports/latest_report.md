@@ -1,98 +1,82 @@
-# Full E2E v02 PHYSICS HOLD one-shot runner — 2026-10-20
+# Full E2E v02 bounded writer owner 결정 — 2026-10-20
 
-**RUNNER_NOT_READY / physical NO-GO.** 실제 Isaac5.1 시작·관측·graph·actuator·종료 경로의 새 코드를 작성했으나, 전체 native actuator writer를 배제하는 실제 연결이 없다. 실행 가능한 CLI가 있다는 사실을 물리 runner 완성이나 GO로 해석하지 않는다. 현재 `single-physics`는 승인 계약과 native gate에서 거부되며 SimulationApp 이전에 종료한다. 이 turn에서는 Isaac/graph probe/physics/ROS/actuator/ENG001/QUAL12/432 실행0, 연구 denominator0, 물리 retry0이다.
+**물리 판정: BLOCKED_WITH_SPECIFIC_CAUSE.** v07의 의도된 단일 writer 경로는 구체적으로 식별했다. 그러나 현재 프로세스의 enabled extension 내부 callback/직접 tensor producer까지 열거·검토한 실제 증거는 없다. 이것을 “어떠한 C++ writer도 영원히 없음”이라는 전역 요구로 확대하지 않는다. C++ lease 프로젝트는 권고하지 않는다. **다음 한 단계는 별도 승인한 paused inventory 1회**다. 새 no-motion 진입점은 코드 검토/계약 검사까지 준비했지만 실제 host admission PASS나 SINGLE process owner 인증을 발행하지 않았다. 따라서 물리 준비 판정으로 PREPARED_FOR_PAUSED_OWNER_PREFLIGHT를 사용하지 않는다.
 
-## 1. 기존 실제 증거와 보존
+이번 SimulationApp/Isaac launch, graph 실행, physics.play, ROS publish, actuator write, motion/retry 모두 0. 이 HOLD branch engineering denominator=0, ENG001/QUAL12/432=0. 과거 engineering 실행 기록은 삭제하거나 0으로 재해석하지 않는다.
 
-사용자가 실행한 `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_GRAPH_ONLY_PREFLIGHT_20261020_v03`의 status, events, graph_result, stage_inventory, manifest, external_v03/final_adjudication 및 대응 host v03/v04/v05·CLI v06·external v03 소스를 정적으로 확인했다. Graph-only를 다시 실행하지 않았다.
+## 1. 실제 producer와 시작 범위
 
-로컬 기록: PASS_GRAPH_ONLY, external child0/wrapper0/overall_success=true, eval1/Ack1/Witness1, native trigger/Ack/Witness 각각 delta1, 같은 token/epoch/thread. Wheel `[.03,.03,.03,.03]rad/s`, steering `[0,0]rad`, expected 일치. Physics/actuator/ROS/retry0. Graph manifest **37개 input SHA 일치**, status가 참조한 output SHA 일치. 이것은 physics timing·독점 writer·physical stop 인증이 아니다.
+[정적 원자료](fe2e_v02_bounded_owner_20261020_v01/static_bench_inventory.json)는 기존 설치 standalone pxr로 원본을 읽기만 했다. `isaac_loaded=false`, 원본 bench SHA `224cac492d267d0403c9402484fcf84011191208fb4689e7e3fc33eadf3756fe`. 조사 subtree `/World/ROBOT_TASK/RuntimeRover`에 graph node20/joint10/script·python·behavior **속성명 후보0**. 이는 stage metadata/customData와 enabled extension의 실행 코드를 모두 인증했다는 뜻이 아니다. Used layer 경로/hash도 원자료에 있다. 전체 bench composition에는 환경/rolltainer 참조도 보이며, 이를 파생 Rover subtree의 active actor와 혼동하지 않는다.
 
-기존 실제 stopping validation의 후퇴 **34.127288744mm** 및 raw-root quiet 실패 **.002619135991m/s > .002**를 유지한다. Pose/FD/native/wheel dq가 고정된 관측으로 raw-root 실패를 지우지 않는다. 원본 one-shot session의 open floor, RuntimeRover reference, 6초 비영 곡률 profile, 정상 감속, 8초 zero 관측을 읽고 사용했다.
+아래 `G=/World/ENG_FE2E/Rover/ActionGraph`. 원본 prefix는 `/World/ROBOT_TASK/RuntimeRover/ActionGraph`이며 v07이 reference로 옮긴다.
 
-보존 확인은 [baseline](fe2e_v02_physics_hold_runner_20261020_v01/preservation_baseline.json)과 [결과](fe2e_v02_physics_hold_runner_20261020_v01/preservation_result.json)의 **429개 SHA PASS**다. 기존 output·source·asset·controller·protocol을 변경하지 않았다. [known locks](fe2e_v02_physics_hold_runner_20261020_v01/known_locks.json) 9개 hash/count PASS; 108/432행 유지. 이번 known-subset 검사는 새 pairing/full dependency closure 인증이 아니다. 실제 simulator stage의 동적 closure도 UNKNOWN이다. `.git`이 없어 git status는 실패했으며 staging/commit/push를 하지 않았다.
-
-## 2. 새 실제 연결 코드
-
-| 파일 | 구현 및 실제 연결 지점 | 검증 수준 |
+| 경로/producer | 실제 입력/출력 | v07 isolated process에서의 상태 |
 |---|---|---|
-| `evaluation/fe2e_v02_physics_hold_host_v01.py` | PhysicsSession, PhysicsAckermann, NoRetryOwner, raw-root terminal evaluator | compile/offline PASS; 물리 미실행 |
-| `scripts/fe2e_v02_hold_one_shot_v07.py` | 실제 SimulationApp, 새 USD/override, Articulation 초기화, baseline, 단일 episode, 승인/hash gate, terminal journal | CLI/admission 검사 PASS; 물리 미실행 |
-| `scripts/fe2e_v02_physics_hold_external_v01.py` | child 단1개, stdout/exit/status 보존, 외부 최종 판정 | 판정 분기 검사 PASS; child launch 미실행 |
-| `analysis/test_fe2e_v02_physics_hold_runner_v01.py` | 새 gate·barrier·fault·raw COM·외부 판정 회귀검사 | 8 tests PASS |
+| G/articulation_controller | Ack execOut; wheelRotationVelocity → front L/R, rear L/R wheel velocity | patch가 명칭/연결 검증 후 derived layer SetActive(False), readback |
+| G/articulation_controller_01 | Ack execOut; wheelAngles → front L/R steer position | 동일 비활성화/readback |
+| G/articulation_controller_02 | Ack execOut; get_array_index0/1→make_array → middle L/R wheel velocity | 동일; array shape/index/upstream도 patch 검증 |
+| G/ros2_subscribe_twist | playback tick→Twist linear/angular→multiply/absolute/ATan2→Ack | PhysicsAckermann 설치가 Ack 외 node 전부 inactive 처리; ROS subscriber 자체 실행 경로 제거 |
+| ROS graph 기타 | transform publisher, camera helpers2, simulation time/render product | 같은 비활성화; 원본 scene node 자체는 보존 |
+| G/ackermann_controller | 수동 입력→wheel4/steer2 산출 | ONDEMAND 계산기, actuator writer 아님 |
+| G/PhysicsHoldImpulseV01→Ack→PhysicsHoldWitnessV01 | evaluate_sync 단일 token/epoch/thread receipt | PhysicsAckermann이 설치. Witness script는 host witness(key)만 호출; actuator setter 없음. 이번 재설치/평가하지 않음 |
+| PhysicsSession.bind→exclusive_write→batched_writer | wheel6 velocity target + steer4 position target, disjoint named subset | 의도한 유일 Python actuator route. 초기 native gate 때문에 이번/현재 실제 미시작 |
+| PhysX receipt / Kit post-update / watchdog / contacts | epoch/관측, pause queue pump, contact headers | PhysicsSession/LiveObserver가 설치할 경로. watchdog는 actuator를 쓰지 않음. stalled Kit에서 queue delivery 보장 없음 |
+| legacy normalized session v07 | scripts/fe2e_v02_normalized_physics_session_v07.py:147 직접 position/velocity setter | v07 HOLD runner가 import/실행하지 않음. 그 script의 top-level simulation/contact callback도 시작하지 않음 |
+| legacy stopping session/ROS child | scripts/fe2e_v02_stopping_validation_session_v01.py; stopping_validation_ros_v01.py Twist publish | HOLD runner가 시작하지 않음. 원본 ROS 진단과 새 direct writer를 혼합하지 않음 |
 
-생산 경로는 `live()`→`PhysicsSession`이다. simulator import는 live 설치 함수 안에서만 일어난다. `admission`은 simulator-free 검증이며 생산 경로에 synthetic pose/receipt 또는 `offline=True` 우회가 없다. 기존 `PhysicsIntegration`의 mock 전용 봉인을 해제하지 않았다.
+소스 근거: `scripts/fe2e_v02_hold_one_shot_v07.py` live/main, `evaluation/fe2e_v02_hold_runtime_integration_v01.py` patch, `evaluation/fe2e_v02_wheel_hold_owner_v01.py` deactivate_derived_writers, `evaluation/fe2e_v02_physics_hold_host_v01.py` PhysicsAckermann/PhysicsSession.attest/bind, `evaluation/fe2e_v02_hold_host_ports_v02.py:236` batched_writer. v07은 bench/reference/physics/floor를 새 USD에 만들며 원본 script를 USD reference로 실행하는 구조가 아니다. 다만 USD의 실행성 metadata/extension 동작까지 이 사실 하나로 배제할 수는 없다.
 
-**실제 step 순서:** PhysX `subscribe_physics_step_events` receipt → `app.update()` 복귀 후 정확히 receipt1/시간진행/dt 검사 → live tensor q/dq·steer·base/COM/root-origin/FD·USD pose/clearance/contact 관측 → owner admission → 동기식 impulse→Ack→execOut ScriptNode → 같은 frame/token/thread의 witness1 및 native node count 각각 delta1 → 이름으로 매핑한 wheel6 velocity/steer4 position write와 native target readback → 다음 물리 advance. 따라서 같은 acquisition frame 안의 계산·쓰기이며 **그 결과가 이미 끝난 physics step에 적용됐다고 주장하지 않는다.** 실제 callback 순서, USD sync, graph scheduling, 다음 step의 응답은 UNKNOWN이다.
+**ROS 수정 설명:** 기존 v07은 bridge를 명시적으로 disable하지 않는다. PhysicsSession.attest가 `isaacsim.ros2.bridge` 또는 `omni.isaac.ros2_bridge` enabled이면 거부한다. graph inactivity와 extension disable은 별개의 검사다. 새 paused 경로는 프로세스 안의 두 bridge extension만 `set_extension_enabled_immediate(...,False)` 후 enabled=false readback을 요구한다. 외부 ROS 설정/기존 process는 건드리지 않는다.
 
-기존 PhaseDispatch와 StoppingAdapter의 `.07 / KMAX / PRE_FINAL / 6sim s` profile 및 정상 BRAKING을 유지한다. Graph 입력에는 기존 gain15와 `degrees(atan2(-.7*z,abs(v)))` 변환을 사용한다. Native graph 출력을 wheel rad/s·steer rad로 직접 전달하고 middle wheel은 기존 FL/FR 복사다. Radius/drive/gain/controller/물리 topology를 고치지 않았다. Graph-only synthetic `.015/zero steer`는 실제 episode profile에 사용하지 않는다.
+Installed API 근거: `/home/user/anaconda3/envs/hh_isaac51/lib/python3.11/site-packages/isaacsim/exts/isaacsim.core.prims/isaacsim/core/prims/impl/articulation.py`의 set_joint_position_targets:859/925, set_joint_velocity_targets:1000/1066은 tensor view setter로 전달한다. pause_motion/resume_motion:5080–5130도 target/velocity setter 후보지만 v07이 호출하지 않는다. 이것은 callback으로 자동 실행된다는 발견이 아니다. API에 target을 마지막으로 쓴 producer identity가 반환되는 것은 확인되지 않았다. 같은 값/복원 write는 readback equality로 검출 불가다. **구체적 미확인은 실제 enabled extension 및 그 내부 callback inventory**이며 외부 임의 native 존재를 입증한 것도 아니다.
 
-MOVING=APPROACH, BRAKING=DECEL, ZERO_SETTLING에서 **같은 sample의 wheel q·실측 steering·base를 먼저 latch하고 owner를 HOLD로 전환**한다. 그 step에서 legacy graph zero/steering zero를 먼저 쓰지 않는다. HOLD는 wheel-position 오차→제한된 wheel velocity feedback이며 wheel stiffness를 바꾸거나 native position drive를 추가한 것이 아니다. 8초 HOLD 관측 후 wheel zero를 명시적으로 쓰고 STOP_OBSERVING으로 봉인하여 8초 독립 정지 관측을 한다. 성공/실패 모두 단일 episode 종료이며 재개·재시도 없다.
+## 2. 새 bounded admission 구현과 증명 범위
 
-## 3. 소유권·pause·판정의 구체적 한계
+새 파일만 추가했다.
 
-세 legacy ArticulationController의 native joint명/입력 upstream을 기존 `patch()`로 검사한 뒤 새 override에서 비활성화한다. 이후 composed stage의 활성 OG node는 Ack/impulse/witness 세 개만 허용한다. ROS bridge 활성, legacy writer 재활성화, 추가 script/graph, target readback 불일치는 실패다. 모든 실제 write 바로 앞에도 native exclusion과 epoch/thread/guard를 다시 검사한다.
+- `evaluation/fe2e_v02_bounded_owner_v01.py`: stage prim/active/type/schema/attribute connection/relationship 전체의 fingerprint, source SHA, enabled extension ID 집합의 admission snapshot과 변경 시 latch하는 recheck. receipt는 항상 physical_go=false/global_native_exclusion=UNKNOWN. `attest` 메서드가 없어 native port로 끼워 넣을 수 없다.
+- `scripts/fe2e_v02_paused_owner_admission_v01.py`: 별도 승인 없으면 Isaac import 전 거부. discovered interpreter, 429 preservation, bench lock 검사 후 새 derived USD만 생성. 기존 patch를 재사용해 세 writer topology 검증/비활성 readback, **모든 graph node inactive**. Ack/witness 설치나 graph evaluation도 없음. unknown script 속성/foreign rigid actor 발견 시 거부. ROS disable/readback, actual attached stage identity/paused time0 확인, full inventory와 layers/source hashes/extension IDs/session layer를 저장하고 종료.
+- `analysis/fe2e_v02_bounded_static_inventory_v01.py`: 위 정적 read-only composition 조사.
+- `analysis/test_fe2e_v02_bounded_owner_v01.py`: 좁은 계약 검사.
 
-이 검사는 **외부 native direct writer가 같은 값을 쓰거나 값을 복원한 경우를 탐지하지 못한다.** 설치 `Articulation` 소스는 tensor target setter/readback을 제공하지만, 조사 범위에서 모든 native writer의 producer registry나 exclusive lease를 얻는 실제 port를 찾지 못했다. 따라서 `NativeExclusionUnavailable.attest()`가 구체적인 blocker를 던진다. 이는 fake certificate가 아니라 **미연결을 나타내는 실패 port**다. 현재는 `native.attest(0)`을 SimulationApp와 play 전에 호출하므로 명령0·physics0으로 거부한다. 미래의 real port가 연결되어야 실제 stage/script/native writer inventory를 제출할 수 있다. 지금 그 inventory를 확보했다고 주장하지 않는다.
+새 paused entry는 Articulation/PhysicsSession을 생성하지 않고 app.update도 호출하지 않는다. stage attach가 이 조건에서 실제로 완료되는지는 live UNKNOWN이며 identity 불일치는 fail-closed다. runtime test 없이 완료를 주장하지 않는다. Terminal은 app.close 전 저장하고 실제 process exit는 외부 관찰이 필요하다.
 
-Wall watchdog는 별도 thread이고 actuator를 쓰지 않는다. 실패는 thread-safe queue로 보내고 Kit thread의 post-update 및 session pump가 `timeline.pause()`를 호출해 playing readback을 기록한다. Kit가 멎으면 REQUESTED가 전달되지 않을 수 있다. **stalled Kit emergency halt 보장은 UNKNOWN**이다. 외부 wrapper도 process kill을 physical stop으로 간주하지 않는다. 새 owner는 write 실패 때 zero를 다시 쓰지 않고 fault latch와 pause 요청만 한다. 따라서 소유권을 잃은 상태에서 두 번째 명령을 시도하지 않는다. Pause 자체는 quiet/정지 PASS가 아니다.
+**양의 증명:** 코드상 명시적으로 시작하는 actor writer는 v07의 exclusive_write 한 경로이고, stage graph writer3은 정확한 topology 확인 후 inactive다. 새 paused entry 자체에는 actor writer/physics advance/graph evaluation이 없다. **증명하지 못한 것:** enabled extension 내부 callbacks/native direct writers의 부재, 임의 외부 extension의 고의적 회피. 새 contract는 이 UNKNOWN을 인정하며 owner certificate를 생성하지 않는다.
 
-관측은 raw COM, COM 보정 root-origin, FD, native velocity, pose, named joint q/dq, contact headers 및 live whole-rover AABB→floor edge clearance를 보존한다. Safety/evaluation GT는 perception/pose estimation/task goal 입력으로 보내지 않는다. Contact observer는 독립 읽기이나 같은 Kit/PhysX process에 의존한다. 빈 200×200m floor 외 collider는 거부한다. 이는 ENG001 장애물 clearance/transfer 인증이 아니다.
+물리용 후속 bounded 정책은 reviewed extension/source hash allowlist + 활성 stage writer allowlist + 매 advance 직전/직후 및 매 write 직전 재검사 + 동일 Kit thread/epoch + target readback을 요구해야 한다. 추가 graph/ROS/script/foreign actor/미검토 extension이면 fault latch→pause request, 재명령 없음. 현재 recheck는 paused snapshot 전용이며 joint state가 변하는 물리 stage에서 그대로 쓰면 false rejection이 생긴다. 따라서 physical active-state projection을 검토하지 않은 채 연결하지 않았다. 범용 native registry나 lease를 발명하지 않았다.
 
-**성공 조건:** 실제 정상 DECEL→ZERO_SETTLING latch→HOLD, 모든 owner/graph/readback/observer gate 통과, HOLD 변위≤4mm/yaw≤.005rad/wheel excursion≤.03007518767339501rad, 종료 zero target의 지속 readback, 8초 post-release 관측, 마지막 온전한1초 root-origin와 **raw COM 둘 다≤.002m/s**, FD≤.002m/s, pose span≤.002m, engineering HOLD-entry reference에 대해 long/lat 각각≤.03m와 yaw≤2°, stable control receipts≥6, pause 전달/readback, terminal_success와 외부 exit0 모두 필요하다. 이 reference는 ENG001 FINAL이 아니다. HOLD 구간 자체의 마지막1초 quiet도 요구한다. Terminal 실패는 그대로 failure다.
+## 3. pre-SimulationApp guard 처리
 
-Measured motion/FD speed 상한 .03m/s, excursion2m, clearance .10m, dq≤1rad/s, freshness/step≤.04s, wall watchdog .1s, motion-profile wall20s, episode wall40s/sim30s 및 post-release wall20s를 넘으면 실패한다. Max-time bound가 정상 감속/물리 정지를 보장하지는 않는다. 기존 frozen terminal tolerance/quiet를 완화하지 않았다.
+v07 main과 live 양쪽의 native.attest(0)가 실제 stage 생성 전 실패한다. actual stage verification이 현재 경로로는 불가능한 직접 원인이다. 두 호출과 NativeExclusionUnavailable은 **수정하지 않았다**. 강한 global native 보장이 연결되지 않았다는 설명도 유지한다.
 
-현재 proposed 값 K=1s⁻¹, target±.02rad/s, slew .2rad/s², signs(+1×6), 4mm/.005rad/8s는 **그대로 미승인**이다. 별도 승인본 contract 경로를 받되 숫자/sign은 후보와 일치해야 하고 runtime/signed/dynamics 승인, sign resolved 및 encoder-target sign·dynamics 근거의 실제 path/hash가 필요하다. 이를 새 evidence-backed 버전으로 작성해야 하며 원본 contract를 바꾸면 preservation gate가 실패한다. 새 승인은 아직 만들지 않았다.
+새 진입점은 별개의 **zero-command admission**으로 분리했다. physical code에는 도달하지 않으므로 기존 물리 gate를 제거/우회하지 않는다. 향후 process-scoped 정책으로 물리 진입 조건을 바꾸려면 별도 명시 engineering authorization과 새 version/source hash가 필요하다. 이 보고서는 그 승인이 아니다.
 
-남은 blocker는 세 가지다.
+## 4. paused 다음 단계와 남은 물리 blocker 3개
 
-1. **Native actuator exclusivity 실제 연결 없음.** 가장 작은 다음 engineering 작업은 별도 새 process에서 해당 articulation의 모든 native target/effort producer를 열거·차단하거나 독점 lease를 강제하는 port를 실제 API에 연결하고, 침입 writer 차단/readback 증거를 내는 것이다. 단순 callback 목록, Python monkeypatch, 승인 boolean은 대체물이 아니다. 설치 API로 불가능하면 경계를 강제할 수 있는 native extension이 필요하다. 범용 control-system 재작성이나 graph-only 재시험은 필요하지 않다.
-2. **수치/sign/HOLD 정책 근거와 별도 사용자 승인 없음.** 원본 보존한 새 contract+evidence, 정확한 runner/host/contract/output에 묶인 수동 승인 필요. Unit test나 미서명 template은 승인이 아니다.
-3. **실제 physics/observer/stop 경로 미실행.** 앞선 두 gate 해결 후 별도 승인한 단일 prospective trial에서만 timing·sensor sync·HOLD/zero stop을 판정한다. Stalled Kit pause 한계도 승인자가 인지해야 하며 guaranteed halt로 바꾸어 쓰지 않는다.
+새 entry의 no-motion 구조는 준비됐으나, 실제 process owner 성립은 아직 미확인이다. 따라서 요청의 “owner 성립 시에만 ready command” 조건에 따라 **승인 가능한 owner-ready launch command는 발행하지 않는다**. 다음 검토 대상은 `scripts/fe2e_v02_paused_owner_admission_v01.py --output <새 절대경로> --approve-paused-launch`이며 실제 launcher는 `/home/user/anaconda3/envs/hh_isaac51/bin/python`이다. 후보 output `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_PAUSED_OWNER_ADMISSION_20261020_v01`은 로컬 미존재 확인했다. 이 설명은 실행 지시/실행 승인/완료 증거가 아니다. 한 번의 별도 paused admission 승인 요청에서 exact command와 source hash를 묶어야 한다.
 
-## 4. CLI와 별도 수동 승인 절차 — 아래 physical 명령 실행 금지
+물리 1회 전 별도 사용자 승인이 필요한 항목은 다음 세 가지다.
 
-현재 admission은 이동 없이 hash/proof/blocker를 기록하고 **의도적으로 exit1 / RUNNER_NOT_READY**다. 실제 보존 출력은 `fe2e_v02_physics_hold_runner_20261020_v01/admission_0001/`이다. 이 출력은 최종 motion-profile wall20s 명시 추가 직전의 code hash snapshot이며, 최종 코드 admission 분기는 이후 오프라인 targeted test에서도 다시 검사했다. 이전 snapshot을 수정하지 않았다.
+1. **bounded scope와 native 잔여 불확실성:** 실제 paused process inventory의 extension/metadata/callback 후보 검토, process-scoped 정책 채택 여부, 기존 global native gate의 후속 version 변경을 명시 승인. 지금 owner admission UNKNOWN.
+2. **signed correction와 numeric 정책:** K=1s⁻¹, limit±.02rad/s, slew .2rad/s², hold8s/4mm/.005rad, signs(+1×6)는 후보 그대로 미승인. evidence path/hash와 새 signed contract가 필요하다. 아래 부호/동역학 근거를 가정으로 대신하지 않는다.
+3. **단일 실제 시험과 pause/stop gate:** independent watchdog는 같은 Kit에 pause 전달을 의존하고 stall 시 정지 보장 UNKNOWN임을 수락해야 한다. 기존 measured speed .03m/s, clearance .10m, raw COM/root/FD quiet .002m/s 등 모든 gate 유지. 이전 후퇴34.127288744mm 및 raw root .002619135991>.002 quiet FAIL은 그대로다. engineering 한 회와 ENG001/QUAL12/432를 분리하고 자동 retry 없음.
 
-```bash
-python3 scripts/fe2e_v02_hold_one_shot_v07.py \
-  --mode admission --domain 191 \
-  --output reports/fe2e_v02_physics_hold_runner_20261020_v01/NEW_UNUSED_ADMISSION
-```
+### 부호/K/velocity/slew의 실행 가능한 근거 계획
 
-아래는 **native binding 완료와 최종 코드 검토 후 사용자에게 별도 승인받을 단1회 physical call**이다. 이 turn에는 실행하지 않았다. 지정 output과 `.external_v01`은 보고 시점 모두 미존재다. Contract/approval 경로는 앞으로 새로 작성·서명해야 하는 파일이며 현재 존재·승인을 주장하지 않는다. 현재 코드로는 native gate 때문에 이 명령도 GO가 될 수 없다.
+정적 joint10은 wheel6 Y-axis/identity localRot0/1, steer4 Z-axis/identity다. wheel stiffness0/damping100, steer stiffness836.6141357421875/damping40. Radius .13300000131130219m와 locked surface→wire .2506265639450088은 기존 drive 근거다. encoder와 target의 같은 signed joint coordinate는 API와 이 정의로 대조할 수 있으나 실제 named index/actuation response 부호까지 확정하지 않는다.
 
-```bash
-ROS_DOMAIN_ID=191 /usr/bin/python3 \
-  /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/fe2e_v02_physics_hold_external_v01.py \
-  --domain 191 \
-  --output /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_PHYSICS_HOLD_ONE_SHOT_20261020_v01 \
-  --hold-contract /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_PHYSICS_HOLD_APPROVED_CONTRACT_20261020_v02.json \
-  --approval /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_PHYSICS_HOLD_MANUAL_APPROVAL_20261020_v01.json
-```
+먼저 기존 attempt_0001/steps.jsonl의 joint name→index, graph target, q unwrap 차분과 dq를 시간 정렬해 **각 wheel별** sign agreement/lag와 zero후 q 회복 필요량을 계산한다. 이름 없는 평균 wheel speed나 base forward 부호를 encoder-target sign으로 대체하지 않는다. 이번 broad reanalysis/재실행은 하지 않았다. 부족하면 최소 미래 물리 probe는 **한 episode 안의 짧은 저속 공통 wheel target→zero**에서 여섯 named q/dq 및 실제 target을 함께 계측하는 것. 직진 양의 excitation은 encoder-target sign만 검증하며 음의 HOLD correction 안전/수렴 인증은 아니다. 이 probe도 별도 명시 승인·사전 시간/변위 상한과 같은 stop gate가 필요하고 이번 실행0이다.
 
-Wrapper가 `/home/user/anaconda3/envs/hh_isaac51/bin/python`과 v07 `--mode single-physics`를 child 한 개로 호출한다. 자동 retry/다음 trial 없음. Output 또는 external sidecar가 있으면 덮어쓰지 않고 실패한다. Terminal이 없거나 internal FAIL/NO-GO인데 child0인 경우도 외부 실패다. Output에 manifest/events/terminal이 남고 sidecar에 command/terminal.txt/final_adjudication.json이 남는다. Physics failure를 journal에 남긴 뒤 close하며, process exit는 외부 wrapper가 최종 확인한다.
+수치 사전 산술: radius×limit≈.00266m/s, limit/slew=.1s, 4mm/radius=.03007518767rad. K1의 무지연 선형 오차 시간상수1s는 계산상 값일 뿐 실제 traction/지연/포화 안정성 인증이 아니다. 34.127mm 후퇴는 wheel 회전 하나로 설명되지 않을 수 있어 q latch만으로 base hold를 보장하지 않는다. 기존 로그에서 yaw/steer/raw COM/FD와 wheel excursion을 함께 검토하고 지연/슬립이 설명되지 않으면 dynamics_certified=false 유지. 신호가 부족할 때 K나 quiet threshold를 맞추지 말고 해당 미래 단일 시험의 근거 부족/실패로 남긴다.
 
-수동 approval JSON 필수값: `scope="ONE_ENGINEERING_PHYSICS_HOLD_EPISODE_NO_RETRY"`, 실제 `approved_by`, `approved_at`, exact absolute `output`, `hold_contract_sha256`, `runner_sha256`, `host_sha256`, `accept_queued_pause_stalled_kit_unknown=true`, `approve_exact_proposed_signed_K_velocity_slew=true`. 승인본 contract의 `approval_evidence`에는 `purpose=encoder_target_sign`과 `purpose=hold_dynamics_support` 각각 실제 `path`와 `sha256`가 필요하다. Native port 연결이 코드를 변경하므로 **그 최종 코드 hash에 대해 다시 승인**해야 한다. 현재 보고서나 사용자 code-only 요청을 그 승인으로 간주하지 않는다.
+## 5. 결정과 검사
 
-## 5. 오프라인 검사와 최종 판정
+**권고: isolate-and-proceed-to-user-approval는 paused inventory 한 회에만 적용. 현재 HOLD physical branch는 중지 상태 유지.** native extension 개발로 확대하지 않는다. paused inventory 검토로 구체적인 process scope를 만들 수 없다면 이 HOLD branch를 멈추고 이미 실제 운동이 확인된 engineering-only legacy ROS/graph route를 별도 목적에 사용한다. 그 route는 이동 가능성 근거가 있으나 34.127mm stop regression 때문에 이 HOLD/terminal 성공의 대체 PASS가 될 수 없다. C++ native lease는 더 강한 강제 경계가 정말 필요할 때의 별도 설계 선택이며 현재 다음 작업이 아니다.
 
-[최종 검사](fe2e_v02_physics_hold_runner_20261020_v01/final_checks.json), [최종 test log](fe2e_v02_physics_hold_runner_20261020_v01/tests_final.txt), [새 code hashes](fe2e_v02_physics_hold_runner_20261020_v01/new_code_sha256.json).
+[checks](fe2e_v02_bounded_owner_20261020_v01/checks.json), [최종 검사](fe2e_v02_bounded_owner_20261020_v01/tests_final.txt), [known subset](fe2e_v02_bounded_owner_20261020_v01/known_locks.json).
 
-- PASS: 신규4개 파일 py_compile, 새 production gate/barrier/fault/terminal에 직접 대응한8 tests. Native UNKNOWN 거부, duplicate/advanced-frame barrier 거부, write 실패 후 retry0, raw COM quiet 실패 유지, internal FAIL+child0 외부 실패, approval 없이 motion 거부, admission 무launch/명령0 및 기존 output 거부.
-- PASS: 이전429SHA, graph manifest37SHA 및 graph output SHA, known9 locks hash/count.
-- FAIL/거부 보존: admission exit1의 RUNNER_NOT_READY. 이것은 물리 시험 실패도 graph regression도 아니며 의도된 admission 거부다. Git status는 `.git` 부재로 실패.
-- UNKNOWN: 실제 새 graph/physics timing, native 소유권, 실제 q/dq/COM/USD/contact 동기화, HOLD dynamics, post-release physical quiet, stalled Kit pause 전달. Compile/tests PASS로 GO를 발행하지 않는다.
+- PASS: standalone USD read, Isaac loaded=false; existing429SHA mismatch0; known subset hash/count 재검사; 새4개 AST parse; focused4tests(변경 source/extension/stage fault latch, native attest 부재, no-motion entry call 금지).
+- FAIL 기록 보존: 최초 AST 검사에서 dict.update를 app.update로 오인한 test1 실패는 tests.txt에 남겼다. receiver를 구분해 수정 후4 PASS. 전체 filesystem 검색 중 screenshot directory permission denied와 처음 잘못 찾은 config/joint_io 경로도 있었다. 실제 contract는 evaluation/, 실제 runtime output은 attempt_0001 아래로 구분했다. 설정 변경/권한 우회/실험 재시도 없음.
+- UNKNOWN: 실제 새 paused admission, enabled extension source closure/callback ownership, physical sign/dynamics/quiet/pause stall delivery. 새 검사 PASS를 owner/physics PASS로 치환하지 않는다.
 
-주요 보존 SHA256:
-
-| 항목 | SHA256 |
-|---|---|
-| authoritative bench USD | `224cac492d267d0403c9402484fcf84011191208fb4689e7e3fc33eadf3756fe` |
-| frozen research controller | `bd1a17f3038909c1ba2ce9b66a540570fd30da29def7561aae2033ebc001d472` |
-| locked drive contract | `7e6937a2c14f5be4fea4b50dc9cfb7c533a62f5a54eb3885533d2f6cb81ec551` |
-| graph-only v03 graph_result | `3a9142f61709bc576a2bde856e00fa6a772c3a4c766b5228bf05672fd2361468` |
-| graph-only v03 events | `3312c6914391e5fe09763c710820089ffd54b07b14b21b761724650f3a6a82e0` |
-
-**다음 구체적 작업은 native exclusive write port를 실제로 연결할 수 있는지 확인·구현하는 code-only engineering 작업이다.** 현재 실제 runner 완성을 선언할 수 없는 정확한 이유가 그 미연결이며, 그래프 재탐색이나 generic mock test 추가로 해소되지 않는다. 그 이후에도 별도 수동 승인 없이는 물리 episode를 실행하지 않는다.
+변경은 새 scripts1/evaluation1/analysis2, 본 보고서와 증거 directory, PROJECT_STATE append뿐이다. 원본 v07/host/contract/USD/controller/locked manifests/기존 결과는 보존했다. 별도 protocol/approval flags true 작성, Git staging/push 없음.
