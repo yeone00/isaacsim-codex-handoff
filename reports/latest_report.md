@@ -1,63 +1,68 @@
-# Full E2E v02 wheel-position feedback HOLD 구현 — 2026-10-19
+# Full E2E v02 HOLD runtime integration — offline 구현
 
-**판정: NO-GO. 분리 adapter·owner mux·최소 derived-layer patch·오프라인 검사는 구현 완료. 실제 actuator 독점·물리 안정성·정지 성공은 UNKNOWN이다.** 이번 Isaac/ROS 구동·motion·ENG001·QUAL12·432-run·자동 retry는 모두 0이며 연구 denominator는 바뀌지 않았다. 기존 선정 결정을 재검토하거나 새 문헌을 탐색하지 않았다.
+작성일 2026-10-20 (Asia/Seoul). 요청된 보고서 파일명의 20261019를 유지했다.
 
-## 구현과 검사
+**GO/NO-GO: 실제 실행 NO-GO. 새 dependency-injected integration의 단위/mock 계약 12/12 PASS. 실제 host 설치·actuator 독점·pause 전달·물리 HOLD 안정성은 UNKNOWN.** Isaac Sim/ROS/physics launch, ENG001, QUAL12, 432, retry/sweep 모두 0이다. 연구 denominator 및 기존 실패 결과는 바뀌지 않았다. 후보 선정/알고리즘 재탐색/기존 감사 재수행은 하지 않았다.
 
-- `evaluation/fe2e_v02_wheel_hold_adapter_v01.py`: explicit wheel6/steer4 name, rad/rad/s 계약. synchronized epoch의 q/dq/steer/base를 검사하여 q unwrap 및 q_hold/steer_hold/base_hold를 한 번만 latch한다. 기준은 immutable tuple이며 갱신하지 않는다. q의 encoder→canonical sign 및 target→API sign 변환을 각각 한 번 적용한다. joint error는 modulo 최단각이 아닌 누적 unwrap 좌표 차이다. `saturate(K*error, ±limit)` 뒤 slew를 적용한다. Fault/stop zero는 slew를 우회한다.
-- Freshness/future/nonfinite/단위·순서/시간역행/step gap/dq·unwrap alias/시간·변위·yaw 한계는 fail-latched zero 및 pause 요청이다. Fault/stop 후 재진입과 re-arm은 금지된다. `tick(monotonic_now)`는 샘플이 끊겼을 때 외부 주기 호출이 필요하다. 입력 epoch 표시는 생산자의 동일-step 계측을 대신 증명하지 않는다.
-- `evaluation/fe2e_v02_wheel_hold_owner_v01.py`: 단일 physics-thread writer mux, derived edit-layer에서 기존 3개 articulation writer의 active=false override 함수, 명시적 DOF subset의 ArticulationAction writer를 구현했다. 원본 layer 저장·drive gain 수정·simulation import/launch는 없다.
-- `evaluation/fe2e_v02_wheel_hold_contract_v01.json`: 모든 수치가 명시된 PROPOSED contract. runtime 승인·signed 정책·dynamics 인증은 false. Adapter와 mux는 runtime 미승인 시 생성부터 거부한다. offline=True는 synthetic 검사용이며 실행 승인으로 사용하면 안 된다.
-- `tests/test_fe2e_v02_wheel_hold_v01.py`: **15/15 PASS**, 최종 로그 `reports/fe2e_v02_wheel_hold_offline_20261019_v02/tests.txt`. Single latch, ± correction, encoder sign, wrap boundary, name/order/units, K/limit/slew invalid, freshness/NaN/mixed epoch, gap/timeout/watchdog, 변위 guard, duplicate owner, Twist overwrite 방지, stop/re-arm 금지, patch mock, writer 실패 pause 및 disjoint subset mapping 검사다.
-- `analysis/fe2e_v02_wheel_hold_offline_v01.py`: 표준 라이브러리만으로 재현. 최종 `replay.json`에 5개 synthetic sample와 wheel/steer target sequence를 저장한다. q=[0,.001,−.001,.002,0]rad에서 첫 wheel target=[0,−.001,+.001,−.002,0]rad/s, steer=[.2,.1,0,0]rad 고정. **물리 stop/safety 성공 증거가 아니다.** 최초 v01 증거(14tests)도 보존하고 writer mapping 추가 후 v02(15tests)를 생성했다.
+## 새 구현 파일
 
-재현 명령(새 미사용 output 경로 필요):
+- `evaluation/fe2e_v02_hold_runtime_integration_v01.py`: 정확한 derived writer inventory와 jointNames/upstream/index/array 연결을 검사하는 별도 edit-layer patch, Ackermann graph-output reader, 이름 기반 DOF snapshot mapping, physics-thread callback, 독립 physics observer와 wall watchdog/pause port. simulator/ROS import나 launch 부작용은 없다.
+- `scripts/fe2e_v02_hold_one_shot_v01.py`: 미사용 output만 생성하는 one-shot 기록/실패 종료 인터페이스. 입력·자기 코드 SHA, 명령, Python/platform, 계측 목록, append event, terminal status, nonzero 실패 exit를 제공한다. 재사용/자동 retry를 거부한다. actor 함수는 전달해도 호출되지 않는다. 현재 CLI는 launch runner가 아닌 **봉인된 준비/거부 인터페이스**다.
+- `analysis/test_fe2e_v02_hold_runtime_integration_v01.py`: 새 synthetic port 계약 검사. 기존 adapter/owner는 정적으로 확인한 simulator-free 모듈만 사용했다. legacy session은 읽기만 했고 import/실행하지 않았다.
 
-```bash
-python3 -m unittest discover -s tests -p test_fe2e_v02_wheel_hold_v01.py -v
-python3 -m analysis.fe2e_v02_wheel_hold_offline_v01 reports/fe2e_v02_wheel_hold_offline_NEW
-```
+`RUNTIME_APPROVED=False`, 기존 numeric contract의 승인 3항목 false를 유지했다. 새 PhysicsIntegration은 offline mock 생성만 허용하며 실제 runtime 생성은 항상 거부한다. bool을 승인으로 바꾸는 작업은 이번 범위에 포함되지 않는다. K=1, ±.020rad/s, slew=.2, base .004m 등 기존 PROPOSED 수치는 변경하거나 인증하지 않았다.
 
-## PROPOSED 수치와 검토 범위
+## 정적 계약 근거와 연결 순서
 
-기존 보고서의 radius r=.13300000131130219m, dt≈1/60s, nominal 잔여 long5.119679mm/lat4.580750mm/yaw .466862°를 이용한 **사전 검토 후보**다. 단일 nominal margin을 다른 fresh FINAL의 실제 margin으로 쓰지 않는다.
+읽은 실제 근거:
 
-| 항목 | 후보·단위 | 산정/안전 조건 |
-|---|---:|---|
-| K_hold | 1 s⁻¹ | 이상적 즉시 추종 P계의 시정수1s, 95% 복원 약3s. 실제 cascade 안정성/유효 damping100 환산 근거 없음: UNRESOLVED |
-| 각 wheel target | ±.020 rad/s | r×limit=.00266000003m/s의 rolling-equivalent. 실제 base cap .03m/s 보장값이 아님. signed HOLD 전용 승인 필요 |
-| target slew | .200 rad/s² | 0→limit .1s; r×slew=.0266000003m/s². 기존 surface-command .07m/s²보다 작은 후보이나 coupled response 인증 아님 |
-| base excursion guard | .004m XY | nominal 최소 위치여유4.580750mm보다 작게 남긴 budget 제안. 충분한 검출·pause stopping distance 인증은 없음 |
-| yaw guard | .005rad=.286479° | nominal 잔여 .466862°보다 작은 예산 후보. terminal ±2° 변경 아님 |
-| wheel excursion | .004/r=.03007518767rad | base guard와 연결한 rolling-equivalent 추가 abort. Slip 시 base pose 별도 검사 필수 |
-| HOLD 시간 | 8s | 이상적 시정수8배, quiet1s 평가 여유 제안. 지난 후퇴가 약7.916667s 지속한 사실도 고려하되 8s 내 stop 보증으로 쓰지 않음 |
-| freshness / max sample gap | .040s / .040s | 기존 약16.67ms의 2sample 간격33.33ms를 포함하는 후보. 실제 scheduling/transport 인증 필요 |
-| wall watchdog | .100s | limit rolling-equivalent에서 .266mm에 해당. actual displacement bound가 아니며 독립 pause 감시 필요 |
-| measured wheel dq bound | 1rad/s | .04×1=.04rad<π로 unwrap alias 제한. 실제 dq admission 적합성 미인증 |
-| signs | wheel6 모두 +1 | 동일 API q/velocity axis 전제, actual named DOF encoder/target 방향 계측 확인 필요 |
+- `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_STOPPING_VALIDATION_20261019_v01/graph.json`
+- `scripts/fe2e_v02_stopping_validation_session_v01.py`의 scene/reference 및 graph 출력 취득 코드
+- 기존 wheel HOLD adapter/owner/contract 및 20261019 구현 보고서
 
-이 값은 편의 기본값으로 adapter에 숨겨져 있지 않다. 모든 양의 유한 수치와 sign을 명시해야 한다. 테스트는 limit·slew·alias 산술 및 코드 계약만 검증했다. 실제 안정성·force·slip·검출 지연·최대정지거리는 UNRESOLVED이므로 runtime을 차단한다. Parameter sweep/통과할 때까지 조정은 하지 않는다.
+원본 reference는 `/home/user/hh/isaac_cosmos/sdg_practice/construction_scene_robot_task_controller_perturbation35mm_2p5deg_v01.usd`의 `/World/ROBOT_TASK/RuntimeRover`이며 derived rover는 `/World/ENG_FE2E/Rover`다. 실제 현재 열린 stage의 재검증은 하지 않았다. graph snapshot hash와 관련 노드 전체 속성/연결은 `reports/fe2e_v02_hold_runtime_integration_20261020_v01/graph_contract.json`에 남겼다.
 
-## 실제 적용할 단일 owner 경로
+| 원본 graph suffix | 이름/입력 연결 | derived patch 경로 |
+|---|---|---|
+| articulation_controller | front_left, front_right, rear_left, rear_right wheel / Ackermann wheelRotationVelocity | /World/ENG_FE2E/Rover/ActionGraph/articulation_controller |
+| articulation_controller_01 | front_left, front_right steer / Ackermann wheelAngles | /World/ENG_FE2E/Rover/ActionGraph/articulation_controller_01 |
+| articulation_controller_02 | middle_left, middle_right wheel / make_array(get_array_index 0, get_array_index_01 1) | /World/ENG_FE2E/Rover/ActionGraph/articulation_controller_02 |
 
-기존 graph.json은 validation bulk **상위 디렉터리**에서 확인했고 SHA도 기존 inventory와 일치한다. 최초 attempt_0001/graph.json 읽기는 경로 오류(exit1)였으며 삭제/성공 처리하지 않았다. git status도 .git 없음(exit128)이므로 Git diff 검증은 수행 불가였다. 권한/샌드박스 오류나 보안 설정 변경은 없었다.
+Joint 이름은 코드에서 `_wheel_joint`, `_steer_joint`까지 정확히 검사한다. Patch는 TraverseAll inventory exact-set, 별도 edit target, node type 및 위 연결을 검사한 뒤 active=false override만 작성한다. 원본/root layer 저장은 없다. 실제 USD에서 patch를 적용하거나 export하지 않았으며 mock stage 검사만 했다. 전체 stage에 다른 articulation writer가 있으면 보수적으로 거부한다. drive gain/controller 변경은 없다.
 
-Source `/World/ROBOT_TASK/RuntimeRover/ActionGraph`의 writer는 `articulation_controller`(FL/FR/RL/RR wheel), `_01`(front steer), `_02`(middle wheel)이다. Derived reference `/World/ENG_FE2E/Rover`에서는 동일 suffix 3개를 별도 stronger edit-layer에서 비활성화한다. Patch는 정확한 node:type과 3개 path를 확인하며 원본 USD를 수정하지 않는다. Mock으로만 검사했고 실제 USD patch 적용은 이번 미실행이다.
+APPROACH/DECEL에서는 host가 완료한 graph epoch token을 reader에 전달해야 한다. wheel4는 FL/FR/RL/RR, middle은 FL/FR 복제, front steer2와 rear steer0를 이름으로 wheel6/steer4에 매핑한다. native rad/s, rad를 그대로 전달하며 HOLD에 surface→wire scale 또는 각도 변환을 추가하지 않는다. 기존 ROS Twist→Ackermann 계산 및 surface→wire 계약 자체는 이번 코드 밖의 보존 대상이다.
 
-APPROACH/DECEL에서는 기존 ROS Twist→Ackermann 계산을 유지하고, 기존 3개 writer 대신 단일 Python owner가 graph 출력 wheel4를 이름으로 재배열하고 middleL/R=frontL/R, front steer2와 기존 rear0를 writer에 전달한다. Legacy surface→wire .250626563945 계약을 유지한다. HOLD joint rad/s에 이 scale이나 π/180을 다시 적용하지 않는다. **이 graph-output reader/physics callback 및 전체 writer inventory 검사는 아직 구현·현장검증되지 않았으며 완성된 runtime runner라고 주장하지 않는다.**
+Callback은 독립 observer의 같은 epoch 확인 → 외부 exclusivity/pause receipt 확인 → fresh synchronized sample 검사 → PRE_WRITE_SNAPSHOT 기록 → owner write 순서다. 첫 ZERO_SETTLING은 같은 callback에서 `enter_hold`로 immutable q/steer/base latch를 만든 뒤 첫 zero target을 적용한다. 이미 같은 epoch에 approach write가 발생한 경우 중복 epoch로 거부한다. HOLD 이후 graph target을 읽거나 재전달하지 않고 HOLD adapter target만 같은 mux로 적용한다. 별도 validation adapter가 매 epoch의 sample 순서/단위/유한성/freshness를 검사하며 실제 HOLD adapter history는 별도로 유지한다.
 
-StoppingAdapter의 첫 ZERO_SETTLING 요청을 physics thread가 처리하는 epoch에, legacy zero write **전에** fresh q6/dq6/steer4/base를 취득하고 mux.enter_hold를 호출해야 한다. Same-step handoff 실패/이미 그 epoch legacy write 발생이면 abort한다. 이후 graph 계산과 ROS Twist zero는 계속될 수 있어도 disabled legacy writer와 mux state 때문에 actuator에 도달하지 않는다. 별도 JointState subscriber는 설치하지 않았고 topic 격리만으로 ownership을 주장하지 않는다. Thread/foreign direct articulation writer는 Python mux로 차단할 수 없으므로 scene과 scripts의 독점 검증이 필수다.
+Receipt는 epoch, graph_disabled, direct_writers_excluded, single_callback, pause_installed가 모두 정확히 일치해야 한다. UNKNOWN/누락/직접 writer 신고/중복 owner/thread/시간 역행/sample 누락은 failure와 pause 요청으로 이어진다. 이 receipt는 host attestation 인터페이스이며 **Python dict가 외부/native writer의 부재를 증명하지 않는다**. 실제 관측/설치 검증을 구현한 host가 없으므로 runtime 봉인을 유지한다.
 
-Independent guard는 owner와 별도 physics observer + 외부 wall watchdog이 담당하도록 다음 runner에서 연결해야 한다. .03m/s 초과·clearance<.10m·stale·fault·guard excursion이면 fail 기록→zero 시도→자기 simulation timeline pause. 기존 독립 emergency .25m/s/2m boundary는 그대로 추가 유지하며 .03 cap을 대체하지 않는다. Callback 정지/zero write 실패에도 pause가 도달해야 한다. Pause로 멈춘 경우 성공이 아닌 실패다. Zero 자체는 물리정지 보증이 아니다.
+IndependentGuard는 owner와 별도 observer에서 raw COM→origin planar 및 FD planar, clearance, contact, 2m emergency boundary를 검사한다. .03m/s, .10m 제한을 유지한다. 별도 thread의 monotonic wall watchdog은 physics callback/write 없이도 pause port를 호출한다. owner latch drift guard(.004m/.005rad)는 기존 adapter가 담당한다. 실제 raw/FD 계산·contact/clearance 공급 및 별도 observer 등록은 host 책임이며 mock 값만 검사했다. Wall pause가 thread에서 실제 timeline까지 전달되는지, physics hang에서도 전달되는지는 UNKNOWN이다. pause port 예외도 안전정지 성공으로 취급하지 않는다. Zero는 안전정지 보장이 아니며 pause 종료는 FAIL이다.
 
-## 실행 전 blocker — 최대 3개
+## 오프라인 검사와 보존
 
-1. **수치·signed HOLD 정책 미승인/미인증:** 위 후보의 gain·양방향 .020rad/s·slew·admission/guard/시간 및 sign 계약의 사전 승인과 검토 기록 필요. 현재 승인 bool을 바꾸기만 해서는 인증을 대체할 수 없다.
-2. **runtime integration 및 독점성 미검증:** 실제 derived patch, 동일 physics epoch graph-output reader/entry handshake/ArticulationAction writer, 모든 외부 writer 배제, independent pause/watchdog를 단일 one-shot runner로 연결하고 검사해야 한다. 현재 제공 파일은 최소 integration building block이다.
-3. **단일 실제 시험 준비와 명시적 실행 승인 부재:** 미사용 output/domain, input·environment·code hashes와 단일 episode 계획, 실제 동일 epoch 계측 및 자동 retry 없는 상태 기록을 확정한 후 다음 단계에서 사용자 승인을 받아야 한다. 이번 실행 권한은 없다.
+명령: `python3 -m unittest analysis.test_fe2e_v02_hold_runtime_integration_v01 -v`
 
-다음 1회는 기존 열린공간/동일 mobility의 nonzero-curvature→정상감속→HOLD다. 실제 q/dq/steer/base/root COM→origin/FD/ROS receive/source/graph target/owner를 동일 epoch로 기록하고 latch 이후 max along/XY/yaw drift, raw root와 FD quiet(.002m/s,1s), max planar .03m/s, contact/clearance/guard를 평가한다. Long/lat±.030m, yaw±2°, clearance≥.10m, footprint1.68×1.61m와 기존 경로·게이트는 불변이다. Wheel q가 유지돼도 base drift 또는 raw-root quiet가 실패하면 FAIL. 이 1회는 ENG001 full-chain success가 아니며 ENG001/QUAL12/432로 자동 전이하지 않는다. 현재 실행 가능한 Isaac command는 제공하지 않는다: runner 연결이 미완료인 상태에서 기존 validation command를 재사용하면 HOLD 검증이 되지 않는다.
+**12/12 PASS, exit0.** 이름/배열 mapping, latch-before-write 및 HOLD graph 차단, missing/mixed/NaN sample, direct writer·pause 미설치 receipt 거부, 중복 epoch/graph barrier, 다른 thread, 독립 속도/clearance/contact/boundary guard, physics 진행 없는 wall timeout pause, write 실패 pause, runtime gate/one-shot actor 미호출·재사용 금지·실패 상태, snapshot 이름 재정렬, exact inventory patch를 검사했다. 후속 코드 변경에 맞춘 재검사까지 모두 exit0이며 최초 로그도 보존했다. 실물 안정성이나 실물 독점성 PASS로 해석하지 않는다.
 
-## 보존
+증거 디렉터리: `reports/fe2e_v02_hold_runtime_integration_20261020_v01/`
 
-기존 inventory의 PROJECT_STATE 과거 버전 항목만 제외하고 비교한 **148개 expected=observed SHA256 PASS**. 최초 workspace 전체 snapshot 대비 코드·문서 기존 파일 변경0(PROJECT_STATE append 이전). 증거는 `reports/fe2e_v02_wheel_hold_offline_20261019_v01/preservation.json`이다. PROJECT_STATE는 이 작업을 추가 기록하며 원본 protocol/threshold/controller/governor/stopping adapter/USD/기존 결과·inventory는 보존했다. 새 evidence에는 명령·Python/platform·code hashes·return code를 남겼다. 구현 PASS와 runtime NO-GO를 분리한다.
+- `tests.txt`, `tests_final.txt`, `tests_final_v02.txt`: 각 단계 로그, 최종 12tests PASS.
+- `execution.json`: 검사 명령/exit, 환경, 새 코드·기존 contract SHA, 실행 금지 상태.
+- `preservation.json`: 기존 148개 expected=observed SHA PASS; PROJECT_STATE append 직전 기존 파일 변경0.
+- `before.json`: 이번 작업 시작 시 workspace SHA snapshot.
+
+기존 protocol/controller/USD/결과/inventory/adapter/owner/contract는 수정하지 않았다. PROJECT_STATE에 이번 결과만 추가했다. 새 code·report·evidence는 별도 경로다. Git stage/push/publish는 수행하지 않았다.
+
+## 남은 blocker — 3개
+
+1. **실제 host 연결과 독점성:** post-physics atomic acquisition, Ackermann completion barrier, 단일 callback 등록, live USD patch/readback, 모든 script/native direct writer inventory·배제 및 callback/thread 소유권 증거가 필요하다. 현재는 테스트 가능한 injected port 구현이며 실제 Isaac callback 등록은 미구현이다.
+2. **독립 pause와 수치/물리 검증:** 별도 observer/wall thread의 실제 pause 전달 설치·hang/write failure 시 전달, raw root COM→origin/FD 및 drift·clearance 계측, joint sign, signed HOLD와 PROPOSED 수치의 사전 검토/승인·안정성 검증이 필요하다. Mock PASS는 이를 인증하지 않는다.
+3. **단일 실행 승인 및 host runner 확정:** 실제 발견된 Isaac launcher의 정확한 경로/명령·버전, unused output/domain, 전체 input/code hash, 한 episode 계획과 실패 상태 보존을 확정하고 사용자 명시 실행 승인을 받아야 한다. 새 인터페이스에는 simulator launcher나 ROS command가 없으며 승인된 실제 시험 명령도 아직 UNKNOWN이다.
+
+## 단일 실제 시험 사전조건 및 다음 행동
+
+다음 행동은 별도 허용 범위에서 blocker 1·2의 host binding을 구현하고, scene/callback/direct writer/pause 설치 증거를 검토하는 것이다. 그 뒤 새 unused output·isolated domain과 **정확한 실제 launcher 명령**을 보고 사용자에게 단일 실행 승인을 받아야 한다. 이번 작업은 해당 승인을 요청하거나 추정하지 않는다.
+
+준비 인터페이스 명령 형식(이번 턴 실행하지 않음): `python3 scripts/fe2e_v02_hold_one_shot_v01.py --output <UNUSED_OUTPUT> --input evaluation/fe2e_v02_wheel_hold_contract_v01.json`. 현재는 metadata 작성 후 FAILED/exit1로 끝나며 simulation을 시작할 수 없다. 실제 host runner를 대체하는 명령이 아니다.
+
+향후 승인 대상 한 회는 기존 열린 공간·동일 mobility에서 nonzero curvature→DECEL→첫 ZERO_SETTLING latch→HOLD다. 각 epoch의 q/dq/steer/base, raw COM/root·origin·FD, source/receive/graph target/owner와 latch-before-zero 순서를 기록해야 한다. HOLD 최대 along/XY/yaw drift와 raw-root·FD quiet(.002m/s, 1s), max planar .03m/s, clearance≥.10m 및 contact/guard를 평가한다. quiet·drift의 실제 산출/성공 판정기는 이번 one-shot interface에 구현하지 않았으며 계측 schema만 준비했다. Long/lat±.030m, yaw±2°, footprint1.68×1.61m와 기존 경로/정책은 불변이다. 계측 누락·terminal error·pause는 실패로 남기고 자동 재시도하지 않는다. ENG001/QUAL12/432로 자동 전이하지 않는다.
