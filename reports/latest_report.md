@@ -1,72 +1,98 @@
-# Full E2E v02 graph compute dispatch 표적 수정 — 2026-10-20
+# Full E2E v02 PHYSICS HOLD one-shot runner — 2026-10-20
 
-**READY_FOR_MANUAL_APPROVAL / offline PASS / live dispatch UNKNOWN / physical NO-GO.** 이번 Isaac/SimulationApp launch, graph live execution, physics.play, ROS publish, actuator command, actual HOLD, ENG001, QUAL12, 432-run, 자동 retry/튜닝 모두 0. 연구 denominator=0. numerical K/sign/dynamics/runtime approval=false 유지. 다음 실행도 별도 명시적 수동 승인 후 graph-only 정확히 1회다.
+**RUNNER_NOT_READY / physical NO-GO.** 실제 Isaac5.1 시작·관측·graph·actuator·종료 경로의 새 코드를 작성했으나, 전체 native actuator writer를 배제하는 실제 연결이 없다. 실행 가능한 CLI가 있다는 사실을 물리 runner 완성이나 GO로 해석하지 않는다. 현재 `single-physics`는 승인 계약과 native gate에서 거부되며 SimulationApp 이전에 종료한다. 이 turn에서는 Isaac/graph probe/physics/ROS/actuator/ENG001/QUAL12/432 실행0, 연구 denominator0, 물리 retry0이다.
 
-## 실제 v02 증거
+## 1. 기존 실제 증거와 보존
 
-`/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_GRAPH_ONLY_PREFLIGHT_20261020_v02`의 status/events/execution_complete/stage_inventory/graph_only.usda/synthetic_inputs/runtime_sources/manifest와 `.external_v02`의 final_adjudication/external_exit/terminal을 읽었다. AGENTS/README/PROJECT_STATE/PROTOCOL_LOCKS, 이전 edge 수정 보고서 및 지정 runner/CLI/wrapper/evaluation 원본도 정적으로 확인했다.
+사용자가 실행한 `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_GRAPH_ONLY_PREFLIGHT_20261020_v03`의 status, events, graph_result, stage_inventory, manifest, external_v03/final_adjudication 및 대응 host v03/v04/v05·CLI v06·external v03 소스를 정적으로 확인했다. Graph-only를 다시 실행하지 않았다.
 
-- `EXEC_EDGE_BEFORE_CONNECT`: 같은 graph의 유효한 OG attribute, uint(execution), OUTPUT→INPUT. `EXEC_EDGE_CONNECTED`가 실제 기록됐다. 이전 상대경로 edge 결함은 해결됐으며 해당 helper를 수정하지 않았다.
-- ONDEMAND/evaluator=execution, graph_evaluations=1, ack_compute_count=0, witness_invocation_count=0. 내부 `FAILED_GRAPH_ONLY`, `MISSING_DUPLICATE_GRAPH_COMPUTE_OR_WITNESS`. physics_callbacks/actuator_writes/ros_publishes/retry/research_denominator=0.
-- child_exit=0, internal FAILED_GRAPH_ONLY, wrapper_exit=1, overall_success=false. 기존 wrapper 판정은 성공적으로 실패를 검출했다. 새 wrapper는 CLI 버전과 sidecar 이름만 변경했고 판정 로직을 유지한다.
-- [실제 manifest 검증](fe2e_v02_graph_compute_dispatch_20261020_v01/v02_verification.json): 입력 35/35 SHA PASS. [최종 검사](fe2e_v02_graph_compute_dispatch_20261020_v01/final_checks.json): status output hash 및 execution_complete 일치 PASS. 기존183을 포함한198 SHA PASS. baseline expected를 변경하여 통과시키지 않았다. 새 preservation inventory는 작업 전 관측값을 추가한 것이며 독립 과학 lock 인증이 아니다. v01/v02 실패·USD·기존 code 모두 보존했다.
+로컬 기록: PASS_GRAPH_ONLY, external child0/wrapper0/overall_success=true, eval1/Ack1/Witness1, native trigger/Ack/Witness 각각 delta1, 같은 token/epoch/thread. Wheel `[.03,.03,.03,.03]rad/s`, steering `[0,0]rad`, expected 일치. Physics/actuator/ROS/retry0. Graph manifest **37개 input SHA 일치**, status가 참조한 output SHA 일치. 이것은 physics timing·독점 writer·physical stop 인증이 아니다.
 
-## 확인된 사실과 원인 UNKNOWN의 경계
+기존 실제 stopping validation의 후퇴 **34.127288744mm** 및 raw-root quiet 실패 **.002619135991m/s > .002**를 유지한다. Pose/FD/native/wheel dq가 고정된 관측으로 raw-root 실패를 지우지 않는다. 원본 one-shot session의 open floor, RuntimeRover reference, 6초 비영 곡률 profile, 정상 감속, 8초 zero 관측을 읽고 사용했다.
 
-**확인된 구성 결함:** v04는 stage에서 Ackermann의 모든 inputs 연결을 해제한다. 실제 저장 stage도 execIn upstream이 없고 synthetic_inputs의 원래 execIn은 None이다. 이후 `request_compute()`와 `evaluate_sync()`만 호출하며 명시적인 execution 입력 발생기를 구성하지 않는다. request_compute 반환값도 기록하지 않았다. 따라서 해당 평가 호출이 downstream 실행 신호를 만들었다는 증거가 없다.
+보존 확인은 [baseline](fe2e_v02_physics_hold_runner_20261020_v01/preservation_baseline.json)과 [결과](fe2e_v02_physics_hold_runner_20261020_v01/preservation_result.json)의 **429개 SHA PASS**다. 기존 output·source·asset·controller·protocol을 변경하지 않았다. [known locks](fe2e_v02_physics_hold_runner_20261020_v01/known_locks.json) 9개 hash/count PASS; 108/432행 유지. 이번 known-subset 검사는 새 pairing/full dependency closure 인증이 아니다. 실제 simulator stage의 동적 closure도 UNKNOWN이다. `.git`이 없어 git status는 실패했으며 staging/commit/push를 하지 않았다.
 
-**확정하지 않은 것:** 이 결함이 v02의 compute0을 발생시킨 유일한 native scheduler 원인인지는 UNKNOWN이다. request_compute는 설치 API상 compute 요청이며, 이 요청이 해당 execution evaluator/dirty 상태에서 어떻게 처리됐는지 v02에는 native count·disabled state·평가 직후 output 기록이 없다. “scheduler 고장” 또는 “monkeypatch 실패”로 단정하지 않는다. graph_evaluations는 노드 compute 횟수가 아니다. 기존 Probe는 fn 실행 전, 심지어 gate 전 카운터를 올렸다. v02는 traceback상 fn에서 예외 없이 돌아왔지만 이것은 Ack compute 증명이 아니다.
+## 2. 새 실제 연결 코드
 
-설치 Python ABI는 `NODE_TYPE_CLASS.compute`를 호출 시점에 동적으로 조회한다. 현재 등록 module/hash도 그 설치 파일과 일치한다. Python ABI가 실제 진입했다면 class wrapper가 관측할 구조이며, 설치 소스에서는 캐시된 별도 compute 함수로 우회하는 근거를 찾지 못했다. 그러나 native 등록 dispatch가 실제 그 ABI를 호출했는지는 v02 로그만으로 입증되지 않는다. class/registry를 교체해서 해결됐다고 주장하지 않으며 등록 ABI를 재등록하지 않았다.
+| 파일 | 구현 및 실제 연결 지점 | 검증 수준 |
+|---|---|---|
+| `evaluation/fe2e_v02_physics_hold_host_v01.py` | PhysicsSession, PhysicsAckermann, NoRetryOwner, raw-root terminal evaluator | compile/offline PASS; 물리 미실행 |
+| `scripts/fe2e_v02_hold_one_shot_v07.py` | 실제 SimulationApp, 새 USD/override, Articulation 초기화, baseline, 단일 episode, 승인/hash gate, terminal journal | CLI/admission 검사 PASS; 물리 미실행 |
+| `scripts/fe2e_v02_physics_hold_external_v01.py` | child 단1개, stdout/exit/status 보존, 외부 최종 판정 | 판정 분기 검사 PASS; child launch 미실행 |
+| `analysis/test_fe2e_v02_physics_hold_runner_v01.py` | 새 gate·barrier·fault·raw COM·외부 판정 회귀검사 | 8 tests PASS |
 
-## 설치 공식 API 근거
+생산 경로는 `live()`→`PhysicsSession`이다. simulator import는 live 설치 함수 안에서만 일어난다. `admission`은 simulator-free 검증이며 생산 경로에 synthetic pose/receipt 또는 `offline=True` 우회가 없다. 기존 `PhysicsIntegration`의 mock 전용 봉인을 해제하지 않았다.
 
-아래는 실제 파일을 import하지 않고 읽은 경로다. 전체 절대경로와 SHA는 [installed_sources.json](fe2e_v02_graph_compute_dispatch_20261020_v01/installed_sources.json)에 있다. 설치 root는 `/home/user/anaconda3/envs/hh_isaac51/lib/python3.11/site-packages/isaacsim`이다.
+**실제 step 순서:** PhysX `subscribe_physics_step_events` receipt → `app.update()` 복귀 후 정확히 receipt1/시간진행/dt 검사 → live tensor q/dq·steer·base/COM/root-origin/FD·USD pose/clearance/contact 관측 → owner admission → 동기식 impulse→Ack→execOut ScriptNode → 같은 frame/token/thread의 witness1 및 native node count 각각 delta1 → 이름으로 매핑한 wheel6 velocity/steer4 position write와 native target readback → 다음 물리 advance. 따라서 같은 acquisition frame 안의 계산·쓰기이며 **그 결과가 이미 끝난 physics step에 적용됐다고 주장하지 않는다.** 실제 callback 순서, USD sync, graph scheduling, 다음 step의 응답은 UNKNOWN이다.
 
-| root 아래 실제 source | 확인 내용 |
-|---|---|
-| `extscache/omni.graph-1.141.2+69cbf6ad.lx64.r.cp311/omni/graph/core/_impl/controller.py:388` | evaluate_sync는 대상 graph를 해석하고 ONDEMAND를 포함한 일반 분기에서 graph.evaluate() 호출. 반환값은 별도 compute 성공 receipt가 아니다. |
-| 같은 extension `omni/graph/core/_omni_graph_core.pyi:4234,4345,4429` | Node.get_compute_count는 native computation instance 수, is_disabled readback, request_compute()->bool 정의. Graph.get_evaluator_name/is_disabled도 제공된다. native counter 단독으로 Python 계산 성공을 주장하지 않는다. |
-| `extscache/omni.graph.action_nodes-1.50.4+107.3.0.lx64.r.cp311.u353/omni/graph/action_nodes/ogn/nodes/OgnOnImpulseEvent.ogn` | 공식 실행 발생기. compute-on-request/threadsafe, state:enableImpulse=true이면 execOut 1회 후 false로 reset. inputs:onlyPlayback=false는 paused 사용 경로다. 내장 test도 해당 조합을 정의한다. |
-| 같은 extension `omni/graph/action_nodes/tests/test_action_graph_nodes_02.py:277` | execution graph에서 OnImpulse.execOut→Counter.execIn, onlyPlayback=false, enableImpulse=true 후 count1 확인. 해당 공식 test는 update yield 기반이므로 ONDEMAND evaluate_sync 조합의 live 성공까지 입증하지는 않는다. |
-| `exts/isaacsim.robot.wheeled_robots/isaacsim/robot/wheeled_robots/ogn/OgnAckermannControllerDatabase.py:331` | ABI는 동적 NODE_TYPE_CLASS.compute(db), input prefetch 및 output commit. 다인자 compute 분기도 존재하나 실제 설치 compute는 단일 db 인자다. |
-| 같은 extension `isaacsim/robot/wheeled_robots/ogn/python/nodes/OgnAckermannController.py:81` | 실제 계산은 synthetic command로 controller.forward 후 wheel/steer output을 기록하고 execOut=ENABLED. 오류면 False 반환. 물리 actuator apply 호출은 없다. |
-| `extscache/omni.graph.scriptnode-1.50.0+107.3.0/omni/graph/scriptnode/ogn/python/nodes/OgnScriptNode.py` 및 `.ogn` | execIn execution 입력, usd-write scheduling, 등록 compute가 사용자 script를 compile하고 compute(db)를 호출한다. Witness를 직접 호출하지 않고 이 경로로 관측한다. |
+기존 PhaseDispatch와 StoppingAdapter의 `.07 / KMAX / PRE_FINAL / 6sim s` profile 및 정상 BRAKING을 유지한다. Graph 입력에는 기존 gain15와 `degrees(atan2(-.7*z,abs(v)))` 변환을 사용한다. Native graph 출력을 wheel rad/s·steer rad로 직접 전달하고 middle wheel은 기존 FL/FR 복사다. Radius/drive/gain/controller/물리 topology를 고치지 않았다. Graph-only synthetic `.015/zero steer`는 실제 episode profile에 사용하지 않는다.
 
-초기 source 검색에서 존재하지 않는 `ogn/nodes/OgnAckermannController*` 경로에 rg 오류가 있었으며 이후 실제 `ogn/python/nodes`와 등록 runtime_sources 경로를 확인했다. 설치 파일 실행이나 수정은 없었다.
+MOVING=APPROACH, BRAKING=DECEL, ZERO_SETTLING에서 **같은 sample의 wheel q·실측 steering·base를 먼저 latch하고 owner를 HOLD로 전환**한다. 그 step에서 legacy graph zero/steering zero를 먼저 쓰지 않는다. HOLD는 wheel-position 오차→제한된 wheel velocity feedback이며 wheel stiffness를 바꾸거나 native position drive를 추가한 것이 아니다. 8초 HOLD 관측 후 wheel zero를 명시적으로 쓰고 STOP_OBSERVING으로 봉인하여 8초 독립 정지 관측을 한다. 성공/실패 모두 단일 episode 종료이며 재개·재시도 없다.
 
-## 새 versioned code와 fail-closed 판정
+## 3. 소유권·pause·판정의 구체적 한계
 
-- `scripts/fe2e_v02_hold_host_binding_v05.py`: 기존 edge helper 유지. 새 `GraphOnlyImpulseV03`(OnImpulseEvent)→Ackermann.execIn→기존 GraphOnlyWitnessV03. onlyPlayback=false. synthetic scalar/출력 sentinel/paused·ONDEMAND·execution/legacy writers inactive/전체 active node 3개 allowlist/외부 Ack scalar 연결 금지를 강제한다. trigger는 Isaac/ROS/Twist/physics/actuator writer와 연결하지 않는다. 기존 derived stage는 새 layer에서만 참조한다.
-- `evaluation/fe2e_v02_graph_probe_v02.py`: graph_evaluations는 실제 evaluate_sync 호출 직전에만 증가. attempt 재사용은 별도 guard로 금지. witness scheduler entry에서 실제 db.node path/exec input, token/epoch/thread를 기록하고 path를 검사한다. witness 실패 traceback도 저장한다. gate 실패는 evaluate0으로 남는다.
-- `evaluation/fe2e_v02_graph_dispatch_v01.py`: trigger/Ack/witness의 독립 native counter 전후 delta 각각1 요구. counter unavailable/rollover/0/중복/해석 불가능은 FAIL. 별도의 등록 class wrapper count1과 witness1도 반드시 필요하다.
-- `scripts/fe2e_v02_hold_one_shot_v06.py`, `scripts/fe2e_v02_graph_probe_external_v03.py`: graph-only 전용 새 entry와 `.external_v03`. wrapper adjudication 유지, retry 없음.
-- `analysis/test_fe2e_v02_graph_dispatch_v01.py`: native delta0/중복/불명확/rollover, evaluate1+callback0 거부, gate 전 평가0, 두 번째 시도 거부, 실제 생성 script 문법 검사.
+세 legacy ArticulationController의 native joint명/입력 upstream을 기존 `patch()`로 검사한 뒤 새 override에서 비활성화한다. 이후 composed stage의 활성 OG node는 Ack/impulse/witness 세 개만 허용한다. ROS bridge 활성, legacy writer 재활성화, 추가 script/graph, target readback 불일치는 실패다. 모든 실제 write 바로 앞에도 native exclusion과 epoch/thread/guard를 다시 검사한다.
 
-새 이벤트는 DISPATCH_BEFORE/AFTER의 evaluator/pipeline/graph·node disabled/native count/execIn/impulse/output sentinel 전후, EXPLICIT_IMPULSE_ARMED readback, EVALUATE_SYNC_RETURN 실제 반환형·repr, ACK_ABI_INSTRUMENTATION 실제 ABI/compute code 위치·인자 수, ACK_COMPUTE_ENTER/RETURN, WITNESS_SCHEDULER_ENTRY 및 검증 receipt, 실패 complete traceback이다. 기존 terminal-before-close와 외부 terminal 보존도 유지한다. ABI 재등록/registry 교체 없이 class wrapper와 native node counter를 독립 비교한다.
+이 검사는 **외부 native direct writer가 같은 값을 쓰거나 값을 복원한 경우를 탐지하지 못한다.** 설치 `Articulation` 소스는 tensor target setter/readback을 제공하지만, 조사 범위에서 모든 native writer의 producer registry나 exclusive lease를 얻는 실제 port를 찾지 못했다. 따라서 `NativeExclusionUnavailable.attest()`가 구체적인 blocker를 던진다. 이는 fake certificate가 아니라 **미연결을 나타내는 실패 port**다. 현재는 `native.attest(0)`을 SimulationApp와 play 전에 호출하므로 명령0·physics0으로 거부한다. 미래의 real port가 연결되어야 실제 stage/script/native writer inventory를 제출할 수 있다. 지금 그 inventory를 확보했다고 주장하지 않는다.
 
-판독은 다음과 같다. native Ack delta0+wrapper0이면 native 계산 호출도 관측되지 않은 상태다. native delta1+wrapper0이면 ABI 계측/dispatch 경로 불일치이며 FAIL이다. wrapper1이지만 witness0이면 compute 반환/execOut/output/ScriptNode 경로를 조사하며 FAIL이다. 모든 계수1이어도 token/epoch/thread/source/output shape·finite·expected value 검증 또는 zero counter gate가 실패하면 FAIL이다. 어떤 경우도 연결 성공만으로 PASS하지 않는다. registered compute/Witness.compute/registry.deliver를 host에서 직접 호출하지 않는다. wrapper는 scheduler에서 들어온 원래 compute만 위임한다.
+Wall watchdog는 별도 thread이고 actuator를 쓰지 않는다. 실패는 thread-safe queue로 보내고 Kit thread의 post-update 및 session pump가 `timeline.pause()`를 호출해 playing readback을 기록한다. Kit가 멎으면 REQUESTED가 전달되지 않을 수 있다. **stalled Kit emergency halt 보장은 UNKNOWN**이다. 외부 wrapper도 process kill을 physical stop으로 간주하지 않는다. 새 owner는 write 실패 때 zero를 다시 쓰지 않고 fault latch와 pause 요청만 한다. 따라서 소유권을 잃은 상태에서 두 번째 명령을 시도하지 않는다. Pause 자체는 quiet/정지 PASS가 아니다.
 
-## 오프라인 결과와 제한
+관측은 raw COM, COM 보정 root-origin, FD, native velocity, pose, named joint q/dq, contact headers 및 live whole-rover AABB→floor edge clearance를 보존한다. Safety/evaluation GT는 perception/pose estimation/task goal 입력으로 보내지 않는다. Contact observer는 독립 읽기이나 같은 Kit/PhysX process에 의존한다. 빈 200×200m floor 외 collider는 거부한다. 이는 ENG001 장애물 clearance/transfer 인증이 아니다.
 
-[최종 tests 로그](fe2e_v02_graph_compute_dispatch_20261020_v01/offline_tests_final_29.txt): 신규5+기존24=29/29 PASS. 새6개 Python 파일 compile PASS, 실제 생성 ScriptNode 문자열 compile PASS. legacy/설치 scientific module import·SimulationApp 실행 없음. [새 code hash](fe2e_v02_graph_compute_dispatch_20261020_v01/new_code_hashes.json).
+**성공 조건:** 실제 정상 DECEL→ZERO_SETTLING latch→HOLD, 모든 owner/graph/readback/observer gate 통과, HOLD 변위≤4mm/yaw≤.005rad/wheel excursion≤.03007518767339501rad, 종료 zero target의 지속 readback, 8초 post-release 관측, 마지막 온전한1초 root-origin와 **raw COM 둘 다≤.002m/s**, FD≤.002m/s, pose span≤.002m, engineering HOLD-entry reference에 대해 long/lat 각각≤.03m와 yaw≤2°, stable control receipts≥6, pause 전달/readback, terminal_success와 외부 exit0 모두 필요하다. 이 reference는 ENG001 FINAL이 아니다. HOLD 구간 자체의 마지막1초 quiet도 요구한다. Terminal 실패는 그대로 failure다.
 
-최초 생성 script compile에서 닫는 괄호 누락 SyntaxError가 발견됐다. module py_compile만으로는 문자열 내부 문법을 검출하지 못했다. 이를 수정하고 실제 문자열 compile 회귀검사를 추가했으며 [초기 실패 기록](fe2e_v02_graph_compute_dispatch_20261020_v01/generated_script_initial_failure.txt)과 이전28tests 로그를 보존했다. live 실패/연구 denominator로 치환하지 않는다.
+Measured motion/FD speed 상한 .03m/s, excursion2m, clearance .10m, dq≤1rad/s, freshness/step≤.04s, wall watchdog .1s, motion-profile wall20s, episode wall40s/sim30s 및 post-release wall20s를 넘으면 실패한다. Max-time bound가 정상 감속/물리 정지를 보장하지는 않는다. 기존 frozen terminal tolerance/quiet를 완화하지 않았다.
 
-PASS는 offline 논리·문법·보존 범위다. 설치 공식 trigger의 paused/ONDEMAND 실제 dispatch, native counter 작동, ScriptNode 실제 실행은 UNKNOWN이며 다음 단1회에서 확인한다. 외부 native/direct writer 전역 배제는 UNKNOWN. 새 expected threshold/gain/K/sign/dynamics 승인을 만들지 않았다.
+현재 proposed 값 K=1s⁻¹, target±.02rad/s, slew .2rad/s², signs(+1×6), 4mm/.005rad/8s는 **그대로 미승인**이다. 별도 승인본 contract 경로를 받되 숫자/sign은 후보와 일치해야 하고 runtime/signed/dynamics 승인, sign resolved 및 encoder-target sign·dynamics 근거의 실제 path/hash가 필요하다. 이를 새 evidence-backed 버전으로 작성해야 하며 원본 contract를 바꾸면 preservation gate가 실패한다. 새 승인은 아직 만들지 않았다.
 
-## 다음 정확히 1회 명령 — 준비만, 이번에는 실행하지 않음
+남은 blocker는 세 가지다.
 
-최종 로컬 검사에서 output과 sidecar 모두 미존재. 사전 생성하지 않았다. 별도 수동 승인 이후 실행 직전 충돌·hash를 재확인한다. 충돌 시 재사용/자동 version retry하지 않는다.
+1. **Native actuator exclusivity 실제 연결 없음.** 가장 작은 다음 engineering 작업은 별도 새 process에서 해당 articulation의 모든 native target/effort producer를 열거·차단하거나 독점 lease를 강제하는 port를 실제 API에 연결하고, 침입 writer 차단/readback 증거를 내는 것이다. 단순 callback 목록, Python monkeypatch, 승인 boolean은 대체물이 아니다. 설치 API로 불가능하면 경계를 강제할 수 있는 native extension이 필요하다. 범용 control-system 재작성이나 graph-only 재시험은 필요하지 않다.
+2. **수치/sign/HOLD 정책 근거와 별도 사용자 승인 없음.** 원본 보존한 새 contract+evidence, 정확한 runner/host/contract/output에 묶인 수동 승인 필요. Unit test나 미서명 template은 승인이 아니다.
+3. **실제 physics/observer/stop 경로 미실행.** 앞선 두 gate 해결 후 별도 승인한 단일 prospective trial에서만 timing·sensor sync·HOLD/zero stop을 판정한다. Stalled Kit pause 한계도 승인자가 인지해야 하며 guaranteed halt로 바꾸어 쓰지 않는다.
+
+## 4. CLI와 별도 수동 승인 절차 — 아래 physical 명령 실행 금지
+
+현재 admission은 이동 없이 hash/proof/blocker를 기록하고 **의도적으로 exit1 / RUNNER_NOT_READY**다. 실제 보존 출력은 `fe2e_v02_physics_hold_runner_20261020_v01/admission_0001/`이다. 이 출력은 최종 motion-profile wall20s 명시 추가 직전의 code hash snapshot이며, 최종 코드 admission 분기는 이후 오프라인 targeted test에서도 다시 검사했다. 이전 snapshot을 수정하지 않았다.
 
 ```bash
-ROS_DOMAIN_ID=193 /home/user/anaconda3/envs/hh_isaac51/bin/python /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/fe2e_v02_graph_probe_external_v03.py --domain 193 --approve-graph-only-launch --output /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_GRAPH_ONLY_PREFLIGHT_20261020_v03
+python3 scripts/fe2e_v02_hold_one_shot_v07.py \
+  --mode admission --domain 191 \
+  --output reports/fe2e_v02_physics_hold_runner_20261020_v01/NEW_UNUSED_ADMISSION
 ```
 
-sidecar: `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_GRAPH_ONLY_PREFLIGHT_20261020_v03.external_v03`. 목표 evaluate=1, actual Ack compute=1, ScriptNode witness=1, trigger native delta1, physics_callbacks=actuator_writes=ros_publishes=0. callback0/compute 불명확/해석 불가능은 반드시 FAILED_GRAPH_ONLY와 wrapper exit1. 실패해도 자동 재시도 없다.
+아래는 **native binding 완료와 최종 코드 검토 후 사용자에게 별도 승인받을 단1회 physical call**이다. 이 turn에는 실행하지 않았다. 지정 output과 `.external_v01`은 보고 시점 모두 미존재다. Contract/approval 경로는 앞으로 새로 작성·서명해야 하는 파일이며 현재 존재·승인을 주장하지 않는다. 현재 코드로는 native gate 때문에 이 명령도 GO가 될 수 없다.
 
-남은 blocker는 3개다.
+```bash
+ROS_DOMAIN_ID=191 /usr/bin/python3 \
+  /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/fe2e_v02_physics_hold_external_v01.py \
+  --domain 191 \
+  --output /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_PHYSICS_HOLD_ONE_SHOT_20261020_v01 \
+  --hold-contract /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_PHYSICS_HOLD_APPROVED_CONTRACT_20261020_v02.json \
+  --approval /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_PHYSICS_HOLD_MANUAL_APPROVAL_20261020_v01.json
+```
 
-1. v02 native scheduler 단일 root cause UNKNOWN; 새 공식 trigger/ONDEMAND 및 독립 native 계수 live 검증 미실시.
-2. 물리 thread ownership/외부 native writer 배제/독립 정지·observer/stop envelope 미인증.
-3. numerical K/sign/dynamics/runtime approval=false. **physical NO-GO**, HOLD/ENG001/QUAL12/432 승인 없음.
+Wrapper가 `/home/user/anaconda3/envs/hh_isaac51/bin/python`과 v07 `--mode single-physics`를 child 한 개로 호출한다. 자동 retry/다음 trial 없음. Output 또는 external sidecar가 있으면 덮어쓰지 않고 실패한다. Terminal이 없거나 internal FAIL/NO-GO인데 child0인 경우도 외부 실패다. Output에 manifest/events/terminal이 남고 sidecar에 command/terminal.txt/final_adjudication.json이 남는다. Physics failure를 journal에 남긴 뒤 close하며, process exit는 외부 wrapper가 최종 확인한다.
+
+수동 approval JSON 필수값: `scope="ONE_ENGINEERING_PHYSICS_HOLD_EPISODE_NO_RETRY"`, 실제 `approved_by`, `approved_at`, exact absolute `output`, `hold_contract_sha256`, `runner_sha256`, `host_sha256`, `accept_queued_pause_stalled_kit_unknown=true`, `approve_exact_proposed_signed_K_velocity_slew=true`. 승인본 contract의 `approval_evidence`에는 `purpose=encoder_target_sign`과 `purpose=hold_dynamics_support` 각각 실제 `path`와 `sha256`가 필요하다. Native port 연결이 코드를 변경하므로 **그 최종 코드 hash에 대해 다시 승인**해야 한다. 현재 보고서나 사용자 code-only 요청을 그 승인으로 간주하지 않는다.
+
+## 5. 오프라인 검사와 최종 판정
+
+[최종 검사](fe2e_v02_physics_hold_runner_20261020_v01/final_checks.json), [최종 test log](fe2e_v02_physics_hold_runner_20261020_v01/tests_final.txt), [새 code hashes](fe2e_v02_physics_hold_runner_20261020_v01/new_code_sha256.json).
+
+- PASS: 신규4개 파일 py_compile, 새 production gate/barrier/fault/terminal에 직접 대응한8 tests. Native UNKNOWN 거부, duplicate/advanced-frame barrier 거부, write 실패 후 retry0, raw COM quiet 실패 유지, internal FAIL+child0 외부 실패, approval 없이 motion 거부, admission 무launch/명령0 및 기존 output 거부.
+- PASS: 이전429SHA, graph manifest37SHA 및 graph output SHA, known9 locks hash/count.
+- FAIL/거부 보존: admission exit1의 RUNNER_NOT_READY. 이것은 물리 시험 실패도 graph regression도 아니며 의도된 admission 거부다. Git status는 `.git` 부재로 실패.
+- UNKNOWN: 실제 새 graph/physics timing, native 소유권, 실제 q/dq/COM/USD/contact 동기화, HOLD dynamics, post-release physical quiet, stalled Kit pause 전달. Compile/tests PASS로 GO를 발행하지 않는다.
+
+주요 보존 SHA256:
+
+| 항목 | SHA256 |
+|---|---|
+| authoritative bench USD | `224cac492d267d0403c9402484fcf84011191208fb4689e7e3fc33eadf3756fe` |
+| frozen research controller | `bd1a17f3038909c1ba2ce9b66a540570fd30da29def7561aae2033ebc001d472` |
+| locked drive contract | `7e6937a2c14f5be4fea4b50dc9cfb7c533a62f5a54eb3885533d2f6cb81ec551` |
+| graph-only v03 graph_result | `3a9142f61709bc576a2bde856e00fa6a772c3a4c766b5228bf05672fd2361468` |
+| graph-only v03 events | `3312c6914391e5fe09763c710820089ffd54b07b14b21b761724650f3a6a82e0` |
+
+**다음 구체적 작업은 native exclusive write port를 실제로 연결할 수 있는지 확인·구현하는 code-only engineering 작업이다.** 현재 실제 runner 완성을 선언할 수 없는 정확한 이유가 그 미연결이며, 그래프 재탐색이나 generic mock test 추가로 해소되지 않는다. 그 이후에도 별도 수동 승인 없이는 물리 episode를 실행하지 않는다.
