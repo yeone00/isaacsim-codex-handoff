@@ -1,70 +1,65 @@
-# Full E2E v02 graph completion witness — 단일 paused probe 준비
+# Full E2E v02 exec edge 실패 수정 — 2026-10-20
 
-2026-10-20. **오프라인 구현·검사 PASS / 실제 graph 실행 UNKNOWN / physical NO-GO.** 다음 단일 graph-only 시험은 수동 승인 대기다. 이번 작업에서 Isaac/SimulationApp launch, ROS publish, physics.play, actuator write, actual HOLD, ENG001/QUAL12/432-run, retry·튜닝은 모두 0이며 연구 denominator=0이다. 기존 설치+pause readback 시험을 반복하지 않았다.
+**오프라인 표적 수정 PASS / 실제 수정 연결 UNKNOWN / physical NO-GO.** 상태는 READY_FOR_MANUAL_APPROVAL이다. 이번 Isaac/SimulationApp launch·graph live evaluation·physics.play·ROS publish·actuator command·motion·ENG001·QUAL12·432-run·retry/sweep는 모두 0이다. 연구 denominator=0, numerics/sign/dynamics/runtime approval=false를 유지한다.
 
-## 새 실제 v02 근거
+## 실제 실패 근거와 보존
 
-읽은 디렉터리: `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_HOLD_HOST_PREFLIGHT_20261020_v02`. status, host_installation, events, execution_complete, stage_inventory, derived_hold.usda, hold_writer_override.usda 및 manifest를 직접 확인했다. manifest 입력 **11/11 SHA PASS**: [검증](fe2e_v02_graph_probe_preparation_20261020_v01/live_v02_manifest_verification.json).
+원본 `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_GRAPH_ONLY_PREFLIGHT_20261020_v01`의 status.json, execution_complete.json, events.jsonl, graph_only.usda, manifest.json과 `.external_v01`의 external_exit.json, terminal.txt, command.json을 직접 읽었다. 기존 준비 보고서와 host v03/CLI v04/wrapper v01/evaluation probe v01도 읽었다.
 
-| 항목 | 판정과 범위 |
+- 내부 FAILED_GRAPH_ONLY. graph_evaluations=ack_compute_count=witness_invocation_count=0. physics_callbacks=actuator_writes=ros_publishes=retry=research_denominator=0.
+- events의 chained traceback: `Parsed source 'ackermann_controller.outputs:execOut' as a path attribute, which cannot connect to a destination of type uint (execution)`. 바깥 예외는 `Failed to connect ... -> /World/ENG_FE2E/Rover/ActionGraph/GraphOnlyWitnessV03.inputs:execIn`이다.
+- 외부 child process exit=0, elapsed=14.303175623062998s와 내부 FAIL은 서로 다른 관측이다. Kit shutdown이 Python 반환을 앞설 수 있다는 기존 코드 설명은 있으나 exit0 발생의 내부 shutdown 원인 자체는 이번에 확정하지 않았다.
+- 같은 output 재사용은 기존 wrapper의 FileExistsError 선행 gate로 child launch 전에 차단된다. 기존 재실행 terminal의 별도 산출물은 제공 경로에 없으므로 그 시도의 독립 로그/hash는 UNKNOWN이다. 새 회귀검사로 선행 차단을 확인했다.
+- [검증 JSON](fe2e_v02_graph_edge_fix_20261020_v01/v01_verification.json): v01 manifest 입력 33/33 SHA, status의 3 output SHA, execution_complete와 status equality PASS.
+- [보존 검사](fe2e_v02_graph_edge_fix_20261020_v01/preservation_after.json): 기존 준비 baseline 172개(기존 148개 포함) + 이번 실패 output/sidecar 8개 + 기존 runner/CLI/wrapper 3개 = **183/183 SHA PASS**. 원본·기존 결과·expected SHA 변경/삭제/재사용 없음. 새 baseline의 실패 산출물 SHA는 작업 전 관측값이며 독립 사전 expected라고 주장하지 않는다.
+
+## 확인된 원인과 미확인 가설
+
+실제 설치 루트는 `/home/user/anaconda3/envs/hh_isaac51/lib/python3.11/site-packages/isaacsim`이다. 파일별 절대경로/SHA는 [설치 소스 inventory](fe2e_v02_graph_edge_fix_20261020_v01/installed_source_hashes.json)에 있다. 패키지는 import하지 않고 텍스트/AST로 확인했다.
+
+| 근거 | 확인 내용 |
 |---|---|
-| 설치 및 정상 terminal | PASS: PAUSED_INSTALLATION_RECORDED_NO_GO, execution_complete 존재, subscriptions_installed=true, ack_witness_installed=true |
-| pause 전달 | PASS: pause_call_ok/paused_readback/delivery_ok=true, api_return 문자열 `None`, api_return_type=NoneType. request thread 132575114806976 → delivery thread 132606506420032. 이전 literal success=false 혼동은 해결됨 |
-| 무물리 결과 | 기록상 physics_episodes=0, actuator_commands=0, retry=0, research_denominator=0, metrics NOT_ACQUIRED_NO_PHYSICS |
-| graph | active Ackermann + witness, 기존 3 articulation writer와 ROS/tick 등 inactive. witness execIn 연결은 Ackermann.outputs:execOut. pipelineStageOnDemand. 설치 PASS이나 ack_witness_exercised=false, graph_barrier_certified=false이므로 실제 계산 UNKNOWN |
-| 정지·배타성 | foreign_writers_excluded=false, physical_stop_verified=false, stalled_kit_stop_guarantee UNKNOWN. physical GO 아님 |
-| 외부 종료 | 사용자 제공 실제 관측 exit=0 / 11.267초. 기존 디렉터리에 독립 external exit/elapsed 파일은 없어 이 숫자의 로컬 파일 재검증은 UNKNOWN. 내부 shutdown_completion도 UNKNOWN 유지 |
+| `extscache/omni.graph-1.141.2+69cbf6ad.lx64.r.cp311/omni/graph/core/_impl/controller.py:429–438, 440–463, 671–694` | edit의 상대 이름은 path_to_object_map에 있는 생성 노드만 매핑한다. 기존 Ackermann은 CREATE_NODES에 없어 이름이 그대로 남는다. 새 Witness는 절대경로로 매핑된다. CONNECT는 이 결과를 connect에 넘긴다. |
+| 같은 패키지 `graph_controller.py:836–895` | source가 string으로 decode되고 destination이 실행 attribute이면 PATH role 조건에 걸려 바로 예외가 난다. 실제 traceback의 내부 메시지/줄번호와 일치한다. |
+| `omni.graph.scriptnode-1.50.0+107.3.0/.../OgnScriptNode.ogn`, `OgnScriptNodeDatabase.py:61–75, 206 이후, 324–328` | 등록명 `omni.graph.scriptnode.ScriptNode`, node version2. inputs:execIn/outputs:execOut은 execution이며 role EXECUTION. script는 string, usePath는 bool이다. |
+| `exts/isaacsim.robot.wheeled_robots/.../OgnAckermannControllerDatabase.py:69–91` | Ackermann execIn/execOut은 execution, execOut role EXECUTION이다. |
 
-## 정적 진단과 구현
+**확정한 직접 원인:** 기존 source 상대 이름의 edit 매핑 누락 → 실제 OG attribute 대신 path 문자열로 연결 API에 전달됨. 이는 단순 포트 타입 불일치 가설보다 구체적인 실제 실패 지점이다. 설치된 순수 매핑 함수만 AST로 분리 실행한 회귀검사에서도 재현된다. legacy/OG 모듈 import나 graph 실행은 하지 않았다.
 
-기존 host binding v02 / CLI v03 / ports v02와 graph_contract를 읽었고 원본은 변경하지 않았다. 설치된 Ackermann .py/.ogn, 등록 DB ABI, 실제 controller 수식과 ScriptNode 구현을 **텍스트로만** 확인했다. [설치 소스·contract SHA](fe2e_v02_graph_probe_preparation_20261020_v01/static_source_evidence.json).
+USD `custom`은 authored attribute 여부이지 OG 실행 role 인증이 아니다. USD에 이름과 uint 또는 token 속성을 만들었다고 등록 node schema/실행 포트가 생성됐다고 판단할 수 없다. terminal의 **기존 inactive HoldAckermannWitnessV02** `token` 대 `uint` 경고는 별도 관측이다. 이번 실패 destination GraphOnlyWitnessV03은 traceback에서 이미 uint(execution)으로 해석됐다. 이 경고를 해당 edge의 직접 원인으로 바꾸어 설명하지 않는다.
 
-- 기존 CompletionBarrier는 actual physics receipt>0을 요구한다. 이를 완화하면 physical barrier 의미가 바뀌므로 기존 코드를 유지하고 physics_epoch=0 전용 Probe를 새로 작성했다.
-- 기존 witness는 USD custom token execIn으로 작성되어 있다. 등록 schema의 execution 포트와의 live 호환성은 미검증이다. 신규 witness는 `og.Controller.edit`의 등록 ScriptNode schema로 생성하고 정확한 execOut→execIn 연결을 읽어 검사한다. 이전 방식이 반드시 실패했다고 단정하지 않는다.
-- 새 stage는 검증된 v02 derived_hold.usda를 sublayer로 읽는 **새 stronger layer**다. 전체 composed stage의 node:type inventory를 순회해 Ackermann 이외 노드를 inactive로 작성하고 새 witness만 추가한다. inherited input 연결 제거는 `SetConnections([])`로 명시적으로 차단한다. `ClearConnections()`로 상위 layer 연결이 다시 드러날 여지를 피한다. 원본 USD/controller/protocol/기존 layer를 저장하지 않는다.
-- ONDEMAND readback, legacy writer 3개 존재·inactive, 전체 active node 집합이 Ackermann+witness와 정확히 일치, Ackermann 모든 input 연결 없음, witness source 연결 일치, timeline not playing·동일 time, PhysX callback count0, probe-owned actuator/ROS count0, ROS bridge extension 비활성화를 평가 전·compute 진입·callback·평가 후 gate로 요구한다. bridge가 이미 활성화되어 있으면 FAIL하며 이 runner는 bridge를 시작하거나 ROS publisher/subscriber를 생성하지 않는다. Physics subscription은 SimulationApp 생성 후 stage attach 전에 설치한다. bootstrap 이전 물리 이벤트나 외부 native/direct writer의 전역 계측을 주장하지 않는다.
-- 명시 synthetic scalar는 speed=.015m/s, steeringAngle=0rad, steeringAngleVelocity=0rad/s, acceleration=0m/s², dt=.01s다. 외부 ROS/Twist는 읽지 않는다. radius/limits/geometry는 stage 값을 읽고 바꾸지 않는다. registered controller의 직진식으로 wheel4 rad/s와 steer2 rad를 예상한다. 정상 radii=.5m·비포화이면 wheel4=.03rad/s, steer2=0rad. 실제 radii/limit으로 검증하며 shape4/2, finite, absolute tolerance1e-8을 요구한다. 여기서 dt는 수식 입력이며 물리 step 증거가 아니다.
-- 기존 ingress의 degrees 변환과 설치 Ackermann .ogn의 steeringAngle **rad** 명세를 구분했다. 이번 직진 시험은 단위/sign/곡선·수치 dynamics 인증을 하지 않으며 기존 ingress를 수정·튜닝하지 않았다. wheel4/steer2 native 출력은 실제 wheel6/steer4 actuator command로 변환·전달하지 않는다.
+기존 v01은 연결 전 실제 source OG node type/port validity, evaluator/pipeline mode, destination node parent 등의 snapshot을 남기지 않았다. 따라서 source의 실제 live 포트 존재/type, graph parent/runtime hydration 정상 여부는 **UNKNOWN**이다. 생성 순서·graph mode 문제와 추가 runtime 문제 가능성은 미확인 가설이다. 기존 코드는 connect 실패 뒤에 ONDEMAND를 설정하려 했으므로 v01의 실패 순간 ONDEMAND라고 주장하지 않는다. 이번 수리는 확인된 이름 해석 문제를 제거하지만 live 성공의 증거는 아니다.
 
-새 파일:
+## 최소 버전 수정
 
-| 파일 | 역할 |
-|---|---|
-| `evaluation/fe2e_v02_graph_probe_v01.py` | 별도 token/epoch barrier, registry, finite/shape/expected output validator |
-| `scripts/fe2e_v02_hold_host_binding_v03.py` | 실제 paused stage/ONDEMAND 단일 평가와 journal; physical mode 없음 |
-| `scripts/fe2e_v02_hold_one_shot_v04.py` | 실사용 graph-only-preflight entrypoint |
-| `scripts/fe2e_v02_graph_probe_external_v01.py` | child 정확히 1회, terminal·실제 외부 exit·elapsed·SHA 저장; retry 없음 |
-| `analysis/test_fe2e_v02_graph_probe_v01.py` | 신규 오프라인 fault injection 및 CLI/wrapper 검사 |
+기존 파일은 보존하고 다음 파일만 새 버전으로 만들었다.
 
-callback은 ScriptNode.compute → `evaluation.fe2e_v02_graph_probe_v01.deliver` → process-local REGISTRY의 동일 Probe로 들어온다. inline script에 explicit token과 `{probe_epoch:1, physics_epoch:0, timeline_s:...}`를 고정하고 callback의 thread/source output paths/값을 기록한다. callback 안에서 native 출력을 읽어 예상값과 비교한다. cached 출력은 평가 전 -999 sentinel로 채워 오래된 값의 재사용을 거부한다. registry 누락/잘못된 module identity면 예외 또는 receipt 누락으로 FAIL한다.
+- `scripts/fe2e_v02_hold_host_binding_v04.py`, `scripts/fe2e_v02_hold_one_shot_v05.py`: ScriptNode 등록 생성 → ONDEMAND 설정 → 양쪽 절대경로의 실제 OG Attribute 조회 → native connect 순서. 기존 single evaluation/compute 계수·witness 검증 로직 유지. manifest에 새 helper/wrapper/CLI hash 포함, approval 네 항목 false 명시.
+- `evaluation/fe2e_v02_graph_edge_v01.py`: 연결 직전에 양쪽 실제 node type/validity, attribute absolute path/OG existence/resolved type/port type, actual graph path, USD type/custom, graph evaluator/pipeline mode, 생성 순서를 events에 기록한다. 실행 role/parent 검사 후 `og.Controller.connect(source_attribute, destination_attribute)`를 호출하고 native upstream readback을 검사한다. 실패 시 traceback과 chained API detail·수집된 evidence를 남기며 재시도하지 않는다.
+- `scripts/fe2e_v02_graph_probe_external_v02.py`: child exit는 external_exit.json에 그대로 보존. 최종 internal status 읽기 실패/malformed/missing도 실패로 처리하며 `final_adjudication.json`에 child_exit/internal_status/wrapper_exit/overall_success를 별도 기록. child0 + internal FAILED_GRAPH_ONLY이면 wrapper1/overall_success=false. 기존 v01도 반환식 자체는 internal PASS를 요구했지만 sidecar에는 최종 판정이 없었다는 차이를 명확히 한다.
+- `analysis/test_fe2e_v02_graph_edge_fix_v01.py`: 실제 설치 매핑 동작 및 wrapper의 해당 실패 조합/child nonzero/PASS/중복 output 차단 회귀검사.
 
-실제 등록 `OgnAckermannControllerDatabase.NODE_TYPE_CLASS.compute`를 process-local counting wrapper로 감싸 **원래 compute를 그대로 호출**한다. evaluate 호출1·실제 Ack compute1·실제 ScriptNode callback1 모두 필요하다. ABI는 이 등록 class의 compute를 동적으로 조회하므로 source상의 경로가 연결된다. 중복 compute가 ABI에서 예외를 삼켜도 count2로 FAIL한다. ScriptNode가 callback 예외를 삼켜도 poison/receipt 검사가 FAIL한다. 반환값·cached execOut만으로 PASS하지 않는다. worker thread callback은 FAIL하며 허용 thread를 임의로 변경하지 않는다. API/schema/scheduler가 paused 계산을 지원하지 않거나 receipt가 없으면 FAILED_GRAPH_ONLY로 종료한다. mock receipt를 live에 주입하는 경로는 없다.
+Controller compute와 witness 함수를 직접 불러 연결을 우회하지 않는다. 기존 등록 compute를 감싸 호출수를 계측하는 방식과 ScriptNode의 실제 exec 신호 전달을 그대로 유지한다. 연결 readback만으로 PASS를 발행하지 않는다. 최종 PASS는 graph_evaluations=ack_compute_count=witness_invocation_count=1, token/epoch/thread 일치, witness 내부 출력 shape/finite/expected matching, ONDEMAND·active allowlist·paused gate, physics/actuator/ROS=0을 모두 요구한다. foreign/native writer 전역 배제는 여전히 UNKNOWN이다.
 
-`PASS_GRAPH_ONLY`/exit0 또는 `FAILED_GRAPH_ONLY`/exit1을 Kit close **전에** status/execution_complete에 쓴다. count/token/epoch/실제 source SHA/출력과 output SHA, 실패 traceback, 입력·명령·환경을 보존한다. close 자체가 내부 terminal과 다른 방식으로 종료될 수 있으므로 외부 wrapper가 terminal.txt, external_exit.json을 따로 저장하고 exit0+내부 PASS 모두 있어야 성공을 반환한다. fatal crash/Kit hang 시 내부 terminal은 없을 수 있으며 이를 PASS로 대체하지 않는다. 자동 timeout/kill/retry는 없다.
+## 오프라인 검사
 
-## 오프라인 검사 및 보존
+- 신규6 + 기존 graph probe18 = **24/24 PASS**, [최종 로그](fe2e_v02_graph_edge_fix_20261020_v01/tests_final_after_metadata.txt).
+- 새 Python 5파일 py_compile PASS. 설치 모듈/legacy 모듈은 실행하지 않았다.
+- 최초 검사 24개 중 annotation context 누락으로 1 ERROR가 있었다. 테스트 추출 함수의 타입 annotation 환경을 보완했으며 [최초 실패 로그](fe2e_v02_graph_edge_fix_20261020_v01/tests.txt), [수정 후 로그](fe2e_v02_graph_edge_fix_20261020_v01/tests_final.txt)를 보존했다. 연구 실행 실패로 합치거나 숨기지 않는다.
+- 기존148을 포함한183 SHA 및 실제 실패 manifest33 SHA PASS. 과학 패키지 설치/업그레이드 없음.
 
-- **신규 18/18 PASS**: 누락·중복 callback/중복 Ack compute, explicit token/epoch, worker thread, gate 실패, swallowed ScriptNode exception, registry identity/누락, shape4/2·finite·expected values, radius/limit, terminal 사전 저장·output 재사용 거부, 승인 없는 CLI launch 차단, 외부 exit0만으로 PASS하지 않음. [최종 로그](fe2e_v02_graph_probe_preparation_20261020_v01/offline_tests_v02.txt). 초기16개 로그도 보존했다. Synthetic 검사는 live witness 증거가 아니다. 기존57 tests 재보고로 대체하지 않았다.
-- 새 Python 5개 py_compile PASS. 실제 unapproved CLI는 **예상된 exit1/FAILED_GRAPH_ONLY**, reason MANUAL_GRAPH_ONLY_LAUNCH_APPROVAL_REQUIRED, graph eval0/physics0. [차단 status](fe2e_v02_graph_probe_preparation_20261020_v01/cli_unapproved/status.json). 실패를 삭제하지 않았다.
-- 기존 **148/148 SHA PASS**, 이전 preflight·기존 host/ports/contract 및 새 live v02 결과 포함 **172/172 보존 PASS**. [작업 전 baseline](fe2e_v02_graph_probe_preparation_20261020_v01/preservation_baseline.json), [작업 후](fe2e_v02_graph_probe_preparation_20261020_v01/preservation_after.json). 기존 expected를 observed로 고치지 않았다. baseline의 새 v02 결과 hash는 이번 관측값이며 독립 과거 expected로 주장하지 않는다.
-- known-lock subset exit0/PASS, full_experiment_ready=false 유지. [결과](fe2e_v02_graph_probe_preparation_20261020_v01/known_locks.json). 신규 source SHA는 [별도 inventory](fe2e_v02_graph_probe_preparation_20261020_v01/new_source_sha256.json)에 기록했다. package 설치/업그레이드, legacy Python 실행, Git staging/push 없음.
+## 다음 v02 단 한 번 명령 — 준비만, 실행 금지
 
-## 다음 딱 1회 live command — 이번에는 실행하지 않음
-
-별도 수동 승인 후 아래 **한 명령만** 실행한다. output 및 `.external_v01` sidecar는 이번 확인에서 둘 다 미존재이며 실행 때도 exclusive mkdir로 검사한다. ROS_DOMAIN_ID193에 다른 publisher가 없는지는 **UNKNOWN**이다. domain 설정만으로 격리 PASS라고 하지 않으며 bridge/publisher는 시작하지 않는다.
+작업 시점에 다음 output 및 `.external_v02` sidecar 모두 미존재임을 확인했다. 디렉터리를 미리 만들지 않았다. 별도 명시적 수동 승인 이후에만 아래 한 명령을 실행한다. 사용 전 path 충돌/원본 hash를 다시 확인하며 충돌 시 재사용하지 않는다.
 
 ```bash
-ROS_DOMAIN_ID=193 python3 /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/fe2e_v02_graph_probe_external_v01.py --approve-graph-only-launch --domain 193 --output /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_GRAPH_ONLY_PREFLIGHT_20261020_v01
+ROS_DOMAIN_ID=193 /home/user/anaconda3/envs/hh_isaac51/bin/python /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/fe2e_v02_graph_probe_external_v02.py --domain 193 --approve-graph-only-launch --output /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_GRAPH_ONLY_PREFLIGHT_20261020_v02
 ```
 
-wrapper가 실제 Isaac5.1 `/home/user/anaconda3/envs/hh_isaac51/bin/python`으로 `scripts/fe2e_v02_hold_one_shot_v04.py --mode graph-only-preflight --approve-graph-only-launch --domain 193 --output <위 경로>`를 정확히 1회 호출한다. 이것이 실사용 Isaac entrypoint다. wrapper와 child를 각각 실행하면 2회가 되므로 하나만 실행한다.
+sidecar: `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_GRAPH_ONLY_PREFLIGHT_20261020_v02.external_v02`. 실패하더라도 자동 retry/sweep는 없다. 이 명령은 graph-only engineering 증거이며 물리 실행 승인이나 Full E2E 관측 대체가 아니다.
 
-성공 evidence: external_exit=0 및 내부 PASS_GRAPH_ONLY, graph_evaluations=1, ack_compute_count=1, witness_invocation_count=1, 동일 explicit token/epoch/thread, callback 내부 wheel4/steer2 유한·예상값 일치, source paths, timeline 정지·physics/actuator/ROS0, legacy3 inactive·active allowlist 및 output/source SHA. 성공 범위는 **graph 계산 경로만 GO**다.
+## NO-GO / 남은 blockers
 
-실패 evidence: FAILED_GRAPH_ONLY/비영 exit 또는 내부 terminal 부재, CALLBACK 누락/중복, schema·registry·스레드·scheduler·output mismatch·ROS bridge 활성·zero gate 실패에 대한 reason/traceback/terminal. external exit0만 있어도 내부 PASS가 없으면 FAIL이다. paused 계산 불가능이면 해당 실제 예외를 그대로 기록하고 종료한다. 재시도·튜닝·물리 전환은 승인되지 않는다.
-
-## 남은 blocker — 최대 3개
-
-1. 실제 paused Kit에서 새 typed witness/ONDEMAND 경로는 **NOT_RUN/UNKNOWN**이다. 위 단일 시험이 이를 확인한다. 오프라인18 PASS는 live PASS가 아니다.
-2. 독립 native/script/direct actuator writer 배제, 실제 physics step 동기화·StoppingAdapter phase, observer·물리 pause/stop 및 stalled Kit 강제정지 보장은 **UNKNOWN**이다. active graph inventory와 probe-owned zero count를 전역 배제 인증으로 확대하지 않는다.
-3. 수치·sign·dynamics·actual HOLD와 physical launch는 미승인이다. **physical NO-GO**, ENG001/QUAL12/432 진입 금지와 기존 실패/연구 denominator를 유지한다.
+1. 수정된 native edge와 정확히1회 실제 graph/witness/output 동작은 live 미검증. 다음 최소 검사는 위 graph-only 1회뿐이다.
+2. 실제 physics-thread ownership/foreign native writer 배제·stalled engine 정지 및 stopping/hold 물리 envelope 인증은 미완료다.
+3. numerics/sign/dynamics/runtime approval=false. ENG001/QUAL12/432와 physical 실행은 계속 NO-GO다.
