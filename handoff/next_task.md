@@ -1,40 +1,39 @@
-# Full E2E v02 — verified paused v02 result -> next graph-only witness test
+# Full E2E v02 — 실제 graph-only 실패 1건 수정: execOut → ScriptNode execIn
 
-상태: READY_FOR_MANUAL_APPROVAL (오프라인 코드 구현만; launch/physics 미승인)
-작성일: 2026-10-20
+상태: READY_FOR_MANUAL_APPROVAL — 표적 오프라인 진단/코드 수정만
+기준: 2026-10-20 graph-only live probe v01 실패
 프로젝트: /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013
 
-## 반드시 사용할 새 live 근거
-먼저 AGENTS.md, docs/PROJECT_STATE.md, reports/full_e2e_v02_hold_live_preflight_followup_20261020_v01.md,
-그리고 아래 실제 2026-10-20 v02 결과를 읽어라.
-- /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_HOLD_HOST_PREFLIGHT_20261020_v02/status.json
-- 위 디렉터리의 host_installation.json, events.jsonl, execution_complete.json, stage_inventory.json 및 derived .usda
-실제 외부 process exit=0, 11.267초 종료. status PAUSED_INSTALLATION_RECORDED_NO_GO, physics_episodes=0, actuator_commands=0, retry=0, research_denominator=0.
-subscriptions_installed=true; ack_witness_installed=true; ack_witness_exercised=false; graph_barrier_certified=false; foreign_writers_excluded=false; metrics NOT_ACQUIRED_NO_PHYSICS.
-PausePort event에서 pause_call_ok=true, paused_readback=true, delivery_ok=true, api_return=None, delivery_thread는 request_thread와 다름; physical_stop_verified=false, stalled_kit_stop_guarantee UNKNOWN.
-이전 pause success=false 혼동은 해결됨. 똑같은 설치+pause readback만 재검증하는 미션은 하지 말 것.
+## 기존 실제 실패 증거를 먼저 읽어라
+- /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_GRAPH_ONLY_PREFLIGHT_20261020_v01/status.json
+- 같은 폴더 execution_complete.json, events.jsonl, graph_only.usda, manifest.json
+- /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_GRAPH_ONLY_PREFLIGHT_20261020_v01.external_v01/external_exit.json, terminal.txt, command.json
+- AGENTS.md, docs/PROJECT_STATE.md, reports/full_e2e_v02_hold_graph_witness_probe_preparation_20261020_v01.md
+- scripts/fe2e_v02_hold_host_binding_v03.py, scripts/fe2e_v02_hold_one_shot_v04.py, scripts/fe2e_v02_graph_probe_external_v01.py, evaluation/fe2e_v02_graph_probe_v01.py
 
-## 이번 작업 목표
-**Ackermann graph completion witness가 실제 설치된 paused Kit에서 ONDEMAND evaluate로 발화하고 값/epoch가 정확한지 확인할 수 있는 단일 무주행 테스트용 runner를 구현하라.**
+실제 관측:
+- internal status=FAILED_GRAPH_ONLY
+- reason=OmniGraphError('Failed to connect ackermann_controller.outputs:execOut -> /World/ENG_FE2E/Rover/ActionGraph/GraphOnlyWitnessV03.inputs:execIn')
+- graph_evaluations=0, ack_compute_count=0, witness_invocation_count=0
+- physics_callbacks=0, actuator_writes=0, ros_publishes=0, retry=0, research_denominator=0
+- external wrapper external_process_exit=0. 내부 FAIL과 external exit0 불일치! 동일 output 재실행은 FileExistsError; 이 재실행은 실제 Isaac launch 전 차단됨.
+- v01 output/sidecar 및 SHA 절대 수정·삭제·재사용 금지.
 
-1. 기존 scripts/fe2e_v02_hold_host_binding_v02.py, scripts/fe2e_v02_hold_one_shot_v03.py,
-evaluation/fe2e_v02_hold_host_ports_v02.py 및 graph contract/stage inventory를 확인. 현재 v02 작업에서 설치만 한 Ackermann witness의 execIn/execOut 연결·ONDEMAND scheduler·ScriptNode registry/스레드 실행 경로를 정적/오프라인 진단하라.
-2. 기존 Python host runner를 versioned v03/v04로 증분 작성해 신규 `graph-only-preflight` 모드를 마련하라. 반드시 timeline is_playing=false, physics callback count=0, actuator write count=0, ROS publish count=0, legacy 3 articulation writer inactive readback, 전체 active actuator writer inventory 확인을 gate로 요구. Graph 계산에는 명시적인 소형 synthetic Ackermann scalar 입력만 전달하고 실제 외부 ROS/Twist subscribe 값을 읽어 명령으로 보내지 말라. Graph node execution 외 모든 actuator writer는 영구 비활성화 상태여야 한다.
-3. **witness를 실제 graph execOut → ScriptNode callback로 관측**, invocation count=1, 동일 explicit token/epoch, thread, source attribute paths, wheel/steer outputs 및 expected Ackermann node output 유한·단위·형상과 기록. evaluate_sync 반환이나 cached execOut 상태만 보고 성공으로 판단하지 말라. 같은 graph가 2회 실행되거나 증거 없으면 fail-closed. Physics paused 상태에서 graph computation이 불가능하면 명확한 FAIL reason을 제공하고 모의 witness로 채우지 마라.
-4. graph-only의 GO는 graph 계산 경로에만 한정. 이번 시험으로 실제 Physics step 동기화, StoppingAdapter 실제 phase 전환, 독립 native/script writer 배제, physical pause/stop, observer 계측을 인증하지 않는다. 외부 direct writer 존재 가능성은 UNKNOWN으로 유지.
-5. 새 versioned journal/CLI에는 PASS_GRAPH_ONLY, FAILED_GRAPH_ONLY 등 명확한 상태·exit. 런타임 preflight 중 정확한 이벤트/물리 count·output SHA·수정 source SHA/terminal 저장. 종료 시 Kit close 전 status 저장, 외부 exit 별도 표시.
-6. 이번 Codex 작업에서는 위 runner 구현 및 오프라인 테스트만 시행. **Isaac/SimulationApp launch, ROS publish, physics.play, actuator 움직임, actual HOLD, ENG001/QUAL12/432-run, 재시도/튜닝 금지**. 원본 USD/controller/protocol/기존 148 hash와 연구 기록 보존.
+## 이번 작업의 정확한 목표
+1. 연결 에러가 발생한 OG edge만 집중 진단. 실제 설치된 Isaac Sim 5.1 패키지의 ScriptNode 등록 node type/exec 속성 schema, execution port 존재/type, graph parent/path, 연결 API contract, USD custom attribute와 OG node attribute 차이를 소스 기반으로 확인.
+2. 에러 직전 source/destination의 실제 node type, attribute path, OG type, existence, graph mode, 생성 순서와 API error detail을 기록할 수 있도록 코드를 보완. node path/relative-vs-absolute names/creation order/port type 문제는 확인 전 가설로 구분.
+3. 가장 작은 versioned code repair로 정확한 native execOut -> ScriptNode execIn edge 연결을 고쳐라. controller 계산/witness 함수를 직접 호출해서 건너뛰는 편법 금지. 원본 controller/USD/protocol 보존.
+4. 신규 다음 단일 live graph-only test에서는 연결 완료 후에도 실제 graph_evaluations=1, ack_compute_count=1, witness_invocation_count=1, token/epoch/thread/output matching, physics/actuator/ROS=0을 요구하도록 유지. graph edge만 이어졌다고 PASS 처리 금지.
+5. wrapper가 external process exit0 + internal FAILED_GRAPH_ONLY이면 전체 성공으로 보이지 않도록 exit/final adjudication을 수정하고 오프라인 회귀검사에 이 케이스 포함. 이전 실패 파일을 소급 수정하지 말고 두 관측 분리 기록.
+6. 단일 실패에 집중한 오프라인 tests, 변경 코드/기존 148 hashes 및 이전 실측 산출물 보존 확인. numerics/sign/dynamics/runtime approval false 유지.
 
-## 단일 다음 live 시험 준비
-이번 코드 구현이 끝나면 위 `graph-only-preflight`를 실제 Isaac5.1에서 단 한 번 실행할 정확한 command를 보고서에 제공하되 직접 실행하지 말 것. output은 unused versioned location, ROS domain은 다른 publisher 없는지 확인 전 UNKNOWN. Graph-only probe 시 반드시 ROS bridge/publisher는 시작하지 말고 actuator writes/physics zero 유지.
+## 실행 경계
+- 이번 Codex 작업에서 Isaac/SimulationApp launch, graph live evaluation, ROS publish, physics.play, actuator commands, robot motion, ENG001, QUAL12, 432-run, retries/sweeps 모두 금지.
+- 기존 v01 결과 보존; 새 미사용 v02 output+sidecar의 live graph-only 명령을 보고서에 준비하기만 하고 실행하지 말라.
+- root cause를 확인하지 못하면 진실하게 UNKNOWN과 필요한 작은 다음 검사만 적어라. 이미 구현된 mock 계약을 반복 재보고하는 것으로 끝내지 말라.
 
-## 완료 보고
-reports/full_e2e_v02_hold_graph_witness_probe_preparation_20261020_v01.md
-- 실제 v02 preflight 결과 PASS/UNKNOWN 구분
-- 신규 graph-only CLI/host 파일과 검사 결과, 실사용 entrypoint
-- 다음 딱 1회 실제 graph-only test command, 실패/성공 evidence
-- max 3 blockers, 수치/sign/dynamics unapproved, **physical NO-GO**
-- legacy 원본·이전 결과 hash 보존, docs/PROJECT_STATE.md append
-- 추가 코드가 불가능할 경우 감추지 말고 FAIL/구체 원인을 보고. 기존 57tests 재보고만 하고 종료하면 안 됨.
-실제로 보고서를 생성한 경우 최종 메시지 끝에 정확히:
-HANDOFF_REPORT: reports/full_e2e_v02_hold_graph_witness_probe_preparation_20261020_v01.md
+## 완료 결과
+reports/full_e2e_v02_graph_edge_failure_fix_20261020_v01.md: v01 실패 근거, root cause verified vs hypotheses, patch와 단위검사, wrapper exit 불일치 수정, 다음 실제 v02 단 1회 명령, NO-GO 및 최대 3개 blockers.
+docs/PROJECT_STATE.md append. 원본/기존 결과 SHA 보존, physical NO-GO 유지.
+보고서 실제 생성 시 최종 응답 마지막 줄:
+HANDOFF_REPORT: reports/full_e2e_v02_graph_edge_failure_fix_20261020_v01.md
