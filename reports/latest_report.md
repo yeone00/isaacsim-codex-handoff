@@ -1,30 +1,65 @@
-# PUBLISHER_SET 집중 진단 — 2026-10-21
+# 실제 건설현장 Isaac Sim 프리뷰 — 2026-10-21
 
-**ROOT_CAUSE_UNKNOWN / 진단 보강 완료 / runtime 미실행.** 실제 v01 attempt의 모든 JSON·JSONL·stdout 로그를 읽었다. `execution_complete.json`은 session v01:153 → guard v01:23, discovery에서 PUBLISHER_SET이며 motion_attempts=0이다. driver도 wall_s=1792548135.0291867에 같은 오류를 기록했다. 그러나 정확한 실패 입력 `names`는 저장되지 않았다. observer는 ros_status.json을 0.1초마다 교체하며 ros_observed.jsonl에는 TF273행·cmd_vel30행뿐이고 endpoint 이력이 없다. 남은 ros_status.json의 wall_s=1792548135.3445156은 driver fault보다 0.3153289초 늦다. 그 최종 snapshot의 names는 `["eng_smoke_observer"]`, namespace `/`, 조회 topic `/rover/cmd_vel`, type `geometry_msgs/msg/Twist`, GID `[1,15,113,9,77,162,171,17,0,0,0,0,0,0,21,3]`이며 저장 TF시각 기준 v01 discovery 검사를 통과한다(ready=False). 이는 실패 snapshot 재현이 아니다. isolation snapshot의 publisher=[]와 허용 TF1/subscriber2도 이후 discovery의 정당성을 증명하지 않는다. 실패한 AND 조건에서 확정 가능한 것은 이름 중복 또는 허용집합 밖 이름 중 적어도 하나뿐이다. namespace/type/GID 자체는 해당 assertion 다음 줄에서 검사되므로 단독으로 그 오류를 설명하지 못한다. 외부 publisher 이름·GID나 합법적 중복 endpoint였다는 주장은 UNKNOWN이다. 기존 출력은 PROCESS_EXIT_CODE=1, internal_status=NOT_READY, MOVED=NO, QUIET=PASS(정지 baseline), zero=NOT_READY, RESEARCH_E2E=NOT_ASSESSED로 유지한다. 과거34.127288744mm 후퇴/QUIET FAIL도 그대로다.
+새 USD를 실제 생성했다. 원본 건설현장·로버·기존 팔레트와 cement HR_Scan 벽돌 300개를 합성했다. 격리된 EngineeringFloor 벤치가 최종 환경이 아니다. **정적 장면 구성 PASS, 전체 렌더 의존성 PARTIAL, 동역학/E2E UNKNOWN**이다.
 
-새 파일은 `evaluation/legacy_supervised_guard_v02.py`, `scripts/legacy_supervised_{session,ros,observer,one_shot,offline_checks}_v02.py`, `scripts/legacy_supervised_sources_v02.json`, 이 보고서와 checks JSON이다. session/driver는 검증 **직전** 별도 `session_endpoint_forensics.jsonl`/`driver_endpoint_forensics.jsonl`에 정확한 snapshot·names·phase·wall/sim·이전 pinned identity를 append/flush/fsync한다. observer v02는 각 endpoint의 실제 조회 topic을 명시한다. 허용 node/cardinality/GID 정책은 v01을 상속하여 그대로 유지하며, 같은 node의 distinct GID 둘도 계속 거부한다. 근거 없는 endpoint 병합/허용 확장은 하지 않았다. topic 일치, 이미 관측한 observer 소실, driver 최초 등장과 등장 후 소실(소실은 zero만 허용), active 이후 discovery 회귀도 fail closed다. 기존 graph/physics/controller/감속/abort/threshold 경로는 바꾸지 않았다. 새 wrapper는 v02 경로와 17-entry SHA manifest를 사용하며 원래 v01 pin도 검증한다. [검사 증거](legacy_supervised_publisher_set_hotfix_20261021_v01_checks.json): 집중18개·기존21개·compile6개 PASS, 기존 manifest11개 SHA PASS, 실제 기존 출력37파일의 전후 SHA/파일집합 동일 PASS. 실제 실패 자료와 최종 snapshot의 비재현성, distinct-GID 중복/foreign node·publisher/topic/type/namespace/GID 교체/stale·소실/정상 phase 전이/오류 전 forensic 보존을 검사했다. 최초 fixture 예상 오류명 불일치는 FAIL로 기록 후 foreign endpoint 추가 fixture로 수정했다. Git status는 저장소가 아니므로 FAIL이며 stage/commit 없음. 원인 해결 여부·runtime admission·MOVED/QUIET 성공은 UNKNOWN이다. 다음은 사용자가 별도로 승인할 때만 아래 **한 번의 진단 보강 simulator-only 시도**이며, 원인 해결 완료로 취급하지 않는다. 미사용 output과 console 경로를 고정하고 충돌 시 중단한다. 외부 publisher가 포착되면 계속 차단하고 그 identity의 domain 격리/매칭을 먼저 해결한다. 자동 retry/sweep, HOLD K1/direct signed pulse, Full E2E/QUAL12/432는 실행하지 않으며 연구분모0이다.
+## GUI에서 열 파일 — 이 경로 하나
 
-별도 사용자 승인 후 사용할 단일 명령(이번 세션 미실행):
+`/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_PREVIEW_20261021_v01/attempt_0002/construction_site_e2e_preview.usda`
 
-```bash
-(
-  cd /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013 || exit 1
-  set -o noclobber
-  exec 3> /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_HOTFIX_20261021_v02.console.log || exit 1
-  export ROS_DOMAIN_ID=191 RMW_IMPLEMENTATION=rmw_fastrtps_cpp ROS_DISTRO=jazzy
-  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}:/home/user/anaconda3/envs/hh_isaac51/lib/python3.11/site-packages/isaacsim/exts/isaacsim.ros2.bridge/jazzy/lib"
-  /usr/bin/python3 scripts/legacy_supervised_one_shot_v02.py --output /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_HOTFIX_20261021_v02 >&3 2>&1
-  run_rc=$?
-  printf '\nPROCESS_EXIT_CODE=%s\n' "$run_rc" >&3
-  cat /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_HOTFIX_20261021_v02.console.log
-  exit "$run_rc"
-)
-```
+카메라 `/World/ENG_FE2E/ConstructionPreviewCamera`와 기본 viewport의 position/target/boundCamera 및 render camera를 저장했다. 현장 안의 로버와 적재물을 함께 보는 시점이다. 두 대상의 bounding box 모서리 8개씩 모두 frustum 안이며, 현장 삼각형에 대한 카메라→각 대상 중심 시선의 차폐 교차 0개다. 실제 GUI 렌더/자동 카메라 적용은 미검증이다. GUI 조작·두 번째 SimulationApp 없이 스크린샷을 얻을 수 없어 제공하지 않는다.
 
-감독자는 실행 중 새 root의 `runtime_stdout.log`와 옆 `.console.log`를 확인한다. wrapper의 simulator launcher는 기존 `/home/user/anaconda3/envs/hh_isaac51/bin/python`, ROS child는 source된 Jazzy `/usr/bin/python3`이며 domain191 빈-domain probe와 atomic root mkdir를 유지한다. wrapper는 runtime argv/env/input hashes, OS child exit, supervisor_complete.json internal_status, attempt execution_complete.json/outcomes를 수집한다. 종료 코드0만으로 성공 판정하지 않는다. 준비할 사용자 중단 명령(새 attempt가 있을 때 파일 요청만 수행):
+## 자산과 배치
 
-```bash
-test -d /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_HOTFIX_20261021_v02/attempt_0001 && touch /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_HOTFIX_20261021_v02/attempt_0001/abort_motion
-```
+|역할|실제 prim|world origin m|
+|---|---|---|
+|원본 건설현장|`/World/ConstructionSite`|(0, 0, 0)|
+|로버|`/World/ENG_FE2E/Rover`|(-25.88797768, 28.4708691133, -0.00835194), yaw 90°|
+|팔레트·적재물|`/World/ENG_FE2E/Fixture`|(-25.888, 30.509, 0.00121562), yaw 90°|
+|물리 장면|`/World/ENG_FE2E/PhysicsScene`|원본 PhysicsScene 참조|
+|프리뷰 카메라|`/World/ENG_FE2E/ConstructionPreviewCamera`|(-30.5, 25.4, 2.7), target (-25.85, 29.65, 0.7)|
 
-Ctrl-C도 기존 abort/zero 요청 경로를 사용한다. 프로세스 종료는 물리 quiet 증거가 아니다. 새 시도도 MOVED/QUIET/RESEARCH_E2E를 각각 판정하고, 실패 출력은 삭제하거나 재시도하지 않는다.
+- 현장 원본: `/home/user/hh/isaac_cosmos/sdg_practice/construction_scene_robot_task_controller_perturbation35mm_2p5deg_v01.usd`. SHA256 `224cac492d267d0403c9402484fcf84011191208fb4689e7e3fc33eadf3756fe` 일치. 실제 현장 참조는 `/home/user/hh/isaac_cosmos/assets/assets/environment/Constructionsite_isaac.usdz`다.
+- 로버: `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_IMPL_20261021_v01/attempt_0001/derived_calibration.usda`의 `/World/ENG_FE2E/Rover`만 참조. 이 로버는 지정 원본의 `/World/ROBOT_TASK/RuntimeRover`를 참조한다. 벤치 바닥·다른 배우는 가져오지 않았다.
+- 적재물: `/home/user/hh/isaac_cosmos/sdg_final/DEMO_FE2E_001_HR_GEOM_v01/attempt_0001/derived_scene.usda`의 `/World/ENG_FE2E/Fixture`만 참조. 기존 FULL 300개 membership·방향·팔레트 형상을 재생성 없이 유지했다. demo의 2m 로버 시작 위치는 가져오지 않았다.
+- 선택 자산: `/home/user/hh/isaac_cosmos/assets/assets/objects/_normalized/cement_brick_HR_Scan.usd`, SHA256 `a3fbf6bd87d71007ae756a3288140d842d6e91135ee10d230a4ce52780d8f87c`. 잠긴 cement/red × HR_Scan/LR_Scan/Proxy/GeoCAD 8개 모두 hash 일치 확인, 이번 장면은 cement HR_Scan 하나만 사용한다. LR은 독립 재구성이다.
+- XY/yaw는 고정 geometry v02의 FE2E_S001 nominal 위치다. 원본 로버 z=.15는 현장 바닥에서 뜨므로 **프리뷰만** 실제 site 삼각형 바닥에 맞췄다. 로버 위치 바닥 z=-.00843751, 자재 위치 z=.00121562; 로버 하단 z=-.008437512. 이 수직 보정은 연구 geometry 변경 승인이나 실행 결과가 아니다. 연구 lock/원본은 수정하지 않았다.
+
+## 제한된 오프라인 검증
+
+PASS: 원본 입력 hash 보존, 현장 메시 visible/inherited, 로버·자재 visible/inherited, 로버 1대/PhysicsScene 1개, 300개 AssetRef가 모두 잠긴 cement HR_Scan 참조, active graph 0개. 3개 Articulation Controller는 모두 targetPrim=`/World/ENG_FE2E/Rover/base_link`, robotPath 빈 문자열이다. 해당 그래프는 프리뷰에서 inactive다. 기존 site 로버·타깃·debug·Replicator·벤치 등은 새 layer에서만 suppress했다. 기존 현장 collision mesh와 ambient dome을 유지하고 추가 floor는 만들지 않았다.
+
+로버/적재물 AABB의 y 간격은 0.74438584m로 서로 겹치지 않는다. 실제 PhysX contact, 바닥 기복에 대한 모든 wheel 지지, nested articulation, 이동 corridor의 .10m clearance는 인증하지 않았다. 물리 실행 없이 이 항목들을 PASS로 바꾸지 않는다.
+
+PARTIAL: USD layer 22개와 asset dependency 411개를 수집했으나 dependency closure에 다음 unresolved가 있다. 이는 disabled source branch도 포함하는 전체 파일 의존성 검사이므로 모두 active 현장에 필요한 누락이라고 단정하지 않는다. 핵심 현장/로버/300 자재 geometry는 실제 composed 됐다.
+
+- `/home/jh/Downloads/rolltainer_stl/apriltag_100.png`
+- `/home/user/hh/isaac_cosmos/assets/assets/objects/textures/mitex_box_u0_v0_diffuse.jpg`
+- `OmniPBR.mdl`
+- `OmniSurface.mdl`
+- `gltf/pbr.mdl`
+- `https:/omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Grid/Materials/Textures/WireframeBlur_basecolor.png`
+- `https:/omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Grid/Materials/Textures/WireframeBlur_blue.png`
+- `https:/omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Grid/Materials/Textures/Wireframe_blue.png`
+- `https:/omniverse-content-production.s3-us-west-2.amazonaws.com/Assets/Isaac/5.1/Isaac/Environments/Grid/default_environment.usd`
+
+MDL은 standalone resolver에 Kit 검색 경로가 없는 영향일 수 있으나 GUI 해결 여부 UNKNOWN이다. 누락된 로컬 PNG/JPG의 올바른 대체 경로는 UNKNOWN이며 임의 텍스처로 바꾸지 않았다.
+
+## 전달 파일과 재구성
+
+- USD: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_PREVIEW_20261021_v01/attempt_0002/construction_site_e2e_preview.usda` (SHA256 `faf516f5d44b2e61a59eaafff54ad6a524a5bb5c5087a5788e352e63c50b6a19`).
+- Manifest: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_PREVIEW_20261021_v01/attempt_0002/manifest.json` — source/22 layer hash, 8개 자산, prim·위치·bounds·카메라·controller·suppression·의존성.
+- 검증: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_PREVIEW_20261021_v01/attempt_0002/build_status.json`, `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_PREVIEW_20261021_v01/attempt_0002/camera_geometry_checks.json`, `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_PREVIEW_20261021_v01/attempt_0002/build_validation.log`.
+- Builder: `/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/build_construction_site_preview_20261021_v01.py`.
+- CLI: `/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/build_construction_site_preview_20261021_v01.sh`.
+- 카메라 검사 코드: `/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/check_construction_site_preview_camera_20261021_v01.py` (이번 attempt_0002 대상으로 고정; 기존 검사 출력 덮어쓰기 거부).
+
+재구성 명령: `bash scripts/build_construction_site_preview_20261021_v01.sh --output <새로운_미사용_절대경로>` (프로젝트 cwd). 확인한 Isaac bundled pxr와 native library만 사용한다. SimulationApp/omni/ROS를 import하지 않는다. 기존 output은 거부한다. 외부 원본의 위치·내용은 manifest hash와 같아야 동일 구성을 재현한다.
+
+최초 build는 graph를 inactive로 만든 뒤 기존 prim handle을 읽어 expired-prim 오류로 실패했다. `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_PREVIEW_20261021_v01/build_status.json`와 `build_failure.log` 및 첫 파일을 보존했다. validity 검사 수정 후 별도 attempt_0002를 생성했다. 두 번째 build의 exit1은 unresolved 의존성에 따른 OFFLINE_PARTIAL이며 성공 exit으로 숨기지 않았다. 시뮬레이션 재시도는 없다. Python compile/bash syntax 확인 PASS; 연구 sweep·단위테스트 확장 없음.
+
+## 바로 다음 E2E 연결 단계 — 이번에 실행하지 않음
+
+1. 이 건설현장을 환경으로 유지한 새 engineering runner에서 실제 mounted camera `/World/ENG_FE2E/Rover/base_link/front_link/front_camera/front_Camera`의 fresh RGB-D → frozen YOLO → B4/B5 → predicted target을 연결한다. 평가 GT/프리뷰 배치 좌표는 perception·pose·controller 입력에 넣지 않는다. 고정 observation policy와 paired representation 조건을 유지한다.
+2. 별도 승인된 motion 작업에서 기존 forward-only approach → 정지 handoff → frozen PRE/FINAL → zero/quiet 평가를 이 현장에서 연결한다. 기존 격리 stop calibration의 이동 PASS나 graph-only PASS를 건설현장 E2E PASS로 쓰지 않는다. 현재 그래프는 안전한 정적 프리뷰를 위해 꺼져 있어 이 파일 자체가 motion runner는 아니다.
+
+직접 blocker는 legacy `PUBLISHER_SET` root cause UNKNOWN과 실제 zero-stop 34.127mm 후퇴/raw-root quiet FAIL이다. .03m long/lat, yaw2°, root+COM+FD quiet .002, clearance .10 및 frozen 성공 기준은 그대로다. K1은 STOP_HOLD_BRANCH 유지. ENG001/QUAL12/432는 진짜 단일 E2E 성공 전 HOLD이며 이번 launch/physics/ROS publish/motion/research denominator 모두 0이다. 렌더 appearance는 위 누락 의존성과 GUI 미검증이 남는다.
