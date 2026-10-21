@@ -59,3 +59,14 @@ PASS: 기존 preservation429 SHA 불일치0, paused manifest source5 불일치0,
 FAIL/기록: tensor config의 처음 추정한 build suffix 경로 읽기는 실패했다. rg로 실제 설치 경로를 찾아 확인했다. 실험 attempt는 아니다. UNKNOWN: native ownership/음의 target·closed-loop HOLD 동특성/실제 one-shot stop/외부 shutdown. Protocol/432 pairing readiness를 이번 표적 검사 PASS로 대체하지 않았다.
 
 변경 파일은 본 보고서, 작은 checks JSON, `docs/PROJECT_STATE.md` append뿐이다. 새 admission code는 STOP 선택에 따라 추가하지 않았다. Isaac/SimulationApp/graph 실행/physics/ROS publish/actuator/retry=0, 이번 engineering·research denominator 기여0. 기존 결과·원본 USD/controller/protocol·v07·수치 contract·이전 실패를 보존했다. Git stage/push 및 package 설치 없음.
+
+
+## 2026-10-21 요청 재확인 — 최종 실행 결정 유지
+
+동일 이름의 보고서와 checks가 이미 존재하여 덮어쓰지 않고 이 절만 추가했다. 이번 turn에서 실제 paused JSON 네 파일과 manifest를 다시 읽고 기존 checks의 입력21개 SHA를 대조했다(불일치0). 보존429개 및 file-layer15개도 직접 재계산하여 불일치0, prim 추가11/삭제0/graph20 inactive를 확인했다. Historical steps와 named DOF를 다시 읽어 303 pulse sample쌍의 위 여섯 순증가 값 및 negative-target row0을 재현했다. v07 runner/host, bounded_owner, paused entry, adapter와 표의 주요 extension startup/subscription source를 정적으로 읽었다. 이 검사는 새 runtime inventory 실행이 아니다.
+
+**최종 결정: STOP_HOLD_BRANCH.** Native 잔여 UNKNOWN 자체를 범용 lease 개발 요구로 바꾸지 않는다. 구체적인 HOLD 응답 근거가 부족하므로 지금 새 process-scoped 물리 entry를 구현해도 시험 준비 완료가 되지 않는다. 기존 paused fingerprint를 물리 safe projection으로 간주하거나 v07 native guard를 approval flag로 대체하지 않는다. 새로운 코드·contract·physics CLI·approval artifact를 추가하지 않았다.
+
+빠진 최소 측정은 여섯 named joint의 실제 signed target readback→다음 q/dq/시간 및 복원 응답을 묶은 **한 episode 기록**이다. 다음 작업은 알려진 mobility 경로의 감독형 simulator demo를 별도 요청하여, 필요 signed segment를 포함할지 먼저 정하고 최종 source/contract hash·정확한 명령·미사용 output·시간/변위/명령 상한을 고정한 뒤 한 번만 명시 승인받는 것이다. 현재 forward 이동 demo만으로 양방향 HOLD가 인증되지는 않는다. 이번에는 승인 질문이나 실행을 하지 않는다. Root+COM+FD quiet와 기존 speed/clearance/terminal 기준, stalled Kit의 pause 전달 한계, 실패 denominator 및 retry0 규칙은 유지한다. Full E2E/QUAL12/432 HOLD.
+
+이번 turn 변경: 이 보고서와 PROJECT_STATE의 append뿐. PASS는 위 정적 원자료 대조 범위이며 native ownership/negative-target HOLD dynamics/외부 exit는 UNKNOWN이다. 새 Isaac·physics·graph 평가·ROS 발행·actuator·retry0, engineering/research denominator 기여0. 기존 checks·source·USD·controller·protocol·실패 결과는 수정하지 않았다.

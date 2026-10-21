@@ -385,3 +385,8 @@ USD/이전956artifacts SHA보존. 이번Isaac/physics/ROScommand/retry/QUAL12/43
 
 Historical named wheel303 sample쌍에서 양의 graph target에 여섯 q 순증가를 확인했지만 순간 dq에는 음수도 있고 negative-target sample0이다. K1 양방향 closed-loop HOLD 증거와 현재 실행 가능한 per-step bounded 경로가 없어 STOP_HOLD_BRANCH 선택. 새 admission/approval boolean/guard 우회/physics CLI를 만들지 않았다. 다음 권고는 기존 mobility 경로의 별도 승인된 감독형 비연구 simulator demo이며 terminal stop PASS와 구분한다. 이전34.127288744mm 후퇴/raw-root quiet FAIL 및 root+COM+FD 기준과 stalled-Kit pause 한계를 보존했다. Isaac/physics/graph/ROS/actuator/retry0, 이번 denominator 기여0, Full E2E/QUAL12/432 HOLD. 원본/기존 코드/contract/outputs 불변. 보고서·checks JSON 추가와 이 기록 외 변경 없음.
 
+
+
+## 2026-10-21 동일 post-paused 요청 재확인 완료
+
+지정 보고서가 이미 존재하여 [동일 보고서](../reports/full_e2e_v02_post_paused_owner_physics_admission_20261020_v01.md)에 재확인 절만 append했다. 실제 paused JSON/표적 source 및 historical named wheel 자료를 다시 읽고 입력21 SHA·보존429·file-layer15 불일치0, graph20 inactive, pulse303쌍의 여섯 양의 순증가/negative-target0을 재현했다. STOP_HOLD_BRANCH 유지: 양방향 direct target→q/dq/복원 응답 근거 부족과 물리 bounded 경로 부재. 추가 paused/graph audit나 C++ lease 개발 요구 없음. 다음은 별도 명시 승인할 기존 mobility 경로의 감독형 비연구 simulator demo이며 frozen terminal PASS와 구분한다. 새 코드/approval/physics CLI 없음, v07/global guard/수치/원본/이전 checks 불변. 이번 실행·명령·retry·denominator 기여0, Full E2E/QUAL12/432 HOLD.
