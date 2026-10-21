@@ -1,37 +1,31 @@
-# ACTION REQUIRED 2026-10-21 — IMPLEMENT two last repairs for legacy supervised mobility ONE SHOT
+# HOTFIX ONLY — 2026-10-21 supervised legacy mobility run blocked at ROS discovery PUBLISHER_SET
 
-This is a NEW IMPLEMENTATION TASK. The diagnosis report already exists at reports/legacy_supervised_mobility_one_shot_preparation_20261021_v01.md and MUST NOT be reproduced as the sole result. Aim: make existing MOVING Isaac/ROS path ready for a user's separate authorization to run exactly one simulator-only supervised engineering demonstration. NO physical run in this Codex turn.
+User actually launched ONE supervised simulator-only attempt at:
+ /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_IMPL_20261021_v01
+Prior output MUST NEVER be deleted, overwritten, retried, or reclassified as movement success.
+External wrapper: PROCESS_EXIT_CODE=1; supervisor_complete.json internal_status NOT_READY, MOVED=NO, QUIET=PASS (stationary baseline only), zero=NOT_READY. execution_complete.json: motion_attempts=0, failure_reason=PUBLISHER_SET, traceback at scripts/legacy_supervised_session_v01.py:153 and evaluation/legacy_supervised_guard_v01.py:23.
+Observed passing attempt_0001/isolation_check.json: pass true, TF publisher exactly one expected node, cmd_publishers empty during isolation, cmd_subscribers exactly observer and OG rover Twist subscriber, nodes the expected three names. This does NOT prove the later discovery publisher set was correct. The failing line is:
+ assert len(names)==len(set(names)) and set(names)<=({OB,DR} if phase!='isolated' else set()), 'PUBLISHER_SET'
+Hence actual failure could be repeated node name, unexpected node, bad prefix/namespacing, or snapshot format. DO NOT GUESS WHICH; inspect real attempt files.
 
-Project: /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013
+## JOB: ONLY resolve this ONE root cause with evidence and minimum repair
+1) Read actual files and source:
+ scripts/legacy_supervised_session_v01.py
+ scripts/legacy_supervised_ros_v01.py
+ scripts/legacy_supervised_observer_v01.py
+ evaluation/legacy_supervised_guard_v01.py
+ reports/legacy_supervised_mobility_one_shot_implementation_20261021_v01.md
+ all relevant JSON status snapshots/logs under existing attempt_0001 (read-only); do not demand a fresh run to diagnose a stored snapshot.
+ Trace the exact values of the 'names' list at failed discovery. Identify precisely whether the check rejected an unexpected publisher identity or erroneously treated multiple GIDs/endpoints of an allowed node as spoofing. Report node, namespace, topic/type, GID where present and phase, with a compact excerpt (NOT 300MB logs). If not stored, label ROOT_CAUSE_UNKNOWN and add pre-failure forensic event in new source rather than fabricating cause.
+2) Make a SMALL versioned correction or diagnostics only (v02 guard/session/ROS/observer as actually needed). Publisher validation must still reject foreign node/GID replacement, unexpected extra publishers, topic/type/namespace mismatch, stale or vanished observer, driver discovery-phase transitions and conflicting ROS nodes. Prefer per-topic per-GID endpoint identity and expected cardinality rather than collapsing legitimate discovery endpoints by node name. Do not just delete the assertion, set always-true, or weaken the frozen control safety boundaries. Distinguish allowed driver initial appearance from a publisher disappearing after active stage.
+3) Regression tests MUST include the saved actual v01 discovery failure data when available, duplicate same-node endpoints with distinct GID, foreign node, unexpected topic/type, GID swap and valid isolated->discovery->active->zero phase transitions; deterministic offline tests and compile, no actual Sim/ROS activity. Preserve all previous sources, USD, contracts and actual attempt logs. Version the entrypoint and pinned source manifest if changed; leave old pinned manifest untouched.
+4) Provide EXACT single NEW output command to launch same historical ROS/graph/physics mobility path ONCE after user's separate physical-simulator approval. Ensure no stale output collision, source/hashes and domain191 environment. Keep user-controlled abort instruction and stdout/exit/internal status collection. No automatic retry/sweep; no HOLD K1; no direct signed pulse; previous 34.127mm stop regression remains failure and new MOVED/QUIET/E2E distinct.
+5) If actual incident is a genuinely unexpected ROS publisher, DO NOT make it allowed. Report exact publisher and safest minimal next action (e.g. isolate domain or instrument matching). A real foreign publisher must block the physical run, not be hidden to get MOVED=YES.
 
-## Source of truth
-- Read AGENTS.md, docs/PROJECT_STATE.md, reports/legacy_supervised_mobility_one_shot_preparation_20261021_v01.md and observed earlier run (READ ONLY) /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_STOPPING_VALIDATION_20261019_v01/attempt_0001 with parent's run plan, graph/joint_io/isolation/steps/contacts and driver code.
-- Existing valid route: /home/user/anaconda3/envs/hh_isaac51/bin/python scripts/fe2e_v02_stopping_validation_session_v01.py --output <NEW>/attempt_0001 --domain 191; ROS child scripts/fe2e_v02_stopping_validation_ros_v01.py created by session. ROS Jazzy bridged, RMW rmw_fastrtps_cpp. Previous supervisor path hardcodes existing output; NEVER execute it again.
-- Frozen v07 HOLD branch STOP; no unapproved K1/wheel sign/negative wheel pulses/force position-HOLD. Earlier zero→34.127288744mm retreat and raw-root quiet FAIL .002619135991> .002 preserved. Research ENG001/QUAL12/432 gates remain HOLD.
-
-## Do exactly these two modifications, not more audits
-A. VERSIONED copy of prior legacy session/ROS child and a tiny supervisor only as needed for NEW isolated output:
-   - before nonzero commands, runtime inspect composed stage existing THREE ArticulationController writers and their joint names/targetPrim/input/source wiring, all 10 named DOF articulation map, ROS bridge and publisher/subscriber/TF/driver readiness in domain191; fail closed on mismatch/unknown; once running, detect publisher/endpoint changes, lost observer, unexpected concurrent writers/actors and stale data, request existing zero/abort/pause. Maintain the previously exercised graph/ROS/driver trajectory and original exact numerical limits; avoid rewriting controller or adding gain tuning. ROS guard must recognize allowed phase transitions, supervisor zero publisher vs driver, not block intended route. No invented universal native C++ writer exclusivity certificate; declare actual scope.
-   - external watch/stop interface (abort_motion/zero_request) with process liveness/termination bookkeeping, no stray ROS child. Exactly ONE new attempt, no retry, and unique output path refusal. Launch command must be REAL against scripts that exist, using actual executable Python environments.
-B. Finish evaluation with independent real time-series criterion:
-   - read actual raw COM/root-origin/FD planar velocities, finite/nonnan with contiguous >=1 simulated second (explicit dt/gap <=.1s), pose displacement span <=.002m, each of three velocity metrics <=.002m/s, and create explicit stop/quiet result, zero-time, signed along/lateral reverse/backward excursion. Do NOT replace raw COM with COM-adjusted origin/FD. If missing or insufficient data mark NOT_READY; preserve original fault and raw logs. Target controller input readback per three articulation nodes, all six named joint q/dq & output targets, contact/floor violation stop gate.
-   - output separately MOVED / QUIET / RESEARCH_E2E (always NOT_ASSESSED by engineering-only run); no assertion that motion=terminal success or that zero target=physical stop. Final wrapper verdict must account for internal status not only OS exit code.
-
-## Minimal safe testing / execution boundary
-- This Codex task may inspect code/data, create versioned legacy_* scripts, py_compile and TEST WITHOUT LAUNCHING Isaac/ROS/physics/actuation; tests should exercise true stop evaluator and change-detection source path with saved/synthetic fixtures, including prior quiet failure.
-- Do NOT execute any new simulator episode in this task. No launch of SimulationApp, no ROS driver, no publish, no actuator target, no negative HOLD pulse, no 432 runs, no novel native lease architecture, no broad unit-test infrastructure.
-- Preserve USD/controller/drives/protocol/old outputs and SHA. No weakening speed cap .03 terminal zero phase, emergency >.25, 2m excursion, floor contact/clearance and raw speed .002m/s criterion.
-- The user intends the NEXT TURN to be a real one-shot supervised simulator test. Do not indefinitely block with theoretical global native producer proof. If a practical code gate is truly impossible, explain the ONE precise blocking API and minimal workaround; do not simply repeat last report.
-
-## DELIVERABLE (MUST produce NEW named report, not old report)
-- reports/legacy_supervised_mobility_one_shot_implementation_20261021_v01.md:
-  exact changed files and source hashes;
-  realistic test outcomes; named endpoint/ROS/graph guard;
-  exact **currently runnable** one-shot fresh output command with env+domain setup and child launch from verified source (prefer atomic fail-if-exists);
-  human approval checklist and how to abort from separate terminal;
-  zero→quiet math/result path and concise success/failure criteria;
-  max 2 real blockers, no inflated SHA dumps.
-- If implementation cannot honestly be completed, report truthful NOT_READY and exact last missing code, without another HOLD branch narrative.
-- Append docs/PROJECT_STATE.md. Original prior reports unchanged.
-- End final message with exactly:
-HANDOFF_REPORT: reports/legacy_supervised_mobility_one_shot_implementation_20261021_v01.md
+## Scope boundaries
+No Isaac/SimulationApp, physics.play, ROS node creation/publish, actuator command or robot movement in THIS Codex session; no another broad ownership audit / graph-only / paused inventory; no unrelated edits. Exactly one focused diagnostic/fix. The existing full-e2e results are not research denominator. Existing v01 output must remain immutable.
+Write new report:
+ reports/legacy_supervised_publisher_set_hotfix_20261021_v01.md
+Append docs/PROJECT_STATE.md and report actual root cause confirmed vs hypothesized, files/targeted tests, new one-shot command OR named blocker in two paragraphs.
+If report exists, final line:
+HANDOFF_REPORT: reports/legacy_supervised_publisher_set_hotfix_20261021_v01.md
