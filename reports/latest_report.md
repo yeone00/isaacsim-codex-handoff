@@ -1,83 +1,74 @@
-# Legacy supervised mobility 단일 실행 준비 — 2026-10-21 v01
+# Legacy supervised mobility ONE SHOT 구현 — 2026-10-21 v01
 
-이번 산출물은 새 단일 실행의 구체적 준비다. **기존 경로의 실행 CLI는 확인됐지만, 현재 소스 그대로는 요청된 live writer guard를 충족하지 않아 감독형 실행 승인 대상으로는 NOT_READY다.** 아래 두 보완을 끝내면 같은 ROS driver/graph를 사용하는 한 번의 실행으로 연결할 수 있다. 물리 실행·ROS node 생성·publish·retry는 이번 작업에서 0회다. 기존 STOP_HOLD 보고서는 수정하지 않았다.
+**두 보완 구현 완료 / offline PASS / 별도 simulator 1회 승인 대기.** 실제 simulator·ROS·physics·publish·actuator·retry 실행은 0회다. 실행 명령은 아래 실제 존재하는 새 wrapper를 가리킨다. Runtime admission과 실제 정지 성공은 UNKNOWN이다. 과거 진단 보고서를 대체하거나 재실행 결과로 해석하지 않는다.
 
-## 확인한 실제 경로와 순서
+## 변경 파일과 보존
 
-원본 실제 출력(읽기 전용): `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_STOPPING_VALIDATION_20261019_v01/attempt_0001`. 부모의 `runtime_command_attempt_0001.json`, `preexecution_plan_attempt_0001.json`, `drive_contract.json`, `graph.json`, `metrics.json`, 실제 attempt의 `joint_io.json`, `isolation_check.json`, `execution_complete.json` 및 두 실행 소스를 읽었다. 기존 303/429 inventory 재계산은 하지 않았다.
+- `scripts/legacy_supervised_session_v01.py`: 기존 stopping session의 버전 분리본. 제어 경로·수치 유지, admission/live guard·정지 평가·target 계측·child 종료 기록 추가. baseline만 독립 1초 판정에 필요한 75 tick으로 확장했다.
+- `scripts/legacy_supervised_ros_v01.py`: 기존 ROS child의 버전 분리본. 기존 StoppingAdapter 호출/감속/최종20 zero 유지, endpoint discovery 및 heartbeat 추가.
+- `scripts/legacy_supervised_observer_v01.py`: 기존 observer의 버전 분리본. 상태 timestamp 추가. 요청 시10 zero를 상태 갱신과 함께 발행하도록 바꿔 stale 오탐을 방지했다.
+- `scripts/legacy_supervised_one_shot_v01.py`: required `--output`, atomic mkdir, 빈 domain probe, 정확히 attempt_0001 한 번, pinned 입력 확인, argv/env/PID/group/exit/internal verdict 기록. 자동 retry 없음.
+- `evaluation/legacy_supervised_guard_v01.py`: simulator/ROS import 없는 공용 실제 guard·독립 평가 함수.
+- `scripts/legacy_supervised_offline_checks_v01.py`: 저장 로그/합성 fixture의 집중 검사.
+- `scripts/legacy_supervised_sources_v01.json`: 새 소스6개·기존 adapter3개·원본 graph/contract의 **정확한 경로와 전체 SHA256**, 11 entries. wrapper가 시작 전에 검증한다. 과거 plan의 legacy dependency SHA도 별도로 검증한다. 보고서에 긴 SHA 목록을 중복하지 않는다.
+- 이 보고서, `reports/legacy_supervised_mobility_one_shot_implementation_20261021_v01_checks.json`, `docs/PROJECT_STATE.md` append.
 
-당시 launcher는 `/home/user/anaconda3/envs/hh_isaac51/bin/python`, ROS_DOMAIN_ID=191, RMW_IMPLEMENTATION=rmw_fastrtps_cpp, ROS_DISTRO=jazzy였다. supervisor가 bridge jazzy/lib를 LD_LIBRARY_PATH에 추가했다. 빈 domain probe → Isaac 세션 → bridge enable → 파생 stage 구성 → observer → settling 180 tick → read-only articulation 초기화 → baseline 60 tick → TF/endpoint 격리 확인 → ROS driver → pulse_start → 정상 감속 → zero 관측 → pause/소유 child 종료 순서다. ROS child는 `/opt/ros/jazzy/setup.bash`를 source한 `/usr/bin/python3`이다. 따로 driver를 수동 실행하면 안 된다.
+원본 session/ROS/observer/supervisor, USD/controller/drives/protocol, 이전 보고서와 attempt는 수정하지 않았다. 과거 plan에 등록된 dependency6개 SHA 일치 PASS. 원본 session SHA `dd881de1a3699f49bc8be7354b09815f2c9d834095119693b712065a8892e232`, 원본 ROS SHA `675ebb52a0aaf0c955d2d52e02c412f7a846931e52c1f4bf64eea9c0d4beedf7` 보존. 이 경로는 v07 HOLD branch와 연결하지 않는다.
 
-Stage는 bench `/home/user/hh/isaac_cosmos/sdg_practice/construction_scene_robot_task_controller_perturbation35mm_2p5deg_v01.usd`의 `/World/ROBOT_TASK/RuntimeRover`를 `/World/ENG_FE2E/Rover`로 reference한다. 원본 전체 stage를 play하는 경로가 아니다. PhysicsScene도 같은 bench에서 reference하고 별도 200×200m floor를 만든다. 재질은 default이며 원래 연구 바닥 traction 인증이 아니다.
+## 실제 guard와 범위
 
-Observed writer 경로: OnPlaybackTick → ROS2SubscribeTwist(`/rover/cmd_vel`) → linear x break/multiply15 및 angular compatibility encoding → AckermannController(radius .5, wheelBase .7, trackWidth .569) → 세 IsaacArticulationController → 현재 base_link. Ackermann 4 wheel target이 front/rear에, index0/1 복사가 middle에 연결되고 wheelAngles는 앞 steering에 연결된다. 물리 wheel radius .13300000131130219m, surface→wire scale .2506265639450088이다. 선형 wire를 SI base speed로 읽으면 안 된다.
+`validate_graph`/`graph_signature`: 현재 composed stage의 모든 OmniGraph node 집합을 저장된 graph와 비교한다. 기존 세 `IsaacArticulationController`의 named jointNames, targetPrim=현재 base_link, robotPath, exec/velocity/position/source 연결, upstream 설정을 대조한다. domain191 ROS2Context와 bridge context wiring, camera/render disable도 확인한다. articulation 초기화 후 10 DOF **정확한 순서**를 요구한다. 시작 snapshot 이후 매 tick graph 설정·연결 및 rigid/collision/joint actor schema·enabled·relationship 변경을 거부하고 script hook은 fail closed한다. 기존 node enable/drive/gain을 바꾸지 않는다.
 
-Named DOF 순서는 `front_left_steer_joint, front_right_steer_joint, middle_left_wheel_joint, middle_right_wheel_joint, rear_left_steer_joint, rear_right_steer_joint, front_left_wheel_joint, front_right_wheel_joint, rear_left_wheel_joint, rear_right_wheel_joint`; wheel index=2,3,6,7,8,9다. 이는 실제 joint_io와 graph 기록 근거다. 이번 USD-only pxr 직접 열기는 해당 conda Python에 pxr가 없어 ModuleNotFoundError로 실패했다. 따라서 현재 composed USD topology 직접 재검증은 UNKNOWN이며 launch 전 gate에서 확인해야 한다. USD를 변경하거나 패키지를 설치하지 않았다.
+`EndpointGuard.check`: observer가 수집한 domain191 node·publisher/subscriber GID/type/namespace를 검사한다. 허용 node는 `eng_smoke_observer`, `_World_ENG_FE2E_Rover_ActionGraph_ros2_subscribe_twist`, `_World_ENG_FE2E_Rover_ActionGraph_ros2_publish_transform_tree`, driver `v02_stopping_single_validation`뿐이다. TF publisher1, command subscriber2를 고정한다. 시작 isolation은 publisher0, discovery는 observer zero publisher/driver의 점진적 등장을 허용하며, driver_ready→session driver_admitted→pulse_start 뒤에만 비영 command를 허용한다. active에서는 두 publisher가 필요하며 정상 driver 완료 후 zero 단계에서는 driver 제거를 허용한다. 등장한 GID 교체, 추가 publisher/node, subscriber/TF 변경, observer 사망, heartbeat/TF wall age>.5초, TF sim 차이>.1초, driver heartbeat 손실은 fault다. driver도 같은 공용 guard를 비영 publish 전에 실행한다.
 
-## 실제 인자와 검토용 단일 CLI
+각 tick에 세 controller input readback(jointNames/positionCommand/velocityCommand/effortCommand), Ackermann output targets, 모든10 named joint q/dq 및 PhysX position/velocity targets를 기록한다. 설치된 `Articulation.get_applied_actions()` 구현이 `get_dof_position_targets/get_dof_velocity_targets`를 읽는 것을 정적으로 확인했다. command가 흐른 후 controller input 크기/이름 수가 맞지 않거나 target readback이 없으면 중단한다. 실제 API/readback 동작은 runtime UNKNOWN이다.
 
-AST로 확인: session은 `--output`(필수), `--domain`(필수 int)만 받고 ROS driver는 `--output`만 받는다. session은 argparse 뒤에 SimulationApp을 import하지만 ROS driver는 argparse보다 먼저 rclpy를 import하므로 무작정 --help를 실행하지 않았다. 기존 supervisor `run_fe2e_v02_stopping_validation_v01.py`는 출력이 과거 경로로 고정돼 있어 재실행 금지다.
+외부 collider inventory는 floor만 허용하고 guarded sweep floor clearance>90m를 assert한다. 실행 중 floor/rover 외 contact, graph/actor/endpoint 변화는 `abort_motion`+`zero_request.json` 요청 후 pause/failure로 기록한다. 기존 .03m/s zero 요청, >.25m/s emergency pause, >2m 이탈, source .07/KMAX/PRE_FINAL, 6 sim초 정상 감속 요청, 14.5 sim초/20 wall초 pulse 한도, zero480 tick을 유지한다. .03은 overshoot 없는 hard invariant라는 주장이 아니다.
 
-새 경로: `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_20261021_v01/attempt_0001`. 이번 검사에서 부모 자체가 존재하지 않는다. 아래는 **기존 두 스크립트를 재사용하는 정확한 route reproduction 명령**이다. 이번에는 실행하지 않았다. 아래 명령만으로 live guard 보완이 생기는 것은 아니므로 현재 실행 승인을 요청하지 않는다. 보완 후 이 명령의 session entry를 검증된 새 버전으로 바꿔 최종 승인해야 한다. 성공한 것처럼 미존재 wrapper 명령을 제시하지 않는다.
+이는 **관측 가능한 composed graph·actor 구조·ROS endpoint·소유 subprocess 범위의 guard**다. 관측되지 않는 native C++ callback 전체의 writer 부재 인증이 아니다. Kit update가 멈추면 파일 zero/pause가 물리 정지를 보장하지 않는다. wrapper는 180 wall초 watchdog 및 abort 후35초 유예 뒤 자기 process group만 종료·기록한다. 세션은 소유 ROS child를 wait→terminate→kill/reap하며 PID/exit를 남긴다. group 잔류·강제 종료는 NOT_READY다. 다른 기존 process/GPU는 건드리지 않는다.
+
+## 오프라인 검사
+
+- `python3 -m py_compile scripts/legacy_supervised*py evaluation/legacy_supervised_guard_v01.py`: 6 files PASS. 해당 검사는 compile만 하며 session import/launch 없음.
+- `python3 scripts/legacy_supervised_offline_checks_v01.py`: **21 checks PASS**. 실제 공용 평가/변화 검출 함수를 직접 호출한다. raw COM/root/FD 초과, NaN, 누락, gap, 60표본 coverage 부족, pose span, saved prior failure/retreat, discovery→active→zero, GID 교체, foreign node, stale observer, graph source 교체/누락 writer, OS0/internal failure를 포함한다.
+- wrapper에 이미 존재하는 reports 경로를 넘긴 검사: `FileExistsError`, nonzero exit PASS, simulator/ROS 미실행. 실제 fresh output은 생성하지 않았다.
+- 기존 dependency6 SHA 대조 PASS. 새 output 부재 PASS. 실제 simulator/bridge/graph·접촉/target readiness는 **UNKNOWN/NOT_RUN**. 오프라인 PASS를 runtime PASS로 쓰지 않는다.
+
+## 현재 실행 가능한 정확한 1회 명령 — 이 턴 미실행
+
+사용자가 다음 턴에 이 경로의 simulator-only engineering **한 번**을 명시 승인한 뒤 실행한다. root가 존재하면 atomic mkdir에서 즉시 실패하며 자동 다른 경로 선택/재시도는 하지 않는다.
 
 ```bash
 cd /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013
-(
-  set -euo pipefail
-  export ROS_DOMAIN_ID=191 RMW_IMPLEMENTATION=rmw_fastrtps_cpp ROS_DISTRO=jazzy
-  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}:/home/user/anaconda3/envs/hh_isaac51/lib/python3.11/site-packages/isaacsim/exts/isaacsim.ros2.bridge/jazzy/lib"
-  run_root=/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_20261021_v01
-  mkdir "$run_root"
-  cp --no-clobber /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_STOPPING_VALIDATION_20261019_v01/drive_contract.json "$run_root/drive_contract.json"
-  /bin/bash -c 'source /opt/ros/jazzy/setup.bash && exec /usr/bin/python3 scripts/full_e2e_ros_observer_v01.py --output "$1/domain_probe_attempt_0001" --probe-only' probe "$run_root" > "$run_root/domain_probe_stdout.log" 2>&1
-  /home/user/anaconda3/envs/hh_isaac51/bin/python scripts/fe2e_v02_stopping_validation_session_v01.py --output "$run_root/attempt_0001" --domain 191 > "$run_root/runtime_attempt_0001_stdout.log" 2>&1
-)
+export ROS_DOMAIN_ID=191 RMW_IMPLEMENTATION=rmw_fastrtps_cpp ROS_DISTRO=jazzy
+export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:-}:/home/user/anaconda3/envs/hh_isaac51/lib/python3.11/site-packages/isaacsim/exts/isaacsim.ros2.bridge/jazzy/lib"
+/usr/bin/python3 scripts/legacy_supervised_one_shot_v01.py \
+  --output /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_IMPL_20261021_v01
 ```
 
-`mkdir` 충돌/실패 또는 probe 실패 시 종료하며 같은 경로를 다시 쓰지 않는다. contract 복사는 작은 provenance JSON만이며 signed 실행 승인이 아니다. 기존 contract의 approved는 drive 단위 계약이고 새 motion 허가가 아니다. 원본 session이 내부에서 `scripts/fe2e_v02_stopping_validation_ros_v01.py --output <attempt>`를 한 번 호출한다. 추가 ros2 topic pub, 별도 observer/driver, v07/OnImpulse/HOLD를 병행하지 않는다.
+Wrapper는 위 환경을 내부에도 고정하고, `/opt/ros/jazzy/setup.bash`를 source한 `/usr/bin/python3` observer로 빈 domain을 먼저 확인한다. 이후 `/home/user/anaconda3/envs/hh_isaac51/bin/python scripts/legacy_supervised_session_v01.py --output <root>/attempt_0001 --domain 191`을 딱 한 번 호출한다. 세션이 같은 source된 Jazzy 환경의 `/usr/bin/python3 scripts/legacy_supervised_ros_v01.py --output <attempt>`를 생성한다. driver 수동 별도 실행 금지. 기존 hardcoded supervisor는 호출하지 않는다.
 
-## 기존 한계·기록·평가
+승인 체크: simulator-only/연구분모0/attempt1/retry0, 위 exact output와 source manifest, domain191에 실제 로봇이나 별도 ROS node가 연결되지 않음, 운영자가 runtime stdout/feedback을 감독하고 아래 abort terminal을 준비함, 이전 quiet FAIL을 인정하며 이번 성공을 예상하거나 보장하지 않음. Runtime preflight가 실패하면 그 attempt를 NOT_READY로 보존하고 멈춘다.
 
-| 항목 | 소스에 실제 있는 값/동작 |
-|---|---|
-| source request | v=.07, k=KMAX≈.382784560616, PRE_FINAL; governor 단일 사용 |
-| 주행 | driver에서 6 sim s 뒤 정상 감속; stale .5s/abort/20 wall s에 zero fault |
-| 세션 상한 | pulse 루프 14.5 sim s 또는 20 wall s; 이후 480 tick≈8 sim s zero 관측 |
-| 속도 | .03m/s에서 zero 요청; >.25m/s는 emergency pause, .03을 대체하는 허용치 아님 |
-| 공간 | settled center로부터 >2m에 pause; footprint 1.68×1.61m, floor edge guard 여유는 >90m 요구 |
-| 접촉 | floor만 외부 collider 허용; floor 접촉 정상, 예상 밖 collider/contact는 차단 대상으로 보완 필요 |
-| zero | driver finally 20 zero; observer는 isolation 뒤 생성한 publisher로 zero_request 때 10 zero |
-| 최종 quiet | 최소 연속 1 sim s, root/COM/FD 각 planar≤.002m/s 및 pose span≤.002m; 누락/시간 gap>.1s면 NOT_READY |
+별도 terminal의 중단 명령(ROS publish 없음):
 
-.03m/s zero 요청은 감속 보장이나 overshoot 없는 hard speed invariant가 아니다. app.update가 멈추면 wall watchdog과 pause 전달도 보장되지 않는다. 기존 session 마지막 60 samples 계산은 정확한 1초 coverage, COM/FD를 판정하지 않아 단독 success 근거로 사용할 수 없다. ±.03m/±2° 및 stable6는 연구 terminal 기준이며 이 demo에는 사전 FINAL/stable6가 없다. Full E2E success는 이 실행으로 판정하지 않는다.
+```bash
+attempt=/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_IMPL_20261021_v01/attempt_0001
+test -d "$attempt" && touch "$attempt/abort_motion"
+```
 
-기존 instrumentation은 `steps.jsonl`에 sim_s/wall_s/phase, q/dq 전체, graph wheel/steer target, pose, tensor root pose, raw COM velocity, COM→origin velocity, FD, native velocity를 기록한다. `adapter_commands.jsonl`은 source_step와 feedback/adapter state/wire를 기록하고 독립 observer의 `ros_observed.jsonl`은 수신 command/TF wall time을 기록한다. command와 physics는 비동기이므로 동일 frame 인과관계를 가정하지 않는다. graph target은 actuator target API readback과 다른 계층이다. contacts·joint_io·isolation·zero·completion도 보존한다.
+세션/driver가 abort를 읽고 기존 zero/abort 경로로 진입한다. zero_request 파일만 생성해도 session이 abort_motion으로 전환한다. wrapper terminal Ctrl-C도 같은 요청이며 자동 retry하지 않는다. 프로세스 종료는 물리 quiet 확인을 대신하지 않는다.
 
-이전 실제 active peak root=.022805331797m/s, FD=.021279668484m/s였지만 zero 뒤 후퇴34.127288744mm, 마지막 raw-root .002619135991m/s로 quiet FAIL이었다. 새 run에도 후퇴/반전은 첫 실제 zero source-step pose/yaw 축으로 signed along/left 및 최대 excursion을 기록한다. negative target나 HOLD를 추가하지 않는다. zero 발행, wheel dq=0, pose 고정 어느 하나만으로 정지 성공을 선언하지 않는다.
+## Zero→quiet 산술과 판정 파일
 
-## 실행을 막는 정확한 두 보완과 최소 수정 위치
+`attempt_0001/stop_quiet_result.json`: MOVED / QUIET / RESEARCH_E2E를 분리한다. MOVED는 첫 관측 대비 planar displacement>.002m인 engineering 표시일 뿐 task success가 아니다. RESEARCH_E2E는 항상 `NOT_ASSESSED`다.
 
-1. **현재 legacy 경로의 live writer admission이 빠져 있다.** session의 `good=...`는 시작 전 endpoint 수만 확인하고, 시작 후 publisher 변경·observer 사망·graph writer 변경을 차단하지 않는다. suffix wheel 선택도 named exact topology gate가 아니다. 최소 보완은 별도 버전 session에서 기존 stage가 attach된 뒤 play 전 composed graph 세 writer의 jointNames/targetPrim/velocity·position 연결과 enabled joint body0/body1를 보존 graph/expected names와 대조하고, articulation 초기화 후 named exact set/order를 확인하는 것이다. `tick()`에서 observer 상태 freshness≤.5s와 생존, 고정 TF/subscriber GID, 허용 publisher(observer zero와 v02_stopping_single_validation뿐)를 점검하여 외부 endpoint/변경/누락이면 abort_motion+zero_request를 기록하고 pause/NOT_READY로 끝내야 한다. driver 시작 전에는 무 publisher 또는 observer만, driver discovery 뒤에는 정확한 두 publisher를 요구하고 비영 command 전 driver 자신의 discovery gate를 두어 시작 경쟁을 막는다. 같은 domain의 임의 node도 거부한다. 이것은 관측 가능한 ROS/graph writer 경로의 제한적 gate이며 모든 native callback 부재 증명은 아니다. substantiation 실패 시 비영 명령 금지다. 원본 ROS driver는 로직을 유지한 새 버전에 이 discovery gate만 추가하며 session child 경로도 그 버전을 지목해야 한다.
-2. **새 출력/종료 계측 연결이 없다.** 기존 supervisor의 상수 O를 새 버전에서 required `--output`으로 바꾸고 mkdir(exist_ok=False), immutable input hash 확인, parent drive_contract의 pinned hash 확인, argv/env/owned PID/exit/failure 기록을 추가한다. session의 현재 `stop_ok=`를 root+COM+FD의 실제 1초 coverage/finite/gap/span 판정으로 바꾸고 quiet 실패는 status=NOT_READY로 남긴다. 초기 baseline도 같은 세 속도 기준을 적용한다. `collision_preflight` 결과를 emit만 하지 말고 floor edge >90m를 assert하고 tick에서 예상 밖 contact를 abort한다. graph outputs뿐 아니라 세 controller의 velocity/position input readback을 jointNames와 묶어 steps에 추가하고, 기존 독립 command/TF observer를 유지한다. 최초 zero와 종료 시점을 묶은 retreat와 outcome JSON을 생성한다. 새 supervisor는 runtime exit=0이어도 execution_complete.status/quiet 실패를 성공으로 바꾸지 않아야 한다. session은 Exception을 잡고 정상 exit할 수 있기 때문이다.
+최종 표본에서 역으로 **연속 최소1 sim초**를 포함하는 구간을 고르고 모든 dt가 0<dt≤.1초인지 확인한다. raw `tensor_COM_velocity[:2]`, root-origin `base_origin_v[:2]`, 실제 pose FD `fd_velocity[:2]` 각각 planar norm 최대≤.002m/s, 구간 모든 pose 쌍 최대거리≤.002m를 요구한다. raw COM을 보정 origin/FD로 대체하지 않는다. NaN/누락/coverage 부족/gap이면 NOT_READY, 유효 자료에서 기준 초과면 FAIL. baseline도 동일 함수로 판정한다.
 
-이들은 새 제어기·gain·sign 실험이 아니라 같은 물리 경로의 admission/recording 최소 보완이다. 이번에는 불완전한 wrapper나 실행 승인 파일을 만들지 않았다. 현재 제출 명령의 실행 가능성은 route CLI 차원 PASS, 요청된 감독 안전 gate 차원 NOT_READY다. 가장 작은 다음 코드 작업은 위 세 원본의 새 버전(supervisor/session/ROS discovery gate)에 이 두 보완만 적용하는 것이며, 이후 별도 사용자 1회 실행 승인으로 이어져야 한다. 범용 lease/C++ 프로젝트는 필요하지 않다.
+최초 ZERO_SETTLING/FAULT_LATCHED이며 실제 wire_v=wire_z=0인 adapter command의 source_step에 연결된 pose/yaw를 zero 기준으로 사용한다. dx,dy를 당시 yaw의 forward/left 축에 투영해 signed along/left 최종 변위, backward=max(0,-min along), reverse-from-running-peak, 최대 |lateral|를 기록한다. sim/wall zero 시각도 보존한다. 비동기 command→physics의 즉시 인과를 주장하지 않는다.
 
-## 감독·중단·수집
+저장된 이전 attempt 재평가: 1.000000052초, max dt=.016666668초, raw COM=.002620264860, root-origin=.002619135991, FD=0m/s, span=0m. **MOVED=YES, QUIET=FAIL, RESEARCH_E2E=NOT_ASSESSED**, backward=.034127288744m, signed lateral=-.000002164250m. pose가 고정되거나 zero target인 것만으로 quiet PASS가 되지 않음을 실제 자료로 확인했다.
 
-최종 보완본 승인 후 supervisor는 관련 없는 Isaac/ROS process를 종료하지 않고 먼저 발견·기록하며, domain191에 unrelated ROS를 열지 않는다. 시작 전 named topology/현재 source hash/빈 domain/단일 target TF/quiet baseline/floor clearance가 모두 통과해야 비영 명령을 허용한다. supervisor는 로그와 phase/pose/속도를 실시간 관찰하고 예상 밖 publisher·contact·속도/공간 이탈·stale·child failure 시 즉시 abort한다. 외부 감독의 정상 abort 인터페이스는 새 attempt의 `abort_motion` 파일 생성이다. observer zero도 요청하려면 같은 attempt에 domain191/time을 기록한 `zero_request.json`을 생성한다. 이 파일 방식은 Kit hang에 대한 hard emergency stop이 아니다. hang이면 동작/정지 UNKNOWN으로 남기고 승인된 supervisor 외 다른 process나 실제 로봇에 ROS를 보내지 않는다. 무조건 retry하지 않는다.
+세션 `execution_complete.json`은 guard/child fault, raw quiet 미달, zero 관측 누락, adapter FAULT를 NOT_READY로 남긴다. 정상 기록은 QUIET PASS·zero 식별·ZERO_SETTLING·observer zero receipt를 요구한다. wrapper의 `supervisor_complete.json`은 OS exit뿐 아니라 내부 status·QUIET·RESEARCH_E2E·종료 bookkeeping을 함께 확인한다. engineering verdict가 좋아도 research terminal success가 아니다. raw steps/commands/contacts/실패를 삭제하거나 분모에서 숨기지 않는다.
 
-종료 후 신규 부모/attempt의 command/env/hash, probe, runtime stdout, steps, adapter_commands, ros_observed, joint_io, scene/collision/isolation, contacts, zero, completion을 수집한다. 최종 1초 root+COM+FD와 span, zero 전후 변위/후퇴, command·target·q/dq를 함께 보고 `MOVED`, `QUIET`, `FULL_E2E`를 별개로 기록한다. QUIET 미달/누락/exception/미완료는 NOT_READY로 보존한다. engineering 실패 시도는 사라지지 않으며 연구 denominator는 0, Full E2E/QUAL12/432는 계속 HOLD다.
-
-## focused 검사와 provenance
-
-정적 AST 인자/소스 읽기 PASS. 과거 plan에 등록된 session/ROS/curvature/governor/controller/bench 6 SHA 대조 PASS(6/6). 새 output 부재 PASS. 실제 launch/live endpoint/current composed topology UNKNOWN. USD-only open 실패(ModuleNotFoundError: pxr), usd executable 탐색 실패, git status는 이 디렉터리에 .git가 없어 실패했다. 이를 물리 실패 episode나 정적 PASS로 바꾸지 않았다. 최종 source 승인에는 추가 dependency closure의 hash도 함께 기록해야 한다.
-
-| source | 현재 SHA256 |
-|---|---|
-| `scripts/fe2e_v02_stopping_validation_session_v01.py` | `dd881de1a3699f49bc8be7354b09815f2c9d834095119693b712065a8892e232` |
-| `scripts/fe2e_v02_stopping_validation_ros_v01.py` | `675ebb52a0aaf0c955d2d52e02c412f7a846931e52c1f4bf64eea9c0d4beedf7` |
-| `scripts/full_e2e_demo_ros_observer_v01.py` | `8186960b6afd71f8e5edc3647804f1bd5babe4813d59cab8bbf108f7cb70acca` |
-| `evaluation/fe2e_v02_stopping_adapter_v01.py` | `dd574fb849c034a9492717b992fe8681fe4a03775dd8599c6256b353c2787d80` |
-| prior drive_contract.json | `7e6937a2c14f5be4fea4b50dc9cfb7c533a62f5a54eb3885533d2f6cb81ec551` |
-
-변경 파일은 이 새 보고서와 docs/PROJECT_STATE.md append뿐이다. 원본 scripts/USD/protocol/과거 attempt/최신 STOP_HOLD 보고서는 수정하지 않았다.
+실제 구현 blocker는 남아 있지 않다. 남은 단계는 **사용자 별도 1회 실행 승인과 그 실행 안의 실시간 admission**이다. UNKNOWN을 해결하기 위한 추가 paused/graph audit나 범용 native lease 개발을 요구하지 않는다. ENG001/QUAL12/432는 HOLD이며 이 경로로 해제하지 않는다.
