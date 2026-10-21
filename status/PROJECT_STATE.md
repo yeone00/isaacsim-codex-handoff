@@ -401,3 +401,10 @@ Historical named wheel303 sample쌍에서 양의 graph target에 여섯 q 순증
 [구현 보고서](../reports/legacy_supervised_mobility_one_shot_implementation_20261021_v01.md), [집중검사 결과](../reports/legacy_supervised_mobility_one_shot_implementation_20261021_v01_checks.json). 새 legacy session/ROS child/observer/supervisor와 offline-safe 공용 guard/evaluator를 구현했다. 기존3writer graph/source/target·10DOF·domain191 endpoint/GID·phase discovery·heartbeat·actor/contact·floor gate, 외부abort/zero·소유child reap·내부status wrapper판정을 연결했다. 원래 감속/수치 유지, baseline만 독립1초 판정을 위해75tick으로 확장했다. Raw COM/root-origin/FD 각각≤.002 및 pose span≤.002, contiguous≥1sim초/dt≤.1 평가와 signed zero후퇴를 추가했다. 기존 자료에서 raw COM=.002620264860/root=.002619135991→QUIET FAIL, backward34.127288744mm 재현. MOVED/QUIET/RESEARCH_E2E 분리(연구항상NOT_ASSESSED).
 
 Compile6·offline21checks·기존출력atomic거부·prior dependency6SHA PASS. source manifest11entries pin. 실제launch/ROS/physics/publish/actuation/retry0, live readiness UNKNOWN. 새 미사용 FE2E_V02_LEGACY_SUPERVISED_IMPL_20261021_v01 output의 실행가능명령과 abort방법을 보고서에 기록했다. 다음은 별도 명시승인할 simulator-only1회이며 추가 paused/global native proof를 요구하지 않는다. 관측 graph/ROS/actor guard 범위이며 모든native callback부재 인증 아님. 원본USD/controller/old scripts/output/reports·v07 STOP branch 보존, ENG001/QUAL12/432 HOLD/연구분모0 유지.
+
+
+## 2026-10-21 PUBLISHER_SET 집중 진단 / v02 forensic 보강
+
+[진단 보고서](../reports/legacy_supervised_publisher_set_hotfix_20261021_v01.md): 실제 v01은 exit1/NOT_READY, motion_attempts0/MOVED NO/QUIET PASS(정지 baseline)/zero NOT_READY다. 실패 discovery의 names는 미저장이고 최종 ros_status는 fault 이후 snapshot이라 ROOT_CAUSE_UNKNOWN이다. 중복 GID/외부 publisher 어느 쪽도 확정하지 않았다. 기존 실제 출력37파일 SHA/집합 및 v01 manifest11개 SHA 보존 PASS. 이전34.127mm stop regression FAIL 유지.
+
+v02 guard/session/ROS/observer/entrypoint와 pinned manifest를 새로 만들었다. 검증 직전 정확한 snapshot/names/phase/pins를 fsync하며 기존 허용 cardinality/GID는 완화하지 않았다. topic·publisher 소실·phase 회귀도 차단한다. offline 집중18/기존21/compile6 PASS; 초기 fixture 오류 FAIL과 수정도 checks에 기록했다. 보고서의 고정 새 output/domain191 단일 명령은 별도 사용자 simulator 승인 후 진단 보강1회용이며 이번 세션 Sim/ROS/physics/publish/motion/retry0이다. 원인 해결/runtime 성공 UNKNOWN, Full E2E/QUAL12/432 HOLD/연구분모0.
