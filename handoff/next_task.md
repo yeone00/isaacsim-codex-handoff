@@ -1,3 +1,13 @@
+# ACTION REQUIRED — This is a NEW task, not STOP_HOLD_BRANCH re-verification (2026-10-21)
+
+PRIOR TASK ALREADY FINISHED. Do NOT modify, append, or reissue reports/full_e2e_v02_post_paused_owner_physics_admission_20261020_v01.md. Do NOT run paused inventory, re-count 429 SHA or 303 positive-wheel samples. These are settled evidence.
+
+SUCCESS FOR THIS TURN REQUIRES a NEW deliverable: reports/legacy_supervised_mobility_one_shot_preparation_20261021_v01.md containing a concrete, manually approvable **single-run command to reuse scripts/fe2e_v02_stopping_validation_session_v01.py and scripts/fe2e_v02_stopping_validation_ros_v01.py**, with unused output path, bounded motion/zero observation and physical provenance. Inspect existing script --help/arguments and original prior launch record first; do not invent commands or execute Isaac/ROS/motion now. If single-run setup is not executable, identify the exact missing script/connection and smallest source patch in that NEW report; a duplicated HOLD conclusion is TASK FAILURE.
+
+Below is the complete task specification, follow it instead of any older session instructions.
+
+---
+
 # Next task — STOP_HOLD_BRANCH; prepare ONE supervised simulator mobility demonstration using existing WORKING route
 
 Date: 2026-10-21 (KST).
