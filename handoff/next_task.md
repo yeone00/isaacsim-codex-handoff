@@ -1,40 +1,37 @@
-# ACTION REQUIRED — This is a NEW task, not STOP_HOLD_BRANCH re-verification (2026-10-21)
+# ACTION REQUIRED 2026-10-21 — IMPLEMENT two last repairs for legacy supervised mobility ONE SHOT
 
-PRIOR TASK ALREADY FINISHED. Do NOT modify, append, or reissue reports/full_e2e_v02_post_paused_owner_physics_admission_20261020_v01.md. Do NOT run paused inventory, re-count 429 SHA or 303 positive-wheel samples. These are settled evidence.
+This is a NEW IMPLEMENTATION TASK. The diagnosis report already exists at reports/legacy_supervised_mobility_one_shot_preparation_20261021_v01.md and MUST NOT be reproduced as the sole result. Aim: make existing MOVING Isaac/ROS path ready for a user's separate authorization to run exactly one simulator-only supervised engineering demonstration. NO physical run in this Codex turn.
 
-SUCCESS FOR THIS TURN REQUIRES a NEW deliverable: reports/legacy_supervised_mobility_one_shot_preparation_20261021_v01.md containing a concrete, manually approvable **single-run command to reuse scripts/fe2e_v02_stopping_validation_session_v01.py and scripts/fe2e_v02_stopping_validation_ros_v01.py**, with unused output path, bounded motion/zero observation and physical provenance. Inspect existing script --help/arguments and original prior launch record first; do not invent commands or execute Isaac/ROS/motion now. If single-run setup is not executable, identify the exact missing script/connection and smallest source patch in that NEW report; a duplicated HOLD conclusion is TASK FAILURE.
-
-Below is the complete task specification, follow it instead of any older session instructions.
-
----
-
-# Next task — STOP_HOLD_BRANCH; prepare ONE supervised simulator mobility demonstration using existing WORKING route
-
-Date: 2026-10-21 (KST).
 Project: /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013
-Authorization in this task: INSPECT + MINIMAL CODE PREPARATION only. NO Isaac launch, physics episode, ROS publish, wheel commands, or real robot motion without separate user approval. Do NOT manufacture signed approval.
 
-## Confirmed study status
-- Latest report: reports/full_e2e_v02_post_paused_owner_physics_admission_20261020_v01.md, state STOP_HOLD_BRANCH.
-- Prior working engineering mobility code: scripts/fe2e_v02_stopping_validation_session_v01.py and scripts/fe2e_v02_stopping_validation_ros_v01.py; prior one-shot actual output at /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_STOPPING_VALIDATION_20261019_v01/attempt_0001 (READ ONLY; never re-run existing attempts or overwrite logs).
-- Real historical actual motion + subsequent ZERO command and 34.127288744 mm backward retreat, raw-root planar speed .002619135991 m/s > frozen .002 m/s quiet criterion. Do NOT reframe this as terminal stop success.
-- Positive wheel graph target gave positive q delta for all six named wheels in logged window (303 pairs); there were 0 negative graph wheel target samples. NEGATIVE direct target/HOLD K=1 are unverified, and the new v07 HOLD runner's native guard intentionally blocks. No new HOLD physical trial, no K/sign inference, no C++ lease project.
-- Prior real graph-only v03 PASS. Paused inventory: legacy 20 graph nodes inactive, ROS bridges false in isolated no-motion process. That does not directly attest safety/ownership of the DIFFERENT legacy mobility path, which must be reviewed separately.
-- Full E2E/QUAL12/432-run research gates continue HOLD.
+## Source of truth
+- Read AGENTS.md, docs/PROJECT_STATE.md, reports/legacy_supervised_mobility_one_shot_preparation_20261021_v01.md and observed earlier run (READ ONLY) /home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_STOPPING_VALIDATION_20261019_v01/attempt_0001 with parent's run plan, graph/joint_io/isolation/steps/contacts and driver code.
+- Existing valid route: /home/user/anaconda3/envs/hh_isaac51/bin/python scripts/fe2e_v02_stopping_validation_session_v01.py --output <NEW>/attempt_0001 --domain 191; ROS child scripts/fe2e_v02_stopping_validation_ros_v01.py created by session. ROS Jazzy bridged, RMW rmw_fastrtps_cpp. Previous supervisor path hardcodes existing output; NEVER execute it again.
+- Frozen v07 HOLD branch STOP; no unapproved K1/wheel sign/negative wheel pulses/force position-HOLD. Earlier zero→34.127288744mm retreat and raw-root quiet FAIL .002619135991> .002 preserved. Research ENG001/QUAL12/432 gates remain HOLD.
 
-## THIS TASK: fast path to user-authorized SINGLE supervised mobility episode
-1. Read AGENTS.md, docs/PROJECT_STATE.md, the latest report, existing legacy actual mobility scripts+actual attempt manifest/logs and original robot USD topology. Identify the EXACT previous successful movement/ROS pipeline and its original launch ordering, ROS_DOMAIN_ID, target and stop commands. Do not rely on guessed command lines or rewire to v07/OnImpulse/HOLD.
-2. Minimize new code. Reuse the SAME existing physically exercised route; construct only a narrowly-scoped VERSIONED launch wrapper/instrumentation if necessary for one new attempt. No parallel controller architecture or broad refactors. Keep original scripts immutable.
-3. One NEW isolated output path; bound active movement duration, speed, displacement, floor clearance/contact and time according to previously documented/frozen constraints. Implement robust independent recording of time-synchronized command, six named q/dq/readbacks, steering, root-origin, raw COM, FD, pose, phase and stop state. Terminal readback must preserve BOTH root + COM + FD quiet criterion; record reversal/retreat, do not add negative target or closed-loop HOLD. Zero→stop observation with existing stop criteria; mark NOT_READY if failed. Keep single attempt, no retry, no parameter sweep, no automatic 432.
-4. For the supervised demonstration establish concrete start/stop gates for the CURRENT legacy ROS driver/bridge, named joint topology, observed writer path and source hashes; prevent unintended concurrent writer without pretending universal native callback proof. Stop and report blocked if live guard cannot be substantiated; never silently loosen research gates. Include instructions for a supervisor to watch and abort and for no ROS in unrelated processes.
-5. If existing route already includes adequate instrumentation, do not create a wrapper just for aesthetics: provide the exact carefully checked NEW one-shot CLI and only minimum added logs. Distinguish engineering 'robot moved' from 'meets terminal quiet' and 'Full E2E success'.
-6. Prepare an exact user-visible command, source/hash output provenance and terminal collection instructions. **DO NOT EXECUTE** in this Codex task; user explicitly authorizes real one run separately after reviewing command and stop limits. The user wants an actual running simulator as the NEXT action, not another five turns of paper approvals. If route truly no longer runnable, give one concrete blocking missing connection and smallest correction, rather than broad contract design.
+## Do exactly these two modifications, not more audits
+A. VERSIONED copy of prior legacy session/ROS child and a tiny supervisor only as needed for NEW isolated output:
+   - before nonzero commands, runtime inspect composed stage existing THREE ArticulationController writers and their joint names/targetPrim/input/source wiring, all 10 named DOF articulation map, ROS bridge and publisher/subscriber/TF/driver readiness in domain191; fail closed on mismatch/unknown; once running, detect publisher/endpoint changes, lost observer, unexpected concurrent writers/actors and stale data, request existing zero/abort/pause. Maintain the previously exercised graph/ROS/driver trajectory and original exact numerical limits; avoid rewriting controller or adding gain tuning. ROS guard must recognize allowed phase transitions, supervisor zero publisher vs driver, not block intended route. No invented universal native C++ writer exclusivity certificate; declare actual scope.
+   - external watch/stop interface (abort_motion/zero_request) with process liveness/termination bookkeeping, no stray ROS child. Exactly ONE new attempt, no retry, and unique output path refusal. Launch command must be REAL against scripts that exist, using actual executable Python environments.
+B. Finish evaluation with independent real time-series criterion:
+   - read actual raw COM/root-origin/FD planar velocities, finite/nonnan with contiguous >=1 simulated second (explicit dt/gap <=.1s), pose displacement span <=.002m, each of three velocity metrics <=.002m/s, and create explicit stop/quiet result, zero-time, signed along/lateral reverse/backward excursion. Do NOT replace raw COM with COM-adjusted origin/FD. If missing or insufficient data mark NOT_READY; preserve original fault and raw logs. Target controller input readback per three articulation nodes, all six named joint q/dq & output targets, contact/floor violation stop gate.
+   - output separately MOVED / QUIET / RESEARCH_E2E (always NOT_ASSESSED by engineering-only run); no assertion that motion=terminal success or that zero target=physical stop. Final wrapper verdict must account for internal status not only OS exit code.
 
-## Absolute preservation and boundaries
-No launch Isaac/SimulationApp, no physics.play, no ROS publishing, no robot motion this turn. No negative wheel target pulse, experimental K=1 HOLD, opportunistic safety threshold or actuator gains changes, frozen controller/USD edits, retries of failed historical attempts, ENG001/QUAL12/432. Preserve earlier original/output hashes. No claim this legacy demo passes failed zero-stop target.
+## Minimal safe testing / execution boundary
+- This Codex task may inspect code/data, create versioned legacy_* scripts, py_compile and TEST WITHOUT LAUNCHING Isaac/ROS/physics/actuation; tests should exercise true stop evaluator and change-detection source path with saved/synthetic fixtures, including prior quiet failure.
+- Do NOT execute any new simulator episode in this task. No launch of SimulationApp, no ROS driver, no publish, no actuator target, no negative HOLD pulse, no 432 runs, no novel native lease architecture, no broad unit-test infrastructure.
+- Preserve USD/controller/drives/protocol/old outputs and SHA. No weakening speed cap .03 terminal zero phase, emergency >.25, 2m excursion, floor contact/clearance and raw speed .002m/s criterion.
+- The user intends the NEXT TURN to be a real one-shot supervised simulator test. Do not indefinitely block with theoretical global native producer proof. If a practical code gate is truly impossible, explain the ONE precise blocking API and minimal workaround; do not simply repeat last report.
 
-## Exit deliverables
-- One compact report: reports/legacy_supervised_mobility_one_shot_preparation_20261021_v01.md: existing observed route, actual code ready vs blockers, proposed single exact command for NEW unused output, observed speed/stop/quiet limits, concise run abort protocol, how to assess measured outcome, max2 blockers.
-- Only needed minimal versioned files and focused source-driven checks; no mock-only project or huge hash dumps.
-- docs/PROJECT_STATE.md append and preserve.
-- Final line if report created: HANDOFF_REPORT: reports/legacy_supervised_mobility_one_shot_preparation_20261021_v01.md
+## DELIVERABLE (MUST produce NEW named report, not old report)
+- reports/legacy_supervised_mobility_one_shot_implementation_20261021_v01.md:
+  exact changed files and source hashes;
+  realistic test outcomes; named endpoint/ROS/graph guard;
+  exact **currently runnable** one-shot fresh output command with env+domain setup and child launch from verified source (prefer atomic fail-if-exists);
+  human approval checklist and how to abort from separate terminal;
+  zero→quiet math/result path and concise success/failure criteria;
+  max 2 real blockers, no inflated SHA dumps.
+- If implementation cannot honestly be completed, report truthful NOT_READY and exact last missing code, without another HOLD branch narrative.
+- Append docs/PROJECT_STATE.md. Original prior reports unchanged.
+- End final message with exactly:
+HANDOFF_REPORT: reports/legacy_supervised_mobility_one_shot_implementation_20261021_v01.md
