@@ -390,3 +390,8 @@ Historical named wheel303 sample쌍에서 양의 graph target에 여섯 q 순증
 ## 2026-10-21 동일 post-paused 요청 재확인 완료
 
 지정 보고서가 이미 존재하여 [동일 보고서](../reports/full_e2e_v02_post_paused_owner_physics_admission_20261020_v01.md)에 재확인 절만 append했다. 실제 paused JSON/표적 source 및 historical named wheel 자료를 다시 읽고 입력21 SHA·보존429·file-layer15 불일치0, graph20 inactive, pulse303쌍의 여섯 양의 순증가/negative-target0을 재현했다. STOP_HOLD_BRANCH 유지: 양방향 direct target→q/dq/복원 응답 근거 부족과 물리 bounded 경로 부재. 추가 paused/graph audit나 C++ lease 개발 요구 없음. 다음은 별도 명시 승인할 기존 mobility 경로의 감독형 비연구 simulator demo이며 frozen terminal PASS와 구분한다. 새 코드/approval/physics CLI 없음, v07/global guard/수치/원본/이전 checks 불변. 이번 실행·명령·retry·denominator 기여0, Full E2E/QUAL12/432 HOLD.
+
+
+## 2026-10-21 legacy supervised mobility 단일 실행 준비 v01
+
+[새 준비 보고서](../reports/legacy_supervised_mobility_one_shot_preparation_20261021_v01.md)를 작성했다. 기존 실제 stopping validation의 launcher/domain191/ROS child/graph 경로와 AST 인자를 확인하고 과거 plan의 주요 입력 SHA6/6 일치를 확인했다. 새 `FE2E_V02_LEGACY_SUPERVISED_20261021_v01/attempt_0001` 경로는 미사용이다. 기존 두 실행 스크립트 재사용 CLI와 제한/abort/수집 방법을 제시했다. 다만 현 소스는 시작 후 writer guard 및 root+COM+FD quiet outcome 연결이 없어 감독형 실행 NOT_READY이며, 새 버전에서 필요한 최소 수정 위치를 두 항목으로 명시했다. USD-only 판독은 pxr 부재로 실패했고 현재 composed topology/live guard는 UNKNOWN이다. Isaac/ROS/physics/publish/motion/retry0. 기존 STOP_HOLD 보고서와 paused inventory는 수정/재실행하지 않았다. Full E2E/QUAL12/432 HOLD 유지.
