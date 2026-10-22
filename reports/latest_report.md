@@ -1,61 +1,65 @@
-# 건설현장 조명 복구 및 단일 정적 렌더 — 2026-10-22
+# 건설현장 전방 RGB-D → 동결 YOLO → B4/B5 단일 스모크 — 2026-10-22
 
-**HEADLESS_VISUAL_PASS / load PASS / capture PASS / host EXITED 0 / GUI_VISUAL_UNKNOWN.** 실제 저장 PNG를 직접 열어 청록색 로버 본체·바퀴·흰 rolltainer 프레임, 벽돌 적층·팔레트, 현장 바닥·기둥·창을 식별했다. 어두운 원거리 배경은 남지만 대상 식별을 막지 않는다. 추가 렌더/재시도0. 이전 어두운 이미지 FAIL, 비동기 capture AssertionError, 사용자 GUI core dump는 기존 기록 그대로 보존한다.
+**FAIL: 실제 Kit 1회가 캡처 이전 단위 assertion에서 중단됐다. 재시도0.** host exit0와 내부 FAIL을 구분한다. 실제 센서 RGB/깊이 미생성, YOLO 현장 추론0, B4/B5·target 미계산이다. NO_DETECTION이나 OUT_OF_FOV 결과로 해석하면 안 된다. Preview 사진을 센서 증거로 대체하지 않았다.
 
-## 바로 열 파일과 렌더 증거
+## 실행과 입증된 blocker
 
-- **GUI에서 열 USD 하나:** `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_LIT_20261022_v01/construction_site_e2e_lit.usda`
-- 원본 렌더 PNG(1000×625): `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_LIT_20261022_v01/static_preview.png`
-- 밝기 가공 없는 좌우 비교: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_LIT_20261022_v01/before_after.png`
-- USD SHA256: `4e0ad262a0ce2a733e86e82e2ba69aa0eee42bb87c33086925117956bbddade8`
-- PNG SHA256: `96177043e2978af808900144977e77f7014d38bcdd7c635ca185d41c5cbf8bdc`
+실행 명령: `python3 scripts/run_construction_site_front_once_20261022_v01.py`.
+실제 runtime: `/home/user/anaconda3/envs/hh_isaac51/bin/python`, Isaac5.1 base.python.kit, headless RayTracedLighting. PYTHONPATH 제거, EULA YES. process gate 기존 Isaac/GUI0; exclusive 새 output에서 Kit launch1. ROS extension0·active OmniGraph0 검사 통과, timeline play/physics.play/명령/이동0. 새 USD 생성·기존 USD 저장 없음. 기존 LIT USD를 열고 session edit target만 선택했다.
 
-Isaac Sim 5.1 GUI에서 위 USD 하나를 File → Open으로 연다. Play, Script Editor, 카메라 조작이나 추가 스크린샷 진단은 필요하지 않다. GUI 자체는 이번에 관측하지 않았으므로 GUI 가시성/재오픈 lifecycle 무크래시는 UNKNOWN이다. 참조 자산은 기존 절대경로에서 읽으므로 이 USD는 asset 전체를 내장한 배포 패키지가 아니다.
+`construction_site_front_rgbd_capture_20261022_v01.py:27`의 `assert units == 1.`가 실패했다. 이전 캡처 코드의 단위 가정을 새 최상위 LIT stage에 적용하기 전에 오프라인으로 확인하지 않은 구현 실수다. stage open 이후 render product/annotator 생성 전에 중단됐으므로 캡처 완료 race나 YOLO 의존성 실패가 아니다.
 
-## 어두움의 확인 근거와 변경
+실패 후 SimulationApp 없이 bundled pxr로 읽은 실제 결과:
 
-기존 PNG를 직접 열고 RGB 픽셀을 분석했다. 완전 검정 픽셀15.19712%, 벽돌/팔레트 고정 사각영역의 검정51.0591%였다. 파일 부재나 빈 capture가 아니라 창밖만 밝고 실내 본체·적재물이 묻히는 실제 영상이었다.
+|파일|metersPerUnit|upAxis|근거|
+|---|---:|---|---|
+|최상위 LIT USD|0.01|Y|두 metadata 미작성, 실제 API fallback|
+|원래 preview attempt_0002 USD|1.0|Z|두 metadata authored|
+|원본 recovery USD|1.0|Z|두 metadata authored|
 
-실제 합성 USD의 활성 조명은 무텍스처 Dome 하나(intensity350, color .65/.72/.85, exposure0)였다. 이전 preview layer는 `/World/SDGLighting_v02/WorkLight_Left`, `WorkLight_Right`를 각각 active=false로 작성했다. 원본 recovery USD에는 흰 Dome2500과 Rect 작업등6000 두 개가 있다. 과거 성공 HR2.0m demo의 `scene_ready.json`/`photometric_readback.json`도 읽었다: Dome8000, ISO400, shutter50, f/5, ACES6. 이 데모는 다른 관측 조건이므로 현장 프리뷰의 정답 노출로 취급하지 않았다.
+LIT/runtime-fixed/visible 상위 layer에는 units가 없고 아래 preview에는 1.0이 있지만, 실제 최상위 stage API 결과는 0.01이다. 하위 layer에 값이 있다는 사실만으로 최상위 stage 단위를 인증할 수 없다. `offline_unit_evidence.json`, `source_coordinate_evidence.json`에 exact path와 layer 정보를 보존했다. 이 결과는 이전 visual PASS를 취소하지 않지만 metric RGB-D 인증을 대신할 수 없음을 보여준다. 카메라 prim은 실제 존재한다. mounted camera의 시선·stack 가시성은 **UNKNOWN**이다.
 
-주된 원인 후보는 **실내 직접 작업광 부재와 Dome 감광**이다. 새 layer는 Dome을 원본의 흰2500으로 복원하고 `/World/ConstructionPreviewWorkLight` RectLight 하나(intensity6000, 3×2m)를 기존 preview camera 위치/방향에서 대상 쪽으로 비추게 추가했다. Light의 transform만 기존 camera world transform에서 복사했다. 카메라·물체의 pose/optics, 재질·texture·binding은 바꾸지 않았다. 대체 재질 없음. 기존 두 작업등은 복구하지 않아 과거 위치의 불필요한 조명을 활성화하지 않았다.
+내부 `kit_internal_result.json`: FAIL/AssertionError. `runtime_host_result.json`: EXITED0/returncode0. wrapper도 exit0를 반환했으므로 **wrapper의 종료 코드 전달 결함**도 기록한다. 결과 판단은 내부 JSON이 우선이며 이 작업을 PASS로 해석하지 않는다. `kit_shutdown.json` 부재로 app.close Python return UNKNOWN; log는 shutdown을 기록하고 host는 종료했다. Native crash를 입증한 결과는 아니다. 재실행·자동 retry 없음.
 
-노출/tone/color 설정은 변경하지 않았다. 새 실제 Kit readback은 ACES op6, ISO100, exposureTime≈.02s(cameraShutter50), f/5, cm2Factor1, sRGB gamma=true, whitepoint1/1/1, OCIO=false, colorcorr=false, histogram=false, autoExposureMode1/fixed, aa exposure1, ambientLightIntensity0, indirectDiffuse=true, skipMostLights=false다. 실제 viewport 제품의 `invertColorCorrection=true`, `invertToneMap=true`도 그대로이며 밝아진 PNG가 생성됐다. 따라서 이 두 flag를 어두움의 확정 원인으로 주장하지 않는다. 세부 값은 `runtime_settings.json`에 있다. Dome/작업등 개별 기여와 warmup 차이(기존12→이번120 update)는 분리 실험하지 않았으므로 단일 원인·정량 기여는 UNKNOWN이다.
+## 실제 동결 모델과 수치 규약
 
-## 실제 이미지 판정과 수치
+- 체크포인트: `/home/user/hh/isaac_cosmos/sdg_final/final_combined_m50_adaptation_v01/standalone_selection_v01/selected_models/FINAL_HR_Scan_M50_REALVAL_MASKBEST_v01.pt`.
+- SHA256 expected=observed: `257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca`.
+- representation: HR_Scan, 기존 M50 RealAdapted selection, epoch25. 현 fixture cement HR_Scan에 맞춰 선택했고 모델 비교/튜닝하지 않았다. selection summary는 Real Val48 Mask mAP50-95 기반이다. 그 historical summary의 Test sealed 문구는 당시 기록이며, 현재 Real Test189는 이미 평가 완료라는 연구 상태를 바꾸지 않는다.
+- 실패 후 기존 sdg_tools 환경에서 체크포인트를 실제 로드해 `SegmentationModel`, task segment, **class0=brick_load** 확인. 학습·predict 호출 없음. torch2.7.1+cu128, ultralytics8.4.129. 상세 manifest 저장.
+- 기존 실제 worker v02와 같은 예정 추론: sensor640×480, YOLO imgsz1280/conf.25/iou.70, RGB→BGR ndarray 변환, mask>.5 후 nearest640×480. 최고 confidence brick_load, tie detector index 선택, GT association/fallback 없음. detection.conf=null, mask area/valid depth=미측정(0으로 성능 평가하지 않음).
+- 실제 카메라 prim: `/World/ENG_FE2E/Rover/base_link/front_link/front_camera/front_Camera`. exterior preview camera 사용 안 함. 동일 render product의 rgb/distance_to_image_plane/camera_params, stopped timeline의 delta_time0 step을 쓰도록 구현했지만 이번에는 해당 지점 미도달이다.
+- 보정 규약: optical right/down/forward, column-vector T_world_optical, world metres. projection[0,0]×320, projection[1,1]×240, principal point320/240; renderer view와 USD scale 제거 transform 비교. 이번 intrinsic/extrinsic/depth 단위의 실제 sensor 검증은 NOT_RUN이다.
+- 동결 pose 원본 `/home/user/eval_step25_pose_final_locked_v01.py` SHA `cc95b96c3305dcbe257a40fcf16f0e68a9e58ae0d5ae43f9cbd31e80ffec0988` 일치. 정적 추출 core와 기존 adapter를 읽었다. B4 top band20mm, quantile.01/.99, overshoot weight4, gate.014116, 최소점30; heading world XY degrees modulo180. B5 camera-facing side fit, nominal4층, side90mm/top exclusion30mm, face quantile.02/.98, load.950×.855m, pallet plane.144m. adapter는 별도 근거가 있는 world pallet-top datum을 요구한다. 현장 USD fixture 높이/pose를 대신 주입하지 않았다.
+- 기존 target 생성은 B5 world XY에서 지정 local−X outward 방향으로 PRE2.203745031260775m/FINAL1.403745031260775m, task yaw는 동결 task 축이다. B4 heading으로 task 축을 돌리지 않는다. 이번에는 target 생성·controller 입력 없음.
+- B5 datum의 현장용 독립 근거는 아직 확보되지 않았다. 이는 미실행 단계의 제한이며, 이번 실제 중단 원인은 좌표계 metadata assertion이다. 새 코드의 센서 기반 B4 단독 경로도 NOT_RUN이며 전체 동결 B4/B5 PASS가 아니다.
 
-밝기는 **저장된 display RGB/255의 .2126R+.7152G+.0722B**이며 scene-linear 광도 측정이 아니다. ROI는 segmentation이 아닌 동일 고정 픽셀 영역이다. 이미지를 보정해서 PASS로 만들지 않았다.
+## 실제 산출물과 누락
 
-|지표|이전 dark PNG|새 실제 PNG|
-|---|---:|---:|
-|전체 p10|0.000000|0.082337|
-|전체 p50|0.007843|0.365555|
-|전체 p90|0.031105|0.713993|
-|RGB 비영 픽셀|84.80288%|99.98992%|
-|RGB 완전 검정|15.19712%|0.01008%|
-|어느 채널이든255 클리핑|0%|0%|
-|로버 본체 영역 p50|0.008126|0.607843|
-|벽돌/팔레트 영역 p50|0|0.212531|
-|현장 영역 p50|0.015969|0.298322|
+외부 새 output: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_FRONT_RGBD_POSE_SMOKE_20261022_v01/`.
 
-**시각 판정 PASS**는 실제 이미지에서 본체·바퀴와 적층 경계·팔레트 및 현장 구조가 인지되는 것을 근거로 했다. 300개 전체의 개별 식별, 재질 충실도/MDL dependency closure, 실제 로봇 배포나 연구 perception 성능을 인증하지 않는다.
+|산출물|존재/의미|
+|---|---|
+|front_rgb.png / front_rgb.npy|없음 — 캡처 미도달|
+|front_depth.npy|없음 — 캡처 미도달|
+|camera_metadata.json|있음 — NOT_CAPTURED 및 실제 오프라인 stage 단위, sensor calibration null|
+|detection_overlay.png|없음 — 추론 미실행|
+|frozen_model_manifest.json|있음 — 실제 checkpoint hash/class 로드 확인, inference0|
+|predicted_pose_targets.json|있음 — CAPTURE_FAILED, traceback, pose/targets null|
+|runtime.log / runtime_host_result.json|있음 — 실제 Kit log와 host0|
+|kit_internal_result.json|있음 — 내부 FAIL|
+|launch_ledger.json / preservation_check.json|있음 — gate/명령 입력·code hash/보존|
+|offline_unit_evidence.json / source_coordinate_evidence.json|있음 — 실패 후 read-only 좌표계 확인|
+|final_evidence.json|있음 — exact filename 존재 여부와 SHA|
 
-## 단일 runtime과 capture 완료
+**실제 센서 thumbnail reference: 없음.** 존재하지 않는 thumbnail이나 이전 exterior PNG를 첨부하지 않는다. Pose/target/error/clearance는 전부 NOT_EVALUATED, stack line-of-sight UNKNOWN이다. 실패 evidence를 정상 검출0이나 invalid depth 측정으로 바꾸지 않는다.
 
-명령은 `python3 scripts/run_construction_site_lit_once_20261022_v01.py`였다. `/proc` comm/cmdline gate에서 기존 Isaac/Kit/SimulationApp 프로세스0을 확인했다(`kit_launch_ledger.json`). exclusive-create ledger가 같은 output 재실행을 거부한다.
+## 보존·검사·다음 행동
 
-실제 `/home/user/anaconda3/envs/hh_isaac51/bin/python` + Isaac Sim5.1 `isaacsim.exp.base.python.kit`/SimulationApp, headless RayTracedLighting. 환경은 EULA YES, PYTHONPATH 제거. 패키지 설치/업데이트 없음. timeline stopped, 활성 ROS extension0, 활성 OmniGraph0, physics.play0, motion0이다. USD edit target은 session layer이며 runtime save는 없다.
+known-lock 도구9개 hash/count PASS(108/432 포함, 이번 pairing 재감사 아님). LIT manifest가 고정한 source hash 및 LIT USD·checkpoint·pose 원본을 실행 전/후 재검증 PASS; exact 목록과 수는 launch ledger/preservation JSON에 있다. 원본·prior outputs·weights/protocol/threshold/조명/300 membership 수정 없음. 새 Python3개 compile PASS. 이번 환경에서 `git status`는 not a git repository로 실패했고 staging/push/remote 변경은 없다. 과학 패키지 설치/업데이트 없음.
 
-캡처를 한 번만 요청했다. future 완료 후에도 update를 계속하면서 파일의 비영 크기 안정화3회, PNG signature·각 chunk CRC·IEND·zlib 압축 해제를 확인했다. 11 update/0.167s 후 1138884바이트 PNG가 검증됐다. **내부 `kit_internal_result.json`은 load/capture PASS**, **외부 `kit_host_exit.json`은 EXITED/returncode0**, wrapper exit0이다. `kit_shutdown.json`은 없으므로 `app.close()`의 Python return은 UNKNOWN이며 내부 capture PASS/host exit0와 구분한다. Native expired-prim/core dump signature는 이번 log에 없다.
+변경: 신규 capture/infer/host 스크립트3개(`scripts/*construction_site_front*20261022_v01.py`), 이 보고서, PROJECT_STATE append. 외부에는 이번 실패 실행 evidence만 추가했다. 실행한 소스는 실패 당시 hash와 함께 보존하고 수정·재실행하지 않았다.
 
-원본 rolltainer의 reference scope 밖 material binding 경고와 fabric의 rear_right_steer_link/visuals/mesh_0 경고는 log에 남아 있다. 이 경고를 제거하거나 임의 asset 변경하지 않았다. GUI callback 전체와 모든 dependency의 무결함을 주장하지 않는다.
+**다음 구체 행동 하나:** 별도 후속 단일 센싱 실행을 준비할 때, 기존 LIT를 열되 session layer에 원래 preview/recovery로 입증된 `metersPerUnit=1.0`, `upAxis=Z`를 명시하고 render 전 readback을 검사한다. 원본 파일·geometry·카메라 pose는 그대로 보존한다. 동시에 host가 internal FAIL이면 nonzero로 종료하도록 수정해야 한다. 이번에는 이를 실행하지 않았으며, 현재 v01 명령 재사용은 exclusive output에서 거부된다. sensing·pose가 성공하지 않았으므로 approach/motion 연결을 다음 단계로 주장하지 않는다.
 
-## 보존·검사·변경 파일
-
-- 입력 runtime USD SHA256 `97da3867a2297f2f90d10ce120280c06e4b1cc71833e51d7862e8399794c3ab6`, 이전 PNG SHA256 `4f2aabda24be8ff8be2d10199a5068234c161721b6c920b1867eec349dc9a083` 일치.
-- 기존 manifest source hash와 used-layer23 SHA를 실행 전/후 검증 PASS. 모든 절대경로/hash는 `manifest.json.source_hashes`, 이전 demo 증거 hash는 `prior_photometric_evidence.json`, code/output hash는 `final_evidence.json`에 있다.
-- 로버/현장/fixture 전체 prim 속성·relationship의 전후 signature 일치 PASS. 메시 points·xform·재질 binding·subset·membership 포함이며 frustum/bbox/camera matrix audit를 반복하지 않았다. 실제 nonempty brick meshes300, rover1, PhysicsScene1, graph0, camera2, RenderProduct1, `/Render` active, calibration 활성 빈 컨테이너2 유지. 새 layer의 authored 변경은 Dome 속성2개+RectLight뿐이다.
-- Offline10 checks PASS, 신규 Python4개 AST PASS 및 shell syntax PASS, PNG 부분파일/CRC 등5 checks PASS, 알려진9 locks hash/count 재검증 PASS(known subset 한정), post-runtime7 checks PASS. source/원본/이전 output 변경 없음.
-- 신규 `scripts/build_construction_site_lit_20261022_v01.py`, 대응 `.sh`, `scripts/check_construction_site_lit_kit_20261022_v01.py`, `scripts/run_construction_site_lit_once_20261022_v01.py`, `analysis/construction_site_lit_image_metrics_20261022_v01.py`, 이 보고서; `docs/PROJECT_STATE.md` append. Bulk USD/PNG/log/JSON은 외부 output에만 저장. Git staging/push/remote 변경 없음.
-
-실용적인 headless 밝기 blocker는 이번 이미지에서 해소했다. GUI_VISUAL은 UNKNOWN으로 남긴다. 다음 작업은 필요시 **위 최종 USD 하나 열기**이며 추가 수동 진단을 요구하지 않는다. 이 조명은 preview 전용으로 연구 lighting lock을 대체하지 않는다. controller/ROS publisher/HOLD graph/training/ENG001/QUAL12/432 실행0, 연구 분모 기여0. 기존 실패·protocol·threshold·checkpoint는 보존했다.
+전체 exercise는 engineering-only이며 preview Dome2500/Rect6000을 frozen research lighting으로 승인하지 않는다. Full E2E 성공·실제 robot 배포 검증 없음. 기존34.127mm stop regression/quiet FAIL, ROS PUBLISHER_SET blocker, ENG001/QUAL12/432 HOLD 유지. 연구 분모 기여0.
