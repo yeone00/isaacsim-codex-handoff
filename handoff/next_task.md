@@ -1,60 +1,28 @@
-# IMMEDIATE REPAIR 2026-10-22 — PREVENTABLE STAGE-METADATA FAIL, THEN REAL FRONT-CAMERA RGB-D/YOLO SINGLE SMOKE
+# NEXT 2026-10-22 — FINISH B5 PALLET DATUM FROM ALREADY CAPTURED REAL RGB-D (NO MORE KIT LAUNCH)
 
-User is understandably furious about repeated expensive headless Kit launches that fail before any sensor capture due to assumptions we could and MUST have checked offline first. STOP creating multiple audit phases and withholding real sensor evidence. In THIS ONE CODEX TURN: correct the preventable stage metrics issue, PRE-FLIGHT ALL OTHER STATIC ASSUMPTIONS before Kit launch, and if genuinely ready run exactly one no-motion real on-rover sensor/inference smoke.
+Previous task REAL SUCCESS (read reports/construction_site_front_rgbd_pose_smoke_fix_20261022_v02.md):
+- Fresh mounted rover front RGB 640x480, depth 480x640 float32 distance_to_image_plane in meters, camera_params saved; one real frozen HR_Scan M50 YOLO11-seg detection class0=brick_load conf 0.8027858734 mask29876px; B4 heading world XY modulo180 90.15771484375°, margin0.001015 < gate0.014116. KIT/internal/host PASS.
+- B5 full pose/target STILL NOT EVALUATED (NULL), because frozen pose code needs an INDEPENDENT physically supported pallet-top datum; do not use known Fixture world pose or ground truth as estimator input.
+- Existing immutable output to REUSE:
+ /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_FRONT_RGBD_POSE_SMOKE_20261022_v02/
+   front_rgb.png, front_rgb.npy, front_depth.npy, camera_metadata.json, detection_overlay.png, detections.json, predicted_pose_targets.json, frozen_model_manifest.json.
+- Source locked B4/B5: /home/user/eval_step25_pose_final_locked_v01.py SHA cc95b96c3305dcbe257a40fcf16f0e68a9e58ae0d5ae43f9cbd31e80ffec0988. Checkpoint SHA 257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca. No further YOLO/Kit capture is necessary.
+- Scene 1m/Z-up root metadata now correct; preview-specific lighting is not frozen experimental lighting. No robot physical movement or ROS allowed. Existing stop regression and PUBLISHER_SET issues remain.
 
-## Grounded exact evidence
-Read reports/construction_site_front_rgbd_pose_smoke_20261022_v01.md and source scripts/outputs. Previous v01 produced:
-- ERROR in scripts/construction_site_front_rgbd_capture_20261022_v01.py line27: assert units == 1.0.
-- Stage opened: /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_LIT_20261022_v01/construction_site_e2e_lit.usda
-- LIT top-level composition reports UsdGeom.GetStageMetersPerUnit = 0.01m and GetStageUpAxis = Y, because top-level LIT/runtime-fixed/visible layer DOES NOT author stage metrics. Base recovery and original preview attempt_0002 authored metersPerUnit=1.0 and upAxis=Z. Correct meaning of scene world positions/geometry is 1m/Z.
-- Old Kit launched one time, aborted BEFORE creating annotators or capture, internal FAIL yet host/wrapper exit0. No RGB, depth, inference or B4/B5 outputs. DO NOT pretend NO_DETECTION/OUT_OF_FOV.
-- Frozen existing model checkpoint: /home/user/hh/isaac_cosmos/sdg_final/final_combined_m50_adaptation_v01/standalone_selection_v01/selected_models/FINAL_HR_Scan_M50_REALVAL_MASKBEST_v01.pt; SHA256 257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca; class0 brick_load; YOLO11 seg actual loaded in sdg_tools env. Locked B4/B5 source /home/user/eval_step25_pose_final_locked_v01.py SHA cc95b96c3305dcbe257a40fcf16f0e68a9e58ae0d5ae43f9cbd31e80ffec0988. Existing on-robot front camera /World/ENG_FE2E/Rover/base_link/front_link/front_camera/front_Camera, not preview camera.
-- Lighting preview scene has real render visual PASS, robot + 300 cement HR_Scan bricks + pallet visible in EXTERIOR camera, not yet proven from FRONT camera. GUI lifecycle unknown. Do not touch original/preview old outputs.
+ONE SUBSTANTIVE JOB: actual DATA-BASED offline pallet datum assessment and B5 if justified. Do not spin up another Kit, regenerate scene, run model again, make new interface/camera layers, create another giant audit, or ask user to click GUI. Use already saved RGB/metric depth/segmentation/camera calibration.
 
-## REQUIRED ACTION (one joined job, no incremental back-and-forth)
+1. Inspect existing frozen B5 code contract and source of pallet_plane/datum (frame, definition, acceptance, whether independent external measurement is mandatory). Read existing scientifically sourced pallet physical dimension (report mentions frozen pallet plane 0.144m) and provenance; distinguish independently known physical pallet height from the ground-truth fixture world transform. If no defensible physical height or datum, explicitly note and do NOT hallucinate a value.
+2. Using existing front_depth.npy + camera_metadata.json and segmentation mask, obtain independently OBSERVED ground/support-plane / pallet-top plane candidates. Prefer real metric RGB-D point cloud transformed via saved calibrated camera pose to world 1m/Z. Select floor pixels clearly OUTSIDE brick_load and pallet ROI, use robust plane fit/RANSAC, check normals relative to world Z, point counts, residuals and inlier support. Pallet top is partially visible around bricks in RGB image; if possible fit actual pallet top directly on verified pixel regions and support, without using fixture authored xform or GT segmentation. Use explicit geometric validity tests and clear visual ROI visualization/overlay. Avoid passing known source fixture Z or brick stack GT into estimator; reserve scene authored geometry/ground truth ONLY for post-prediction audit with two separate phases.
+3. Determine whether sensor-estimated plane plus independently sourced physical pallet thickness meets frozen B5's notion of an independent pallet-top datum. If valid, compute in existing world frame with uncertainty, run the ORIGINAL unchanged B5 code offline using saved real mask/depth and derived datum, and obtain pose and B5 PRE/FINAL targets with confidence/validity indicators; save actual numerical target and provenance. If not valid, retain B5 NOT_EVALUATED and explain the ONE concrete missing independent datum and pragmatic physical measurement needed. Do not relax thresholds or alter frozen estimator to force success.
+4. Use approved geometry/pose from source ONLY AFTER predictions have been frozen to estimate B4 heading error and B5 pose error, if frames correspond, explicitly separated as offline evaluation. Do not claim successful physical alignment or clearance without real collision/motion check. No GT injected into perception.
+5. Output concise actual plots/diagnostic overlay of observed ground/pallet candidate and metrics plus one JSON:
+ /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_B5_DATUM_OFFLINE_20261022_v01/
+  candidate_floor_plane.json, candidate_pallet_plane.json (or rejected reason), b5_predicted_pose_targets.json, provenance.json, roi_overlay.png when feasible. New output path must be unused and old results preserved. Avoid unsupported claims about surface normals or floor planar quality.
+6. Generate report reports/construction_site_b5_datum_offline_20261022_v01.md with clear conclusion B5 VALIDATED vs INSUFFICIENT_DATUM, numerical plane evidence, valid B5 pose/target only if warranted, precise next SINGLE engineering action, no more than 1 page if possible. docs/PROJECT_STATE.md append. If output would require refactoring prior locked B5 code, STOP and report scope precisely instead of modifying science.
 
-A. Fix stage-unit metadata at root CAUSE with a completely new immutable working input OR a stage session-layer override, whichever reliably yields active composed stage 1.0/Z in Isaac Kit. Prefer writing a NEW thin/derived USD layer with BOTH:
-  metersPerUnit = 1.0
-  upAxis = "Z"
-authoring stage root metadata explicitly, while referencing/sublayering existing lit site with same authored composition and without changing original source USD, rover, scene mesh xforms, camera, light, or 300-brick membership. Validate composed result via bundled pxr offline.
-  Alternatively session-only override allowed via actual OpenUSD API:
-  with Usd.EditContext(stage, Usd.EditTarget(stage.GetSessionLayer())):
-      assert UsdGeom.SetStageMetersPerUnit(stage, 1.0)
-      assert UsdGeom.SetStageUpAxis(stage, UsdGeom.Tokens.z)
-  then re-read UsdGeom.GetStageMetersPerUnit(stage), GetStageUpAxis(stage). NOTE stage metadata in a SUBLAYER is insufficient; explicitly read stage composed results at top-level. Treat incorrect return as preflight FAIL. The root-layer approach is preferable if any session behavior ambiguous.
-  Do NOT scale model by 100, rotate stage or call reference transform correction: the source coordinates are already in 1m/Z. This is metadata correction ONLY.
-  OpenUSD evidence: https://openusd.org/release/user_guides/schemas/usdGeom/overview.html and https://openusd.org/release/api/class_usd_stage.html — stage metrics and root/session layer authoring.
-
-B. BEFORE ONE KIT LAUNCH run a fast offline preflight, on REAL target scene and script configuration, fail with exact concise issue, NOT another generic stage:
-  - exact intended stage composed 1.0m/Z and BOTH metrics authored
-  - front camera Prim is active, loaded, is UsdGeom.Camera, correctly mounted, with valid projection/clipping and nondegenerate world pose
-  - correct robot and fixture shapes, 300 bricks, single rover, /Render active and intended headless render product accessible
-  - actual checkpoint exists, SHA matches and can load in installed inference environment (already loaded in previous report); pose source exists SHA matches
-  - imported code/module/annotator ID names and effective output destinations can be resolved enough to avoid preventable static assertions; no arbitrary zero-frame/float equality checks.
-  - B5 requires an INDEPENDENT physical pallet datum, which remains unproven; this is not a blocker for taking RGB-D and doing YOLO/B4, so treat full B5 as NOT_EVALUATED instead of killing the smoke. Never inject fixture/world pose as B5's input.
-  - ensure output path is new UNUSED version, e.g. /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_FRONT_RGBD_POSE_SMOKE_20261022_v02 ; old v01 failed output cannot be reused or overwritten.
-  - confirm no running Isaac GUI/Kit before launch. No other instance while GUI open.
-
-C. Correct actual live sensor runner:
-  - Use full LIT site scene but corrected 1m/Z, on-rover FRONT camera (not exterior preview camera), one RGB+meter depth distance_to_image_plane+camera_params capture with existing live Isaac5.1 replicator/annotator implementation (no fake data).
-  - Await asynchronous capture file writes and verify complete PNG/NPY/JSON before closing Kit. The previous async-capture race is already fixed; retain that logic.
-  - Run REAL frozen checkpoint YOLO11-seg on FRESH captured RGB, mask->depth pose B4, then B5 only if genuine independent datum is available. Never use fixture GT poses or root authored transform in model inference.
-  - If no detection/invalid depth/camera front misses brick stack, SAVE FRESH RGB and depth and report accurate reason, not another failure from an unnecessary assert; record line-of-sight from live image. Failure cases count useful sensor smoke evidence.
-  - Do not change camera/object pose, lighting, controller, physics/protocol.
-  - No physics.play, ROS/OmniGraph actuation, robot movement, repeated launches, automatic retries, research denominator count.
-
-D. HOST/INTERNAL STATUS bug MUST be fixed: failure in Kit Python result JSON must yield NONZERO wrapper/host status, even if SimulationApp clean shutdown returns host exit0. A separate host gate may inspect internal result after child exit and exit with nonzero. On failures preserve evidence and don't call it PASS. Avoid throwing an early assertion that prevents saving sensor negatives.
-
-E. After offline preflight PASS, DO EXACTLY ONE ACTUAL Kit5.1 no-motion runtime session, IF no other Kit running. Save in new output:
-  front_rgb.png, front_depth.npy, camera_metadata.json, frozen_model_manifest.json, detection_overlay.png (if inference), predicted_pose_targets.json (status & reason), internal/host result and preserved logs. If GT B5 datum unavailable still provide B4 status and image.
-  There should be no more "we ran Kit then realized a stage metadata assumption" — preflight the stage metrics without Kit before launch.
-  If preflight exposes hard true blocker, resolve in this SAME task when source-derived and safe, THEN single launch; do not stop at creating a preparatory report. If truly impossible, report exact missing module and no Kit run.
-
-F. Deliver concise actual results, NOT another giant audit:
-  reports/construction_site_front_rgbd_pose_smoke_fix_20261022_v02.md
-  exact new run paths, metadata correction provenance and preflight evidence, whether front RGB/depth actually saved, detection+confidence, B4/B5 target or honest null, Kit internal outcome and host propagation. Append docs/PROJECT_STATE.md; preserve v01 failed evidence/hashes.
-  Output final marker exactly once only if report exists:
-HANDOFF_REPORT: reports/construction_site_front_rgbd_pose_smoke_fix_20261022_v02.md
-
-## Do not repeat previous waste
-No camera/lighting preview variants, no additional renders solely for appearance, no new control algorithms, no generic 100-check test suite, no asset/model training, no QUAL12/432, no motion/ROS, no re-running v01 path, no requests for screenshots/manual user prim property work. The user wants the first real front-camera RGB-D and model output, even if model misses. Finish that if at all technically possible.
+SAFETY / REVIEW:
+ - ONLY offline computation using existing files, NO new Isaac Sim, ROS, physics.play, movement, controller updates, QUAL12/432, research denominator change.
+ - Do not overwrite scene, capture, model, original USD, B4/B5 frozen code, hashes. No unmeasured pallet-height guess; no manual image coordinate hacks without recorded mask/ROI and uncertainty.
+ - Crucially the old B4 gate PASS is geometry/heading-specific; full pose success/robot deployment not established.
+Final marker if report exists:
+HANDOFF_REPORT: reports/construction_site_b5_datum_offline_20261022_v01.md
