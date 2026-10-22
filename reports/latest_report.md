@@ -1,55 +1,23 @@
-# 전면 RGB-D·동결 YOLO 단일 스모크 수정 결과 — 2026-10-22
+# B5 독립 datum 오프라인 평가 — 2026-10-22
 
-**실제 센서 캡처·YOLO 실행 PASS. Kit 정확히 1회, 재시도0. B4 heading 계산 완료, B5/전체 pose/target은 NOT_EVALUATED·null.** 기존 v01은 캡처 이전 assertion FAIL이며 그대로 보존했다.
+**결론: INSUFFICIENT_DATUM — 관측 상판 후보는 확보했지만 현행 증거 계약에 부합하지 않아 B5 NOT_EVALUATED, pose/PRE/FINAL=null.** 물리 높이 부재만으로 끝낸 감사가 아니다. 저장된 RGB·metric depth·예측 mask·calibration으로 실제 평면을 계산했다. 센서 관측을 planned fixture design으로 위장하지 않았으며, 요청의 계약 변경 시 중단 조건을 적용했다.
 
-## 실제 결과와 위치
+산출물: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_B5_DATUM_OFFLINE_20261022_v01/`. 실행: `/home/user/anaconda3/envs/sdg_tools/bin/python analysis/construction_site_b5_datum_offline_20261022_v01.py` (exit0). 동일 경로의 `roi_overlay.png`, `plane_diagnostic.png`, `candidate_floor_plane.json`, `candidate_pallet_plane.json`, `datum_diagnostics.json`, `b5_predicted_pose_targets.json`, `provenance.json` 및 정확한 ROI mask에 근거를 남겼다.
 
-새 실행 경로: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_FRONT_RGBD_POSE_SMOKE_20261022_v02/` (이하 RUN). 실행 명령: `python3 scripts/run_construction_site_front_once_20261022_v02.py`.
+|관측 근거|바닥|노출 팔레트 상판|
+|---|---:|---:|
+|유효 ROI / inlier 수|62,384 / 62,384|1,810 / 1,810|
+|world Z 대비 normal 기울기|0.370144°|0.079751°|
+|직교 잔차 RMS / P95 (m)|5.76e−8 / 1.14e−7|4.50e−8 / 8.63e−8|
+|ROI 중심 world Z (m)|−0.002026833|0.146866635|
+|XY covariance 작은 고유값 (m²)|0.009899|0.003574|
 
-|항목|실측 결과|
-|---|---|
-|front_rgb.png / front_rgb.npy|640×480 RGB, 저장·PNG 재개봉 검증 PASS|
-|front_depth.npy|480×640 float32, distance_to_image_plane, 미터|
-|전체 유효 깊이|288,630 pixels; 0.570293–4.205339m|
-|YOLO11-seg|fresh RGB에 동결 모델 predict 정확히1회; class0 brick_load 1개|
-|confidence / mask|0.8027858734 / 29,876 pixels, 모두 유효 깊이|
-|B4 heading|90.15771484375° (world XY, modulo180)|
-|B4 gate|margin .0010150169 < frozen .014116, 90° flip 미사용|
-|B5 / pose / PRE·FINAL targets|독립 physical pallet datum 부재로 NOT_EVALUATED / null / null|
-|Kit 내부 / child exit / wrapper exit|PASS / 0 / 0, inference exit0, 최종 host gate PASS|
+RGB를 먼저 보고 GT 없이 바닥 polygon `(40,335),(600,335),(600,450),(40,450)` 및 상판 polygon `(158,269),(185,239),(444,239),(482,269)`을 기록했다. 경계 2px erosion, 예측 brick mask 3px dilation 제외 후 역투영했다. 바닥은 팔레트·brick 밖이다. 상판 ROI는 육안으로 보이는 목재 deck 양옆·앞쪽이며 overlay 재확인했다. Seed261022, RANSAC400회, normal 제한10°, inlier3mm 후 TLS 재피팅. 별도 진단 기준 ≥100점·inlier≥80%·기울기≤5°·XY 분산>1e−5m²를 두 후보 모두 통과했다. 이는 **새 연구 성공 기준이 아닌 진단 기준**이다. 추가 erosion1/2px에서도 상판 중심 높이 변화 <1e−8m였다. 외측 ROI 확장·반복 관측·depth/camera 보정의 체계 오차는 미검증이다.
 
-RUN의 `front_rgb.png`, `front_depth.npy`, `camera_metadata.json`, `frozen_model_manifest.json`, `detection_overlay.png`, `detections.json`, `predicted_pose_targets.json`, `kit_internal_result.json`, `runtime_host_result.json`, `host_gate_result.json`, `runtime.log`, `inference.log`가 실제 존재한다. `final_evidence.json`에 파일별 크기·SHA256, 코드 해시와 최종 검증을 기록했다.
+바닥 평면 `n=(.002298154,−.006037599,.999979133), d=.240267997`; 상판 `n≈(0,−.001391911,.999999031), d=−.105066299` (`n·world+d=0`). 상판 ROI 중심 XY에서 바닥 외삽 Z=.000417517m, 상판−바닥=.146449118m로 명목 두께 .144m보다 2.449mm 크다. 바닥은 팔레트 아래를 직접 관측하지 않았고 두 평면도 평행하지 않으므로 floor+.144를 상판 datum으로 대입하지 않았다. 극소 잔차는 **시뮬레이터가 이미 렌더한 저장 RGB-D의 내부 평면성**이며 현실 센서의 수십 nm 정확도나 실물 팔레트 측정이 아니다.
 
-Fresh overlay를 직접 확인했다. 전면 영상 중앙에 벽돌 적층이 가림 없이 들어오고 팔레트는 그 아래 보인다. 배경은 바닥·창문이다. 따라서 이번 관측은 NO_DETECTION/OUT_OF_FOV가 아니다. 마스크 유효 깊이 min/median/max는 .995580/1.058167/3.257009m이며, 배경 혼입 가능성을 배제하거나 pose 정확도를 인증하지 않는다. GT 오차·clearance는 NOT_EVALUATED다.
+**계약·출처:** 원본 pose SHA256 `cc95b96c3305dcbe257a40fcf16f0e68a9e58ae0d5ae43f9cbd31e80ffec0988`, production SHA256 `a3740cd82022a1686794f8da892fb376ad1a02f63c2fe8e842ac1cef864641ad` 일치 PASS. `.144m`는 두 원본 및 prior allowlist의 독립된 **설계 두께**다. 실물 metrology·이번 fixture world transform과 다르다. 원본 `mask_to_world`는 Z≥PALLET_H−.020, `side_points`는 PALLET_H+nominal4×.090−.030을 사용하며 독립 측정 방법·normal 허용오차 계약은 없다. 현재 `full_e2e_locked_pose_adapter_v01.py:6–24`는 hashed `engineering_fixture_design` / `planned_horizontal_fixture_top_world_m`만 허용한다. Sensor-observed plane은 이 형식에 해당하지 않는다. 직접 원본 호출은 legacy K/frame을 쓰며 새 datum/calibration 연결 없이는 정당하지 않다. 증거 계약 확장·원본 우회 호출·동결 함수 변경은 하지 않았다.
 
-## 메타데이터 수정과 실행 전 검증
+**검사/한계:** 입력14개 실행 전후 SHA 보존 PASS, mask29,876px PASS, 진단 계산·overlay PASS. ROI 밖 무효 depth의 matmul RuntimeWarning(exit0)은 diagnostics에 보존했으며 피팅에는 유한 양수 depth만 들어갔다. B5 계약 적합 FAIL, 체계적 datum 불확도 UNKNOWN. 기존 B4=90.157714844°/margin.001015는 그대로 보존했으며 heading gate를 전체 pose 성공으로 승격하지 않았다. B5 예측이 중단되어 GT 오차 audit도 NOT_EVALUATED; 원본 fixture/GT geometry를 로드하지 않았다. Kit·YOLO·ROS·motion·학습·432 실행0, 연구분모 변화0. 체크포인트는 재로드/재해시하지 않았고 기존 manifest hash만 참조했다. Stop regression/PUBLISHER_SET은 미해결이다.
 
-기존 LIT 입력은 `CONSTRUCTION_SITE_E2E_LIT_20261022_v01/construction_site_e2e_lit.usda`, SHA256 `4e0ad262a0ce2a733e86e82e2ba69aa0eee42bb87c33086925117956bbddade8`이다. v01의 실제 `offline_unit_evidence.json` 및 recovery/preview 근거는 원래 좌표 의미1m/Z와 LIT root fallback .01m/Y를 구분한다.
-
-새 RUN/`stage_metrics_1m_z.usda`는 기존 LIT sublayer 하나와 **root metersPerUnit=1, upAxis="Z"만** 작성했다. SHA256 `424cb17b104d7a68a4c264216e38b9823f371524a8704e07fb4eec8b08d1e264`; 실행 전 read-only mode0444로 고정했다. 원본 저장·100배 scale·회전 보정은 없다. root/session stage metadata 의미는 [OpenUSD UsdGeom 문서](https://openusd.org/release/user_guides/schemas/usdGeom/overview.html)와 [UsdStage API](https://openusd.org/release/api/class_usd_stage.html)를 확인했다. 설치 버전 API는 직접 확인해 적용했다.
-
-Bundled pxr 오프라인 `offline_preflight.json` PASS: 최상위 composed1m/Z·두 root metadata authored, root prim spec0, 원본/파생 실제 prim membership·type·기여 source prim stack 일치, 입력hash 일치, 300 nonempty fixture meshes, 단일 rover, active /Render 및 기존 product 접근, active OmniGraph0. 따라서 mesh/xform/camera/light/300 membership opinion은 동일하다.
-
-실제 전면 카메라 `/World/ENG_FE2E/Rover/base_link/front_link/front_camera/front_Camera`의 active/loaded/Camera schema·mount·perspective·양수 focal/aperture·clipping(.01,10000000)·유한 비퇴화 변환·scale 제거 후 no-shear를 검사했다. 위치는 (-25.888,29.009,.5970774262)m이다. Replicator 설치 소스에서 rgb/distance_to_image_plane/camera_params 등록 및 synchronous step(delta_time0, wait_for_render)을 확인했고, Python 구문·실제 inference module import도 통과했다.
-
-**오프라인 실패도 보존:** 첫 preflight는 큰 메쉬 속성 직렬화 후 번들 Stage에 `GetCompositionErrors`가 없어 AttributeError로 exit1했다. Kit launch0인 시점이었다. `offline_attempt1_failure.json`에 남겼고 API 호환 v03에서 root prim spec0 + 실제 prim stack/membership 비교로 대체해 PASS했다. 최초 snapshot 비교 boolean은 저장되지 않아 인증 근거로 사용하지 않는다. 이 정적 검사 실패를 Kit 실패나 센서 음성 결과로 바꾸지 않았다.
-
-Checkpoint SHA256 `257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca`, pose 원본 SHA256 `cc95b96c3305dcbe257a40fcf16f0e68a9e58ae0d5ae43f9cbd31e80ffec0988`를 확인하고 sdg_tools에서 실제 모델 로드·segment/class0 brick_load를 검증했다. 추론은 기존 imgsz1280/conf.25/iou.70, mask>.5 nearest resize, 최고 confidence/tie index 규약을 유지했다. GT association·fixture pose 주입은 없다.
-
-## 단일 런타임과 종료 판정
-
-`launch_ledger.json`의 기존 Isaac/GUI process0 이후 Isaac5.1 base.python.kit headless RayTracedLighting을 한 번 실행했다. 동일 전면 render product에서 RGB·axial depth·camera_params를 얻었다. timeline time0, stopped, ROS extension0, physics.play/명령/운동0. 카메라 변환 전후 일치, renderer view와 optical 변환 일치, metersPerSceneUnit1.0, 실제 fx=fy317.0431201px, cx320/cy240 확인.
-
-PNG/NPY를 동기 저장한 뒤 다시 열어 완전성을 확인하고 Kit를 닫았다. async viewport capture future를 사용하지 않으므로 저장 future 미완료 shutdown 경로가 없다. 로그는 약17.277초에 shutdown을 기록한다. `app.close()` 뒤 Python marker는 없어 close의 Python return은 UNKNOWN이지만, child exit0 및 이미 저장된 내부 capture PASS와 host/inference 결과는 확인했다. 기존 material binding/fabric 경고와 unknown projection→pinhole fallback 경고는 로그에 보존했으며 실제 cameraModel=pinhole과 projection/calibration 교차 검증은 PASS했다.
-
-호스트는 child exit만으로 성공 처리하지 않고 **내부 PASS·child0·inference0 모두** 요구한다. 내부 FAIL/UNKNOWN 또는 inference 실패면 wrapper1이다. child0/internalFAIL, missing internal, child failure, inference failure, 성공 판정 사례를 검사했다. 이번 실측은 모두 성공해 wrapper0이며, 이번 런에서 내부 실패를 인위적으로 유발하거나 Kit를 재실행하지 않았다.
-
-B4는 fresh mask/depth 역투영 점에 기존 추출 core의 top-band/heading 함수만 적용했다. B5 vertical filter/독립 datum 입력은 적용하지 않았다. 전체 B4/B5 pose pipeline PASS·목표 접근 readiness로 해석하지 않는다.
-
-## 보존과 다음 행동
-
-입력27개 실행 전후 hash PASS, v01 기존 산출물·스크립트14개 hash 보존 PASS, known-lock9개 hash/count PASS(이번 pairing 재감사 아님). 원본·v01·weights·protocol·threshold·카메라·조명은 수정하지 않았다. 과학 패키지 설치/학습/preview 재렌더/ROS/움직임/QUAL12/432 없음, 연구분모0.
-
-변경 파일: 신규 `scripts/construction_site_front_rgbd_capture_20261022_v02.py`, `scripts/construction_site_front_infer_20261022_v02.py`, `scripts/run_construction_site_front_once_20261022_v02.py`, `scripts/preflight_construction_site_front_20261022_v02.py`(실패 보존), API 호환 `scripts/preflight_construction_site_front_20261022_v03.py`, `scripts/check_construction_site_front_camera_20261022_v02.py`, 본 보고서와 PROJECT_STATE append. 외부 RUN에는 실제 센서/추론/상태/검증 증거만 추가했다.
-
-다음 구체 행동은 실제 RGB-D·overlay를 검토하고 독립 pallet datum의 물리적 근거를 확보하는 것이다. 확보 전 B5 target 생성·motion으로 진행하지 않는다. 이번 관측은 engineering-only이며 frozen 연구 lighting/confirmatory/real robot 배포 검증을 대신하지 않는다.
+**다음 단일 행동:** 현재 관측 상판 후보와 불확도를 증거로 받는 **새 버전 datum adapter 계약을 검토·승인**한다(동결 B4/B5 함수 유지). 추가 Kit 캡처는 필요 없다. 실물 독립 검증이 필요하다면 동일 world 기준에 연결한 팔레트 상판의 다점 높이 측량이 필요하지만, 측정값만 생겨도 현 adapter의 evidence-kind 제한은 별도 해결해야 한다. 지금 병목을 단순히 “팔레트 두께 하나 부족”으로 표현하지 않는다.
