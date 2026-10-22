@@ -1,32 +1,43 @@
-# NEXT — Construction-site perception/pose smoke, NOT flat-floor controls or another USD audit (2026-10-21)
+# URGENT 2026-10-22 — FIX ACTUAL GUI VISIBILITY of construction-site preview (not another theoretical frustum PASS)
 
-Previous task COMPLETED: actual new preview at
-/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_PREVIEW_20261021_v01/attempt_0002/construction_site_e2e_preview.usda
-Report reports/construction_site_isaac_preview_20261021_v01.md.
-User has the Isaac Sim 5.1 GUI open on workstation; do NOT start a second SimulationApp while GUI runs. Do not request new screenshots or repeated property inspection.
+This replaces the earlier RGB-D/YOLO task for ONE targeted GUI preview repair. The user's ACTUAL Isaac Sim 5.1 screenshot of existing preview contradicts the offline camera check:
+- Open file: /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_PREVIEW_20261021_v01/attempt_0002/construction_site_e2e_preview.usda
+- GUI viewport toolbar explicitly says "ConstructionPreviewCamera".
+- Render shows a SMALL, distant, OVEREXPOSED construction site only against large white background, approx 250px wide in ~810px viewport. NO identifiable rover, pallet or cement bricks.
+- Stage shows /World/ConstructionSite and collapsed /World/ENG_FE2E (not visibly marked inactive). The intended preview was an actual close, recognizable SITE + ROVER + PALLET/300 CEMENT BRICKS together.
+- This is NOT a successful preview! Do not tell user to manually expand nodes, press F multiple times, send more screenshots, tweak attributes, or restart numerous times.
+- Current Isaac GUI IS OPEN on workstation; DO NOT launch another concurrent SimulationApp, ROS, physics or motion. Original scene open UI marked * in earlier screenshots: do not save changes into any original/old USD.
 
-## Actual known state
-- Source site /World/ConstructionSite, rover /World/ENG_FE2E/Rover, cement HR_Scan FULL 300 bricks and pallet /World/ENG_FE2E/Fixture, one PhysicsScene; real mounted front Camera and preview Camera.
-- Composition static PASS, camera frustum checked offline, active graph0 (purposely DISABLED preview), ROS publish/motion0.
-- OFFLINE_PARTIAL specifically missing deps some MDLs/grid URL and local apriltag PNG/mitex JPG, many may be inactive branch. GUI visual status is not yet known. Original USD/assets immutability required.
-- Old isolated actual ROS/graph mobility can move rover but zero→stop moved backward34.127mm, quiet failed. Legacy PUBLISHER_SET issue root-cause unknown. New K1 HOLD branch STOP. These are honest downstream blockers; do not misrepresent scene preview as motion readiness.
-- Research core: asset-representation performance comparison in CONSTRUCTION SITE. Path frozen RGB-D → YOLO model → B4/B5 depth pose → approach-target determination → actual motion/stop. Ground-truth only for evaluation, never perception/controller input. Freeze controller and scientific locks; QUAL12/432 prohibited until valid one-shot E2E.
+Previous report: reports/construction_site_isaac_preview_20261021_v01.md
+Previous preview builder scripts/build_construction_site_preview_20261021_v01.py
+Previous derived preview manifest JSON and camera_geometry_checks.json in attempt_0002.
+It claims camera at (-30.5,25.4,2.7) target (-25.85,29.65,0.7), rover (-25.88797768,28.4708691133,-.00835194) and fixture (-25.888,30.509,.00121562), one active rover and a 300-brick cement HR_Scan pallet. That claim was OFFLINE ONLY. Investigate why it does not render as intended in the actual user's GUI.
 
-## Single substantive deliverable
-Prepare (do not run without explicit approval) ONE reproducible and MINIMAL **real construction-site RGB-D perception + B4/B5 pose smoke** using this exact existing scene and front robot camera. The next work must establish whether the actual site scene and study sensor/data/model path function. Do not spend this turn making a new robot controller/ROS safety framework, another graph-only witness or another scene with cubes.
+## DO THE WORK — ONE REAL VISUAL PREVIEW FIX, not a diagnostic report only
 
-A. Inspect only necessary script/model/camera/source refs and actual pinned frozen weights/shape, existing RGB-D extraction and B4/B5 modules; identify actual paths (no guessed weights), create a small live runner or GUI-safe Python script for ONE engineering frame/short sensor capture from the actual derived scene, real camera RGB plus distance_to_image_plane depth, frozen YOLO11-seg, B4/B5 predicted target, and source timestamps. No offline pre-filled prediction or GT-derived target. If there is no reachable model, report exact blocker.
-B. First deal with scene asset appearance pragmatically: via USD analysis identify which missing deps are truly reachable from currently active mesh/shading; either fix ONLY genuinely required active materials with correct existing assets/Kit paths on a NEW derived layer, or keep OFFLINE_PARTIAL and explain what specific appearance might be wrong. Do not download random replacements or touch originals. Avoid repeating wholesale 411-dependency closure.
-C. Camera: confirm robot actual front camera is attached to existing robot and sees material in its real frustum. Note preview camera visibility is NOT same as front sensor camera visibility; if front sensor FOV is wrong, adjust ONLY preview-specific initial rover pose/camera or target placement in a NEW scene version and document transform; no GT shortcuts. Do not silently assume object is visible because preview camera sees it.
-D. Deliver one NEW versioned sensor-smoke script plus exact one-shot CLI/launch procedure and outputs (frame RGB, depth NPY/metadata, actual inference mask/conf, predicted B4/B5 pose/target or honest NO_DETECTION) and a concise two-page report. If user GUI is still running, do NOT launch new Isaac process; prepare then request GUI closure only before a future explicit one-shot live smoke. Can optionally create a no-motion offline USD camera projection check now. Do not call external ROS bridge or move wheels in this task.
-E. No more than 2 true blockers. Keep failures as failures; do not create 15 preparatory wrappers. Source/hash and existing frozen assets stay untouched. Need a meaningful engine-based sensor capture NEXT, not a new audit/safety architecture.
+1. Inspect actual existing preview USD via USD/PXR (use known Isaac bundled pxr environment, not an arbitrary python with missing pxr):
+  - Camera authored XformOps, opOrder, composed local-to-world transform, orientation, look axis (-Z) and up (+Y); actual frustum/matrix, focalLength, aperture, clipping planes, shutter, camera prim relationships, DefaultViewport metadata, geometry visibility.
+  - Recompute projected image locations AND approximate on-screen pixel extents of rover and Fixture from authored world bounding boxes using USD convention and camera world transform; validate expected "large enough" and CENTERED. Do not conflate offline theoretical requested target with camera actual authored pose.
+  - Composition for /World/ENG_FE2E/Rover and Fixture: active/inherited visibility from ancestors; loaded payload, material, geometry descendants counts, size, USD BBoxCache world ranges, 300 brick actual mesh/reference instances, whether relationships refer to suppressed legacy actors, bad references or offset transforms. A nominal reference count isn't evidence meshes are visible. Report site/rover/fixture bbox, camera clipping and actual relative positions.
+  - Identify and FIX root cause of why user can see only distant site: wrong view camera orientation/authoring, unbound viewport camera, clipping, hidden/failed geometry, incorrect site-frame placement, or missing texture/lighting. Confirm with real composed USD data; categorize unverified branches as hypotheses.
+  - Do not rebuild entire research scene, guess new random assets, change frozen scientific poses or change old 300-brick membership. If fixing site placement genuinely requires a NEW preview-only visual pose, state exactly why and keep scientific geometry unchanged in source.
 
-## Authorized now
-Inspect/reuse code, produce a NEW small derived USD only if needed, scripts and offline checks, report. NO parallel SimulationApp launch, no physics.play, ROS publish, wheel actuation, physical rover run, automatic retries, QUAL12/432, research denominator change. Do not ask the user to operate GUI in multiple steps.
+2. Produce ONE NEW versioned corrected preview file in UNUSED output path:
+ /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_VISIBLE_20261022_v01/construction_site_e2e_visible.usda
+ (if path exists, fail without overwrite and report collision).
+ Make GUI default view a REAL authored close camera in which the rover BODY and pallet/brick stack are both visually sizable (~at least several tens of pixels each) while recognizable real construction environment forms background. Provide overview camera separately if useful. Camera frame should use actual USD camera axes, explicit composed world xform and projection, not only settings target. Preserve all ORIGINAL source and v01 preview USD untouched. Keep original floor/collision and one robot/PhysicsScene, inactive action graph; no ROS/motion.
 
-## Outputs
-- reports/construction_site_rgbd_pose_smoke_preparation_20261021_v01.md
-- Real script/config with one precise valid executable command (no ungrounded names), independent unused output, frozen model manifest and error/abort behavior. If not implementable due actual missing dependency, specific file+small correction.
-- docs/PROJECT_STATE.md append. Preserve all sources/outputs.
-- final marker only if report exists:
-HANDOFF_REPORT: reports/construction_site_rgbd_pose_smoke_preparation_20261021_v01.md
+3. Validation must address failure: project actual composed world-bounds corners for rover and pallet to image-space under actual corrected authored Camera Xform. Require projected centers inside frame with >15% image width/height (practical but avoid false precision; report actual ratios), no near/far clip issues, physically plausible bounds and visible descendants. If can't make both fit at a recognizable size, create a second "robot + pallet detail" camera with explicit default selected. Catch white/washed material only if relevant and source-backed. Avoid repeating full 411 dependency list unless one missing active material directly explains invisible body.
+ The GUI is open so do not auto-launch another SimulationApp. You may optionally use a LOCAL NON-SIM rendering preview only if it is already available; do not claim screenshots verified by GUI unless actually observed. A USD validator can PASS geometric checks but GUI_VISUAL remains UNKNOWN until opened.
+
+4. Output NEW builder patch/script if needed, small manifest (camera world matrix, image projection, material/mesh count, geometry bbox and source hash), report:
+ reports/construction_site_visible_preview_fix_20261022_v01.md
+ State exact diagnosed cause and what changed, new actual file path, what is visually expected, what remains unknown; do not label GUI visually PASS without evidence. If the true issue is failed USD geometry references, repair with existing REAL files/prim paths, not fake proxy cubes.
+
+5. Keep next study flow after fixing user-visible scene: real on-rover front RGB-D + frozen YOLO + B4/B5; forward-only approach later subject to existing physical stop and ROS guard failure. Do NOT do these until preview is usable, do NOT new graph/ROS/HOLD project, audits, 432-run. Limit code-only action to scene repair, no physics.play, no actuation, no parallel Isaac launch. User should only have to open ONE newly created file once, not repeat screenshots for many proposed variants.
+
+## Important provenance
+Actual report before fix recorded v01 preview USD SHA faf516f5d44b2e61a59eaafff54ad6a524a5bb5c5087a5788e352e63c50b6a19 and 300 asset refs. Asset is cement_brick_HR_Scan.usd source hash a3fbf6bd87d71007ae756a3288140d842d6e91135ee10d230a4ce52780d8f87c. Preserve.
+PROJECT_STATE append, old data untouched, no benchmark results.
+Last line after NEW report:
+HANDOFF_REPORT: reports/construction_site_visible_preview_fix_20261022_v01.md
