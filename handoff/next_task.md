@@ -1,29 +1,37 @@
-# NEXT 2026-10-22 — REAL CONSTRUCTION SITE VISUAL: FIX DARKNESS AND CAPTURE SMOKE
+# NEXT 2026-10-22 — ACTUAL CONSTRUCTION-SITE RGB-D -> FROZEN YOLO -> B4/B5 POSE (ONE ENGINEERING SMOKE)
 
-User has already spent hours repeatedly opening USDs, taking screenshots and running manual GUI Script Editor. No more manual diagnostics; DO NOT ask user to operate camera controls or take screenshots. Deliver real render evidence and ONE ready-to-open USD.
-
-## Latest reliable facts (read full report)
-reports/construction_site_runtime_prim_crash_fix_20261022_v01.md
-Current stage: /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_RUNTIME_FIX_20261022_v01/construction_site_e2e_runtime_fixed.usda
-- CONFIRMED FIXED: /Render active and viewport RenderProduct valid, /World/Rover_Calibration active empty container, stale cameras removed from active renderer, actual Isaac Sim5.1 Kit loaded and ended host exit0 WITHOUT prior native core dump, 1 real rover, 300 real cement HR_Scan brick meshes and pallet, proper scene bounds/camera. Preserve.
-- Actual saved headless image static_preview.png (look for file inside above output folder) shows left brick pallet, right rover outline and site but is TOO DARK for practical identification. HEADLESS_VISUAL FAIL, GUI_VISUAL UNKNOWN.
-- Prior renderer detail preview light blue-ish DomeLight intensity=350 color=(.65,.72,.85), down from original 2500. Renderer still has possible old tone/correction settings. Need check actual settings and image before choosing exact fix.
-- Latest single Kit smoke internal failure: scripts/check_construction_site_kit_load_20261022_v01.py immediately asserted PNG existence after screenshot capture future, but PNG was generated later. Do not count host exit0 as capture success. Fix asynchronous capture completion/wait, properly check image file and record output.
-- Exact camera position (-29.35,29.4,2.6) target (-25.888,29.4,.65) is geometry tested. DO NOT change camera or object pose or repeat offline frustum/PXR matrix audit.
-- Existing original source files, historical attempted USDs, scripts, checkpoints and frozen experiment parameters must remain IMMUTABLE.
-
-## ONE CONCRETE EXECUTION REQUEST
-1. Inspect old real dark PNG quantitatively (luminance distribution, nonzero masks), and inspect in image viewer or local image-processing library, plus the actual active DomeLight/environment/exposure/tone/color settings read from USD/Kit and prior functioning site render settings. Diagnose darkness instead of asserting root cause without checking.
-2. Build exactly ONE NEW versioned derived scene (do not overwrite):
+## Status and non-negotiable context
+Just completed: reports/construction_site_lit_preview_render_20261022_v01.md.
+Usable, truly rendered source scene, not a mock:
  /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_LIT_20261022_v01/construction_site_e2e_lit.usda
- Change only necessary preview display lighting, material resolving or color/exposure settings, chosen from evidence. Preserve 1 rover, 300 cement HR Scan meshes, site, preview camera and on-robot camera, /Render active, Rover_Calibration namespace active/empty, one physics scene, graph inactive, existing bounds/placement and science locks. Do not add surrogate materials that defeat real asset fidelity study.
-3. If no other Isaac GUI/process is running (user previous GUI crashed, but verify actual process list), conduct exactly ONE NO-PHYSICS NO-ROS NO-MOTION Isaac Sim5.1 Kit loading and STATIC RENDER of new scene. Fix capture future synchronization: wait for saved nonempty PNG and verify before close (no naive immediate is_file assert). Record host exit and internal return separately. No automatic second render if fail.
-4. Actually INSPECT output PNG for practical visibility (rover BODY, brick STACK and pallet, site background). Save output PNG, if useful an offline before-after composite; quantify exposure with p10/p50/p90 luminance and clipping. Classify HEADLESS_VISUAL_PASS only if visually recognizable, not merely because camera bounds or code tests pass. Distinguish GUI_VISUAL_UNKNOWN until real GUI observed.
-5. Generate concise report:
- reports/construction_site_lit_preview_render_20261022_v01.md
- Include specific cause evidence, modifications, absolute verified USD and PNG paths, honest runtime/capture/visual results and any blocker, input hashes and future one-file GUI-open instruction. Append docs/PROJECT_STATE.md; preserve previous failures and outputs. If still dark, report actual cause candidate from runtime settings and FAIL, rather than another design-audit project.
+Actual headless PNG:
+ /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_LIT_20261022_v01/static_preview.png
+HEADLESS_VISUAL_PASS (robot frame/body/wheels, 300 cement HR_Scan bricks+wooden pallet, construction-site floor/columns/windows clearly visible), Kit load/capture PASS, host EXITED0. GUI lifecycle still UNKNOWN. Actual lighting is preview-only Dome2500 + new RectLight6000; do not silently treat this as frozen SDG/evaluation lighting. Single rover, single physics scene, render product active, stale calibration consumer fixed, camera actual preview position and rover/brick pose locked. Preserve originals and prior outputs/hashes.
+User is exhausted by dozens of pointless camera/graph mock validations. Move the RESEARCH forward instead of making more proof-of-concept USD preview variants.
 
-SCOPE: no robotics controller, ROS publisher, physical motion, physics.play, new HOLD graph, dataset training, ENG001/QUAL12/432-run, experiment denominator adjustment. No GUI manual operations or new unsupported runtime promises.
+Research objective: test whether 3D asset representation strategies (HR_Scan/LR_Scan/Proxy/GeoCAD, cement/red bricks) affect synthetic->real perception and downstream robot pose/approach alignment. Current visible fixture is **cement HR_Scan 300 bricks nominal** only. Real robot front mounted camera:
+ /World/ENG_FE2E/Rover/base_link/front_link/front_camera/front_Camera
+ Existing trained YOLO11-seg and frozen inference checkpoint(s), synthetic RGB-D annotators distance_to_image_plane, frozen B4/B5 pose+target logic are in research project assets/scripts. Reuse ACTUAL source & checkpoint, NEVER mocked detections, never pass fixture GT world pose to estimation/planning.
+Do not assume the exterior preview camera is the on-robot perception camera. A pretty scene photo is not perception evidence.
 
-Output final marker only when report exists:
-HANDOFF_REPORT: reports/construction_site_lit_preview_render_20261022_v01.md
+## ONE SUBSTANTIVE CODEx JOB
+
+1. Inspect real project frozen model paths (e.g. M50_R50 RealAdapted if appropriate) and real camera prim/annotator and B4/B5 implementation and their expected inputs. Read only needed code/report/manifest; no broad audit, no literature search. Identify and document exact existing model checkpoint hash and which trained model representation it belongs to, resolution, class IDs and B4/B5 numerical conventions. If source absent do not invent.
+2. Build ONE minimal engineering-only on-robot vision smoke runner to OPEN THE EXISTING **LIT site USD** (or its fresh one-off derived run layer if absolutely required) in Isaac Sim5.1 and render a FRESH image from the actual mounted front camera, simultaneously REAL metric depth (distance_to_image_plane), and camera calibration/intrinsics/extrinsics metadata. Use existing correct annotators/ROS-independent pipeline. No physics.play, no ROS, no articulation movement, no training, no automatic retries.
+3. Run real frozen YOLO11 segmentation on FRESH on-rover RGB and then REAL depth-assisted B4/B5 predicted 3D/approach/target (or honestly output NO_DETECTION/INVALID_DEPTH/OUT_OF_FOV with actual sensor evidence). Save overlay RGB and B4/B5 computed target data when possible. Explicitly report detection.conf, segmentation mask area, depth valid pixels, predicted pose frame and predicted target, estimated clearances only if actually evaluated. Avoid calling camera viewport photo a sensor frame. Never use known GT stack position/pose or source USD target as estimator/controller input; GT for offline error evaluation only after predictions frozen. Use existing checkpoint, not a new default untrained model.
+4. Confirm mounted camera line-of-sight to stack FROM ACTUAL CAPTURE, not bbox-only. If object is outside FOV, negative result is meaningful; do not fake inference success. If orientation/location must change only to get sensible initial perception, do so only in a NEW engineering derivative with documented approved source-grounded start transformation and NO research GT leakage; preferably return honest OUT_OF_FOV instead of geometry edits. No multiple repeated test variants or parameter sweeping.
+5. Execute at most ONE no-motion actual Kit run, only if no GUI/Isaac process is already running (process gate), using existing workstation Python/Isaac5.1 and confirmed model weights; finish actual PNG/NPY/JSON captures before shutdown (the previous file existence race was solved). If cannot run due absent checkpoint/dependency, DO NOT pretend PASS or create ten wrappers; produce precise missing file/module and a small ready-to-execute script. Distinguish an internal exception from host exit0 and hold no-retry after crash.
+6. Save actual artifacts to NEW unused run output directory:
+ /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_FRONT_RGBD_POSE_SMOKE_20261022_v01/
+ at minimum front_rgb.png, front_depth.npy, camera_metadata.json, detection_overlay.png when detection succeeds, frozen_model_manifest.json, predicted_pose_targets.json (with status and failure reason), runtime result and log. No manipulation of prior USDs. Script output's exact names must match report and verify existence.
+7. Report
+ reports/construction_site_front_rgbd_pose_smoke_20261022_v01.md
+ with exact results, actual sensor frame thumbnail reference, whether YOLO inference ran, mask, B4/B5 pose and errors, honest fail states, actual host/Kit status and scientific limits. Append docs/PROJECT_STATE.md. Provide ONE concrete next step directly toward building single engineering E2E site rover approach ONLY if sensing and pose succeed. Otherwise focus on ONE proven blocker (e.g., mounted camera cannot see stack) with precise correction, not more separate research architecture projects.
+
+## Safety and research locks
+- Workstation GUI should not be asked to run Script Editor; do not launch Kit alongside GUI; no ROS publish, wheels, physics.play, robot motion, persistent controls; no A*/new K1 controller, no QUAL12, no 432 benchmark, research denominator remains0. Previous terminal stop drift34.127mm and raw-root quiet failure, and ROS discovery PUBLISHER_SET blocker remain; do not claim E2E motion success.
+- Source asset representation, camera/material hashes, prior scene and model checkpoints, fixed thresholds/hypotheses/protocol unmodified. Do not use GT in perception. Light in lit USD for visual preview does NOT automatically authorize lighting change of frozen study scenes; classify this entire exercise engineering-only until protocol alignment.
+- Save partial output if no detection and close simulator. Do not auto retry to force a success. Absolutely no further GUI click-by-click testing requested from user.
+
+Final marker ONLY if report exists:
+HANDOFF_REPORT: reports/construction_site_front_rgbd_pose_smoke_20261022_v01.md
