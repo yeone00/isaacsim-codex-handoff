@@ -1,60 +1,90 @@
-# 건설현장 프리뷰 가시성 수정 — 2026-10-22
+# 건설현장 runtime prim / 크래시 수정 — 2026-10-22
 
-새 정적 프리뷰 파일을 생성했다. **기하 검증 PASS / 실제 GUI_VISUAL UNKNOWN**이다. 이전 사용자 GUI 화면은 실패 증거이며 이전 frustum PASS로 이를 뒤집지 않는다. 이번에도 GUI를 관찰하거나 렌더한 것은 아니므로 실제 가시성 해결 완료라고 판정하지 않는다.
+새 USD의 runtime namespace 수정과 실제 Kit 로드/viewport RenderProduct 확인은 PASS다. **전체 smoke는 캡처 파일 즉시 확인 AssertionError로 FAIL**, host exit는 0이다. 성공 exit가 내부 실패를 덮지 않도록 별도 판정했다. 실제 저장된 headless 이미지는 매우 어두워 **HEADLESS_VISUAL FAIL**, 사용자 GUI 가시성은 **GUI_VISUAL UNKNOWN**이다. 재실행하지 않았다. 이전 사용자 GUI의 `Aborted (core dumped)`는 **CRASHED**로 유지한다.
 
-## 열 파일 하나
+## 전달 파일과 범위
 
-`/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_VISIBLE_20261022_v01/construction_site_e2e_visible.usda`
+최종 USD:
+`/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_RUNTIME_FIX_20261022_v01/construction_site_e2e_runtime_fixed.usda`
 
-새 파일에서 기본 카메라는 `/World/ENG_FE2E/ConstructionPreviewCamera`다. 팔레트가 화면 왼쪽, 로버가 오른쪽에 크게 배치되고 실제 원본 현장이 배경으로 남도록 옆에서 내려다보는 구도로 수정했다. 노드 확장·F·속성 수정·반복 재시작은 요청하지 않는다. 원본이나 이전 파일의 저장은 필요 없다.
+최종 SHA256: `97da3867a2297f2f90d10ce120280c06e4b1cc71833e51d7862e8399794c3ab6`.
 
-## 확인된 원인과 아직 확정할 수 없는 원인
+- 최종 builder: `scripts/build_construction_site_runtime_fix_20261022_v02.py`, launcher `.sh`. 기존 visible/preview builder는 수정하지 않았다. 새 builder v01 실패도 보존했다.
+- 최종 offline 검사: `scripts/check_construction_site_runtime_fix_20261022_v02.py`.
+- 한 번의 Kit 검사/host launcher: `scripts/check_construction_site_kit_load_20261022_v01.py`, `scripts/run_construction_site_kit_once_20261022_v01.py`.
+- 원본·이전 output·프로토콜·controller·체크포인트 변경 없음. 카메라 위치/target/asset pose/조명 변경 없음. 신규 바닥 없음. physics.play/ROS/actuation/ENG001/QUAL12/432=0, 연구 분모0.
 
-**확정된 결함:** 기존 팔레트 투영 폭/높이는 14.46%/14.76%로 이번 실용 기준 15%에 미달했다. 무텍스처 흰 DomeLight는 intensity=2500, exposure=0, color=(1,1,1)로 합성되어 있었다. 밝은 흰 배경과 높은 조명 에너지가 씻겨 보이는 현상에 기여할 수 있다. 새 프리뷰에서 가까운 측면 구도와 intensity=350, color=(.65,.72,.85)를 적용했다. 이 조도는 프리뷰 선택값이며 광도 보정이나 렌더로 검증한 최적값이 아니다.
+## 확인된 작성 결함과 수정
 
-**GUI 불일치의 단일 근본 원인은 UNKNOWN이다.** 기존 파일의 실제 authored/composed 카메라는 eye=(-30.5,25.4,2.7), 월드 -Z look=(.70354,.64302,-.30260), +Y up=(.22336,.20415,.95312)이며 요청한 표적 방향과 일치한다. `/World`, `/World/ENG_FE2E`의 상위 변환은 identity다. 기존 카메라의 실제 월드 행렬로 계산해도 로버 전체는 약197×204px, 팔레트는117×75px(810×506 기준)이다. 따라서 '현장 전체가250px/로버 없음' 화면을 잘못된 정적 카메라 방향으로 설명할 수 없다. GUI 세션의 다른 카메라 상태·레이어/렌더 상태가 적용됐을 가능성은 가설이다. GUI의 카메라 이름 표시는 사용자 증거로 인정하며 '카메라 미선택'으로 단정하지 않는다.
+실제 bundled `pxr`로 원본 parent site, calibrated derived reference, preview/visible USD를 합성해 확인했다. 이전 보고서의 기하 PASS는 runtime namespace/GUI PASS가 아니며 이번 사용자 관측이 결함을 확정한다.
 
-기존 root `cameraSettings:boundCamera`와 RenderSettings camera 관계는 올바른 prim을 가리켰다. 로컬 Isaac 5.1 `omni.kit.viewport.menubar.camera.../camera_menu_container.py`의 `__ensure_valid_camera`도 root boundCamera 키를 읽는다. 새 파일은 이 키, Perspective position/target, DefaultViewport boundCamera와 실제 RenderSettings camera를 함께 기록했다. 이 메타데이터는 현재 열린 GUI 세션에 강제 적용했다는 뜻은 아니다.
+1. `scripts/build_construction_site_preview_20261021_v01.py:38-39`의 pseudo-root children 중 World 외 전부 `SetActive(False)` 루프가 `/Render`를 껐다. 실제 authored opinion은 `CONSTRUCTION_SITE_E2E_PREVIEW_20261021_v01/attempt_0002/construction_site_e2e_preview.usda`의 `/Render active=false`다. 원본 recovery USD는 active=true다. visible v01은 이를 그대로 상속했다.
+2. 같은 builder의 35–37행 World children 일괄 비활성화가 `/World/Rover_Calibration active=false`를 작성했다. 원본 recovery USD는 이 루트에 `rover_base_camera_51_SUCCESS.usd` reference를 갖고 활성이다. 원본에 `/World/Rover_Calibration/rover_base`도 실제 존재/활성이다. 따라서 이전 합성에서 부모 비활성은 **로컬 확인된 사실**이다. 다만 사용자의 native expired-prim 예외를 던진 정확한 C++ 호출/보관된 handle은 확보하지 못했다. 비활성 부모가 발견됐다는 이유로 전체 native stack 원인을 확정하지 않는다.
+3. 원본 `/Render/OmniverseKit/HydraTextures`에는 viewport 제품과 Replicator, Replicator_01, Replicator_02가 있다. viewport와 _01/_02의 `camera`는 옛 calibration RoverFrontCamera 경로, Replicator는 꺼진 `/World/RobotCameraFixed`를 가리킨다. `/Render/OmniverseGlobalRenderSettings.products`는 이 제품과 이미 없는 Step16D 조명 캘리브레이션 제품들도 예약한다. 이것은 **확인된 stale consumer**다. `/Replicator/SDGPipeline/OgnGetPrims_01.inputs:pathPattern`도 옛 camera 경로지만 `/Replicator` 자체는 계속 inactive다. source 속성 조사에서 별도 calibration Python script hook은 확인하지 못했으며, 모든 외부 GUI callback 부재를 증명한 것은 아니다.
 
-## 실제 합성 형상 확인
+새 layer는 `/Render`, `/Render/OmniverseKit`, `/Render/OmniverseKit/HydraTextures`만 활성화하고 viewport 제품의 camera를 현재 detail preview camera에 재연결한다. 오래된 Replicator 제품3개는 개별 inactive, global/preview RenderSettings.products는 viewport 하나로 한정한다. 옛 renderer 설정을 통째로 활성화하거나 전부 지우지 않았다.
 
-인스턴스 proxy를 포함한 순회와 points·purpose·inherited visibility를 확인했다. 모든 대상/조상은 active/loaded이고 visibility 차단은 없다. instance 내부로 들어가지 않는 이전의 단순 mesh count를 근거로 삼지 않았다.
+Calibration 루트와 rover_base는 활성 namespace로 유지한다. 루트의 GroundPlane/Cube/Camera와 rover_base의 모든 직계 자식(링크·바퀴·joints·Looks)은 새 layer에서 개별 inactive다. 따라서 이 namespace에서 활성 prim은 컨테이너2개뿐이며 geometry/camera/physics API/graph가 없다. 두 번째 로버나 옛 controller를 활성화하지 않았다. 임의의 가짜 로버/대체 형상/카메라 alias도 만들지 않았다. 현재 로버의 후방 camera만 추가 inactive로 하여 실제 front camera와 detail camera 두 개를 유지했다.
 
-|대상|월드 AABB 최소 m|최대 m|확인|
+다른 억제 root도 원본/preview/fixed 활성 상태를 조사했다. `/Replicator`는 옛 SDG graph 때문에 계속 inactive, `/World/ROBOT_TASK`는 기존 RuntimeRover/PhysicsScene 중복 방지를 위해 계속 inactive다. `/World/TestSetup`, `/World/RobotCameraFixed`, `/World/SDGTarget_Mitex`, `/World/ROBOT_TASK_TARGET`, `/World/RobotTaskDebug` 등 옛 실험 root는 일괄 복구하지 않았다. 전체 실제 root 목록과 각 layer active opinion은 output의 `authored_active_diagnostics.json`에 있다.
+
+## 합성 readback과 형상
+
+|경로|이전 composed|수정 composed|새 layer authored|
 |---|---|---|---|
-|현장|(-35.923,-12.030,-3.760)|(41.678,37.613,8.791)|실제 mesh1, material subset410|
-|로버|(-26.584,27.727,-.00844)|(-25.192,29.215,1.565)|mesh20, render/default/proxy visible19, material subset528|
-|팔레트+벽돌|(-26.438,29.959,.00122)|(-25.338,31.059,.50522)|실제 nonempty visible brick mesh300, material300, 기존 팔레트Cube5|
+|/Render|false|true|true|
+|/Render/OmniverseKit 및 HydraTextures|부모 비활성으로 없음|true|true|
+|viewport RenderProduct|부모 비활성으로 없음|true|상위 true, camera 재연결|
+|/World|true|true|새 active opinion 없음|
+|/World/Rover_Calibration|false|true|true|
+|/World/Rover_Calibration/rover_base|부모 비활성으로 없음|true, 빈 형상 컨테이너|true|
+|/World/ROBOT_TASK|false|false|기존 false 유지|
+|/World/ROBOT_TASK/RuntimeRover|부모 비활성으로 없음|없음|추가 없음|
+|/World/ENG_FE2E 및 Rover/Fixture|true|true|기존 상태 유지|
 
-로버 본체는 `/World/ENG_FE2E/Rover/base_link/visuals/gl_shell/mesh`이고 실제 points607638개, purpose=default, visibility=inherited다. 본체 AABB는 (-26.2515,27.9299,.06885)~(-25.5245,29.0119,.52415)이다. 로버 전체 bbox만으로 본체 크기를 대체하지 않고 따로 투영했다. guide collision mesh는 렌더 메시 수에서 제외했다. 로버의 보이지 않는 debug Cube도 별도로 확인했다.
+Rover/Fixture/site bounds, visible/nonempty mesh와 material/subset 집계는 수정 전후 정확히 같다. 활성 geometry rover1, PhysicsScene1, OmniGraph0, RenderProduct1, camera2다. Fixture 실제 visible/nonempty mesh300, cement HR_Scan reference 및 300 membership의 기존 layer와 hash를 보존했다. camera world=(-29.35,29.399999999999995,2.6000000000000028), target=(-25.888,29.4,.65). 부동소수점 오차 허용1e-10로 확인했다.
 
-기존 rolltainer Plane의 `/World/Looks/OmniPBR` binding은 reference 범위 밖이라 무시되는 warning이 실제로 있다. 다른 rolltainer 본체/rover body의 geometry는 정상 합성되므로 이것을 로버 전체 소실의 원인이라고 하지 않는다. site는 mesh 직접 binding 대신410개 subset material을 사용한다. 전체411개 dependency 목록은 반복하지 않았다. 기존 unresolved MDL/일부 texture의 GUI 해석과 실제 shading은 UNKNOWN이며 임의 텍스처/가짜 proxy 형상으로 대체하지 않았다.
+- `/World/ConstructionSite`: bbox `[[-35.922999532751746, -12.03000091842822, -3.76000491489485], [41.678000472232675, 37.613003106975654, 8.791001771608157]]`, visible mesh 1, nonempty mesh 1, material subset 410, bound mesh 0.
+- `/World/ENG_FE2E/Rover`: bbox `[[-26.58353353126272, 27.727124082005997, -0.00843751199999998], [-25.19242182873728, 29.214614144527538, 1.564688323444346]]`, visible mesh 19, nonempty mesh 20, material subset 528, bound mesh 9.
+- `/World/ENG_FE2E/Fixture`: bbox `[[-26.43800001192093, 29.95899998807907, 0.0012156202235174187], [-25.337999988079073, 31.05900001192093, 0.5052156203391005]]`, visible mesh 300, nonempty mesh 300, material subset 0, bound mesh 300.
 
-로버/Fixture의 XY/yaw/z, site transform, 바닥·collision, 원본 형상·팔레트300 membership은 변경하지 않았다. 두 대상 y AABB 간격은 .74439m다. 새 preview-only 물체 pose도 도입하지 않았다. 단일 로버/PhysicsScene, active OmniGraph0을 재확인했다. 물리 contact/주행 가능성은 검사 범위가 아니다.
+## 보존한 입력과 검증 실패 이력
 
-## 수정된 실제 카메라 검증
+원본 parent: `/home/user/hh/isaac_cosmos/sdg_practice/construction_scene_robot_task_controller_perturbation35mm_2p5deg_v01.usd`.
+Calibrated rover reference: `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_IMPL_20261021_v01/attempt_0001/derived_calibration.usda`의 `/World/ENG_FE2E/Rover`; 원본 RuntimeRover를 참조한다. Fixture reference는 `DEMO_FE2E_001_HR_GEOM_v01/attempt_0001/derived_scene.usda`의 기존 Fixture다.
 
-카메라 eye=(-29.35,29.4,2.6), target=(-25.888,29.4,.65). 명시적인 SetLookAt 역행렬 하나와 resetXformStack을 사용한다. 실제 월드/view/projection 행렬과 -Z/+Y 축, authored opOrder·전체 camera attrs는 manifest에 보존했다. Perspective, focalLength24, aperture36×22.5, clipping .05~250m, shutter open/close0, exposure0이다. time-sampled camera ops는 없다. RenderSettings1600×1000과 기본 viewport camera 모두 동일한 실제 카메라를 참조한다.
+이전 visible manifest의 input_layer_hashes를 실제 파일과 대조했고 현재 source used-layer 전체 hash도 Kit 종료 뒤 다시 일치했다. 전체 path/hash는 `manifest.json.source_hashes`, `.prior_hash_inventory_verified`에 보존했다. 주요 값:
 
-|대상|투영 폭×높이 비율|810×506 화면 예상 bbox|화면 중심 (u,v)|카메라 깊이 m|
-|---|---|---|---|---|
-|로버 전체|35.69%×55.84%|289×283px|(.704,.485)|2.918~4.903|
-|로버 본체|20.70%×20.21%|168×102px|약(.660,.584)|모든 corner frame 안|
-|팔레트+300벽돌|23.21%×26.76%|188×135px|(.306,.600)|3.565~4.771|
+- `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_VISIBLE_20261022_v01/construction_site_e2e_visible.usda`: `828cc1d00509298473ebc65fd67bd02834c05b87683ab6002af08e65fc8547bc`
+- `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_PREVIEW_20261021_v01/attempt_0002/construction_site_e2e_preview.usda`: `faf516f5d44b2e61a59eaafff54ad6a524a5bb5c5087a5788e352e63c50b6a19`
+- `/home/user/hh/isaac_cosmos/sdg_practice/construction_scene_robot_task_controller_perturbation35mm_2p5deg_v01.usd`: `224cac492d267d0403c9402484fcf84011191208fb4689e7e3fc33eadf3756fe`
+- `/home/user/hh/isaac_cosmos/assets/assets/objects/cement_brick_HR_Scan.usd`: `55716ba771ba02b0d07492a60ab9ea3d38925dc1353ac980b4bd5d7d3a113157`
+- `/home/user/hh/isaac_cosmos/assets/assets/objects/_normalized/cement_brick_HR_Scan.usd`: `a3fbf6bd87d71007ae756a3288140d842d6e91135ee10d230a4ce52780d8f87c`
+- `/home/user/hh/isaac_cosmos/sdg_final/FE2E_V02_LEGACY_SUPERVISED_IMPL_20261021_v01/attempt_0001/derived_calibration.usda`: `ccd37e6493813884f49c66d7ae94419e0009293bb33954e0a241d23c775910f2`
 
-USD row-vector/world inverse 및 실제 projection matrix로 AABB8 corners를 투영했다. 가로·세로15% 초과, 중심/모든 corners 화면 안, near/far clip 여유 PASS다. 픽셀은 명시된 가상 해상도 기준 근사이며 GUI 실측이 아니다. 현장 실제 삼각형과 카메라→각 대상 중심 segment 교차0/0이다. 이는 전체 표면 가림이나 로버 자체가림/재질 렌더 PASS를 보장하지 않는다. 단일 detail 구도로 두 대상이 기준을 만족하므로 사용자에게 여러 후보 파일/카메라를 요구하지 않는다.
+처음 새 builder v01은 USD를 생성했으나 front camera 이름을 RoverFrontCamera로 가정하고 camera world float를 exact equality로 비교하여 exit1/FAILED다. 별도 v01 검사에서 실제 rear camera가 남아 있음도 확인했다. 초기 후보는 `failed_offline_candidate.usda`로 byte 보존했고 원래 manifest/build_status/offline_check 실패를 그대로 남겼다. 최종 새 USD에 rear camera만 비활성화했으며, 최종 builder v02와 offline_check_v02는 실제 front_Camera 경로/float tolerance/카메라2개를 확인한다. 최종 offline17 checks PASS이며 geometry/material 집계는 동일하다. Kit는 이 최종 파일에 대해서만 한 번 실행했다. 오류를 지우거나 실패를 PASS로 덮어쓰지 않았다.
 
-## 파일·실행·보존
+## 실제 한 번의 no-motion Kit 검사와 종료
 
-- Builder: `scripts/build_construction_site_visible_20261022_v01.py`, bundled pxr launcher `.sh`.
-- 본체 확인: `scripts/check_construction_site_visible_body_20261022_v01.py`.
-- 실행: `bash scripts/build_construction_site_visible_20261022_v01.sh` (프로젝트 cwd). 새 output mkdir(exist_ok=False)에 해당하는 사전 충돌거부; 이 경로는 이제 사용됐으므로 재실행하면 실패해야 한다.
-- 실제 런타임: `/home/user/anaconda3/envs/hh_isaac51/bin/python` + Isaac 5.1 `omni.usd.libs-1.0.1+69cbf6ad.lx64.r.cp311`; SimulationApp/omni/ROS import 없음.
-- 증거: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_VISIBLE_20261022_v01/manifest.json`, `body_geometry_check.json`, `build_status.json`, `build_validation.log`. 명령/원본 hashes/코드 hash/환경과 실제 행렬·투영·mesh/material count를 기록했다.
-- 새 USD SHA256: `828cc1d00509298473ebc65fd67bd02834c05b87683ab6002af08e65fc8547bc`.
-- 이전 USD SHA256: `faf516f5d44b2e61a59eaafff54ad6a524a5bb5c5087a5788e352e63c50b6a19` 일치.
-- cement HR_Scan SHA256: `a3fbf6bd87d71007ae756a3288140d842d6e91135ee10d230a4ce52780d8f87c` 일치.
+명령: `python3 scripts/run_construction_site_kit_once_20261022_v01.py`.
+Host gate는 `/proc`의 comm/cmdline에서 Kit/Isaac/SimulationApp 프로세스를 확인했고 실행 전 해당 프로세스0이다. ledger의 exclusive create로 같은 output 재시도는 거부한다.
 
-Builder exit0, checks11개 PASS, 본체 별도 check exit0, Python compile/bash syntax PASS. old composed used-layer hashes는 수정 전후 모두 일치했다. 새 output은 생성 전 없었고 기존 원본·v01/attempt0002·과거 실패를 덮어쓰지 않았다. 잠금/성공기준/실험 결과 변경 없음. 현장 GUI 스크린샷·로컬 렌더는 생성하지 않았다. 기존 GUI 조작/추가 Isaac launch/physics.play/ROS/actuation/training/432=0, 연구 denominator0.
+실제 runtime: `/home/user/anaconda3/envs/hh_isaac51/bin/python`, Isaac 5.1 `isaacsim.exp.base.python.kit`/SimulationApp. 이전 offline 실행은 Isaac `omni.usd.libs-1.0.1+69cbf6ad.lx64.r.cp311` PYTHONPATH와 bin/conda lib를 지정했다. 과학 패키지 설치/업데이트 없음.
 
-다음 구체적 단계는 위 새 USD 하나를 기존 GUI에서 여는 것이다. GUI_VISUAL은 실제 관찰 전 UNKNOWN이다. 프리뷰가 사용 가능한 것이 확인된 뒤에만 실제 on-rover front RGB-D→frozen YOLO→B4/B5로 이어간다. Forward-only approach는 후속 별도 작업이며 기존 physical stop FAIL/ROS guard 문제를 유지한다. 새 graph/ROS/HOLD 프로젝트나 benchmark를 실행하지 않았다.
+실제 Kit readback (`kit_load_result.json`): exact final stage, `/Render active=true`, calibration active=true, viewport render_product_path=`/Render/OmniverseKit/HydraTextures/omni_kit_widget_viewport_ViewportTexture_0`, 실제 RenderProduct valid/active, camera 현재 detail 경로 및 위 world position. 활성 ROS extension은 빈 목록, timeline_playing=false, physics.play 호출0, active OmniGraph0. original/derived USD 저장은 하지 않았고 runtime edit target은 session layer다.
+
+Native `Failed to define UsdPrim`, `UsdExpiredPrimAccessError`, terminate/core dump는 이번 log에 없다. 원본 rolltainer material binding이 reference scope 밖이라 무시되는 기존 warning, fabric의 `/World/ENG_FE2E/Rover/rear_right_wheel_link/collisions/mesh_0` non-existent path warning은 실제 log에 남아 있다. 이 warning을 성공으로 숨기거나 새 trial로 고치지 않았다.
+
+**정확한 내부 실패:** `check_construction_site_kit_load_20261022_v01.py:35`, `task.result(); assert (OUT/'static_preview.png').is_file()` → AssertionError. Capture future 이후 파일 기록 시점이 달라 즉시 존재 assertion이 실패했을 가능성이 있으나 원인을 확정하지 않는다. `kit_failure.json`에 stack 보존. finally의 `app.close()` 이후 host returncode=0/EXITED이고 `[15.209s] Simulation App Shutting Down`이다. `kit_shutdown.json`은 생성되지 않았으므로 app.close의 Python return 확인은 UNKNOWN이다. 전체 smoke는 내부 FAIL로 집계하며 host exit0만으로 PASS라 하지 않는다. 이번 실행은 CRASHED로 판정할 native/signal 증거가 없다. 사용자 이전 GUI core dump는 별도로 CRASHED다. 재시도0/추가 launch0.
+
+## 실제 이미지와 남은 제약
+
+종료 뒤 `static_preview.png`가 실제 저장돼 직접 열어 확인했다(1000×625). 좌측 pallet/벽돌 덩어리와 우측 로버/rolltainer 윤곽 및 현장 구조는 보이지만 전체가 매우 어둡고 로버/자재 식별성이 불충분하다. **HEADLESS_VISUAL FAIL_DARK_INSUFFICIENT_IDENTIFIABILITY**, **GUI_VISUAL UNKNOWN**이다. bbox를 visual PASS로 바꾸지 않았다. 조명·노출·오래된 per-product renderer 속성 및 GUI 환경 차이의 기여도는 이번 한 번으로 분리되지 않았다. 원본 renderer 제품에는 invertColorCorrection/invertToneMap 등 과거 속성도 있으며 이번에는 카메라 consumer 경로만 고쳤다. 임의 노출/조도 sweep이나 또 다른 카메라 변경은 하지 않았다.
+
+최종 이미지 SHA256: `4f2aabda24be8ff8be2d10199a5068234c161721b6c920b1867eec349dc9a083`.
+
+정확한 남은 blocker는 실용적인 밝기/식별성 미확보다. 런타임 namespace 결함은 실제 로드에서 복구 확인했지만 모든 GUI callback/재오픈 lifecycle의 무크래시 보장은 아니다. 다음 사용자 동작이 필요하면 **위 최종 USD 하나를 GUI에서 한 번 열기**로 제한한다. 추가 스크립트 편집/스크린샷 반복은 요구하지 않는다. 후속 조명/색관리 수리는 실제 이미지와 runtime renderer 설정에 근거한 별도 범위이며 이번에는 허용한 단일 load 뒤 재실행하지 않았다.
+
+## 변경 파일과 검사
+
+새 builder v01/v02와 launcher2, offline checker v01/v02, 단일 Kit checker/host launcher, 이 보고서 추가; docs/PROJECT_STATE.md append. Bulk USD/PNG/log/hash JSON은 위 외부 output에만 있다. compile4 및 bash syntax PASS, offline 최종17 checks PASS, prior layers/최종 USD post-Kit SHA 보존 PASS, runtime load/product PASS, capture smoke FAIL, host EXITED0, headless visual FAIL, GUI UNKNOWN. cwd에 Git metadata가 없어 `git status --short`는 not a git repository로 실패했다. staging/push/remote 변경 없음.
