@@ -1,23 +1,34 @@
-# B5 독립 datum 오프라인 평가 — 2026-10-22
+# 센서 관측 pallet datum adapter v02 — 2026-10-22
 
-**결론: INSUFFICIENT_DATUM — 관측 상판 후보는 확보했지만 현행 증거 계약에 부합하지 않아 B5 NOT_EVALUATED, pose/PRE/FINAL=null.** 물리 높이 부재만으로 끝낸 감사가 아니다. 저장된 RGB·metric depth·예측 mask·calibration으로 실제 평면을 계산했다. 센서 관측을 planned fixture design으로 위장하지 않았으며, 요청의 계약 변경 시 중단 조건을 적용했다.
+**실제 결과: B5 COMPUTED, 단일 offline engineering 호출1/재시도0/exit0.** 저장된 front RGB-D·검출 mask와 수동 ROI 상판 평면만 사용했다. 새 계약은 **PROPOSED engineering semimanual 전용**이며 frozen confirmatory 승인·자율 perception·연구 E2E 성공을 뜻하지 않는다.
 
-산출물: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_B5_DATUM_OFFLINE_20261022_v01/`. 실행: `/home/user/anaconda3/envs/sdg_tools/bin/python analysis/construction_site_b5_datum_offline_20261022_v01.py` (exit0). 동일 경로의 `roi_overlay.png`, `plane_diagnostic.png`, `candidate_floor_plane.json`, `candidate_pallet_plane.json`, `datum_diagnostics.json`, `b5_predicted_pose_targets.json`, `provenance.json` 및 정확한 ROI mask에 근거를 남겼다.
+산출물: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_B5_SENSOR_ADAPTER_20261022_v02/`. `adapter_evidence_v02.json`, `contract_validation.json`, `b5_prediction.json`, `predicted_pre_final.json`, `source_hash_manifest.json`, `completion.json`, `post_execution_verification.json` 존재·파일0444. 실행 명령: `/home/user/anaconda3/envs/sdg_tools/bin/python analysis/construction_site_b5_sensor_adapter_20261022_v02.py`.
 
-|관측 근거|바닥|노출 팔레트 상판|
-|---|---:|---:|
-|유효 ROI / inlier 수|62,384 / 62,384|1,810 / 1,810|
-|world Z 대비 normal 기울기|0.370144°|0.079751°|
-|직교 잔차 RMS / P95 (m)|5.76e−8 / 1.14e−7|4.50e−8 / 8.63e−8|
-|ROI 중심 world Z (m)|−0.002026833|0.146866635|
-|XY covariance 작은 고유값 (m²)|0.009899|0.003574|
+|항목|실제 값|
+|---|---:|
+|관측 anchor world XY (m)|−25.8346946456, 30.0307131705|
+|계산된 상판 world Z (m)|0.14686663495932334|
+|B5 중심 world XY (m)|−25.8358191200, 30.4337574128|
+|B4 heading (mod180)|90.15771484375°|
+|B4 margin / flip|0.001015016867 / false (threshold .014116)|
+|B5 score / inside rate|0.073290312617 / 0.985579663973|
+|유효점 / top / side|29,819 / 4,470 / 24,504|
+|B5 center 90° 후보 선택|true; heading은 원본대로 B4 값 유지|
+|PRE world XY (m)|−25.8358191200, 28.2300123815|
+|FINAL world XY (m)|−25.8358191200, 29.0300123815|
 
-RGB를 먼저 보고 GT 없이 바닥 polygon `(40,335),(600,335),(600,450),(40,450)` 및 상판 polygon `(158,269),(185,239),(444,239),(482,269)`을 기록했다. 경계 2px erosion, 예측 brick mask 3px dilation 제외 후 역투영했다. 바닥은 팔레트·brick 밖이다. 상판 ROI는 육안으로 보이는 목재 deck 양옆·앞쪽이며 overlay 재확인했다. Seed261022, RANSAC400회, normal 제한10°, inlier3mm 후 TLS 재피팅. 별도 진단 기준 ≥100점·inlier≥80%·기울기≤5°·XY 분산>1e−5m²를 두 후보 모두 통과했다. 이는 **새 연구 성공 기준이 아닌 진단 기준**이다. 추가 erosion1/2px에서도 상판 중심 높이 변화 <1e−8m였다. 외측 ROI 확장·반복 관측·depth/camera 보정의 체계 오차는 미검증이다.
+기존 YOLO confidence .8027858734는 검출 신뢰도다. Pose confidence는 정의되지 않았다. 원본 B5의 실패 gate는 3D/top/side 각각30점 미만이며 side 부족 시 q70 fallback이 있다. 이번에는 모두 통과했다. 원본에는 score/inside-rate 합격 threshold가 없으므로 새 threshold를 만들거나 pose 정확도 PASS로 해석하지 않았다. B4 margin은 flip 선택 규칙이며 전체 pose gate가 아니다.
 
-바닥 평면 `n=(.002298154,−.006037599,.999979133), d=.240267997`; 상판 `n≈(0,−.001391911,.999999031), d=−.105066299` (`n·world+d=0`). 상판 ROI 중심 XY에서 바닥 외삽 Z=.000417517m, 상판−바닥=.146449118m로 명목 두께 .144m보다 2.449mm 크다. 바닥은 팔레트 아래를 직접 관측하지 않았고 두 평면도 평행하지 않으므로 floor+.144를 상판 datum으로 대입하지 않았다. 극소 잔차는 **시뮬레이터가 이미 렌더한 저장 RGB-D의 내부 평면성**이며 현실 센서의 수십 nm 정확도나 실물 팔레트 측정이 아니다.
+**좌표·수식 근거:** frozen source `/home/user/eval_step25_pose_final_locked_v01.py`의 `PALLET_H=.144`(157행), `camera_basis`(398행)의 eye Z=.600 및 target Z=PALLET_H+layers×SIDE_H/2, `mask_to_world`(498행)의 `Z>=PALLET_H-.020`, `side_points`(918행)의 `Z<=PALLET_H+layers*.090-.030`를 확인했다. 즉 .144는 원래 floor Z=0 설정에서 설계 두께와 절대 상판 Z가 같았던 값이며 일반 world 높이가 아니다. 함수는 datum 인자를 노출하지 않는다. 새 v02는 기존 calibrated camera adapter의 **입력 좌표 평행이동** `z′=z_world−z_anchor+.144`를 재사용한다. 따라서 두 filter는 world에서 각각 `Z>=z_anchor−.020`, `Z<=z_anchor+.360−.030`과 동치다. XY·normal 회전·원본 전역 상수·B4/B5 식은 변경하지 않았다. Camera basis도 같은 Z 이동을 쓰며 B5는 그 forward XY를 사용한다.
 
-**계약·출처:** 원본 pose SHA256 `cc95b96c3305dcbe257a40fcf16f0e68a9e58ae0d5ae43f9cbd31e80ffec0988`, production SHA256 `a3740cd82022a1686794f8da892fb376ad1a02f63c2fe8e842ac1cef864641ad` 일치 PASS. `.144m`는 두 원본 및 prior allowlist의 독립된 **설계 두께**다. 실물 metrology·이번 fixture world transform과 다르다. 원본 `mask_to_world`는 Z≥PALLET_H−.020, `side_points`는 PALLET_H+nominal4×.090−.030을 사용하며 독립 측정 방법·normal 허용오차 계약은 없다. 현재 `full_e2e_locked_pose_adapter_v01.py:6–24`는 hashed `engineering_fixture_design` / `planned_horizontal_fixture_top_world_m`만 허용한다. Sensor-observed plane은 이 형식에 해당하지 않는다. 직접 원본 호출은 legacy K/frame을 쓰며 새 datum/calibration 연결 없이는 정당하지 않다. 증거 계약 확장·원본 우회 호출·동결 함수 변경은 하지 않았다.
+`n·world+d=0`에서 JSON의 normal·d·관측 centroid XY를 읽어 `z_anchor=−(nx*xa+ny*ya+d)/nz`로 계산했다. .146866635를 상수로 넣지 않았다. 상판 normal≈(4.923e−9,−.001391911,.999999031), d=−.1050662992m, tilt=.079750625°. Inlier1810/1810, XY extent1.069291×.252661m, 관측 Z span .351871mm, 잔차 RMS4.50e−8m/P958.63e−8m다. 이는 anchor에서 수평 datum으로 근사한 것이며 전체 기울어진 평면을 flatten하지 않았다.
 
-**검사/한계:** 입력14개 실행 전후 SHA 보존 PASS, mask29,876px PASS, 진단 계산·overlay PASS. ROI 밖 무효 depth의 matmul RuntimeWarning(exit0)은 diagnostics에 보존했으며 피팅에는 유한 양수 depth만 들어갔다. B5 계약 적합 FAIL, 체계적 datum 불확도 UNKNOWN. 기존 B4=90.157714844°/margin.001015는 그대로 보존했으며 heading gate를 전체 pose 성공으로 승격하지 않았다. B5 예측이 중단되어 GT 오차 audit도 NOT_EVALUATED; 원본 fixture/GT geometry를 로드하지 않았다. Kit·YOLO·ROS·motion·학습·432 실행0, 연구분모 변화0. 체크포인트는 재로드/재해시하지 않았고 기존 manifest hash만 참조했다. Stop regression/PUBLISHER_SET은 미해결이다.
+**계약·검사:** evidence kind=`sensor_observed_pallet_top_plane_world_v01`. RGB/depth/calibration·checkpoint·ROI mask·plane·run ID·이전 provenance와 파일 SHA를 연결하고 frame/Z-up/미터, 유한 값, +Z unit normal, slope≤5°, inlier≥100/ratio≥.8, P95≤3mm, XY covariance>1e−5m²를 검사했다. 이 수치는 이전 진단을 이은 **제안 engineering admission 기준**이며 연구 승인값이 아니다. 잘못된 kind/hash/수치·출처변경은 거부한다. 부정 사례7개 거부 PASS(평면변경4개는 먼저 provenance mismatch에서 차단; 각 geometry branch의 독립 coverage는 미확보). 원본9개 함수 및 모든 추출 상수 AST 일치 PASS, 평행이동 filter 동치·synthetic side/fallback spot 검사 PASS. 원본 pose SHA `cc95b96c3305dcbe257a40fcf16f0e68a9e58ae0d5ae43f9cbd31e80ffec0988`, production SHA `a3740cd82022a1686794f8da892fb376ad1a02f63c2fe8e842ac1cef864641ad`, HR checkpoint SHA `257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca` 실제 일치. 전체 입력50파일 전후 보존 PASS, compile2 PASS, known-lock9 hash/count PASS(이번 pairing 재감사 아님). 기존 capture manifest의 자기 자신 항목은 작성 전 empty hash이므로 자기 인증에서 제외했으며 입력 데이터 항목은 기존 datum provenance와 교차 일치한다. expected hash를 수정하지 않았다.
 
-**다음 단일 행동:** 현재 관측 상판 후보와 불확도를 증거로 받는 **새 버전 datum adapter 계약을 검토·승인**한다(동결 B4/B5 함수 유지). 추가 Kit 캡처는 필요 없다. 실물 독립 검증이 필요하다면 동일 world 기준에 연결한 팔레트 상판의 다점 높이 측량이 필요하지만, 측정값만 생겨도 현 adapter의 evidence-kind 제한은 별도 해결해야 한다. 지금 병목을 단순히 “팔레트 두께 하나 부족”으로 표현하지 않는다.
+예측 JSON을0444로 먼저 고정한 후 기존 target generator를 적용했다. PRE/FINAL은 prelock 거리2.2037450313/1.4037450313m 및 amendment chain through v03·geometry v02 workspace의 task yaw+90°/local_-X 정책이며 추정 heading을 task yaw로 대체하지 않았다. 관련 실제 lock 내용·hash를 사후 검증 JSON에 남겼다. GT 비교는 독립적으로 정당화된 현재 scene GT 없이 수행하지 않았다.
+
+**한계:** ROI는 RGB 육안 polygon·erosion·검출 mask 제외를 사용한 수동 선택이다. Brick mask에도 배경 혼입 가능성이 있다. 상판은 한 anchor의 높이이며 floor와 비평행하다. floor 외삽 대비 .146449118m와 설계 .144m 차2.449mm는 절대 센서 오차가 아니다. 렌더 depth의 극소 잔차는 물리 센서 정확도가 아니며 scale/calibration 체계 불확도와 world 위치 정확도는 UNKNOWN이다. Clearance·로봇 성공 NOT_EVALUATED. Kit/새 capture/YOLO inference/ROS/physics/motion/432 모두0, 연구분모 기여0. 기존 stop regression/PUBLISHER_SET 미해결도 유지한다.
+
+변경: 신규 `evaluation/full_e2e_sensor_datum_adapter_v02.py`, `analysis/construction_site_b5_sensor_adapter_20261022_v02.py`, 본 보고서, PROJECT_STATE append. Frozen 원본·v01 adapter·이전 출력은 보존했다. `.git` 부재로 Git status는 실패했으며 staging/push 없음; 존재하지 않는 task config 탐색도 실패했으나 실제 lock에서 정책을 확인했다.
+
+**다음 단일 engineering 단계:** 저장 RGB-D에서 노출 목재 상판 ROI를 자동으로 분리하는 별도 후보를 구현하고, 이번 고정 수동 ROI와 비교하여 datum 자동 추출 가능성을 평가한다. 이 결과나 코딩만으로 protocol 승인을 대신하지 않는다.
