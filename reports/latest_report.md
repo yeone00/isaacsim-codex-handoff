@@ -1,37 +1,48 @@
-# v27 HR admission: 새 live perception 시도, ROI 점 수 부족으로 실패
+# v28 HR pilot — ROI 가능, fresh B5 통과; 메모리 gate에서 주행 전 실패
 
-2026-11-02 (Asia/Seoul). **Kit 1회 / RETRY0. HR의 새 YOLO/B4 관측은 얻었지만, 유효한 전체 HR pilot 관측은 아니다.** 새 수동 ROI의 팔레트 점 87개가 기존 최소100개에 미달하여 `PERCEPTION_FAIL`로 종료했다. PRE/FINAL 모두 NOT_RUN, 비영 주행0. 어두운 외관이나 offscreen Plane을 실패 원인으로 삼지 않았다. LR/CAD 미실행, pilot-only amendment DRAFT, formal science denominator0, HPO/training PAUSED.
+2026-11-02 (Asia/Seoul). **정당한 팔레트 ROI는 가능했다. 새 HR RGB-D → frozen YOLO/B4 → 수동 ROI113점 → B5/새 PRE·FINAL 목표 생성까지 PASS. 실제 PRE/FINAL 주행은 모두 NOT_RUN.** Kit 정확히1회/RETRY0, engineering **0/1 FAIL**이다. 주행 전 기존 `GC_MEMORY_BOUND`가 중단시켰고, 이후 정상 Kit close도 실패하여 기존 runner watchdog이 강제 종료했다. 성공·clean exit로 해석하지 않는다. LR/CAD0, science denominator0, HPO/training PAUSED.
 
-| 판정 | 결과와 범위 |
-|---|---|
-| CAMERA_CAPTURE_PASS | PASS: 새640×480 RGB/axial depth, 유효290,691픽셀, calibration8/8, optical transform·정지 capture·원래 graph PASS |
-| Render/material admission | 한 reviewer가 새 RGB를 직접 확인, 적재물과 팔레트 상면 구분 가능. 활성 asset/MDL/texture dependency 확인. 전체 renderer closure UNKNOWN은 유지하며 photometric fidelity나 원본 동등성을 인증하지 않음 |
-| 공통 Plane | NOT_VISIBLE/OUT_OF_SCOPE: composed bounds 전체가 optical 오른쪽 frustum 밖. near=.01m/far=10,000,000m도 검사. frontal pallet ROI 가림 불가. 공통 gray binding 검증 유지, in-frame material PASS 주장 없음. authentic AprilTag MISSING |
-| 실제 physics | parser error0, PhysX interior28/28·region28 unique union28/native0·consumer28 PASS, stationary support2214/2214·6wheel contact, contacts168/예상외0 |
-| 새 frozen HR YOLO/B4 | brick_load 1개/conf .7122505903, mask/depth7717/7717, B4 heading90.011093°·margin .0664386562. 실제 새 센서 관측이며 GT·이전 pose 입력0 |
-| 수동 ROI-assisted B5 | **FAIL 입력 gate.** 새 polygon [[237,196],[250,183],[384,183],[401,196]], 2px erosion/3px brick exclusion 후87점. inlier87/87, tilt .079804°, p95 residual1.147e−7m, 작은 XY covariance eigenvalue .00504m²는 통과하나 **87<100**. B5 pose/targets 생성 전 중단 |
-| PRE / FINAL | 둘 다 NOT_RUN. driver 미시작, actual curved sweep/normal leg stop/독립 FINAL proof NOT_RUN. 유효 pilot 성공0/1 시도, formal science 표본으로 미등록 |
-| zero / exit | zero request 및 직접 graph zero 수행, 실제 ROS receipt MISSING/valid=false·NOT_APPLICABLE_PRE_DRIVER. Kit0/observer0/runner1, NOT_READY/MISSING_WITNESS. 강제종료·timeout0, 소유 PID 잔존0. baseline quiet1초·aggregate STOPPED=PASS는 접근 정지 성공이 아님 |
+## 짧은 오프라인 진단과 공통 reviewer 규칙
 
-저장 v26의 객관 진단은 [offline evidence](construction_site_hr_offline_evidence_20261102_v27.json)에 있다. 성공한 v21과 width/height/fx/fy/cx/cy/optical transform이 정확히 같다. 두 RGB 전체 평균 휘도는118.6656/118.7224, 직접 검토한 load 사각형(x247:383,y135:195)의 평균10.5258/10.5128·중앙값4.353/4.353, 팔레트 사각형 평균33.0961/33.1050이다. RGB 평균 채널 절대차 .37372/255, 최대33으로 bitwise 동일하지 않다. 두 depth 모두290,691픽셀 유효하며 공통 유효영역 abs차 중앙값·95백분위0, 최대 .429513m. 국소 geometry 차이를 전체 렌더 고장으로 해석하지 않았다. v24는 visual reference replacement와 공통 union/fallback의 파생 pilot scene, v26은 disabled mount API만 추가 제거한 scene이다. v21 원본 scene과 완전히 같은 실험이 아니며 start/camera geometry는 일치하고 새 light/brightness 수정은 없다.
+v27 raw의 RGB/array/depth/YOLO mask/calibration/ROI/mask SHA를 기존 witness index와 대조했다. 모든 입력·원본 보존 PASS. 실제 RGB와 확대영상 및 마스크를 직접 검토했다. 기존 polygon `[(237,196),(250,183),(384,183),(401,196)]`은 vertex 순서가 정상인 convex 사각형이다. 높이13px, raw2102 → 2px erosion1415 → 3px brick exclusion1328 → 유효87로 재현됐다. 깊이 결측이 아니라 대부분의 ROI가 적재물에 가려지고 그 주변까지 제외되는 설계다.
 
-별도 외부 `PILOT_HR_OFFLINE_DIAGNOSTIC_20261102_v27_01`에서 v26 저장 RGB에 동일 M50 recipe(imgsz1280/conf.25/IoU.70/mask.5)를 정확히1회 적용했다. brick_load conf.6880520582, 마스크7714픽셀·valid depth7714, B4 계산 PASS. detector mask 내 luma 중앙4.1404/95백분위24.9399, 최소0/최대126.7892다. 이는 실제 RGB의 검출된 노출영역 수이며 semantic GT의 brick pixel census가 아니다. semantic annotator는 추가하지 않았다. 수동 ROI는 시각적으로 가능했지만 offline B5는 실행하지 않았다. 이 diagnostic은 fresh 과학 관측이나 v27 capture로 대체되지 않는다.
+보이는 팔레트 좌우 상면과 앞 모서리 안쪽을 따르는 후보 `[(236,197),(250,183),(384,183),(403,197)]`는 높이14px, raw2275/eroded1573/excluded1460/**valid113**, 제외영역 잔존0이다. 앞선 ROI를 y197까지 1px 넓히기만 하면101점이며 여유는1점이다. 최종 후보는13점 여유지만 견고하지 않다. 좌우 경계·앞 경계를 각각 ±1px 바꾼 9개 diagnostic에서92–139점, 안쪽 변경 시98·92로100 아래가 된다. y198 후보 등은 경계 밖 위험 때문에 최종 선택하지 않았다. 자동 최적 polygon 탐색·GT mask·USD target/pose 사용0. 가림 내부를 가로지르는 raw 사각형에서 brick은 원래 exclusion으로 제거하며 **잔존 픽셀을 상면에서 확인**했다. 수직 앞면·바닥을 점 확보에 사용하지 않았다. 2px erosion이 앞 모서리와 잔존점 사이 여유를 제공한다.
 
-HR 활성 material은 `PilotVisual_v23/Normalize/SourceAsset/Looks/material0`의 `gltf/pbr.mdl::gltf_material`, texture lookup은 같은 MDL의 `gltf_texture_lookup`이다. SDK MDL SHA `2c7c14d7bbf7cacea990f90e8ecc92700d8a7fe9805e44970096796e2be88b78`과 v24 active dependency를 재검사했다. 실제 USDZ member `SubUSDs/textures/brick_gray_mid_texture0.png`를 읽고 hash를 남겼다([texture evidence](construction_site_hr_texture_20261102_v27.json)). 활성 재질은 unlit shader가 아니며 emissive_strength10000만 authored되어도 MDL default emissive_factor0이면 자체 발광하지 않는다. 텍스처 미해결이나 fatal shader failure의 구체 증거는 없고 임의 밝기·조명 보정0이다. resolved asset과 외관 관측이 renderer 전체 정합성 증명을 뜻하지는 않는다.
+[오프라인 결과](construction_site_roi_regression_20261102_v28.json), [별도 원래 fit diagnostic](construction_site_roi_plane_diagnostic_20261102_v28.json). 새 pure-fit 코드를 만들지 않고 정적으로 읽은 v27 `fit` AST만 추출해 saved depth를 검사했다. 기존 RANSAC400/3mm·inlier100/80%·tilt5°·covariance 조건 그대로113/113 PASS, tilt .079800°, p95 residual1.047e−7m. 저장 관측 diagnostic이며 v27의 실패를 구제하거나 fresh observation으로 대체하지 않는다. v21의 알려진 ROI는 실제 raw에서 확인했으나 새 run에 자동 복사하지 않았다.
 
-[좁은 결정 규칙](../docs/construction_site_hr_admission_rule_20261102_v27.md)은 camera capture, perception validity, material unknown을 구분한다. v26 당시 NO-GO/미주행 결과는 소급 수정하지 않았다. 새 v27 runner/session/adapter/link는 v26 derived-only mount fix·v25b capture를 유지하고 offscreen frustum 분류, fatal shader/RGB-D rejection, task PERCEPTION_FAIL 명시만 추가했다. v21 driver/event-aware stop/verifier·model·ROS·graph/TF/GID·PhysX·contact·sweep·GC·5mm/2도·quiet≥1초 기준은 그대로다. 실행된 source는 이후 수정하지 않았다.
+[PILOT ONLY 공통 절차 v28](../docs/construction_site_roi_review_rule_PILOT_20261102_v28.md)을 기록·적용했다. **기존 one-shot 앞에180초의 사전 preview window를 추가한 observation-policy 변경**이며 frozen scientific lock 수정이 아니다. HR/LR/CAD에 동일 적용한다. RGB·동일 axial depth·YOLO exclusion만으로 raw polygon/잔존점 overlay와 count를 보며, plane/GT/target/downstream 성공·representation 표시는 없다. Reviewer가 시각적으로 정당한 ROI를 한 window 안에서 검토한 뒤 한 번만 확정하며 B5 후 재제출0. Reviewer code `Codex-visual-review-v28`; 운영자는 HR임을 알고 있으므로 완전한 이중맹검은 주장하지 않는다. 암호학적 인간 신원 인증도 아니다.
 
-실제 명령은 아래 두 단계이며 첫 prepare는 offline, 두 번째가 유일한 Kit다. 이미 사용한 root에 재실행하면 거절된다.
+## 실제 새 Kit 결과
+
+외부 root: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v28_01`, raw `attempt_0001`. fresh RGB SHA `d1b5e670ea9a5def7043db1640c6f9e69735b4f0bf00ebce9d14e893cf409bbe`. 아래 prepare는 offline이고 run만 Kit1회다.
 
 ```text
-python3 scripts/construction_site_perception_runner_20261102_v27.py --prepare-only --output /home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v27_01
-python3 scripts/construction_site_perception_runner_20261102_v27.py --run --output /home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v27_01
+python3 scripts/construction_site_perception_runner_20261102_v28.py --prepare-only --output /home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v28_01
+python3 scripts/construction_site_perception_runner_20261102_v28.py --run --output /home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v28_01
 ```
 
-raw: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v27_01/attempt_0001`. 실제 derived scene SHA `0a4e245c065e492c510720fd91beb67bcc4e01680d08745701bdd2535b12c523`, fresh RGB SHA `cc1af4c6dfba0ca6fe1c4b9e4157f48ecbee9ef8727dc0808c4ce84502b0f45c`. ROI는 새 영상을 보고 새로 지정했고 old v21 ROI/pose를 복사하지 않았다. 시각 검토 뒤 선택한 더 좁은 다각형이 기존 pixel-exclusion 뒤 최소 점 수를 확보하지 못했다. 이번 실패는 HR 모델의 detection failure나 재질 고장을 증명하지 않으며, 수동 ROI protocol의 현재 한 사례 실패다. 실패 후 ROI 변경·추가 inference·재시도·GT 구제0이다.
+| 항목 | 실제 판정 |
+|---|---|
+| Camera | PASS, fresh640×480 RGB/axial depth·유효290691·calibration8/8·정지capture·원래 graph. 새 full RGB와 확대영상을 직접 검토. Plane offscreen 분류 유지 |
+| Frozen HR M50 / B4 | PASS, 새 inference1회, conf .7014451, mask/depth7718, heading90.011093°·margin .0664386562. weights/recipe 불변 |
+| ROI | 새 frame 직접검토 후 preview1개·최종제출1개,113점. 제출전 raw overlay를 표시·직접 확인. 좌표가 diagnostic과 같지만 새 영상에서 독립적으로 재검토했으며 자동 재사용0. RGB/array/depth/mask/overlay·preview SHA, reviewer, window·final 시각, shape, count, exclusion proof 기록 |
+| B5 | PASS, 평면113/113·tilt .079800°·p95 1.047e−7m. locked pose COMPUTED, B5 inside_rate .9906603. fresh PRE=(-25.9346695,28.2780359), FINAL=(-25.9346695,29.0780359). **목표 생성과 목표 도달을 구분** |
+| Physical admission | PASS, parser Error0, 실제 PhysX28/native0·consumer28, stationary support2214/2214·6wheel contact. 실제 contact168/예상외·shell load0 |
+| PRE 경로 admission | 전체 rover sweep PASS, PhysX live support48060/48060. 실제 주행 trajectory 검증이나 PRE 도달 아님 |
+| 실제 PRE / FINAL / normal stop | **모두 NOT_RUN**. driver 시작 전 차단, 비영 adapter/ROS 명령0. FINAL은 측정 PRE가 없어 독립 재계획·sweep NOT_RUN. baseline quiet1초는 접근 stop 아님 |
+| TF/GID·GC | capture graph/물리 불변 PASS. active driver endpoint/TF/GID 검증 NOT_RUN. 기존 GC guard **FAIL**: RSS22,329,970,688 bytes=20.7964GiB, 절대상한8GiB 초과. 증가량0이며768MiB 증가한도 위반이 아니라 절대한도 위반. scope .00258s, GC는 paused cleanup에서 복구됨 |
+| zero / 종료 | ROSzero receipt MISSING/valid=false, NOT_APPLICABLE_PRE_DRIVER. 요청·직접graphzero만 존재. observer exit0/driver NOT_STARTED. Kit close watchdog25초 초과→terminate 후5초 대기→kill, Kit exit−9·runner exit1/FAILED·finalizer KIT_EXIT_NOT_ZERO. 정상 shutdown 증거없음. watchdog 종료를 숨기거나 정상 exit로 바꾸지 않음. owned Kit/observer 잔존0 |
 
-검사: compile PASS, 실행 전 [집중 CPU28/28](construction_site_pilot_regression_20261102_v27.json), v21 stop20/20, known9 SHA 및108/432행 PASS. 새 valid/invalid RGB-D·depth0·fatal shader·in-frustum Plane 분기의 실제 함수 호출 회귀5/5는 **실행 종료 후** 추가 확인했다([결과](construction_site_hr_admission_test_20261102_v27.json)); fake app/read-only USD를 쓰며 추가 Kit는 없다. [독립 witness](construction_site_pilot_witness_20261102_v27.json)는 raw 전체 hash index·실제 physics/관측/cleanup·입력 SHA·executed snapshots·provisional digest·available evidence hash PASS를 확인한다. [보존 검사](construction_site_preservation_20261102_v27.json): v26 raw154개 hash 불일치0, v24 manifest/parents/세 scene/material dependency 재검사 PASS. 기존 v19–v26·v20 FAIL0/2·v21 성공1/1·frozen4rep·원본USD/weights는 그대로다.
+**첫 중단 원인은 `GC_MEMORY_BOUND` 하나이며, 후속 cleanup의 Kit close 실패는 별도 infrastructure 실패다.** `motion_gc.enter()` 직후 첫 `tick()`에서 발생했고 isolation/driver 생성 이전이다. 이번 run의 메모리 사용 원인은 아직 UNKNOWN이다. ROI·detector·geometry/model 실패로 돌리지 않으며 메모리 한도를 올리지 않았다. 추가 Kit/annotation/재추론/구제0.
 
-변경 파일: 새 `scripts/construction_site_{perception_runner,perception_session,perception_adapter,pilot_link}_20261102_v27.py`, 새 offline/geometry/regression/admission_test/witness 분석 코드, v27 결정 규칙·reports, latest와 PROJECT_STATE. bulk 센서/scene은 외부 root에 남겼고 설치/학습/LR/CAD/432/Git push0이다. 이번 원시 실패·worker exit1·runner exit1은 삭제하거나 성공 분모에서 숨기지 않는다.
+## 검증과 보존
 
-**남은 실제 blocker는 새 수동 pallet ROI의 유효 점 수87<100이다.** 다음 구체 작업은 이 실패 RGB/overlay/mask에서 기존 ROI 선택 절차의 점 확보 가능성과 경계 불확실성을 offline 검토하는 것이다. 이 실행을 구제하거나 재시도하지 않는다. 새 live 재시도는 별도 bounded 작업으로 결정해야 하며, 독립 clean HR PRE/FINAL 성공 전 LR/CAD는 권고하지 않는다.
+[독립 witness](construction_site_pilot_witness_20261102_v28.json)는 입력·executed snapshot·provisional digest·가용 evidence hash 모두 PASS, owned PID 소멸, contact·실제28shape·113점 재계산 및 PRE/FINAL NOT_RUN을 확인했다. engineering success=false, zero receipt=false, GC한도 충족=false가 명시돼 있다. Endpoint replay0행을 PASS로 취급하지 않는다. 대형 sweep/support는 외부 raw에 보존하고 report에는 경로/SHA/요약만 둔다. 초기 verbose witness도 외부 `witness_full_development_v28.json`에 보존했다.
+
+집중 ROI14/14 + [소스·시각거절5/5](construction_site_source_checks_20261102_v28.json), compile PASS, 기존 v21 stop20/20 PASS, [known9 SHA 및108/432행](construction_site_known_locks_20261102_v28.json) PASS. 테스트는 old87 REJECT, valid113 INPUT PASS, brick/image-edge/교차vertex/시각적으로 부적절한 pallet-edge 거절, final후preview/재제출·late·변조·RGB mismatch 거절, preview target생성0, 원래 B5 fit AST 동일을 포함한다. 시각적 pallet-edge 적절성은 reviewer 책임이고 preview가 자동 semantic/GT edge 판별을 한다고 주장하지 않는다.
+
+[실행전](construction_site_preservation_20261102_v28_pre.json)·[실행후](construction_site_preservation_20261102_v28_post.json) v27 전체 원시 index와 prepared 입력 mismatch0. v26 mount fix·v24 HR scene·28cell·v21 driver/event-aware stop·min100·B4/B5·5mm/2°/quiet1s·contact/graph/TF/GID/GC 한도를 보존했다. 이전 v27 **0/1 FAIL**, v20 **0/2 FAIL**, v21 **1/1 engineering success** 그대로다. 이번 v28은 exploratory engineering0/1이며 formal sample0, scientific equivalence/confirmatory 성공 주장없음.
+
+변경 파일: 새 `scripts/construction_site_roi_review_20261102_v28.py`와 v28 adapter/session/runner. Adapter는 기존 B5 전 provenance 검증·window 시작만 추가, session은 adapter 경로만 변경, runner는 새 경로·source hash 포함만 변경했다. 새 ROI regression/source-check/independent-witness 분석과 pilot rule·v28 reports, latest/PROJECT_STATE 갱신. legacy 원본·USD·weights·locks 변경0, scene/light/YOLO training0, LR/CAD0, push/설치/외부 메시지0.
+
+다음 구체 작업은 **기존 메모리 한도를 유지하면서 pre-driver admission 완료 시 RSS가20.8GiB인 원인을 좁히고, 동일 실패 후 close 지연 로그를 확인하는 별도 bounded 진단**이다. 이번 v28에서는 더 실행하지 않는다. 독립 clean HR PRE/FINAL 성공 전 LR/CAD 진행하지 않는다.
