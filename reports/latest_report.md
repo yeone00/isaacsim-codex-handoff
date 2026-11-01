@@ -1,130 +1,100 @@
-# HR/LR/CAD 소규모 과학 파일럿 admission v22 — 2026-11-02
+# 3표현 pilot prepare-only v23 — 2026-11-02
 
-**현재 실행 readiness: 세 표현 모두 BLOCKED. Kit 실행 0, 과학 denominator 0, HPO/training PAUSED.** 실제 자산·동결 모델은 세 표현 모두 확보됐다. 막힌 것은 모델 부재가 아니라 **3표현/변경된 현장 제어·수동 ROI 정책의 명시적 개정과, 실제 300개 슬롯을 매핑하는 최소 adapter·공통 물리 overlay의 미구현**이다. 기존 v21을 또 반복하는 작업은 필요하지 않다.
+**실제 파생 overlay 3개 생성·검증 완료. 최종 HR/LR/CAD 모두 BLOCKED. Kit/ROS live NOT_TESTED, research observations0, formal denominator0.** 21/23 정적 gate와 cross-row identity는 통과했지만, 동일 표준 box의 양의 부피 겹침96쌍 및 공통 rolltainer Plane의 깨진 material binding 때문에 PREPARE_PASS를 부여하지 않았다.
 
-산출물: [구체 후보 manifest](../manifests/construction_site_pilot_candidate_20261102_v22.json), [명령·adapter 계약](../docs/construction_site_pilot_commands_20261102_v22.md), [실행 가능한 offline checker](../scripts/construction_site_pilot_admission_20261102_v22.py), [실제 검사 결과](construction_site_pilot_admission_checks_20261102_v22.json), [scene/asset inventory](construction_site_scene_inventory_20261102_v22.json), [known locks](construction_site_known_locks_20261102_v22.json). 후보는 실행 가능한 검사를 제공하지만 미구현 live runner를 실행 가능하다고 표시하지 않는다.
+[기계 manifest](../manifests/construction_site_pilot_prepare_20261102_v23.json) · [최종 checker 결과](construction_site_pilot_prepare_checks_20261102_v23.json) · [8개 focused 검사](construction_site_pilot_validation_20261102_v23.json) · [정밀 geometry 증거](construction_site_pilot_geometry_detail_20261102_v23.json) · [pilot-only DRAFT](../docs/construction_site_pilot_amendment_DRAFT_20261102_v23.md) · [v24 최소 runtime 계약](../docs/construction_site_pilot_runtime_contract_20261102_v23.md)
 
-## 1. 로컬 근거와 readiness
+## 최종 준비 상태
 
-README, PROJECT_STATE 전체, PROTOCOL_LOCKS, 실제 prelock v01/amendment v02/v03/geometry v02, registry와 CSV, v21 소스·raw calibration/graph/corridor, 자산 characterization·cost benchmark를 읽었다. known 9개 SHA/count PASS. 별도 checker에서 **72개 unique 입력 파일 SHA 72/72 PASS**, base108/execution432/geometry108/432 uniqueness·4rep exact-set 및 모든 CSV 열 join PASS. geometry의 중복 열은 `_geometry`를 사용하므로 legacy task yaw0을 geometry yaw90으로 오독하지 않았다. geometry lock 자체 독립 expected SHA는 여전히 UNKNOWN; 이번 observed inventory를 과거 authoritative expected로 승격하지 않았다.
+| 표현 | 파일/72 hash·mapping | standalone 구성·300 static 매핑 | 안전·활성 재질 포함 최종 | live render/PhysX/ROS | 과학 admission |
+|---|---|---|---|---|---|
+| HR_Scan | PASS | PREPARE_PASS (제한된 정적 항목) | **BLOCKED**: 겹침96 + binding | NOT_TESTED | HOLD |
+| LR_Scan | PASS | PREPARE_PASS (제한된 정적 항목) | **BLOCKED**: 겹침96 + binding | NOT_TESTED | HOLD |
+| GeoCAD | PASS | PREPARE_PASS (제한된 정적 항목) | **BLOCKED**: 겹침96 + binding | NOT_TESTED | HOLD |
 
-| 표현 | 실제 자산/모델 | 현재 현장 통합 | 판정 |
-|---|---|---|---|
-| HR_Scan | cement/red normalized USD·matched M50 SHA PASS | 현장 cement 300개 HR reference; v21 fresh RGB-D→실제 PRE/FINAL 완료 1회 | **BLOCKED**: 새 pilot 정책/overlay에 대한 HR 행은 미실행, HR 성공 재사용 불가 |
-| LR_Scan | cement/red normalized USD·matched M50 SHA PASS | 원본 자산 존재; 현재 현장 슬롯은 HR 고정. LR 원본 collider0 | **BLOCKED**: 새 scene mapping/worker 인자·물리 통제 미구현 |
-| GeoCAD (=CAD) | cement/red normalized USD·matched M50 SHA PASS | 원본 자산 존재; 현장 GeoCAD mapping 없음. 원본 collider0 | **BLOCKED**: LR과 같은 구현 gate |
+cross-row collider transform·dimension·enabled state 및 고정 scene signature는 정확히 같다. 이것은 **안전한 live physics parity 인증이 아니다**. 공통 static load는 적재물 질량/동역학을 제거하는 새 조건이며 v21 HR 성공도 새 파일럿 관측으로 재사용하지 않았다. 아래 경로는 모두 실제 생성됐다. bulk USD/로그/전체 mesh inventory는 Git 밖에 있다.
 
-v21 ENGINEERING_RECORDED와 독립 post-Kit proof는 [v21 보고서](construction_site_stop_lifecycle_20261101_v21.md)에 보존돼 있다. 새 corrected implementation **engineering 1/1**, historical v19b 성공, v20 **0/2 VERIFIED FAIL**은 별개다. 1/1은 일반 신뢰성·반복 성공률이 아니다. 이번 파일럿 수행수0, 정식 과학 분모0. 이전 engineering/실패를 새 과학 성능표에 넣거나 빼서 유리하게 만들지 않는다.
+## 실제 overlay와 선택
 
-## 2. 실제 자산, 유래, 모델 및 비용
+모든 asset root: `/home/user/hh/isaac_cosmos/assets/assets/objects/_normalized/`. 모든 model root: `/home/user/hh/isaac_cosmos/sdg_final/final_combined_m50_adaptation_v01/standalone_selection_v01/selected_models/`. 아래 전체 SHA와 절대경로는 manifest에도 동일하게 기록했다.
 
-자산 root는 `/home/user/hh/isaac_cosmos/assets/assets/objects/_normalized/`이다. 실제 파일명은 `{cement,red}_brick_{HR_Scan,LR_Scan,GeoCAD,Proxy}.usd`이며 8개 전부 registry expected SHA와 일치한다. 전체 절대경로·SHA와 referenced source layer SHA는 inventory/manifest에 있다. 파일명 동일 source와 normalized wrapper를 경로 전체로 구분했다.
+### HR_Scan — BLOCKED
 
-| 표현 | cement normalized SHA256 | red normalized SHA256 |
-|---|---|---|
-| HR | a3fbf6bd87d71007ae756a3288140d842d6e91135ee10d230a4ce52780d8f87c | 886a191cd74959dbb963206f3b173afee37a3b4e4e0159831bc48ab40fbabad4 |
-| LR | 5781f72b71940938883f94a1325920a2a87ed768cba37a0000fa6fefd85256e1 | 9cf5d46621f5c8c1bc0ef76ac99584cdb0907008bab5ae8f290c4b2a359808e1 |
-| CAD | e579f77f46debf05fca23d6bfc5c08217cc9541b3d932dee1088559cbef4699b | 104a55f4cd98c439ed3d7c739e13052c94056834dfd41ed3076803dd9e45020a |
-| legacy Proxy | a86a29dd9cfe5fad48734df3f6f0fc91afaff628c0c0f08b4aa99f4a20e677be | 0750b615c32f242fb0031c0456b5251b42a53720c899e41bcf0999e890b694d8 |
+- Overlay: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_PREPARE_20261102_v23/HR_Scan_04/pilot_scene.usda`
+- Overlay SHA256: `37895379cd0ac5a9b729b526bbf7b4548e7768ad404726beaa3b64a8bb200a03`
+- Asset: `/home/user/hh/isaac_cosmos/assets/assets/objects/_normalized/cement_brick_HR_Scan.usd`
+- Asset SHA256: `a3fbf6bd87d71007ae756a3288140d842d6e91135ee10d230a4ce52780d8f87c`
+- Matched model: `/home/user/hh/isaac_cosmos/sdg_final/final_combined_m50_adaptation_v01/standalone_selection_v01/selected_models/FINAL_HR_Scan_M50_REALVAL_MASKBEST_v01.pt`
+- Model SHA256: `257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca`
+- 실제 정적 검사: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_PREPARE_20261102_v23/HR_Scan_04/prepare_check.json`
+- 실행 상태·소스 snapshot·stdout: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_PREPARE_20261102_v23/HR_Scan_04/`
 
-HR은 높은 acquisition 입력의 재구성, LR은 reduced-resolution acquisition 입력을 같은 pipeline으로 **독립 재구성**한 것이다. HR mesh decimation이 아니다. `_asset_audit/brick_asset_characterization_FINAL_8ASSET_v03.csv`는 이 유래를 명시한다. LR source preprocessing benchmark에는 원영상 cement1280×720/30fps/1873frames/62.433초, red1234×720/30fps/2199frames/73.3초와 재현 LR640×360/5fps/313·367frames가 기록돼 있다. 이는 **입력 저감 재현 benchmark**이며 당시 독립 reconstruction 전체 로그나 원래 실제 human acquisition 비용의 대체물이 아니다. 원본 reconstruction tool/version·설정·측정자 노동시간의 완전 lineage는 이번 근거에서 UNKNOWN이다.
+### LR_Scan — BLOCKED
 
-GeoCAD는 실측 치수 기반 script CAD이다. cement `build_geocad_v03.py`, red 최종 `rebuild_red_geocad_v06.py`; 오래된 red v03을 고르지 않는다. red에는 실제 구멍/홈 geometry가 있고 Proxy는 photographed face textures를 입힌 cuboid이다. CAD는 Proxy라는 이름 변경이 아니다. 다만 **GeoCAD composed layers가 Proxy USD를 appearance 의존성으로 참조**한다. Proxy를 분석군에서 제외해도 그 dependency 파일을 삭제/비활성화하면 안 된다.
+- Overlay: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_PREPARE_20261102_v23/LR_Scan_03/pilot_scene.usda`
+- Overlay SHA256: `dd06e774715d8c8b362954c3d9b56f230a7c40a18336acb52b104499f37df4c8`
+- Asset: `/home/user/hh/isaac_cosmos/assets/assets/objects/_normalized/cement_brick_LR_Scan.usd`
+- Asset SHA256: `5781f72b71940938883f94a1325920a2a87ed768cba37a0000fa6fefd85256e1`
+- Matched model: `/home/user/hh/isaac_cosmos/sdg_final/final_combined_m50_adaptation_v01/standalone_selection_v01/selected_models/FINAL_LR_Scan_M50_REALVAL_MASKBEST_v01.pt`
+- Model SHA256: `d58e18a87f4cafba6fd92d8bade6e2ff12ad2380db427311b072859fd2cca42f`
+- 실제 정적 검사: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_PREPARE_20261102_v23/LR_Scan_03/prepare_check.json`
+- 실행 상태·소스 snapshot·stdout: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_PREPARE_20261102_v23/LR_Scan_03/`
 
-동결 모델 root는 `/home/user/hh/isaac_cosmos/sdg_final/final_combined_m50_adaptation_v01/standalone_selection_v01/selected_models/`, 파일명 `FINAL_<representation>_M50_REALVAL_MASKBEST_v01.pt`이다.
+### GeoCAD — BLOCKED
 
-| 표현 | matched checkpoint SHA256 |
-|---|---|
-| HR_Scan | 257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca |
-| LR_Scan | d58e18a87f4cafba6fd92d8bade6e2ff12ad2380db427311b072859fd2cca42f |
-| GeoCAD | bbfb9fc8d0c421154844f7e299b6d8162b9394eb07d36a31110f593c0813ce8f |
-| legacy Proxy | 870cd7a66e7c26bc8fdab89df51a0a0ed04df53e7e68cf1f946c593dfcf7f74e |
+- Overlay: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_PREPARE_20261102_v23/GeoCAD_04/pilot_scene.usda`
+- Overlay SHA256: `fa44819add283dd56644ff2e936539a161f9ad5b6aabf56ffe1b0f452000559d`
+- Asset: `/home/user/hh/isaac_cosmos/assets/assets/objects/_normalized/cement_brick_GeoCAD.usd`
+- Asset SHA256: `e579f77f46debf05fca23d6bfc5c08217cc9541b3d932dee1088559cbef4699b`
+- Matched model: `/home/user/hh/isaac_cosmos/sdg_final/final_combined_m50_adaptation_v01/standalone_selection_v01/selected_models/FINAL_GeoCAD_M50_REALVAL_MASKBEST_v01.pt`
+- Model SHA256: `bbfb9fc8d0c421154844f7e299b6d8162b9394eb07d36a31110f593c0813ce8f`
+- 실제 정적 검사: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_PREPARE_20261102_v23/GeoCAD_04/prepare_check.json`
+- 실행 상태·소스 snapshot·stdout: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_PREPARE_20261102_v23/GeoCAD_04/`
 
-prelock의 `perception_models_frozen`/`implementation_guardrails`는 representation-matched M50을 규정한다. 공통 HR 모델은 공정성 기본값이 아니다. 모델마다 mask/confidence/유효 depth·B4/B5·목표가 달라질 수 있고, 비교 대상은 **표현+해당 동결 인식 모델의 전체 전략**이다. 순수 geometry causal effect로 해석하지 않는다. 공유 모델을 비교하려면 별도 estimand/새 protocol이 필요하다. 새 HPO 최종 3weights는 준비됐다고 가정하지 않으며 이 pilot에 필요하지 않다.
+## 실제 구현·검증한 것
 
-공통 estimator는 `/home/user/eval_step25_pose_final_locked_v01.py` SHA `cc95b96c3305dcbe257a40fcf16f0e68a9e58ae0d5ae43f9cbd31e80ffec0988`, B4 Gated Top MinAreaRect/B5 Camera-Facing Side Fit, frozen gate .014116이다. v21의 v13 worker는 HR key·metadata를 hard-code하고 B5를 새 영상의 수동 pallet ROI 평면으로 보조한다. layer_count4와 seed261022도 명시적이다. 이 도움·prior를 전 표현 동일하게 선언해야 한다. GT pallet-top을 대신 넣지 않는다.
+새 [prepare adapter](../scripts/construction_site_pilot_prepare_20261102_v23.py)는 `--representation {HR_Scan,LR_Scan,GeoCAD}`와 v22 manifest를 받는다. `--prepare-only`만 허용하고 `--run`/Proxy를 거절한다. 설치된 Isaac 5.1의 Python과 `omni.usd.libs` 경로를 기존 runner와 같은 방식으로 사용하되 SimulationApp/Kit/omni/ROS/model을 import하지 않는다. v22의 검사 함수를 재사용해 입력72개 SHA와 frozen108/432 exact-set·4rep pairing·geometry 모든 열 join을 확인했다. 원래 v22 hard block은 수정하지 않았다.
 
-### 기록된 비용과 결측
+COW overlay는 실제 v21 `prepared_site_drive.usda`를 sublayer로 참조한다. 이 baseline SHA는 v21 `prepare.json`의 expected와 일치했다. 원본 site/stage/source/모델/잠금/기존 evidence에는 저장하지 않았다. 각 output에는 source snapshot, command, standalone 환경, per-execution 상태, 실패/exit code, 해시와 상세 검사 JSON을 보존했다.
 
-| 항목 | 실제 기록 | 한계/결측 |
-|---|---|---|
-| HR/LR elapsed | characterization: HR120분/LR30분, 두 재료 모두 APPROX_REPORTED | timed compute가 아니며 active/passive 모두 PENDING |
-| acquisition workload | 원영상 해상도/fps/frames/길이/크기/SHA, LR 저감 비율·preprocessing wall/CPU | 실제 촬영 준비·재촬영·사람 분·재구성 원 run 로그 미확보 |
-| CAD 재현 compute | GeoCAD benchmark 3회/재료: cement wall평균 .898590초, red .898861초; CPU·geometry_match 기록 | 실측·스크립트 작성·수정·appearance 노동시간 아님 |
-| geometry/size | cement HR512696/LR468612/CAD12 triangles; red HR623272/LR613600/CAD972 | polygon 수만으로 fidelity 순위/정확도 결론 불가 |
-| dependency footprint | cement HR37.770/LR33.264/CAD8.928MiB, red HR43.212/LR42.122/CAD5.245MiB | wrapper 약 .001MiB만 비용으로 쓰지 않음; shared dependency 중복과 tex payload 구분 |
-| fidelity/physics | size/pivot PASS, texture resolution/payload·mesh/material 수 기록 | scan-to-real 오차/동일 view render fidelity 정량 점수·전체 renderer closure UNKNOWN |
+**중요한 instance/reference 해결:** 실제 300 AssetRef를 instance-proxy-aware traversal로 찾았다. 상위 scene reference 안에서 온 HR arc는 강한 local `references=[selected]`만 써도 합성에 남는 것을 로컬로 확인했다. 초기 CAD에는 HR와 CAD mesh가 함께 나타났다. 최종 전략은 각 실제 AssetRef만 instanceable=false로 하고, 원래 하위 분기300개를 derived layer에서 active=false로 만든 다음, 같은 slot frame의 새 `PilotVisual_v23` child에 selected normalized USD만 명시적으로 참조하는 것이다. 활성 mesh prim stack이 선택 자산의 dependency layer들에서만 오는지 확인했다. 원래 HR dependency가 보존된 sublayer 안에 존재하는 것과 활성 visual 혼합을 구분한다.
 
-CAD 노동시간·HR/LR active/passive compute가 누락됐다고 0으로 채우지 않는다. 기존 비용을 reference로 붙이고 파일럿에서는 새 capture/inference/B4/B5/planning/verification/전체 wall·sim·RSS·review 시간을 측정한다. 비용 결측은 파일럿 launch blocker가 아니라 향후 cost–performance 결론 제한이다.
+원래 AssetRef300의 전체 world matrix·orientation·membership은 불변이다. 전체 rover/fixture/camera/ROS ActionGraph의 composed attributes·connections·relationship targets signature도 baseline 및 세 행 간 동일하다. Proxy는 CAD의 Looks appearance dependency로 계속 해석된다. CAD는 mesh 하나에6개 material subsets가 있으므로 root mesh의 직접 binding 없음만으로 material FAIL을 내리지 않고 face partition12면과 subset binding을 검사했다. HR/LR의 활성 binding 각각300, CAD subset binding1800을 검증했다.
 
-## 3. 최소 paired matrix와 실제 불일치
+모든 표현에서 native brick collision/rigid 활성0, canonical static Cube300, CollisionAPI enabled=true/RigidBodyAPI 없음이다. cube는 원래 SideStanding의 sibling이며 local dimension190×90×57mm/center(0,0,.0285)m를 사용한다. guide purpose는 렌더 구분용이며 collisionEnabled를 끄지 않는다. live safety 소비자의 실제 PhysX shape 등록은 미검증이다. 원래 visual은 선택 자산 참조로 보존하고 native HR가 포함된 기존 분기는 비활성화했다.
 
-질문은 “동일 v21 controller·독립 verifier와 동일한 관측/도움 규칙을 실제 HR/LR/CAD에 적용할 수 있는가?”이다. 최소 **한 base × 세 표현, 각 1 planned execution**, 반복·검정력·성능 우열/동등성 검정은 제안하지 않는다.
+정적 world m/Z-up, sublayer/reference composition 및 활성 selected geometry/source mapping PASS. canonical collider와 rover 시작자세 overlap0, ground/fixture surface triangle-box SAT penetration0이다. 현장 collider mesh382,994면에 대해 load envelope/triangle broad phase 뒤 SAT를 적용했다. 이 surface 검사는 충돌 표면 침투 점검이며 mass·contact offset·friction·settling·load stability 증명이 아니다.
 
-| 새 실행 ID suffix | material/completeness/occlusion | scene/seed/start | 변화 |
-|---|---|---|---|
-| HR_Scan | cement/C100 300개 4층/FULL, 추가 occluder 없음 | 공통 site,261022, XY(−25.88797768,27.4), yaw90° | 실제 HR asset+HR M50 |
-| LR_Scan | 동일 | 동일 | 실제 LR asset+LR M50 |
-| GeoCAD | 동일 | 동일 | 실제 CAD asset+CAD M50 |
+visual standard envelope 초과 최대값은 HR 약2.854e−9m, LR 약1.027e−9m, CAD 약1.789e−9m로 1µm 수치허용보다 작았다. geometry를 축소·이동해서 맞춘 것이 아니다. 세 표현의 unit/axis 불일치나 standard envelope 밖 실질 돌출은 발견하지 못했다.
 
-base ID `PILOT_SITE_CEMENT_C100_CLEAR_20261102_v22`; 각 output 절대경로/300개 prim 경로는 manifest에 열거했다. 아직 디렉터리를 만들지 않았다. 고정 순서 HR→LR→CAD는 feasibility용이며 order bias를 성능 효과와 혼동하지 않는다. 이후 본 연구 representation×load completeness×occlusion으로 확대하려면 별도 수준·분석 잠금이 필요하다.
+canonical signature: `636b754bce87434d1b20d46930dc85660e35d3075dbba3e6eaec9ca26c1d627d`. 고정 scene signature: `771b8d722f05abbb29def38937fff9c7229216292f00897d8d824a7de4f37ffc`. 상세 collider matrix·bounds·native disable 기록·모든 선택 reference·활성 binding·dependency layer SHA는 각 prepare_check JSON에 있다.
 
-기존 frozen nominal/unobstructed 대응 근거는 `FE2E_S001`이다: cement/C100/FULL/300/Near1.5m/Frontal0/Nominal/seed2379027709, geometry v02 start(−25.88797768,28.4708691133), target(−25.888,30.509), yaw90°. 이 행은 confirmatory membership=true이므로 새 pilot ID에서 성능 자료로 소모하지 않는다. **v21 start Y27.4, seed261022, site 조명은 S001과 다르다.** v21 actual camera Y27.939685994이므로 target XY거리 약2.5693m이며 frozen Near1.5나 Mid2.5와 동일하지 않다. 그러므로 이 제안은 기존 현장 nominal fixture의 **새 paired 파생 pilot**이며 frozen S001 exact replay가 아니다. 일반화 범위는 cement 한 조건뿐이다.
+## 남은 두 blocker와 bounded 해결
 
-available C100/C60/C20·FULL/T01–T05·paired seeds는 locked CSV에 존재한다. 생산 source `/home/user/nonideal_depletion_b2b_production_rgb_v01.py`와 registry mapping, frozen depletion membership은 확인했지만 v21 worker는 layer_count4/현장 full fixture만 지원한다. 기존 manifests에는 completeness/distance/view/lighting이 있고 **독립 occlusion factor/가림률 수준은 없다**. 추가 occluder 없음과 self-occlusion0은 다른 말이다. 모든 표현에서 실제 가시율은 posthoc 측정, self-occlusion 차이는 표현의 관측 효과로 기록한다. C60/C20이나 occlusion 확장을 현재 실행 가능하다고 표시하지 않는다.
+**1. 동일 위치·표준 치수 box의 내부 겹침96쌍.** 총 접촉 후보1782쌍은 별도 정밀 검사에서 face1304/edge424/corner54로 구분됐다. 기존 JSON의 `intended_face_contacts`는 이 접촉 후보 합계이므로 face 수1782로 해석하면 안 된다. 이들과 별도로 양의 부피 겹침96쌍이 있다. 모든 box axis는 world cardinal axis와 최대4.441e−16 오차만 있어 이96쌍은 회전된 OBB의 AABB false positive가 아니다.
 
-standalone USD 합성 검사로 현장 `/World/ENG_FE2E/Fixture/ActualBrickLoad`의 HR AssetRef300, 사용 layer25를 확인했다. source stage는 `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_FRONT_RGBD_POSE_SMOKE_20261022_v02/stage_metrics_1m_z.usda`; lit/runtime-fixed layer를 거쳐 기존 DEMO fixture를 참조한다. fixture root transform은 회전90°/translation(−25.888,30.509,.00121562)이다. native 인스턴스 내부 collider는300개다. plain Traverse에서0을 반환하는 것은 instance proxy 미포함 때문이며 물리 collider 없음으로 결론 내리지 않았다. source asset은 cement HR collider1, 나머지7 asset collider0이다.
+예: Layer_01_A/Bundle_01_S/Brick_05와 Bundle_06_R/Brick_02의 overlap XYZ는 약(28.5,47.5,90.0)mm다. 이는 원래 slot frame에 표준 box를 놓으면 발생하며 위치 보존 검사도 PASS했다. 원래 HR mesh/native collider 자체가 같은 부피를 점유한다거나 기존 v21의 실제 접촉 실패였다고 단정하지 않는다. 두 static box의 내부 겹침이 live 접촉에서 무해하다는 증거도 없다. 따라서 동일300poses/동일치수/겹침0이라는 요구를 동시에 만족했다고 주장할 수 없다. 임의 축소·이동·collider 삭제나 실패 gate 완화는 하지 않았다.
 
-따라서 **참조만 바꾸는 native scene은 공통 physics가 아니다.** geometry 크기 정규화가 collider·mass·settling 동등성을 보장하지 않는다. 권고안은 pilot-only 새 overlay에서 세 표현 모두 native brick rigid/collision을 끄고 기존300슬롯·190×90×57mm canonical 정적 box와 보수적 exclusion envelope를 공통 적용하는 것이다. scene/rover/원본 asset은 손대지 않는다. 이는 material contact·적재물 동역학을 평가하지 않는 **고정 적재물의 인식→비접촉 접근** 비교로 한정한다. 형상을 억지로 동일하다고 주장하지 않고, visible scan/CAD geometry·texture는 그대로 둔다. 이 변경은 아직 미승인/미구현이며 safety 서명과 명시적 개정 없이는 실행 금지다. native 물리까지 연구하려면 그것을 표현 전략의 일부로 유지한 별도 설계가 필요하다.
+**권고하는 다음 한정 offline 수정:** 300개 표준 box의 **외부 union envelope를 정확히 보존하는 공통 정적 union collider**를 좌표평면 분할로 겹치지 않는 cuboid cells로 생성하고, union 부피·외부 경계·rover/ground clearance가 원래300 box의 union과 같은지 검증한다. 렌더와300 slot은 그대로 둔다. 이는 “enabled box 정확히300개”를 바꾸는 별도 pilot-only physics 개정이므로 현재 overlay를 PASS로 바꾸지 않고, 새 artifact/새 DRAFT 조건으로 기록해야 한다. 이 bounded 단계가 끝나기 전 v24 Kit motion은 NO-GO다. 단순 내부 겹침을 무해하다고 간주하는 우회는 권하지 않는다.
 
-## 4. 관측·제어·정지·기록 계약
+**2. 공통 rolltainer Plane의 authored material binding 손실.** 활성 prim `/World/ENG_FE2E/Rover/base_link/MountedRolltainer/AssetRef/rolltainer_body/Plane`이 source의 `/World/Looks/OmniPBR`을 가리키지만 reference 범위를 벗어나 무시된다. 원본 rolltainer USD를 직접 열어 intended Material/Shader가 존재하고 diffuse texture가 `/home/jh/Downloads/rolltainer_stl/apriltag_100.png`인 것을 확인했다. 이 파일은 해당 경로에 없고 현재 assets root의 정확한 파일명 검색에서도 발견하지 못했다. 전체 파일시스템에 없다고 단정하지 않는다. 원래 이미지의 SHA는 UNKNOWN이다.
 
-[명령 guide](../docs/construction_site_pilot_commands_20261102_v22.md)에 adapter의 구체 patch 지점·frame convention·ROI·timeout·원시 artifact·lifecycle을 적었다. fresh mounted 640×480 RGB+distance_to_image_plane depth 한 render product, 매 실행 실제 calibration/optical transform, 단일 inference, matched M50/B4/B5를 사용한다. fx=fy317.0431201195는 실제 v21 reference이며 새 T_world_optical을 복사하지 않는다. PRE/FINAL은 새 B5 중심에서 공통 offset2.2037450313/1.4037450313m, task yaw90/local−X로 생성한다. B4는 기록용 heading이며 task axis를 회전시키지 않는다. USD GT는 sensor pose calibration·안전 map의 허용 role과 posthoc evaluation에만 식별하여 쓰고 B5 center·ROI·controller goal 정답으로 주지 않는다.
+**다음 한정 복구:** 원래 AprilTag 이미지의 실제 파일/lineage를 회수해 SHA를 기록하고, derived 공통 material subtree에서 원래 `/World/Looks/OmniPBR`을 참조한 후 Plane을 그 local material로 bind한다. 원본 USD는 그대로 두고 세 행에 동일하게 적용한다. 원래 image를 임의의 새 tag로 대체하지 않는다. 원본 texture를 회수할 수 없다면 현 fallback appearance를 별도 protocol 조건으로 명시하고 실제 동일-view render admission으로 검증해야 하며 현재 정적 FAIL을 PASS로 바꾸지 않는다.
 
-manual ROI는 **명시적 human-assisted/nonautonomous**이다. 세 표현에 동일 reviewer/익명 image code/한 번 polygon 제출/시간 제한, GT·모델명·이전 ROI·성공 결과 비공개, 실제 새 RGB와 overlay SHA 결합 검토를 요구한다. 외관으로 표현이 짐작되는 blind 한계는 기록한다. 미검출/ROI 실패 시 더 많은 도움·재시도·threshold 변경을 허용하지 않는다.
+MDL 문제를 이론으로 무시하지 않았다. 설치 SDK의 실제 `kit/mdl/core/mdl/gltf/pbr.mdl`와 `kit/mdl/core/Base/OmniPBR.mdl`을 찾아 standalone resolver search path로 해석하고 SHA를 기록했다. 전자의 SHA는 `2c7c14d7bbf7cacea990f90e8ecc92700d8a7fe9805e44970096796e2be88b78`, 후자는 `685a82c18b381f1cd29831490e4c356e61dbeac2d86803babc115cd6a4a845db`다. 선택 brick의 활성 bound networks/texture는 실제 경로 해석 PASS다. 전체 dependency scan의 remote Grid/rolltainer texture/mitex texture 등 미해결 항목은 각 JSON에 그대로 남겼으며, 전부 활성 rendered dependency라고 단정하지 않았다. 실제 MDL compile·renderer 결과는 NOT_TESTED다.
 
-v21 graph/publisher/GID/TF, rear-reference follower와 base_link evaluation의 구분, 원래 collision/support/path/speed·steering·memory/GC bounds, PRE stop 후 독립 FINAL admission, 실제 wire replay·physics stop verifier를 모두 유지한다. **engineering trigger3mm, endpoint5mm/2°, quiet≥1초**는 perception target 도달 인증이다. 이를 canonical task success threshold로 바꾸지 않는다. canonical GT posthoc main11cm/7.3417743229°, strict5.5cm/3.6860176256°, relaxed16.5cm/10.938473748°는 기존 정의 그대로 별도 보고한다. GT 중심에 대해 잘못 생성된 목표에 정확히 정지할 수 있으므로 두 결과는 반드시 나눈다.
+## Pilot DRAFT 및 v24 최소 실행 계획
 
-pilot 출력은 다음과 같다.
+새 DRAFT는 정확히 HR/LR/GeoCAD, cement C100/FULL300/추가 occluder 없음/v21 site·start·seed·camera를 명시한다. estimand는 **representation + matched frozen M50 pipeline**이며 geometry-only 인과효과가 아니다. frozen FE2E_S001 exact replay도 아니다. v21 start/scene, assisted ROI, matched model/controller/stop verifier, common static load라는 변경을 선언하고 원래4rep108/432를 보존한다. occlusion 수준·효과크기·power·추가 표본계획은 만들지 않았다. cost missing은 그대로 missing이다.
 
-- 단계별 capture/calibration·detection(confidence/mask/depth count)·B4 validity/heading·B5 validity/center·target generation·route admission 결과와 최초 실패원인.
-- B4 modulo180 heading error, B5 XY·longitudinal/lateral 오차를 **GT posthoc 전용**으로 측정. invalid pose는 결측 원인과 함께 남기고 유효표본에서만 구한 평균을 전체 성능처럼 표시하지 않음.
-- PRE/FINAL 각각 실제 이동·base_link endpoint 거리/yaw·wire zero/quiet·certificate, canonical terminal error와 기존 세 task bands.
-- unexpected contact·침투/하중·안전 fault·timeout·TF/GID/graph fault·강제종료·exit code·독립 attestation 결과.
-- 단계/전체 wall와 sim 시간, inference/pose/계획/검증 비용, reviewer active time, RSS 및 기존 asset 제작비 reference/결측.
+두 blocker의 한정 offline 해결과 새 DRAFT 조건 고정 후에만 [runtime 계약](../docs/construction_site_pilot_runtime_contract_20261102_v23.md)의 v24 순서로 진행한다. 실제 live wrapper는 아직 없으며 가짜 실행 CLI를 제시하지 않는다. 작은 코드 연결은 session의 stage derive를 검증된 scene row로 받는 것과 HR 고정 worker의 rep/model/source metadata selector 두 곳이다. v21 rover/control/ROS/stop verifier를 다시 작성하지 않는다.
 
-예정행3/실제시도수/검증완료수/성공수를 함께 보고한다. detection/pose/ROI/target/route rejection/물리 미도달/접촉은 task failure; sensor bootstrap/process crash·증거 hash/독립 certificate 누락·외부 verifier/exit 실패는 infrastructure/attestation failure로 별도 표시한다. 동시에 발생하면 두 flag를 보존한다. **시작된 모든 행은 전체 시도 분모에 남고**, 인프라 실패를 지워 성공률을 높이지 않는다. 시작 전 BLOCKED는 미시도로 별도 집계한다. 타당한 inference가 있었더라도 attestation 실패를 VERIFIED success로 세지 않는다. 파일럿은 정식 confirmatory 분모에 합치지 않는다.
+첫 bounded Kit는 HR **한 행만**: 먼저 실제 render/material과 PhysX static shape 등록/native0·consumer 가시성·support/settling/contact를 검사한다. 실패면 motion0/NO-GO와 모든 로그를 보존한다. 성공한 경우에만 fresh RGB-D→정확한 HR M50→B4/한 reviewer·한 번 time-limited ROI B5→새 목표→기존 PRE swept path/wheel support→normal stop/quiet→독립 FINAL admission/stop/quiet를 적용한다. exit/cleanup/독립 post-exit proof/PID 소멸 확인 전 다음 LR을 시작하지 않고, CAD도 같은 순서다. retry0. threshold·GID·TF·속도·steer·GC·timeout·zero/quiet 기준은 원본 계약 그대로다. GT는 perception goal/ROI 정답으로 쓰지 않는다.
 
-## 5. 3 대 4 개정 권고 — 기존 잠금 변경 없음
+## 검사·실패·보존 기록
 
-10월29일 요청을 기록한 [three_rep_hpo_start 보고서](three_rep_hpo_start_20261029_v01.md)와 PROJECT_STATE의 “향후 HR/LR/GeoCAD, Proxy 제외”가 확인됐다. 이 후의 4rep 언급은 frozen protocol 기록이며 이를 뒤집는 새로운 4rep 연구 결정 근거는 찾지 못했다. **의도된 후보는 HR/LR/CAD**다. 다만 이 결정이 Full E2E frozen matrix에 이미 반영됐다는 뜻은 아니다.
+최종 adapter/checker compile PASS, 실제72/72 SHA 및108/432 pairing/join PASS, 세 scene 각각21/23 정적 검사 PASS. read-only v23 checker는 cross-row identity PREPARE_PASS와 각 행 BLOCKED/exit2를 함께 반환했다. 모델 오매핑/scene hash 변조/Proxy 분석군/disabled collider/transform 변조/CLI Proxy·live 인자 거절 등 focused8/8 PASS. standalone 결과를 FULL READY/science PASS로 승격하지 않는다.
 
-권고: 다음 미사용 artifact 번호로 별도 pilot amendment를 작성하고 parent SHA를 명시한다. `v04`라는 전역 버전 하나를 모든 artifact에 강제로 붙이지 않는다. 아래는 제안이며 이번에 어떤 lock도 갱신하지 않았다.
+개발 중 최초 compile 괄호 오류, 설치 USD에 없는 `Stage.GetCompositionErrors` 호출로 HR_Scan_01 exit1, ancestor reference 혼합 발견 및 초기 비효율 triangle 검사 시도는 삭제하지 않았다. 개선 전 실행의 일부는 별도 output에서 끝까지 검사했고4회는600초 timeout으로 실패했다. 이들은 과학 관측이 아니고 최종 세 행 대신 사용하지 않는다. run별 실제 terminal/exit와 source snapshot 유무는 [개발 실행 inventory](construction_site_pilot_development_runs_20261102_v23.json)에 기록했다. Standalone 총11회 중 개발8회(API FAIL1, 600초 timeout FAIL4, 완료 BLOCKED3), 최종3회 모두 완료 BLOCKED/exit2다. 이전 wrapper가 timeout exit JSON을 남기지 못한4회에는 terminal에 관측된 TimeoutExpired/exit1을 별도 receipt와 final status로 추가 기록했다. 모든 소유 standalone worker는 종료됐고 기존 사용자 프로세스를 중지하지 않았다. 초기 snapshot 부재/작업 중 source 변경이 있었던 output은 최종 provenance로 채택하지 않았다. `git status`는 starter가 Git repo가 아니어서 실패했다. stage/commit/push/remote 변경은 없다. 탐색 중 잘못된 tail 다중파일 인자 오류도 연구시도가 아니다.
 
-| 영향 artifact/section | 필요한 versioned 변경 |
-|---|---|
-| prelock `confirmatory_design`/representation factor·pairing·confirmatory count, `perception_models_frozen`, `analysis_precommitment`, `implementation_guardrails` | 후보3rep/matched 모델/추론·도움·실패정책 명시; pilot namespace와 정식 matrix 분리 |
-| amendment v03 `scientific_factors_unchanged`/`representation_runs`/primary model 및 task-policy 관련 기존 controller 규정 | 더는 unchanged라 부르지 않음. v21 follower/stop verifier, 현장 start/조명·수동ROI·공통 정적 물리 정책을 pilot 범위로 명시 |
-| scenario_manifest_v01 execution432 + SCENARIO_MANIFEST_LOCK | 새 3rep 실행행렬·행수·SHA·pairing exact-set; 기존432 불변. base108을 재사용한다면 membership/seed 그대로 parent 참조 |
-| initial_geometry_v02 geometry432 + INITIAL_GEOMETRY_LOCK | 새 실행 geometry join/metadata 및 pilot 고유 geometry/start 정의. geometry108/workspace는 같을 때만 hash 참조; 바뀌면 각각 새 버전 |
-| asset registry/model mapping 및 downstream config/runner/results schema | execution eligibility3rep와 appearance dependency 구분. 8asset 원본 registry는 그대로 보존 가능; 새 pilot mapping만 별도 생성 |
-| 연구 method/results/analysis contrast·표·비용 항목 | 연구 대상3rep·representation+matched model estimand·human assistance·physics/분모·과거4rep 연구와 구분 |
-
-세 표현으로 base108을 그대로 유지하면 수학적으로324행이지만 **324 설계를 승인·생성·실행한 것은 아니다**. 추후 completeness×occlusion 새 축은 기존 distance/view interaction 계획과 다르므로 별도 방법론 개정 대상이다. 이번 목적을 큰 행렬/검정력 결정으로 확장하지 않는다. 접근 가능한 `Downloads/TOC 수정본.docx`는 EUI/건물용도 연구 목차여서 본 연구 method/results 근거가 아니었다. 관련 최신 논문 원고는 확인하지 못했다. starter에 기록된 Real Test189는 recipe locking 뒤 이미 평가됐으며 미개봉이라 하지 않고 tuning에 사용하지 않았다. 실제 외부 검증 red-only를 cement/실로봇 배포로 일반화하지 않는다.
-
-## 6. 진짜 blocker와 다음 단일 작업
-
-1. **문서 gate:** 3rep 후보, v21 controller/현재 start·수동 ROI·matched M50·pilot-only 공통 정적 physics를 parent locks와 구분한 좁은 서면 amendment가 필요하다. 이는 기존 사용자3rep 의도를 다시 묻기 위한 gate가 아니라 기존 잠금과 달라지는 실행 조건을 구체적으로 남기는 gate다.
-2. **작은 실행 adapter gate:** 300개 실제 slot reference 교체와 공통 물리 overlay, representation 인자 worker, 동일 reviewer 규칙·per-run raw/status를 연결하고 standalone USD에서 slot/transform/활성 재질·collider·graph·camera/safety를 비교해야 한다. Kit/학습 없이 할 수 있는 다음 구현이다. HR/LR/CAD 세 행 모두 같은 새 adapter를 써야 한다.
-
-**다음 단일 action:** 위 두 조건을 한 번에 검토할 수 있도록 *pilot-only amendment + 최소 parameterized adapter/derived overlay의 prepare-only 산출물*을 새 버전으로 구현·검사한다. 그 static admission이 통과한 뒤 별도 허용된 작은 파일럿으로 전환한다. 이번에는 Kit 승인 요청이나 이전 v21 주행 재시도를 하지 않았다. 새 자산/학습/HPO를 준비하는 것은 다음 action이 아니다.
-
-inactive texture reference 자체는 blocker로 넣지 않았다. 전체 renderer closure는 UNKNOWN이지만 v21 HR은 실제 렌더/인식 성공했다. LR/CAD의 활성 material binding·texture closure는 prepare-only에서 어떤 visible prim에 연결되는지 확인할 대상이다. 빠진 경로가 현재 활성 rendering에 영향을 주는 증거가 있을 때만 해당 행을 차단한다. Proxy appearance 의존성은 보존한다.
-
-## 7. 검사·실패 기록·변경 파일
-
-PASS: checker AST와 정상 BLOCKED·변조 hash/누락 input 거절을 CPU로 확인했다（`construction_site_pilot_checker_validation_20261102_v22.json`）。known9 subset, 입력72 SHA, 108/432 four-rep pairing 및 geometry 모든 열 join; standalone USD scene300 refs/instance collider300 및 자산8개 확인. CPU checker가 **12개 미구현 runtime contract로 BLOCKED/exit2** 반환하는 것은 예상 admission 거절이다. 런타임/과학 readiness PASS가 아니다.
-
-탐색 중 nonexistent scene-provider/glob 조회 exit2, 넓은 파일명 검색의 Documents permission denied, standalone USD 첫 인라인 코드 괄호 오류 exit1은 있었다. 기존 파일은 수정하지 않았고 잘못된 인라인 코드를 수정한 뒤 standalone read-only 합성을 완료했다. plain traversal collider0의 제한은 inventory에 보존하고 instance-proxy300 결과로 명시했다. 이것들은 Kit/과학 시도가 아니다. 관련 논문 파일명 검색은 exhaustive filesystem 권한 인증이 아니다.
-
-신규: 본 보고서, candidate manifest, command guide, stdlib checker, known-lock/scene/admission/checker 검증 JSON. 갱신: `reports/latest_report.md`, `docs/PROJECT_STATE.md`. source USD·weights·원본 rover/scene·모든 frozen scientific manifests/locks·v19/v20/v21 code/raw/snapshots는 수정하지 않았다. package 설치/학습/Kit/ROS/process 종료/Git stage·push0. **engineering corrected 1/1, science denominator0 유지.**
+변경 파일: 새 v23 adapter·evidence checker·DRAFT/runtime 계약·manifest·검사/geometry/validation/개발 실행 inventory·이 보고서. `reports/latest_report.md`와 `docs/PROJECT_STATE.md`만 최신 상태를 갱신했다. 기존 source/USD/weights/locks/v19b–v21 raw 및 v20 FAIL0/2는 보존했다. Kit/ROS live/training/HPO/asset reconstruction/새 연구 관측0, formal denominator0. 다음 구체 작업은 위 union collider와 원래 Plane texture/binding을 **offline에서 한정 해결**하는 것이며, 현재 상태로 v24 주행을 시작하지 않는다.
