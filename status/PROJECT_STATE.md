@@ -476,3 +476,8 @@ GUI/GPU free 확인 후 hh_isaac51 Kit **한 번 실행**했으나 baseline `CLO
 ## 2026-11-01 — 현장 v05 수정 v04 실제 실행 / PhysX support 미확보
 
 [보고서](../reports/construction_site_single_rover_mobility_20261101_v05.md). 새 v05 namespace에서 기존 수정 v04 SHA 그대로 Kit1회/retry0. 물리377steps/6.283333661s/시각역행0, 통로·graph·baseline quiet PASS. tilted 표본2214 생성되었지만 허용floor ray hits0/2214, shell9ray도 저장hit0; 여섯wheel contacts6/6. STATIONARY_PHYSX_SUPPORT_FAILED로 driver 생성 전 중단. 원시query hit/반환값 미저장으로 미검출과path필터 원인 구분UNKNOWN. 비영명령0/MOVED NO/base XY변위0/STOPPED NOT_TESTED, nativeexit0/internalNOT_READY/runnerexit1. cleanup pause/graphzero 요청은 postdrive stop검증 아님. 원본입력hash보존PASS, 코드변경0, 연구분모0/HPO PAUSED. 다음 최소수정은 기존안전필터 전 ray 원시hit+반환bool 저장 한 가지; 추가Kit 없음.
+
+
+## 2026-11-01 — 현장 v06 raycast API 수정 PASS / TF freshness admission FAIL
+
+[보고서](../reports/construction_site_single_rover_mobility_20261101_v06.md). Kit2세션(첫 진단FAIL/시간초과 child-9 보존, 수정 재확인1회), 측정주행0/비영명령0/MOVED NO/변위0/주행후STOPPED NOT_TESTED. RaycastHit가 dict 아닌 속성객체임을 실제 AttributeError로 확인·수정; 14 bounded raw rays 필터전hits 저장, 기본단면/양면 모두 hit, composed path/winding 정상. 수정후 strict support2214/2214·sixwheelcontact·shell9/9 PASS, 최소gap70.647mm/실제shellsep+78.864mm·impulse0; fallback미사용, 통로0.10m유지. 물리378steps/6.300000329s. 이후 긴support계산 뒤 과거TF를 즉시채택해 TF_STALE(age7.206364s); driver미생성/PUBLISHER_SET NOT_TESTED. freshTF(.5swall/.1ssim) 대기 최소수정·actualstale/fresh/simstale 회귀·compile PASS, 최종수정 runtime NOT_TESTED/추가launch0. 코드snapshot/hash 구분, 원본stage/controller/v04코드7hash 보존PASS. 새외부v06에 실패2세션/trajectory/evidence보존. 연구분모0/HPO PAUSED/FullE2E NOT_YET_VALIDATED. 다음은 freshTF 대기수정으로 기존ROS shortpulse+zero 실제검증이며 이동성공 주장없음.
