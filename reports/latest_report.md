@@ -1,62 +1,52 @@
-# 현장 단일 로버 v03 — geometry 오탐 수정, 실제 Kit 1회 / 명령 전 중단
+# 현장 단일 로버 v04 — 물리 시계 PASS, 기울어진 바퀴 지지 검사에서 구동 전 중단
 
-2026-11-01 KST. **v02의 거대 AABB 차단은 제거했다. 실제 Kit 한 세션을 실행했으나 baseline `CLOCK_NOT_ADVANCING`에서 실패했다. 물리 forward+stop milestone은 달성하지 못했다.** 재실행하지 않았다.
+2026-11-01 KST. **실제 Kit 한 세션에서 시계와 baseline 정지는 확인했지만 forward+stop 목표는 달성하지 못했다.** 비영 명령 0, MOVED NO, 주행 후 STOPPED NOT_TESTED. 연구 denominator 0, HPO PAUSED 유지. 재시도·두 번째 Kit 없음.
 
-| 항목 | 결과 |
+| 항목 | 실제 결과 |
 |---|---|
-| 충돌체별 오프라인 geometry / graph admission | PASS |
-| 실제 Kit launch | 1회, headless / 로컬 hh_isaac51 runtime |
-| 비영 명령 / actual drive attempts | 0 / 0 |
-| MOVED / STOPPED | NO(구동 미시도) / NOT_TESTED; QUIET NOT_READY |
-| CONTACT | 관측됨: 여섯 바퀴 및 차체 shell–현장 mesh, 총 168 events |
-| PhysX swept support raycast | NOT_RUN — 선행 clock gate 실패 |
-| 실제 실행 판정 | FAIL / NOT_READY, `CLOCK_NOT_ADVANCING` |
-| 연구 denominator / HPO·training·B300·E2E·432 | 0 / 미실행, HPO PAUSED 유지 |
+| Kit / drive attempts / nonzero commands | 1 / 0 / 0 |
+| 물리 clock / stationary quiet | PASS / PASS |
+| MOVED / STOPPED | NO / NOT_TESTED — postzero 검증 없음 |
+| shell 관측 접촉점 비침투·무충격 | PASS, 정지 기록 범위 한정 |
+| 여섯 바퀴 contact | 관측됨; 실제 swept PhysX 지지 인증 NOT_TESTED |
+| 내부 판정 / native host exit / runner exit | NOT_READY / 0 / 1(정상화된 실패) |
+| 단일 남은 기술 제약 | 정착 후 기울어진 바퀴 지지를 실제 PhysX raycast로 인증하지 못함 |
 
-## 좁은 변경과 오탐 교정
+## 시계 BEFORE / AFTER
 
-새 파일은 `scripts/construction_site_drive_geometry_20261101_v03.py`, `construction_site_drive_runner_20261101_v03.py`, `construction_site_drive_session_20261101_v03.py`, `construction_site_drive_geometry_checks_20261101_v03.py`다. v02 runner/session을 복사해 geometry import와 v03 경로를 연결했고, session에는 비영 명령 전 정지 PhysX 지지 검사만 추가했다. 기존 v02 ROS pulse·세 articulation controller·stopping adapter·endpoint guard를 그대로 재사용한다. 원본 USD/연구 controller/ActionGraph 원본/모델/기존 출력은 수정하지 않았다.
+v03 원본 steps195개·runtime_summary·run_status·ros_status를 직접 읽었다. runtime_summary는 attempt 내부가 아니라 v03 출력 root에 있었다. v03 baseline은 `timeline.get_current_time()`을 사용했고 timeline start/end timecode0, 기본 looping play였다. timeline 범위 **0.000000160808~0.033333656689초, 역행78회**, TF stamp6.283333661초였다. v03에는 독립 물리 step 기록이 없으므로 과거 물리 진행 자체를 확정하지 않는다.
 
-전체 visual subtree AABB를 충돌 판정에서 제거했다. 활성 collider마다 world 3D AABB와 개별 반경을 사용해 원래 guard 범위인 역방향 .05m~전방 .15m, yaw ±2°, clearance .10m를 보수적으로 확장한다. yaw 변위 상계는 `2*r*sin(1°)`다. site geometry와 Z 교차부터 검사하고 그 다음 XY를 검사한다. mesh는 각 world triangle과 pair·원래 bounds·swept bounds·겹친 Z를 기록한다. 높은 collider가 실제 활성인 경우에도 이 알고리즘에 포함된다.
+설치된 Isaac Sim **5.1.0**의 실제 Python 소스와 `.pyi`를 확인했다(`installed_api_evidence.json`). v04는 **SimulationManager.get_simulation_time()**을 baseline·FD·endpoint/TF 비교·pulse/postzero 시간의 기준으로 사용한다. PhysX 실제 step callback의 횟수·각 dt·누적 dt, native step count, raw timeline·play/loop 상태, 기존 graph simulationTime·TF stamp를 별도로 저장했다. wall time과 i×dt를 simulation time으로 사용하지 않았다.
 
-**입력 설명과 로컬 권위 자료의 차이:** 원래 robot asset의 Cube는 collision/rigid body `True`지만, 실제 site composition에서 더 강한 `construction_scene_robot_task_rover_smoke_v03.usd` override는 둘 다 `False`다. source property stack을 확인했으며 v02의 기존 collider inventory에도 Cube가 없다. 현재 source/의존성 42개 expected hash는 실행 전후 일치한다. 따라서 이 현장에 적용되는 composed 값은 False다. 이번 작업에서 Cube를 끈 것이 아니다. Cube Z[9.49164806,10.49164806]와 비활성 상태를 inventory에 보존했고, Cube를 참조하는 joint는 0개였다. 원격 질량/constraint가 활성인 증거는 없다. rolltainer/caster collision 10개도 원래 비활성이며 삭제·활성화하지 않았다. 활성 로버 collider는 13개다.
+새 runtime overlay만 start0/end120초·loopingFalse로 설정했다. 원본 USD와 graph·physics dt·controller는 그대로다. 물리 timestamp는 **6.283333661035초**, 실제 callback **377 steps**, 마지막 dt **0.016666667536초**이며 native physics step 수도377이다. native 시간과 실제 callback dt 누적값 차이 **0초**, step count 차이0, 기존 graph timestamp와 native 차이0이다. telemetry195행의 물리 시각3.050000159070→6.283333661035초, 역행0; raw timeline3.016666823998→6.250000325963초, 역행0; TF와 native 최대 차이 .033333336068초로 기존 .1초 기준 이내다.
 
-v02는 이러한 visual/비활성 bound까지 묶어 높이3.623–3.652m의 site triangle 8개를 차단했다. v03에서는 그 높이에 활성 로버 점유가 없어 해당 차단이 없다. synthetic USD 회귀검사에서 **활성 high Cube–3.65m triangle은 분리**, **활성 high Cube–10m triangle은 차단(Z 교차 [10,10])**됨을 검증했다. 실제 upper 장애물을 무조건 제외하는 수정이 아니다.
+baseline 마지막30행 시간차 **0.483333358541초 > .4초**. 마지막 정지창 coverage **1.000000052154초**, COM peak .000388869344m/s, root-origin .000394139814m/s, FD0, pose span0으로 모두 기존 .002 기준 PASS다. 이 값은 **비영 명령 이전 stationary 상태**이며 주행 후 정지 성공을 뜻하지 않는다. raw timeline과 물리 시계가 서로 다른 위상임을 직접 확인했다. 다만 range와 source를 함께 수정했으므로 v03 원인이 looping 하나였다는 분리 인과 증명은 아니다.
 
-바닥은 빈 공간을 포함하는 31×31 expanded box 대신, 실제 활성 cylinder 바퀴의 변환된 최하단 접촉선에서 축 방향 세 점을 채취했다. 여섯 바퀴×41개 travel 위치(5mm 간격, -.05~+.15m)×yaw -2/0/+2°×접촉선 3점=2,214개다. 명목 start와 .05m endpoint도 포함한다. 비활성 caster는 별도 inventory로 남겼으며 지지 역할을 가정하지 않았다.
+## shell과 바퀴 — 확보한 물리 증거
 
-첫 `prepare_0001`은 기존 “triangle 높이차<.005m” 분류를 유지해 floor 부근 pair20/지원 누락827을 기록했다. 이는 실제 미지지 확정이 아니다. 원본 floor 높이 band [-.03,.02]m는 유지하면서 triangle의 작은 경사/분할에 따른 flatness 조건을 제거하고 실제 표본 높이와 비교했다. wheel bottom 약 -8.35mm인 원본 기하를 기준으로 10mm 내 표면 교차를 요구하며, 이를 물리 인증으로 간주하지 않는다. 최종 `prepare_0003`은 pair0/지지 누락0이다. 연속 정확 충돌·traction 인증이 아니라 보수적 장애물 AABB 및 이산 지지 검사다.
+`contacts.json`은 pair뿐 아니라 각 접촉점의 world 위치, normal, separation(m), impulse(Ns), phase와 물리 step을 저장한다. 총168 events, shell24 events/144 points다. shell 최소 separation **.078864306211m**, 최대 impulse **0Ns**, normal Z .999986469746이다. 예시 world contact(-25.9086914,28.4468822,-.008502685)m는 floor 근처지만 shell에 대한 separation은 양수였다. 따라서 단순 pair count를 shell 침투/끌림으로 해석하지 않는다.
 
-모호한 mesh 지지는 비영 명령 전에 **진짜 PhysX raycast_all로 동일 2,214점의 site surface를 검증하고, 여섯 바퀴 각각의 실제 floor contact가 있어야 통과**하도록 추가했다. 바닥 예외는 원래 floor band 안에 한정된다. 실제 실행에서는 clock gate가 먼저 실패해 이 raycast 검증에 도달하지 못했다. 초기 geometry PASS를 실제 지지/비침투 PASS로 승격하지 않는다.
+정착 후 collider inventory의 shell world Z는 **[.065561256826,.527515326354]m**다. 원본 현장 mesh를 읽어 같은 shell XY의 수직 triangle 교차9점을 계산했으며 최소 하단 gap **.070647280933m**, 9/9 양수다. 이는 **저장 기하의 offline 교차**이며 live PhysX raycast로 표기하지 않는다. 관측된 shell 접촉은 모두 settling0~.383333353초에 발생했고 baseline 접촉점은 없다. 기록된 점은 비침투·무하중이며 정지 상태 간격도 양수다. **주행 중 dragging/안전은 NOT_TESTED**다.
 
-## 실제 한 세션의 결과
+여섯 바퀴 모두 각24 contact events를 기록했다. 전후4바퀴에는 최대10.4266/16.5298/20.7066/12.0553Ns impulse가 있었고 middle2바퀴는 최대0Ns였다. 따라서 여섯 pair를 모두 하중 지지로 승격하지 않는다. 전체 swept support 표본의 실제 PhysX 검사는 도달하지 못했다.
 
-외부 출력 root:
-`/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_SINGLE_ROVER_MOBILITY_20261101_v03/`
+## 정확한 중단 원인과 실행 후 수정
 
-실행 명령:
-```bash
-python3 scripts/construction_site_drive_runner_20261101_v03.py --run --output /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_SINGLE_ROVER_MOBILITY_20261101_v03/prepare_0003
-```
+offline 준비는 collision별 .10m clearance와 기존 ROS 세 controller graph admission PASS였다. 실제 baseline 후 다시 계산한 `collision_preflight.json`에는 **장애물 overlap0건**이다. 실패7개는 여섯 바퀴 각각 `tilted_support_requires_stationary_PhysX` + 그 결과 `no_enabled_ground_supports`다. 기존 알고리즘은 cylinder 축의 world Z 성분 절댓값>.0001이면 표본을 만들지 않았다. 실제 tensor base orientation은 roll **.137956685°**, pitch **-.260161107°**였고 수평 축 가정이 깨졌다. 이는 통로 장애물이나 실제 wheel unsupported 확정이 아니다.
 
-실행 전 Kit/학습 후보0, GPU compute는 기존 rustdesk PID953930/535MiB뿐이었다. domain191 probe·입력 hash 검사 후 Kit을 한 번 열었다. `/Render`, 원래 site floor, 1m/Z 및 source sublayer를 유지했다. 새 EngineeringFloor/teleport는 없다. 종료 후에도 Kit/학습 후보0이며 사용자 프로세스를 중지하지 않았다.
+**이번 구현은 이 analytic 실패를 shell 진단·live raycast보다 먼저 assert하는 순서를 유지한 탓에, 안전 확인 후 같은 세션에서 주행할 기회를 놓쳤다.** 원시 failure_reason `NO_SAFE_CORRIDOR`는 보존하지만 원인은 위 support 처리 한계로 특정한다. 임의로 guard를 통과시키거나 재실행하지 않았다.
 
-180 settling updates 후 baseline75와 exception_zero120, 총195개 telemetry를 보존했다. baseline 마지막30행의 timeline 차이가 필요한 .4s를 충족하지 못했다. 전체 기록 time은 약 0.000000161~0.033333657s 범위에서 **78회 감소**했다. 반면 ROS TF stamp는 약6.2833s였다. source stage는 start/end time code 모두0, FPS/timeCodesPerSecond24다. 짧은 stage 구간 looping 또는 clock 선택 문제가 의심되지만 직접 원인을 확정하지 않았다. 원본 timing을 바꾸거나 연구 gate를 낮춰 재시도하지 않았다.
+실행 종료 뒤 실행 당시 v04 코드3개를 외부 `executed_code/`에 그대로 보존했고 hash가 prepare manifest와 일치함을 확인했다. 이어 repository v04 geometry에는 기울어진 cylinder의 각 axle 단면에서 실제 최하단 radial tread를 계산하는 식을 추가했다. 표본 높이는 개별 world Z로 비교하며 기존10mm support tolerance, 5mm travel 간격, yaw±2°, .10m clearance를 유지한다. session도 shell 진단과 live support 자료를 저장한 뒤 최종 admission을 판단하도록 순서를 수정했다. controller/graph/원본 collider 변경 없음.
 
-첫/마지막 기록 pose XY는 (-25.8879776001,28.4708671570)로 같았고, 기록 구간 signed forward displacement0m였다. 이는 명령 주행·정지 후 drift 수치가 아니다. 기록 최대 planar COM .000388869m/s, root-origin .000394140m/s, FD0m/s지만 clock이 비단조이고 유효한 연속1s 관측이 없어 **정지 PASS는 아니다**. joint q/dq·graph targets는 `steps.jsonl`에 있다. 이전34.127288744mm retreat/quiet FAIL은 해결되지 않았다.
+**이 실행 후 수정본은 static 검증만 PASS, 실제 runtime NOT_TESTED다.** consumed prepare의 입력 hash는 이 수정본과 달라 재사용 실행이 차단된다. 실행 결과를 수정본의 성공으로 재해석하지 않는다.
 
-접촉은 여섯 바퀴 각각24 events와 `base_link/collisions/gl_shell/mesh`–현장 mesh24 events다. 후자는 차체 접촉이므로 실제 penetration/접촉 위치 확인이 필요하다. callback은 collider pair/point count만 기록했으며 contact 위치·힘·침투 깊이는 확보하지 못했다. floor support 전체/안전 traction 인증은 UNKNOWN이다.
+## 보존·검사와 다음 행동
 
-ROS에는 TF publisher1, cmd subscriber2(observer 포함), cmd publisher0, 관측 command0이 있었다. 이름·GID·phase 자료는 `ros_status.json`, `ros_observed.jsonl`에 보존했다. driver discovery/nonzero admission 이전에 실패했으므로 publisher guard 실패로 오분류하지 않는다. zero_request/abort 파일 및 graph zero cleanup 경로를 실행했지만 ROS zero publisher는 시작되지 않았고 `zero=NOT_READY`다. 실제 postzero ≥1s hold와 endpoint 성공은 미검증이다.
+- 새 코드: `scripts/construction_site_drive_{runner,session,geometry,geometry_checks,evidence}_20261101_v04.py` 총5개. 변경 문서: 이 보고서, `reports/latest_report.md` 동일 내용, `docs/PROJECT_STATE.md` 추가 기록.
+- compile5 PASS. enabled high collider의 높이 분리/실제10m 충돌/disabled 상태 회귀 PASS. .2° tilted wheel369 support samples PASS, 바닥 제거 시 지원 실패 검출 PASS. 이는 synthetic offline 검사다.
+- source/reused input46개 재검증 PASS, v03 prepared inputs49개 보존 PASS. source USD, v01-v03 코드/출력·고정 controller/threshold 변경 없음. 실행 당시 코드와 실행 후 수정본 hash는 `final_verification.json`에 구분했다.
+- Kit 내부 NOT_READY인데 native exit0인 현상을 다시 관측했다. 새 runner는 internal status를 읽어 **exit1**로 반환했다. 성공 처리하지 않았다. post-run 선택적 Euler 계산의 inline SyntaxError/exit1도 verification에 남기고 read-only 계산만 바로잡았다.
+- 실제 명령: `python3 scripts/construction_site_drive_runner_20261101_v04.py --run --output /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_SINGLE_ROVER_MOBILITY_20261101_v04/prepare_0001`. 로컬 hh_isaac51 Python/Kit 사용. 사전 Kit·훈련 프로세스0, GPU는 기존 rustdesk535MiB. 사용자 프로세스 종료 없음.
+- 증거 root: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_SINGLE_ROVER_MOBILITY_20261101_v04`. 실제 실행은 `prepare_0001/attempt_0001/`; 핵심 파일은 `physics_steps.jsonl`, `steps.jsonl`, `baseline_quiet.json`, `collision_preflight.json`, `contacts.json`, `runtime_summary.json`, `execution_complete.json`, 상위 `run_status.json`, root `stationary_evidence_analysis.json`, `final_verification.json`이다. 초기 prepare와 최종 prepare는 offline이며 Kit은 최종 prepare에서 정확히1회였다.
 
-**주의할 실제 실패 기록:** native Kit shutdown과 외부 runner의 OS exit code는0이었지만 `execution_complete.json`과 `run_status.json`은 `NOT_READY/CLOCK_NOT_ADVANCING`이다. 성공으로 세지 않았고 `final_verification.json`에 normalized FAIL로 명시했다. 원시 status/exit를 덮어쓰지 않았다.
-
-## 검사·보존·다음 행동
-
-- Python4개 compile PASS. 작은 USD 높이 분리/진짜 upper 충돌/비활성 구분 회귀검사 PASS.
-- prepare0001 FAIL 진단 보존, prepare0002/0003 offline PASS. 첫 worker 환경의 libusd_tf.so 누락과 출력 parent 미생성 오류도 `early_failures.json`에 보존; Kit 미실행 오류다.
-- 재사용 source42개 hash 전후 PASS, 실행 input hash 재검사 PASS. 준비 overlay의 graph 밖 property0, Cube joint reference0. 전체 속성 직렬화/대용량 복사 없음.
-- 핵심 증거: `source_property_authority.json`, `source_physics_inspection.json`, `source_joint_and_overlay_check.json`, `geometry_regression.json`, `source_hashes_after.json`, `runtime_summary.json`, `final_verification.json`; 실제 실패는 `prepare_0003/attempt_0001/` 및 `run_status.json`.
-- `reports/latest_report.md`는 시작 시 없었으며 이번 v03 보고서와 같은 내용으로 생성했다. PROJECT_STATE에 이번 실패를 추가했다.
-
-**다음 구체적 작업은 기존 session의 timeline/ROS physics clock 불일치와 shell–floor contact를 정지 상태에서 확인하는 좁은 수정이다.** 단조 clock/실제 ≥1s baseline, PhysX support 및 차체 비침투가 확인된 후에만 새 승인 범위에서 단일 forward+stop을 진행할 수 있다. 현재 motion milestone 미달이며 broad audit/아키텍처 재설계/연구 실행으로 확대하지 않았다. 연구 denominator0을 유지한다.
+**다음 구체적 행동은 새 별도 실행 기회에서 수정된 tilted-tread 표본의 live PhysX 지지 인증을 마치고, 안전하면 같은 세션에서 단일 forward+stop을 수행하는 것이다.** 이번 허용량 한 세션은 소진했으므로 추가 launch하지 않았다. 34.127288744mm 역드리프트 문제는 해결되지 않았고 이번에는 postzero reverse drift·target 오차를 측정할 주행이 없었다. HPO/YOLO training/B4/B5/B300/324/432/QUAL12/preview/GT perception 입력 없음, 연구분모0이다.
