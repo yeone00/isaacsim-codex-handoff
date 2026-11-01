@@ -60,3 +60,8 @@ python3 -m unittest discover -s tests -p test_construction_site_drive_lifecycle_
 prepare exit0, CPU8/8 PASS, 실제 물리 이동·정지·안전 PASS, 정상 driver lifecycle PASS, 전체 runtime FAIL/NOT_READY다. 재실행0. 종료 후 Kit/drive/training process0, GPU compute는 기존 rustdesk535MiB만 남았다. `.git` 없는 경로여서 git status exit128; stage/push 없음.
 
 외부 evidence root: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_SINGLE_ROVER_MOBILITY_20261101_v09_runtime_01`. `prepare.json`, `code_versions.json`, `executed_code/`, `measurement_summary.json`, `run_status.json`, `runtime.log`와 `attempt_0001/`의 `steps.jsonl`, `physics_steps.jsonl`, `adapter_commands.jsonl`, endpoint forensic JSONL, `stop_confirmed.json`, `calibration_ros_complete.json`, `zero_request.json`, `zero_published.json`, `contacts.json`, `stop_quiet_result.json`, `owned_processes.json`, `execution_complete.json`을 보존한다. 새 runtime 출력만 생성했으며 코드 변경0. 보고서·latest mirror·PROJECT_STATE를 갱신했다.
+
+
+## 동일 요청 재수신 시 로컬 재확인 — 2026-11-01
+
+요청된 runtime_01의 실제 완료 자료가 이미 존재함을 확인하여 추가 Kit 세션·prepare·주행을 실행하지 않았다. 원시 steps 771행·command 66행에서 비영45회/FAULT_LATCHED 0행, 최초·최종 world pose 및 cleanup 요청/receipt 시각을 다시 직접 확인했다. Prepare의14개 입력 SHA256은 현재도 모두 일치한다. 실행 중인 Kit/drive/training process는 발견되지 않았다. 기존 실제1회 결과와 전체 NOT_READY 판정을 유지하며, 이번 재확인에서는 코드 수정·CPU 테스트 재실행도 하지 않았다. 보고서와 latest mirror 및 PROJECT_STATE만 갱신했다.

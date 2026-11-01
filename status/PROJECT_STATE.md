@@ -501,3 +501,6 @@ GUI/GPU free 확인 후 hh_isaac51 Kit **한 번 실행**했으나 baseline `CLO
 ## 2026-11-01 — 현장 v09 실제1회: 이동·정지·child 정상, runner 집계 FAIL
 
 [실제 보고서](../reports/construction_site_drive_v09_runtime_20261101_v01.md). 새v09_runtime_01 prepare/Kit1회·ROS episode1회/retry0. 실제 world base +Y21.505356mm/ΔX1.907µm, 계획50mm B 잔여28.496601mm; 짧은 실측B′ 도착이며50mm 자체도달NO(기존±30mm engineering target.pass TRUE와 구분). support2214/2214·shell9/9·기존graph/endpoint guard·.10m통로PASS, unexpectedcontact0·shell최소sep+82.015775mm/impulse0. BRAKING→ZERO_SETTLING→최소1physical초quiet/graphzero 인증 후 child18.104778wall초에completion_accepted TRUE, adapterfault/hardtrigger NULL. 최종quiet1.000000052초PASS/FD0/span0/wheeldq0, 기존480tick관찰 유지. driver/observer/Kitexit0이나 전체NOT_READY/runnerexit1 보존. 원인은 session:354가 cleanup에서 생성할zero_published.json을cleanup요청:371보다 먼저 요구하는 단일집계순서오류. marker실제생성은최종관측뒤/정상child종료뒤이며lateFAULT재발아님. CPU8/8PASS와실제전체FAIL구분. 코드변경0/추가launch0,14prepare입력hash동일·snapshot보존. 원본/이전결과보존,종료후Kit/training0/HPOPAUSED/연구분모0. 다음은정상child종료후cleanupzero확인뒤최종집계하도록집계순서만수정; YOLO/B4/B5·324/432·HPO미시작.
+
+
+2026-11-01 동일 v09 runtime 요청 재수신: 기존 runtime_01 실제 완료 원자료를 재확인했다. steps771/commands66/비영45/FAULT0, prepare14 SHA256 일치. 추가 prepare·Kit·주행·코드변경0; 기존1회 예산과 NOT_READY 결과를 유지한다. cleanup receipt 선행 확인 후 집계 순서 수정이 미해결이며 HPO PAUSED/연구분모0. 상세는 위 실제 보고서의 재확인 절을 참조한다.
