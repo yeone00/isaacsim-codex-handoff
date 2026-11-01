@@ -1,74 +1,75 @@
-# 현장 perception → PRE → FINAL v15 — 2026-11-01
+# 현장 perception → PRE → FINAL v16 — 2026-11-01
 
-**GRAPH_CHANGED 원인 해결·실제 ROS 곡선 주행 시작. 전체 demo NOT_READY: PRE 물리 NO / FINAL 물리 NO.** 새 인식은 PASS지만 PRE 도중 `TF_STALE`로 안전 정지했다. Kit 2회 한도를 소진했고 추가 실행하지 않았다. HPO/training PAUSED, 과학 denominator0.
+**전체 NOT_READY. 새 인식·PRE 안전 경로 검사는 PASS, 실제 PRE/FINAL 도착은 NO/NO다.** 누적 파일 재읽기를 제거한 v16으로 Kit 1회·ROS 주행 1회를 수행했으나 `TF_STALE`가 재발해 안전 정지했다. 요청에 결합한 cleanup receipt 및 물리 quiet·소유 프로세스 정상 종료는 PASS다. 관측된 TF 상태 반영 지연에 대한 v16b 후속 패치는 CPU 검사만 PASS이며 runtime NOT_RUN이다. 재시도0, 과학 denominator0, HPO/training PAUSED. 기존 v15의 실패를 변경하지 않았다.
 
-| 결과 | 첫 시도 v15_01 | 마지막 시도 v15_02 |
-|---|---|---|
-| fresh mounted RGB-D → frozen YOLO/B4/수동 ROI B5 | PASS | PASS |
-| 실제 capture graph 차이 | 렌더 노드17 추가, 기존 변경/삭제0 | 동일 |
-| 공급자 actuator/ROS wiring | 변경0 | capture 및 매 tick invariant PASS; graph fault 없음 |
-| PRE swept collision / live wheel support | PASS / 24300/24300 | PASS / 24300/24300 |
-| 비영 ROS Twist | 0 | 288회 |
-| PRE / FINAL 물리 도달 | NO / NO | NO / NO |
-| base 경로길이 / 순변위 | 0 / 0m | .255870 / .254318m |
-| wheel dq 최대 절댓값 | 0rad/s | .984256rad/s |
-| 예상 밖 contact / 주행 shell 침투·하중 event | 0 / 미주행 | 0 / 0 |
-| 주행 후 quiet | NOT_TESTED | PASS, 1초·pose span0·최대속도 .0002164m/s |
-| zero | cleanup 기록 보존 | driver 최종20회+observer10회; cleanup receipt 검증 FAIL |
-| 실제 Kit PID / exit | 1362015 / −9 | 1365688 / 0 |
-| runner exit / outer result | 1 / KIT_EXIT_NOT_ZERO | 1 / MISSING_WITNESS·NOT_READY |
+## 변경과 검사
 
-## 실제 그래프 차이와 수정
+v15/v15b를 새 버전으로 복제하고 검증된 mounted camera·fresh RGB-D capture, frozen HR YOLO, B4/B5, 수동 ROI, v14 Hermite follower·legacy steering encoding·StoppingAdapter·13 collider sweep·live PhysX support를 재사용했다. 새 센서 관측 대신 이전 목표/GT를 주입하지 않았다. 초기 배치는 기존 v14b의 물리 시작 전 overlay 배치 그대로이며 실행 중 transform 변경은 없다.
 
-첫 실제 composed stage capture 직전 **19:41:39.556684 KST**, 직후 **19:41:40.389535 KST** 원자료는 `_01/attempt_0001/graph_pre_capture.json`, `graph_post_capture.json`, 재개 첫 tick의 `graph_changed_detail.json`이다. 두 번째는 **19:44:04.888041 → 19:44:05.748963 KST**이며 별도 fresh frame이다. 원래 v14c는 미실행이었고, 이번 v15는 그 계측을 복제·확장해 실제 관측했다. 아래17개는 모두 **A(render/capture-only)**다. B/C 관측0. 정확한 input 값·connection·relationship 전체와 wall time은 각 root의 `engineering_outcome_v15.json` 및 위 snapshot에 보존했다.
+- Session의 command JSONL을 byte cursor로 신규 완결 행만 읽는다. 부분 행은 다음 poll까지 보류하고 파일 교체·축소는 거절한다. controller readback도 같은 캐시를 사용한다. drive contract는 시작 때 한 번 읽는다.
+- Driver의 leg별 승인 경로는 한 번 읽고 cache한다. 매 사용 시 inode·size·mtime·ctime을 비교하여 경로 변경은 거절한다. 두 번째 leg는 별도 파일이므로 새로 읽는다.
+- 불변인 과거 contact를 반복 검사하지 않고 새 contact 전부를 검사한다. 원자료는 모두 보존한다. 정상 정지 인증 함수 자체는 유지하고 adapter가 ZERO_SETTLING일 때만 호출한다.
+- **매 tick 전체 graph/actor 검사, endpoint/GID 고정, TF wall≤0.5초·sim 차≤0.1초, steering·속도·이동 envelope·collision·support·정지 기준은 유지했다.** EndpointGuard 원본 및 fsync 동작도 변경하지 않았다.
+- 비상 `zero_request.json`은 보존한다. finally에서 별도의 `cleanup_zero_request.json`을 atomic 생성하며 고유 request ID·시각·domain을 담는다. observer는 새 요청마다 zero count를 다시 시작하고 10회 발행 후 요청 전체 SHA256·ID·시각을 영수증에 넣는다. 대기 함수는 이전 요청 영수증을 성공으로 채택하지 않고 최대3초 동안 해당 요청 영수증을 기다린다. 정상 경로의 outer finalizer도 동일 binding을 다시 검사하며 기존 모든 witness를 요구한다.
 
-| 정확한 추가 prim path | node:type |
+실행 전 신규 IO 회귀 **5/5**, 기존 v15 graph allow/reject **5/5**, 신규 runtime source 6개 compile PASS. IO 회귀는 부분 행·동일 파일 반복 poll의 추가 read 0byte·축소 거절·승인 경로 변경 거절·잘못된 요청/시각/domain/count/nonzero 영수증 거절·기존 TF 한계 거절을 포함한다. 실제 종료 뒤 v16b TF snapshot 회귀 **4/4**, 후속 source 4개와 summary compile PASS. 총 회귀14개 PASS. 신규 테스트가 실제 도착이나 v16b runtime 성공을 증명하지는 않는다.
+
+## 실제 제한 실행
+
+출력 root:
+`/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_PERCEPTION_APPROACH_20261101_v16_01`
+
+명령:
+```bash
+python3 scripts/construction_site_perception_runner_20261101_v16.py --prepare-only
+python3 scripts/construction_site_perception_runner_20261101_v16.py --run --output /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_PERCEPTION_APPROACH_20261101_v16_01
+```
+
+prepare geometry worker는 기존 hh_isaac51 pxr runtime을 사용했다. Kit은 `/home/user/anaconda3/envs/hh_isaac51/bin/python`과 설치된 Isaac Sim 5.1, ROS jazzy/domain191로 실행했다. 인식은 기존 sdg_tools 환경이다. 상세 command·Python·실행 소스 snapshot은 `code_versions.json`, `prepare.json`, `executed_code/`, 인식 패키지 버전·weight hash는 `attempt_0001/frozen_model_manifest.json`에 있다. resource/GPU/domain isolation PASS, 기존 rustdesk 보존. 의존성 설치·업그레이드 없음.
+
+이번 새 RGB와 ROI overlay를 직접 보고 `(236,197),(251,181),(383,181),(403,197)` 수동 상면 ROI를 새 RGB SHA256에 결합했다. 자동 팔레트 검출이 아니다. 새 예측 **PRE=(-25.934669582,28.278040571), FINAL=(-25.934669582,29.078040571)m**, task yaw +90°다. 이전 목표 좌표를 재사용하지 않았다.
+
+| 항목 | 실측/판정 |
 |---|---|
-| `/Orchestrator/OgnReadFabricTime` | `omni.replicator.core.ReadFabricTime` |
-| `/Render/OmniverseKit/HydraTextures/Replicator_03/PostRender/SDGPipeline/Replicator_03_CameraParamsOpenCVPR` | `omni.replicator.core.CameraParamsOpenCV` |
-| `/Render/OmniverseKit/HydraTextures/Replicator_03/PostRender/SDGPipeline/Replicator_03_DistanceToImagePlaneSDPostCopyToHost` | `omni.syntheticdata.SdPostRenderVarToHost` |
-| `/Render/OmniverseKit/HydraTextures/Replicator_03/PostRender/SDGPipeline/Replicator_03_GpuInteropEntry` | `omni.graph.nodes.GpuInteropRenderProductEntry` |
-| `/Render/OmniverseKit/HydraTextures/Replicator_03/PostRender/SDGPipeline/Replicator_03_LdrColorSDPostCopyToHost` | `omni.syntheticdata.SdPostRenderVarToHost` |
-| `/Render/OmniverseKit/HydraTextures/Replicator_03/PostRender/SDGPipeline/Replicator_03_PostRenderProductCamera` | `omni.syntheticdata.SdRenderProductCamera` |
-| `/Render/PostProcess/SDGPipeline/DispatchSync` | `omni.replicator.core.OgnRefTimeGate` |
-| `/Render/PostProcess/SDGPipeline/PostProcessDispatcher` | `omni.syntheticdata.SdOnNewFrame` |
-| `/Render/PostProcess/SDGPipeline/Replicator_03_CameraParams` | `omni.replicator.core.CameraParams` |
-| `/Render/PostProcess/SDGPipeline/Replicator_03_CameraParamsOpenCV` | `omni.replicator.core.CameraParamsOpenCV` |
-| `/Render/PostProcess/SDGPipeline/Replicator_03_CameraParamsOpenCV_Sync` | `omni.graph.action.RationalTimeSyncGate` |
-| `/Render/PostProcess/SDGPipeline/Replicator_03_CameraParams_Sync` | `omni.graph.action.RationalTimeSyncGate` |
-| `/Render/PostProcess/SDGPipeline/Replicator_03_DistanceToImagePlaneSDhostPtr` | `omni.syntheticdata.SdRenderVarPtr` |
-| `/Render/PostProcess/SDGPipeline/Replicator_03_LdrColorSDhostPtr` | `omni.syntheticdata.SdRenderVarPtr` |
-| `/Render/PostProcess/SDGPipeline/Replicator_03_PostProcessDispatch` | `omni.syntheticdata.SdOnNewRenderProductFrame` |
-| `/Render/PostProcess/SDGPipeline/Replicator_03_PostProcessRenderProductCamera` | `omni.syntheticdata.SdRenderProductCamera` |
-| `/Render/Simulation/SDGPipeline/Replicator_03_RenderProductCameraPrimPath` | `omni.syntheticdata.SdSimRenderProductCamera` |
+| fresh capture·frozen model·B4/B5 | PASS, 수동 ROI 보조 |
+| PRE curved sweep / live support | PASS / 24300/24300 |
+| 비영 ROS command / 전체 adapter 행 | 406 / 407 |
+| PRE 도착 / FINAL 도착 | NO / NO, FINAL plan·sweep·drive NOT_RUN |
+| 마지막 base XY / yaw | (-25.928850174,27.759275436)m / 약94.326° |
+| PRE 잔여 거리 | 0.518797774m |
+| base 경로길이 / 순변위 | 0.362254716 / 0.361458268m |
+| wheel 최대 abs dq | 0.846528649rad/s |
+| unexpected contact / 주행 shell 침투·하중 event | 0 / 0 |
+| 비상 정지 뒤 quiet | PASS, 연속1.000000052sim초 |
+| quiet pose span / FD peak | 0m / 0m/s |
+| quiet raw COM / base origin peak | 0.000233799 / 0.000229391m/s |
+| PRE·FINAL 정상 stop certificate | 둘 다 없음 |
+| driver 최종 zero / cleanup observer zero | 20회 / 해당 cleanup 요청에 10회 |
+| cleanup receipt binding | PASS |
+| driver / observer exit | 0 / 0 |
+| 실제 Kit PID / exit / close log | 1379939 / 0 / 확인 |
+| outer / runner exit | NOT_READY·MISSING_WITNESS / 1 |
 
-분류는 prefix만으로 하지 않았다. 추가 노드17개 모두 inputs relationship가 비어 있고, 연결은 render dispatcher/GPU interop/camera parameter 경로 안에 있다. `ReadFabricTime`에는 input/relationship가 없다. 렌더 경로 값은 실제 `/Render/OmniverseKit/HydraTextures/Replicator_03`다. 기존 모든 노드는 정확히 동일하므로 추가 노드가 공급자 actuator 입력으로 연결된 흔적도 없다.
+Driver의 `adapter_state=MOVING`, `completion_accepted=false`, fault 파일의 `TF_STALE`를 그대로 보존했다. `adapter_fault=null`은 endpoint fault가 없다는 뜻이 아니다. `outcomes.zero=NOT_READY`도 유지된다. 상위 `STOPPED=PASS`는 비상 정지 뒤 quiet의 집계이며 PRE/FINAL 정상 도착·stop certificate를 뜻하지 않는다. session의 `TWO_LEGS_INCOMPLETE`, outer의 `MISSING_WITNESS`와 runner exit1을 성공으로 바꾸지 않았다.
 
-공급자 `/World/ENG_FE2E/Rover/ActionGraph`의 `ros2_subscribe_twist`는 `rover/cmd_vel`, domain191의 `EngineeringROS2Context`, 기존 playback tick을 유지했다. linear.x → `multiply_01`(15.0) → Ackermann speed, angular.z → `multiply`(−.7)·기존 atan2 → steering 연결을 변경하지 않았다. Ackermann wheelbase .7m/invertSteering True 및 세 controller의 jointNames와 입력 연결, `inputs:targetPrim=[/World/ENG_FE2E/Rover/base_link]`, 빈 robotPath가 동일했다. 원래 expected_graph에 대한 admission도 두 번 PASS. 실제 node type/버전·input config/connection·target 관계는 snapshot에 전체 보존했다. ROS publisher/subscriber의 GID 고정 guard는 그대로다. 새로운 publisher identity를 허용하지 않았다.
+## TF_STALE 조사: 확인된 지연과 미확인 원인
 
-작은 `evaluation/construction_site_graph_20261101_v15.py`는 **baseline 전체를 그대로 비교**하고, 실제 첫 시도에서 관측한17개 추가 노드만 exact path/type/port/config/connection/relationship로 허용한다. `DispatchSync.inputs:simTimesToWrite`의 렌더 frame schedule 값만 정규화하며 connection은 비교한다. 알 수 없는 노드나 actuator 변경은 거절한다. baseline 재설정이나 graph guard 비활성화는 없다. allow manifest는 `evaluation/construction_site_render_allow_20261101_v15.json`이며 prepare hash에 포함됐다.
+실제 fault guard 시각은 **19:57:38.424785 KST**다. guard가 읽은 status는 wall age **0.095260620초**였지만 그 안의 TF age는 **0.501729965초**, sim stamp 차는 **0.016666668초**였다. pinned GID는 동일했다. 따라서 기존 TF_STALE 차단은 유효하다.
 
-## 새 인식과 실제 물리 증거
+이번 최소 계측에서 pulse tick 간격 p50 **0.089357초**, p95 **0.092792초**, max **0.420023초**다. guard 구간 p50 **0.062177초**, max **0.393329초**; app.update p50 **0.025071초**, max **0.028884초**다. 중단 직전 긴 구간은 app.update 이전 guard 구간에 있었다. 이 구간 안의 graph traversal·actor signature·forensic fsync·스케줄링 중 무엇이 지연을 일으켰는지는 **UNKNOWN**이다. 누적 파일 재읽기가 유일한 원인이라는 가설은 이번 재발로 지지되지 않는다.
 
-두 fresh 결과 PRE=(-25.934803317,28.278040478), FINAL=(-25.934803317,29.078040478)m. 같은 scene/rover, v14b의 physics 전 engineering startup을 유지했다. 새 영상마다 RGB와 overlay를 직접 확인하고 `(236,197),(251,181),(383,181),(403,197)` 수동 ROI를 새 RGB SHA256에 결합했다. 자동 팔레트 인식이 아니다. frozen HR model·B4/B5·+90° policy, 기존 v14 follower/legacy encoding/StoppingAdapter를 재사용했다. 목표를 v14 좌표나 GT로 대체하지 않았고 실행 중 transform 변경은 없다.
+또한 **실제 수신과 상태 게시 사이 지연**을 확인했다. fault snapshot의 TF는 wall `1793530657.923055`였고, status 파일 시각은 `1793530658.3295243`이었다. observer 원자료에는 다음 TF를 **1793530658.3441489**에 이미 수신한 기록이 있다. 그러나 guard 시각 **1793530658.424785**에 읽은 status에는 이전 TF가 남았다. 즉 새 TF 수신 후 약80.6ms가 지나도 driver는 이전 TF를 검사했고, 다음 수신 기록은 `1793530658.4319358`이다. 이전 TF를 검사한 안전 guard를 우회하거나 threshold를 늘리는 방식으로 해결하지 않았다.
 
-마지막 base는 (-25.916446686,27.652854919)m, yaw 약93.449°다. wheel dq와 controller target·base tensor/FD physics가 steps/adapter commands에 함께 남았다. 새 PRE 경로의 실제13 collider 곡선 sweep와 live support를 통과한 뒤에만 비영 명령을 보냈다. 전체 곡선 추종 성공은 아니다. FINAL leg은 PRE 미도달로 plan/sweep/drive 미시도다.
+이 증거에 맞춰 **새 v16b observer**는 on_tf에서 새 TF를 즉시 atomic status snapshot에 반영한다. endpoint 목록은 기존 주기마다 전부 재조회하고, **그 endpoint inventory의 wall_s는 TF 수신으로 갱신하지 않는다**. 새 TF가 오래된 신원 정보의 유효기간을 늘릴 수 없다. CPU 재현은 실측 시각과 같은 이전 snapshot의 TF_STALE 거절, 즉시 반영 snapshot의 동일 guard 통과, GID 변경 거절, stale endpoint/stale TF 거절 및 inventory 없는 상태 생성 금지를 확인했다. **v16b는 prepare·Kit 실행하지 않았다.** 실행된 v16과 후속 v16b를 소스/해시로 분리했다. 전체 TF_STALE 해결의 runtime 검증은 남아 있다.
 
-PRE 잔여 직선거리 **0.625455m**에서 driver `TF_STALE`가 발생했다. 해당 guard 입력의 TF wall age는 **0.502469063s > .5s**, sim stamp 차이는 약 .016667s였고 GID는 고정값과 동일했다. 그 뒤 session은 `TWO_LEGS_INCOMPLETE`를 기록했다. pulse 중 기록 간 최대 wall 간격은 **.434226s**다. TF 지연의 근본 원인은 UNKNOWN이며 단순 threshold 완화로 해결하지 않았다.
+## Cleanup·보존·다음 행동
 
-## 정지·종료·검사와 다음 작업
+원래 비상 요청 시각 `1793530658.4413543`은 변경하지 않았다. 별도 cleanup 요청은 `1793530667.53573`, ID `677327f214554cdc92215441a4c7418e`; 영수증은 `1793530667.5524633`으로 **요청 후16.733ms**이며 요청 hash `efe3c60ea3518d9c540dfcf3762d0fd955132b24a277471c14659f356991814c`와 일치한다. 이 영수증은 비상 요청에 먼저 발행한 zero를 cleanup으로 소급 채택한 것이 아니다. 전체 lifecycle 성공과 cleanup receipt PASS는 별도 판정이다.
 
-비상 zero 후 물리 quiet PASS와 cleanup 성공을 구분한다. 마지막 driver는 final zero20회, observer는 zero10회를 기록했다. observer zero receipt는 cleanup 요청보다 먼저 생성되어 `ZERO_RECEIPT_INVALID`이며 lifecycle 완료 인증은 FAIL이다. PRE/FINAL stop certificate가 없어서 outer `MISSING_WITNESS`도 유지했다. driver/observer exit는 모두0이지만 전체 성공을 뜻하지 않는다.
+prepare 입력 **50개 hash 불변**, v15_02 prepare의 기존 **44개 입력 보존 PASS**, provisional digest·존재 evidence hash PASS. 필수 witness 누락은 그대로 FAIL이다. 소유 driver/observer/Kit PID 소멸 확인, 남은 Kit/training/HPO 프로세스0, rustdesk 유지. 강제 종료·watchdog timeout 없음. 원본 stage·weights·locked protocol·기존 v01–v15 source/results를 수정하지 않았다. 이번은 engineering 한 세션이며 scientific lock 전수 재감사나 과학 실행은 하지 않았다. `git status`는 현재 폴더가 Git repository가 아니어서 exit128로 실패했으며 파일별 hash와 diff로 확인했다.
 
-첫 close는 provisional 저장 뒤에도 멈춰, 새 runner가25초 후 **소유 Kit 자식만** TERM하고5초 뒤 KILL했다. exit−9/forced termination은 실패다. 두 번째는 `Simulation App Shutting Down` 및 실제 Kit exit0 확인 후 outer final을 썼다. 역사적 v14 −9는 그대로 실패다. 두 시도 모두 prepare 입력 hash와 존재하는 provisional evidence SHA256 재검사 PASS이며 종료신호가 원래 zero_request를 덮어쓰지 않았다. 미존재 필수 witness를 PASS로 만들지 않았다.
+신규 파일: `scripts/construction_site_perception_{runner,session}_20261101_v16.py`, `scripts/construction_site_drive_ros_20261101_v16.py`, `scripts/construction_site_observer_20261101_v16.py`, `evaluation/construction_site_{io,persistence}_20261101_v16.py`, IO test·summary 각 analysis 파일. 후속 미실행 패치는 runner/session/observer v16b, `evaluation/construction_site_tf_snapshot_20261101_v16b.py`와 해당 analysis test다. 이 보고서·`reports/latest_report.md`·`docs/PROJECT_STATE.md`를 갱신했다.
 
-검사: 신규 Python compile PASS; `python3 analysis/construction_site_graph_test_20261101_v15.py`의 실제 렌더17개 추가 허용 및 actuator type/connection/target/config 변경 거절 **5개 PASS**. Kit 전 resource/GPU/domain 격리 PASS, 사용자 Kit/GUI/training 없음·rustdesk 보존. 원본 USD/rover/model/scientific data/v01–v14 source와 result는 수정하지 않았다. 추가 source는 session/runner v15·v15b, graph invariant·allow manifest, CPU replay 검사다. 본 보고서·latest·PROJECT_STATE를 갱신했다.
+증거는 root의 `measured_summary_v16.json`, `tf_stale_forensics_v16.json`, `focused_checks.json`, `followup_checks_v16b.json`, `v15_preservation.json`, `code_inventory_v16.json`, `post_run_process_check.json` 및 `attempt_0001/`의 raw steps/ROS/forensics/receipt/provisional/outer final이다. 존재 evidence hash PASS가 누락 witness나 도착 성공을 대신하지 않는다.
 
-**다음 실제 blocker:** `.5s` TF freshness를 유지하면서 runtime 지연을 줄여야 한다. 현재 session이 매 tick 누적 command JSONL 전체를 다시 읽고 controller readback에도 전체 재독해하며, driver는 매 command path JSON 전체를 다시 읽는다. 먼저 새 버전에서 이 부분만 cursor/cache로 바꾸고 physics update/TF publish/observer receive 시각을 최소 계측하여 지연 원인을 확인한다(현재 I/O가 원인이라는 확정은 아님). emergency zero receipt는 해당 요청 시각과 결합해 별도로 고친다. 안전 한계와 GID guard를 유지한 뒤 새로운 별도 bounded 실행에서 PRE→FINAL을 완주해야 한다. 이번 두 번 뒤 추가 Kit/50mm replay/학습/대규모 실험은 없다.
-
-증거 root:
-
-- `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_PERCEPTION_APPROACH_20261101_v15_01`
-- `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_PERCEPTION_APPROACH_20261101_v15_02`
-
-각 root의 prepare/code_versions/executed_code, engineering_outcome_v15, run_status와 attempt_0001의 원본 fault/provisional/outer final을 함께 읽는다. Kit exit0만으로 runner 성공이나 PRE/FINAL 도달을 주장하지 않는다.
+**다음 구체적 행동:** v16b의 즉시 TF 게시 수정으로 새 별도 output에서 fresh perception·동일 안전 admission 후 bounded PRE→FINAL 검증을 수행한다. 준비 명령은 `python3 scripts/construction_site_perception_runner_20261101_v16b.py --prepare-only`이며 이후 생성되는 prepare의 정확한 run command를 사용한다. 이번 작업에서는 정한 Kit1회·retry0 한도를 지켰다. 장기 guard 구간의 세부 원인은 추가 계측 대상으로 남으며, 현재 full approach readiness는 PASS가 아니다.
