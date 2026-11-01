@@ -514,3 +514,8 @@ GUI/GPU free 확인 후 hh_isaac51 Kit **한 번 실행**했으나 baseline `CLO
 ## 기존 현장 50mm 목표 실제 주행 v10-B — 2026-11-01
 
 [새 보고서](../reports/construction_site_target_drive_20261101_v10B.md). 실제 Kit1회/episode1회/재시도0. live world feedback로 ORIGINAL B 잔여 0.143863mm, 5mm 기준 B_REACHED YES; MOVED YES, STOPPED PASS, NONZERO74. zero receipt10 및 driver/observer/Kit exit0. 그러나 app.close 뒤 execution_complete.json 미생성으로 runner FAIL(exit1); 원시 실패 보존. CPU13/13 PASS, 입력hash 불변. 다음은 close 전 provisional 저장+외부 runner 최종화 수정이며 추가 실행 없음. HPO/training PAUSED, 연구denominator0.
+
+
+## Kit 종료 경계 결과 저장 source patch v10C — 2026-11-01
+
+[보고서](../reports/construction_site_result_persistence_20261101_v10C.md). 신규 runner/session 및 CPU-safe persistence helper/test 작성. close 전 durable PROVISIONAL, 실제 Kit child exit 이후 outer가 provenance·raw stop/target/safety/cleanup 및 shutdown 로그를 검증하여 atomic final/result status를 작성한다. 기존 v10B B_REACHED YES / STOPPED PASS / runner FAIL(exit1) 보존. 신규 CPU23+기존13=36/36 PASS, 신규4개 compile PASS. git diff --stat는 비Git 디렉터리여서 실패, 파일간 diff 검토. Kit/ROS/prepare worker/학습/물리 재시도 NOT_RUN, v10C 실제 종료 readiness UNKNOWN. HPO/training PAUSED, 연구denominator0. 다음은 별도 bounded 실제 종료 확인 후보1회이며 이후 장거리 A-to-B와 fresh RGB-D→YOLO→B4/B5/task E2E로 진행; 이번 작업에서 시작하지 않음.
