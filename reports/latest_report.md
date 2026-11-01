@@ -1,55 +1,58 @@
-# 현장 drive cleanup 순서 수정 v10-A — 2026-11-01
+# 기존 construction site 원래 B 목표 주행 v10-B — 2026-11-01
 
-판정: 소스 수정 및 CPU 검사 PASS. v10 물리 주행 / Isaac Kit / ROS drive / prepare / HPO / training / 324·432 E2E 모두 NOT_RUN. HPO PAUSED, 연구 denominator 0.
+실제 Kit 1회·ROS 저속 episode 1회·재시도 0회. **B_REACHED YES, MOVED YES, STOPPED PASS, 전체 runner FAIL(exit1)**. HPO/training PAUSED, 연구 denominator 0. v09의 미도달 및 cleanup 순서 실패 기록은 수정하지 않았다.
 
-## 수정 내용
+## 실제 측정
 
-v09 session의 모듈 본문 ROS 정상 종료 분기(line 354)는 finally(line 371)의 cleanup 요청으로 생성되는 zero_published.json을 먼저 요구했다. v10은 기존 gracefulness·physical quiet·이동·wheel response·adapter/guard 조건을 success_candidate로 보관하고, finally에서 한 번만 cleanup 요청을 보낸다. observer가 보낸 실제 영수증을 최대 3초 기다린 뒤 count≥10, v=w=0, domain 일치, 요청 이후부터 현재까지의 유한 wall_time을 검사한다. observer 종료 요청은 이 검사 뒤에 보낸다.
-
-child/observer exit0, 강제 종료 없음, graph/native cleanup 및 Kit close 오류 없음까지 확인한 뒤 최종 성공 여부와 execution_complete.json을 기록한다. runner는 session 종료 뒤 기존 aggregate로 run_status.json을 작성한다. abort 신호는 별도로 latch하며, cleanup 도중 외부에서 바뀐 zero_request도 실패로 처리한다. cleanup이 만드는 abort marker 자체와 외부 abort를 구분한다. 사전 fault/abort/zero request는 cleanup 영수증으로 성공으로 승격되지 않는다.
-
-v09 원본은 수정하지 않았다. v10 runner를 새로 만들어 v10 session과 helper를 prepare hash 대상에 포함했다. ROS child와 observer는 기존 v09/v02 소스를 그대로 사용하므로 ROS companion 변경은 없다. controller/guard/physics/velocity/task 수치와 480 tick 관찰은 유지했다.
-
-## 정확한 변경 위치
-
-- `scripts/construction_site_drive_session_20261101_v10.py:17` — `def request_abort`
-- `scripts/construction_site_drive_session_20261101_v10.py:358` — `  ok=graceful`
-- `scripts/construction_site_drive_session_20261101_v10.py:359` — `  success_candidate=ok`
-- `scripts/construction_site_drive_session_20261101_v10.py:371` — `finally:`
-- `scripts/construction_site_drive_session_20261101_v10.py:379` — ` cleanup_requested=`
-- `scripts/construction_site_drive_session_20261101_v10.py:390` — ` cleanup_receipt=await`
-- `scripts/construction_site_drive_session_20261101_v10.py:425` — ` owners_clean=`
-- `scripts/construction_site_drive_session_20261101_v10.py:426` — ` result['status']='ENGINEERING_RECORDED' if final_success`
-- `evaluation/construction_site_drive_cleanup_20261101_v10.py:7` — `def await_zero_receipt`
-- `evaluation/construction_site_drive_cleanup_20261101_v10.py:30` — `def final_success`
-- `scripts/construction_site_drive_runner_20261101_v10.py:54` — `  cmd=[PY`
-- `scripts/construction_site_drive_runner_20261101_v10.py:33` — `  c=json.loads`
-
-## SHA256 (로컬 실제 파일)
-
-| 파일 | SHA256 |
+| 항목 | 결과 |
 |---|---|
-| `scripts/construction_site_drive_session_20261101_v09.py` | `66e74ea132b4ab45a3a47d576efac470577db0438b3d44bb732e7a44ffccd59f` |
-| `scripts/construction_site_drive_session_20261101_v10.py` | `8b0ce6b49c84c4da9d71e11dbb5ca38730cd81470bc3d0ab57780b05364234f1` |
-| `scripts/construction_site_drive_runner_20261101_v09.py` | `8fd132a0573555b0bb37b44d36ad07ded1d16f215a81965bc93dd492731c78b4` |
-| `scripts/construction_site_drive_runner_20261101_v10.py` | `ce035de1cd0c6869bae44c203fb851a1b373b3105a17379a925635553dd412f0` |
-| `scripts/construction_site_drive_ros_20261101_v09.py` | `bf7931222b26f8a966ab9580c5feafed012ee770ad6054949e8650d7f27b163c` |
-| `evaluation/construction_site_drive_cleanup_20261101_v10.py` | `1a03662c3712c0f1a7f0589734dbf935085bc9cf1bae55b32239427a405be052` |
-| `tests/test_construction_site_drive_cleanup_20261101_v10.py` | `ab9b65cec5cd5b34e6dce8e7536761a0739a9058028613c076d2bf75c0d52022` |
+| NONZERO Twist | 74회 |
+| initial XY world m | [-25.887977600097656, 28.470867156982422] |
+| final XY world m | [-25.887977600097656, 28.52072525024414] |
+| ORIGINAL B world m | [-25.88797768, 28.520869113267] |
+| 실제 순변위 | 49.858093262mm |
+| 원래 B까지 최종 거리 | 0.143863045mm |
+| B_REACHED | YES, 사전 선언 Euclidean 5mm 이내 |
+| MOVED / STOPPED | YES / PASS |
+| 최종 quiet | sim 16.266667515039444–17.266667567193508, 1.0000000521540642 physical초 |
+| zero receipt | count10, v=w=0, domain191, 요청 이후 실제 wall timestamp 확인 |
+| 종료 | driver0 / observer0 / Kit0 / runner1 |
+| runner | FAIL: execution_complete.json 없음 |
+| safety | 예상 밖 접촉 0; 주행 shell 1920 points, 최소 separation 0.08201577514410019m, 최대 impulse 0.0Ns |
+| faults | driver adapter_fault=None, hard_trigger=None; completion_accepted=True |
 
-## 검사와 한계
+정지 증거는 live PhysX/SimulationManager 물리 시간 및 위치 표본이다. graph wheel target과 wheel controller zero를 포함한 stop_confirmed.json도 존재한다. 최종 quiet 기준은 기존 속도≤.002m/s, pose span≤.002m, ≥1초 유지다. 최종 quiet 상세: `{"status": "PASS", "criteria": {"coverage_s": 1.0, "max_dt_s": 0.1, "span_m": 0.002, "speed_m_s": 0.002}, "start_sim_s": 16.266667515039444, "end_sim_s": 17.266667567193508, "coverage_s": 1.0000000521540642, "max_dt_s": 0.01666666753590107, "max_raw_COM_m_s": 0.0006907683005902118, "max_root_origin_m_s": 0.0006844824186411379, "max_FD_m_s": 0.0, "pose_span_m": 0.0}`. 최대 planar 속도 0.021711930243831726m/s로 기존 .03m/s pulse cap 미만이다. collision preflight 및 support admission PASS. 원본 supplier Action Graph·/rover/cmd_vel·wheel controllers 경로이며 native fallback은 새 경로에서 명시적으로 금지했다.
 
-- 환경: `/home/user/anaconda3/bin/python3`, Python `3.13.5`, `Linux-6.14.0-37-generic-x86_64-with-glibc2.39`. 표준 라이브러리만 사용.
-- PASS: `python3 -m unittest discover -s tests -p 'test_construction_site_drive*20261101_v*.py' -v` — 11/11 (신규 3 + 기존 lifecycle 8), 최종 0.084초, exit0.
-- PASS: `python3 -m py_compile scripts/construction_site_drive_session_20261101_v10.py scripts/construction_site_drive_runner_20261101_v10.py evaluation/construction_site_drive_cleanup_20261101_v10.py tests/test_construction_site_drive_cleanup_20261101_v10.py` — exit0.
-- 신규 테스트: cleanup 전 marker 부재 재현 → 요청 후 지연 receipt → 정상 최종 성공; missing/malformed/stale/future/nonzero/wrong-domain/count 오류 거절; 기존 실패 후보·abort·process/cleanup fault 성공 승격 거절; AST로 cleanup→receipt→observer stop→owner 기록→Kit close→최종 판정→serialize 순서를 확인.
-- 기존 lifecycle 검사에서 실제 adapter watchdog/stop timeout 및 physical/graph quiet 실패가 유지됨을 확인. 실행형 legacy Kit/ROS 모듈 import 없음.
-- 보조 `git diff --stat` 명령은 이 디렉터리가 Git repository가 아니어서 exit129 실패했다. 이후 파일 직접 diff로 검토했다. `diff -u` exit1은 예상한 소스 차이를 뜻한다. staging/commit/push 없음.
-- UNKNOWN: 실제 Kit·ROS에서 새 순서가 완료되는지. CPU fixture/AST는 실제 전달·물리 정지·운영체제 프로세스 종료의 runtime 인증을 대신하지 않는다. observer receipt는 기존 observer의 10회 zero 발행 증명이며 추가 subscriber ACK를 주장하지 않는다.
-- 보존: v01–v09 결과 및 historic v09 runtime 보고서를 이번 작업에서 수정하지 않았다. v09 +Y21.505355835mm, STOPPED PASS, B50mm 미도달(잔여28.496601mm), runner NOT_READY라는 역사적 판정은 그대로다. 이 수치는 사용자 제공/기존 기록 맥락이며 이번에 runtime 로그를 재검사하지 않았다.
+## 최소 확장과 제한
 
-## 변경 파일 및 다음 작업
+새 runner/session/ROS v10B 및 evaluation target helper를 추가했다. live world base pose를 engineering 제어 입력으로 명시 사용한다. 연구 perception 입력/GT 없는 Full E2E 검증이 아니다. 원래 B는 고정했고 +Y remaining≤3mm이면 기존 StoppingAdapter BRAKING을 latch한다. 이동 요청 .02m/s 및 기존 governor/감속/속도·yaw·접촉·endpoint guard는 보존했다. 기존 40mm diagnostic travel abort는 이 50mm 목표와 양립하지 않아 새 버전에서 65mm 유한 한계로 변경했다. 기존 corridor가 -50~+150mm를 검사하므로 이 한계는 검사 범위 안이다. 새 planner·robot·floor·원본 USD 변경·teleport·base pose 직접 설정 없음. 기존 derive가 실행별 overlay를 생성하는 경로를 그대로 사용했다.
 
-신규 session v10, runner v10, cleanup helper v10, regression test v10, 본 새 보고서. docs/PROJECT_STATE.md에 완료 기록 추가. 위 SHA256 표에 신규/원본 경로를 구분하여 기록했다.
+v09의 시작 포함20wall초 대신 startup8초, 이동60wall초 및10sim초, 정지20wall초를 선언했다. stale feedback .5초·supervisor abort는 중복 step 대기보다 먼저 zero+abort한다. 기존 adapter의8sim초 정지 timeout과 독립 물리 quiet 조건도 유지했다. session 전체 active85wall초/22sim초, child 전체95wall초, runner180초 abort/210초 소유 process 강제종료 backstop을 유지했다. timeout은 성공으로 승격하지 않는다. 실제 driver 완료 wall 25.49363174199243초, normal brake sim 7.900000412017107, zero sim 8.150000425055623다.
 
-다음 작업은 별도 승인 범위의 A→B 50mm 실제 목표 주행이다. 이번 패치는 그 실행이나 성공을 뜻하지 않으며 runtime NOT_RUN이다.
+## 실제 드러난 최종 저장 실패
+
+v10-A corrected cleanup 순서를 계승해 zero_request→observer zero receipt→observer stop→owned process exit 기록까지 실행됐다. receipt wall 1793519989.493466, request wall 1793519989.489242; 두 ROS child exit0이다. 그 뒤 runtime.log의 `Simulation App Shutting Down`, Kit exit0이 있으나 app.close 뒤의 최종 집계/serialize에 도달한 증거가 없고 execution_complete.json이 없다. 따라서 메모리 안 cleanup_receipt.valid 및 session 최종 candidate는 UNKNOWN이다. 실제 파일의 receipt 필드는 독립적으로 재확인했다. runner 원시 기본 MOVED NO/STOPPED NOT_TESTED는 결과 파일 load 이전 기본값이며 실제 steps/stop evidence와 구분한다. 원시 run_status.json은 수정하지 않았다.
+
+로컬 SimulationApp.close 소스 `.../isaacsim/exts/isaacsim.simulation_app/isaacsim/simulation_app/simulation_app.py:763`은 shutdown_and_release_framework()를 호출한다. 이 런타임에서는 close 이후 저장에 의존할 수 없다는 증거다. CPU fixture는 이 Kit 종료 동작을 인증하지 못했다. 카메라/재질의 reference scope warning도 runtime.log에 남아 있으며 이번 작업에서 원본을 수정하지 않았다.
+
+다음 구체적 조치는 **별도 새 버전에서 close 이전 provisional 결과를 저장하고, Kit가 종료된 뒤 외부 runner가 exit code와 receipt/child 증거를 검증해 최종 결과를 작성**하는 것이다. 이번 single-session 예산은 소진했으며 재실행/원시 결과 사후 PASS 변경은 하지 않았다.
+
+## 검사·파일·재현
+
+- PASS: 새 실행 소스 py_compile; 기존 cleanup/lifecycle CPU11/11 및 신규 target/phase 검사2/2. legacy 실행 모듈 import 없이 검사했다.
+- PASS: prepare corridor 및 resource gate(Kit/training 없음; 기존 rustdesk535MiB만 GPU 사용). 실행 후 prepare 입력 21개 hash 모두 동일. 전체 연구 lock/asset dependency closure 재감사 주장은 아니다.
+- 실제 실행: prepare exit0, Kit exit0, runner exit1. 실제 이동/도달/정지 PASS와 전체 FAIL을 분리한다.
+- 신규 코드: scripts/construction_site_drive_runner_20261101_v10B.py, scripts/construction_site_drive_session_20261101_v10B.py, scripts/construction_site_drive_ros_20261101_v10B.py, evaluation/construction_site_target_20261101_v10B.py, tests/test_construction_site_target_20261101_v10B.py.
+- 문서: 본 보고서, latest_report.md, docs/PROJECT_STATE.md. 기존 v01–v10-A 소스/보고서 보존, staging/push 없음.
+
+```bash
+python3 -m py_compile scripts/construction_site_drive*20261101_v10B.py evaluation/construction_site_target_20261101_v10B.py
+python3 -m unittest discover -s tests -p 'test_construction_site_drive*20261101_v*.py' -v
+python3 -m unittest discover -s tests -p 'test_construction_site_target_20261101_v10B.py' -v
+python3 scripts/construction_site_drive_runner_20261101_v10B.py --prepare-only --output /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_TARGET_DRIVE_20261101_v10B_01
+python3 scripts/construction_site_drive_runner_20261101_v10B.py --run --output /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_TARGET_DRIVE_20261101_v10B_01
+```
+
+증거 root: `/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_TARGET_DRIVE_20261101_v10B_01`. prepare.json 입력 hash/command, code_versions.json 환경/hash, executed_code snapshot, runtime.log, run_status.json, measurement_summary.json, attempt_0001의 원시 steps(854행)/physics_steps/adapter_commands(95행)/contacts/support/stop_confirmed/stop_quiet_result/zero_request/zero_published/owned_processes를 보존한다. execution_complete.json 부재 자체가 실패 증거다. diff exit1은 예상 소스 차이이며 테스트 실패가 아니다.
+
+YOLO/B4/B5·HPO·B300·324/432 E2E 미실행. engineering world pose feedback 성과를 연구/실물 로봇 validation으로 일반화하지 않는다.

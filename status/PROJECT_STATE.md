@@ -509,3 +509,8 @@ GUI/GPU free 확인 후 hh_isaac51 Kit **한 번 실행**했으나 baseline `CLO
 ## 2026-11-01 — v10-A cleanup 순서 소스 수정 / runtime NOT_RUN
 
 [새 보고서](../reports/construction_site_drive_cleanup_patch_20261101_v10.md). v09 원본을 보존한 새 session v10·runner v10·CPU helper/test를 작성했다. 정상 child+physical quiet 후보 후 cleanup zero 요청→최대3초 실제 observer receipt 내용/시각 검증→소유프로세스 exit0 및 cleanup/Kit close 오류 확인→최종 판정/serialize 순서로 변경. 신호·fault·누락/오류 receipt·강제 종료는 FAIL 유지. CPU11/11 및 compile4 PASS. 보조 git diff --stat은 비Git 디렉터리로 실패(exit129), 파일 직접 diff 검토. v09 실제 runner NOT_READY/B50mm 미도달 이력과 기존 보고서 보존. Kit/ROS/prepare/물리주행/324·432/HPO/training NOT_RUN, HPO PAUSED/연구분모0. 다음은 별도 A→B50mm 실제 목표주행 작업이며 이 소스 패치는 runtime 성공 증거가 아니다.
+
+
+## 기존 현장 50mm 목표 실제 주행 v10-B — 2026-11-01
+
+[새 보고서](../reports/construction_site_target_drive_20261101_v10B.md). 실제 Kit1회/episode1회/재시도0. live world feedback로 ORIGINAL B 잔여 0.143863mm, 5mm 기준 B_REACHED YES; MOVED YES, STOPPED PASS, NONZERO74. zero receipt10 및 driver/observer/Kit exit0. 그러나 app.close 뒤 execution_complete.json 미생성으로 runner FAIL(exit1); 원시 실패 보존. CPU13/13 PASS, 입력hash 불변. 다음은 close 전 provisional 저장+외부 runner 최종화 수정이며 추가 실행 없음. HPO/training PAUSED, 연구denominator0.
