@@ -504,3 +504,8 @@ GUI/GPU free 확인 후 hh_isaac51 Kit **한 번 실행**했으나 baseline `CLO
 
 
 2026-11-01 동일 v09 runtime 요청 재수신: 기존 runtime_01 실제 완료 원자료를 재확인했다. steps771/commands66/비영45/FAULT0, prepare14 SHA256 일치. 추가 prepare·Kit·주행·코드변경0; 기존1회 예산과 NOT_READY 결과를 유지한다. cleanup receipt 선행 확인 후 집계 순서 수정이 미해결이며 HPO PAUSED/연구분모0. 상세는 위 실제 보고서의 재확인 절을 참조한다.
+
+
+## 2026-11-01 — v10-A cleanup 순서 소스 수정 / runtime NOT_RUN
+
+[새 보고서](../reports/construction_site_drive_cleanup_patch_20261101_v10.md). v09 원본을 보존한 새 session v10·runner v10·CPU helper/test를 작성했다. 정상 child+physical quiet 후보 후 cleanup zero 요청→최대3초 실제 observer receipt 내용/시각 검증→소유프로세스 exit0 및 cleanup/Kit close 오류 확인→최종 판정/serialize 순서로 변경. 신호·fault·누락/오류 receipt·강제 종료는 FAIL 유지. CPU11/11 및 compile4 PASS. 보조 git diff --stat은 비Git 디렉터리로 실패(exit129), 파일 직접 diff 검토. v09 실제 runner NOT_READY/B50mm 미도달 이력과 기존 보고서 보존. Kit/ROS/prepare/물리주행/324·432/HPO/training NOT_RUN, HPO PAUSED/연구분모0. 다음은 별도 A→B50mm 실제 목표주행 작업이며 이 소스 패치는 runtime 성공 증거가 아니다.
