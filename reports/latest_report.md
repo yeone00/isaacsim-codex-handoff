@@ -1,70 +1,89 @@
-# 현장 perception → PRE → FINAL v19 — 2026-11-01
+# v19b 기준선 동결 및 독립 재현성 v20 — 2026-11-01
 
-**실제 체인 완료: 두 번째 실행 ENGINEERING_RECORDED, PRE_REACHED=true, FINAL_REACHED=true.** Fresh mounted RGB-D → frozen HR YOLO → B4 → 수동 ROI 보조 B5 → 새 관측 PRE/FINAL → 실제 ROS 조향 PRE 정상 정지 → 측정 정지 자세에서 독립 FINAL 경로 검증 → 실제 FINAL 정상 정지를 완료했다. 5mm 위치·2° yaw·ZERO 이후 실제 quiet ≥1초 기준을 유지했다. 첫 실행의 TF_STALE/FINAL 미도착은 NOT_READY로 보존했다. Kit 총2회, 추가0회. HPO/training PAUSED, 연구 denominator0, HR/LR/CAD 비교·confirmatory/432 실행0.
+**실제 Kit 시도 정확히 2회, 독립 전체 성공 0/2, 추가 실행0. 두 실행 모두 FAIL / NOT_READY / runner exit1이다.** 새 RGB-D → frozen HR YOLO → B4 → **수동 이미지 ROI 보조 B5** → 새 PRE/FINAL 추정 → 실제 ROS PRE 정상 정지는 두 번 통과했다. FINAL에서는 정상 stop 요청 시 `MOVING → ZERO_SETTLING`으로 같은 update 안에서 전환돼, 기존 독립 인증에 필요한 별도 `BRAKING` 기록이 없었다. FINAL 인증·완료 응답 없이 종료됐으며 cleanup/fault quiet를 도착 성공으로 계산하지 않았다.
 
-## 실제 결과
+과거 v19b(`v19_02`) 성공은 **이전 engineering 참고 1회**로 보존하며 이번 반복 수에 포함하지 않는다. 첫 v19 실패도 그대로 실패다. HPO/training **PAUSED**, scientific denominator **0**, 학습·자산 생성·HR/LR/CAD 비교·324/432 formal 실행0. 과학 pilot 준비 완료를 선언하지 않는다.
 
-외부 output root는 `/home/user/hh/isaac_cosmos/sdg_final/` 아래 다음 두 개다. 각각 새 `attempt_0001`만 사용했다.
+## A. 먼저 동결한 기준선
 
-| 항목 | `CONSTRUCTION_SITE_PERCEPTION_APPROACH_20261101_v19_01` | `CONSTRUCTION_SITE_PERCEPTION_APPROACH_20261101_v19_02` |
-|---|---|---|
-| 실행 코드 | v19 | v19b: GC 제한 지연, 완료 응답 대기 수정 |
-| PRE_REACHED | **true**, 정상 BRAKE→ZERO | **true**, 정상 BRAKE→ZERO |
-| PRE 위치 / yaw 오차 | 2.759mm / −0.03425° | 2.856mm / −0.03452° |
-| PRE quiet | PASS, 1.000000052초 | PASS, 1.000000052초 |
-| FINAL_REACHED | **false** | **true**, 정상 BRAKE→ZERO |
-| FINAL 위치 / yaw 오차 | 마지막 측정 약6.95mm / 도착 미입증 | **2.894mm / −0.03435°** |
-| FINAL quiet | 비상 ZERO-ONLY quiet와 구분 | **PASS, 1.000000052초** |
-| 실제 pulse 누적 경로 | 1.676356m | 1.680854m |
-| 실제 비영 command 기록 수 | 2344 | 2344 |
-| 차단 / 정상 완료 | driver TF_STALE → TWO_LEGS_INCOMPLETE | completion_accepted=true, fault=null |
-| 사후 비상 quiet | 새61샘플, ZERO-ONLY PASS | 비상 복구 없음 |
-| 예기치 않은 접촉 / shell 침투·하중 | 0 / 0 | 0 / 0 |
-| 별도 cleanup 요청 결합 zero10 | PASS | PASS |
+[최초 해시 인덱스](../construction_site_v19b_success_baseline_20261101_v20.json)와 [추가 의존성 인덱스 v02](../construction_site_v19b_success_baseline_20261101_v20_v02.json)를 새 파일로 작성하고 각 `.sha256` sidecar를 저장했다. v02는 최초 인덱스를 해시로 참조한다. **최초 인덱스를 덮어쓰거나 역사적 v19_02 기록을 수정하지 않았다.** 인덱스 및 sidecar는 읽기 전용으로 설정했다. 내용 SHA 검사가 보존 근거이며 읽기 전용 권한 자체를 보안상 불변성 보증으로 해석하지 않는다.
+
+최초 인덱스는 준비 입력73개, 실행 Python snapshot69개, v19_02 raw 파일 전체, PRE/FINAL 개별 인증, steps/ROS Twist/wheel/contact/quiet/exit/provisional 증거, HR checkpoint, 환경 entry, seed/설정을 참조한다. Python 원문은 import 없이 메모리 compile 검사했다. 추가 인덱스는 USD 의존성27 layers와 materialized archive/texture, v07 provenance42항목, transitive local code/config, 두 conda 환경 package metadata를 포함한다. 최초268개+추가456개 파일 항목이며 중복 참조가 있다. 과거 expected가 없는 항목은 현재 observed hash만 기록했으며 소급 PASS를 만들지 않았다.
+
+실제 진입은 기존 `scripts/construction_site_perception_runner_20261101_v19b.py`와 `construction_site_perception_session_20261101_v19b.py`다. session source SHA256는 `9b2da203e7c4506b7c96fcd1e6942d95553db72c3b9fc4dc9a3344b064f5a5c8`. 모델은 `FINAL_HR_Scan_M50_REALVAL_MASKBEST_v01.pt`, SHA256 `257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca`다. Python `/home/user/anaconda3/envs/hh_isaac51/bin/python`, Isaac Sim5.1, perception `sdg_tools`, ROS jazzy/domain191/`rmw_fastrtps_cpp`를 유지했다. 실제 argv·Python version은 각 `code_versions.json`, inference library version은 `frozen_model_manifest.json`에 있다.
+
+원래 1m/Z construction site의 `stage_metrics_1m_z.usda`, 원래 rover, supplier graph 원본 `construction_scene_robot_task_controller_perturbation35mm_2p5deg_v01.usd`, v14b engineering startup overlay(초기 XY −25.88797768, 27.4m), HR cement nominal load를 유지했다. camera·render allowlist·ROS/GID guard·follower·full-rover collision/support 기준을 변경하지 않았다. 목표는 perception에서 산출하고 USD GT를 commanded target으로 넣지 않았다. geometry는 기존 safety 역할로 구분된다.
+
+PRE/FINAL 위치5mm·yaw2°·ZERO 뒤 quiet≥1초, quiet 속도/XY span 각2mm/s·2mm, TF wall≤0.5초/sim≤0.1초 및 GID gate를 유지했다. stop trigger3mm, 기존 제어 이득/후방 기준 offset0.338m, GC600초/RSS증가768MiB/절대8GiB 제한도 변경하지 않았다. B5 RANSAC seed261022 유지, 다른 명시적 seed 부재는 UNKNOWN으로 기록했다.
+
+정적 `pxr.UsdUtils.ComputeAllDependencies` 검사에는 material resolver 없는 SDK MDL(`OmniPBR.mdl`, `OmniSurface.mdl`, `gltf/pbr.mdl`), remote Grid 경로와 로컬 `apriltag_100.png`, `mitex_box_u0_v0_diffuse.jpg` 등의 미해결 참조가 남는다. 정확한 경로는 [closure JSON](construction_site_usd_closure_20261101_v20.json), 경고는 동명 `.log`에 있다. 이 검사는 비활성/reference metadata까지 포함한다. 참조 파일을 새로 만들거나 stage를 바꾸지 않았으며 materialized 입력의 drift는 없었다. **전체 렌더 자산 closure 및 미기록 과거 환경의 완전 소급 인증은 UNKNOWN**이다. 실제 두 실행의 capture/calibration/graph 및 safety gate 결과와 구분한다. missing Python snapshot·모델·실행 필수 prepared input은 없었다.
+
+[재현 명령 README](../construction_site_reproduction_20261101_v20.md)에 정확한 prepare/run 명령과 fresh ROI 절차를 저장했다. pose CSV·이전 목표 재생이 아니라 기존 capture/inference entry를 실행한다.
+
+## B. 독립 실제 실행 두 번
+
+두 root는 `/home/user/hh/isaac_cosmos/sdg_final/` 아래 각각 다음과 같다. root마다 새 runner/Kit/physics 초기화와 `attempt_0001` 한 번만 사용했다.
+
+- `CONSTRUCTION_SITE_REPRODUCIBILITY_20261101_v20_01`
+- `CONSTRUCTION_SITE_REPRODUCIBILITY_20261101_v20_02`
+
+각 실행 직전 기존 인덱스724개 항목의 SHA256 및 새 prepare와 역사적 prepare의 파일 내용 hash가 일치했다. output 경로만 달랐다. GUI/Kit/training 없음, GPU rustdesk만 존재, ROS domain probe PASS 후 launch했다. 첫 실패 뒤 새 ZERO-ONLY 정지·접촉0·소유 PID 소멸을 확인해 두 번째를 허용했다. unrelated process 중지·GPU reset·강제 종료0. 두 실행 사이 runtime code/GC/ROI 정책/모델/초기 배치/기준 변경0.
+
+| 항목 | v20_01 | v20_02 |
+|---|---:|---:|
+| fresh capture / real YOLO / B4 | PASS / PASS / 계산 완료 | PASS / PASS / 계산 완료 |
+| YOLO confidence | 0.693538 | 0.718262 |
+| B5 / fresh RGB+ROI overlay 직접 시각 검토 | COMPUTED / 승인 | COMPUTED / 승인 |
+| PRE 추정 XY(m) | −25.934824241, 28.278040457 | −25.934825707, 28.278040474 |
+| FINAL 추정 XY(m) | −25.934824241, 29.078040457 | −25.934825707, 29.078040474 |
+| PRE_REACHED / FINAL_REACHED(인증 기준) | true / **false** | true / **false** |
+| PRE 위치오차 / yaw오차 | 2.682323mm / −0.037579° | 2.772089mm / −0.013001° |
+| PRE post-zero quiet | 1.000000052초 PASS | 1.000000052초 PASS |
+| FINAL 독립 stop certificate | **누락 / FAIL** | **누락 / FAIL** |
+| PRE / FINAL live support | 48060 / 43740 PASS | 48060 / 43740 PASS |
+| 실제 pulse 누적 경로 | 1.682034207m | 1.682042363m |
+| pulse 기록 sim / wall 기간* | 126.833340 / 314.493228초 | 126.400007 / 306.942939초 |
+| nonzero command 기록 | 2363 | 2353 |
+| 실제 wheel peak | 1.572852rad/s | 1.450511rad/s |
+| driver TF wall 최대 | 60.709ms | 49.504ms |
+| session TF wall 최대 | 121.238ms | 116.312ms |
+| driver TF sim 최대 | 16.667ms | 16.667ms |
+| 예상 밖 contact / shell 침투·하중 | 0 / 0 | 0 / 0 |
+| 별도 fault ZERO-ONLY quiet | 새61샘플 / PASS | 새61샘플 / PASS |
+| cleanup 요청 결합 zero10 | PASS | PASS |
 | driver / observer / Kit exit | 0 / 0 / 0 | 0 / 0 / 0 |
-| outer final / runner exit | NOT_READY·MISSING_WITNESS / 1 | **ENGINEERING_RECORDED / 0** |
+| outer / runner exit | NOT_READY / **1** | NOT_READY / **1** |
 
-두 번째 실행의 관측 목표는 PRE `(-25.93480444460404, 28.278040544572605)`, FINAL `(-25.93480444460404, 29.078040544572602)`m다. PRE 정지 측정 world pose는 `[-25.934833526611328, 28.275184631347656, -0.009073960594832897, 1.5701938757113014]`, FINAL 정지 측정은 `[-25.934341430664062, 29.075183868408203, -0.005458937957882881, 1.5701967482995547]`이며 순서는 `[x_m,y_m,z_m,yaw_rad]`다. 종료 직전 추가 물리 관측 pose도 `[-25.934341430664062,29.07517433166504,-0.005459004081785679,1.5701967460715578]`로 보존했다.
+\* `pulse_start`부터 마지막 `phase=pulse` 샘플까지이며 중간 PRE 정지/FINAL 검사와 실패 대기 구간을 포함한다. 순수 이동시간이나 성공 소요시간이 아니다. 정확한 sim/wall timestamps는 원자료와 summary에 있다.
 
-PRE 인증 quiet 창의 COM/root/FD 최대 속도는 각각 1.309/1.307/0.584mm/s, XY span 0.0268mm다. FINAL 인증 창은 1.834/1.834/0.801mm/s, span 0.0229mm다. 마지막 추가1초는 root 0.220mm/s·span0이다. 각 leg의 독립 certificate와 zero wheel/controller readback으로 검증했으며, 단순 이동이나 cleanup zero를 도착으로 계산하지 않았다. 기존 aggregate의 `outcomes.zero`는 첫 PRE zero를 가리키는 호환 필드이므로 FINAL 근거는 `leg_1_stop.json`·FINAL commands·outer 재검증이다.
+두 번 모두 새 `front_rgb.png`와 새 `roi_overlay.png`를 도구로 직접 열어 확인한 뒤, 현재 RGB/overlay SHA에 `manual_roi.json`/`roi_review.json` 승인을 결합했다. 현재 영상에서 노출된 pallet top이 같은 위치임을 확인해 polygon `[(236,197),(251,181),(383,181),(403,197)]`을 각각 사용했다. 기존 2px erosion·brick exclusion3px 유지. 승인자는 이번 작업의 Codex 시각 검토이며 연구자의 추가 현장 annotation 검증을 대체한다고 주장하지 않는다. **assisted B5이며 완전 자율 pallet 인식이 아니다.**
 
-## 짧은 offline replay와 종단 수정
+새 RGB SHA256는 순서대로 `6f77b4245686231a5c289c8d6aa41ed3018e2746c3363b92775a72620a06155d`, `7b4333d784758489e966fd1378ac948732bf90fee844f87bb9548723fdec27f9`다. depth는 둘 다 `d17d0fe06e507a7718ba90723be945a07151b2a627f278d7a0bc918548be3e3d`로 일치한다. 고정 장면/초기 관측의 동일 depth 내용 자체를 stale 또는 독립성 증명으로 해석하지 않는다. 각 새 Kit PID(1548314/1559236), 새 output, capture에서 render product 생성·orchestrator step·annotator 새 buffer 저장, capture PASS 및 별도 시각 검토·실제 inference 기록을 함께 근거로 사용했다. 이전 pose/targets/depth 파일을 copy하는 경로는 실행하지 않았다.
 
-README·PROTOCOL_LOCKS·최신 PROJECT_STATE·v18 보고서 및 실제 v18b `executed_code`를 확인했다. 실행 스냅샷과 로컬 소스 일치, v18_02 입력65개 불변을 확인한 뒤 저장 pose/yaw·waypoints·cross/along·signed curvature·속도를 재생했다. 원시 분석은 첫 root `cpu_regression_v19.json`의 replay 배열에 있다.
+`predicted_pose_targets.json`은 B4 직후의 중간 결과라 B5_NOT_EVALUATED를 기록한다. 이후 수동 ROI datum으로 계산된 최종 B5는 별도 `b5_prediction.json`에서 COMPUTED다. B4 heading은 둘 다90.011093°, B5 center는 각각 (−25.934824241,30.481785488), (−25.934825707,30.481785505)m다. `predicted_pre_final.json`과 B5 최종 기록을 사용했으며 중간 파일을 성공처럼 수정하지 않았다.
 
-v18의 cubic 경로는 종점 yaw는 +90°지만 종점 곡률이 −0.251701/m였다. 실제 base의 측방 이동과 yaw 증가 관계를 구간별 최소제곱으로 비교하면 회전 기준점에서 base까지 전방 오프셋이 약0.339m이며, 구간별 0.333–0.340m로 일관됐다. base 위치를 회전 기준점처럼 추종하면 조향 중 base의 측방 속도를 누락한다. 기존 추종은 약20mm 측방 잔차가 쌓였다가 종단에서 반대쪽으로 빠졌다. 마지막3cm에서는 이미 약6.25mm 측방 오차였고, 최소거리8.677mm에서 normal stop이 발동하지 않았다. 최소 회전반경 약2.612m에서 남은 짧은 전진거리만으로 해결할 접근이 아니었다. 8mm/s 하한도 endpoint 통과를 계속시켰다. v18에는 정상 BRAKE 진입 자체가 없었으므로 brake hysteresis가 주원인이라는 증거는 없다.
+## 실패의 직접 근거와 안전 정지 구분
 
-새 v19는 같은 국소 Hermite 방식에서 rear 기준점을 사용하고, BASE XY/차체 yaw로 변환한 경로를 기존 full-rover sweep에 넘긴다. quintic의 양 끝 곡률은0이다. 목표 PRE/FINAL은 바꾸지 않았다. replay에서 산출한 engineering 오프셋0.338m, 측방/heading feedback12·6(기존2.5·3.2), 속도 `min(.02,max(.004,.12*along))`를 명시적으로 적용했다. 3mm 정상 stop trigger는 유지했고 supplier steering encoding·stiffness·KMAX·governor/StoppingAdapter는 그대로다. PRE 계획 최대곡률 약0.349/m는 실제 KMAX0.382785/m 이내이며, 새 경로 admission은 0.95*KMAX 상한을 사용한다(기존 경로의0.80 여유와 구분). CPU 모델은 오프셋0.328/0.338/0.348m에서 모두 2.80–2.85mm의 정상 제동 진입을 예측했다. 이는 물리 PASS 대신 사용하지 않았고 실제 두 실행에서 정상 PRE 정지를 확인했다.
+v20_01 FINAL 첫 ZERO는 sim123.983339800초/source step7436, v20_02는 sim123.483339773초/step7406이다. 두 leg1 command 배열에 `BRAKING`은 **0개**, `ZERO_SETTLING`은 각각141개다. 정상 stop 요청 update에서 governor의 출력이 바로0이 됐고 `NORMAL_DECELERATION`으로 ZERO가 기록됐다. 반면 역사적 v19b FINAL에는 sim123.066673085초 BRAKING(출력0.000073693m/s) 다음 sim123.116673088초 ZERO라는 두 기록이 존재한다.
 
-두 번째 실행의 PRE full rover 곡선 sweep와 live wheel support48060/48060 PASS, PRE 정지 후 새 pose에서 FINAL sweep와43740/43740 PASS다. original site·공급 ROS ActionGraph·실제 GID/TF·graph/render allowance·actor cache·contact·shell 보호를 유지했다. RGB와 ROI overlay를 각 실행에서 직접 보고 해당 fresh RGB hash에 ROI/review를 결합했다. 동일 픽셀 polygon을 사용했지만 과거 RGB-D·목표·pose CSV를 재사용하지 않았다. frozen checkpoint SHA256는 기존 `257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca`와 일치하며 target 생성에 USD GT를 넣지 않았다.
+고정 `StoppingAdapter.update`는 normal stop 때 내부 상태를 BRAKING으로 바꾼 뒤 같은 호출에서 출력이0이면 ZERO_SETTLING으로 다시 바꾸고 최종 상태만 반환한다. `confirmed_stop`은 command 배열의 별도 BRAKING 존재 및 BRAKING→ZERO 순서를 요구한다. 따라서 이번 두 배열은 quiet 여부와 관계없이 인증에서 거절된다. driver는 ZERO 뒤7sim초에서 certificate 미수신 상태로 exit0/`completion_accepted=false`; session은 `TWO_LEGS_INCOMPLETE`, outer는 `MISSING_WITNESS`로 실패했다. 이는 **저장 증거와 정적 코드로 특정한 상태 전이/인증 불일치**이며 제어를 변경해 검증한 해결책은 아니다.
 
-## GC와 fault-zero 생명주기
+최종 측정은 각각 FINAL 잔여2.978442mm/yaw−0.032799°, 2.851582mm/−0.018149°였다. 그러나 이 측정 phase는 `fault_zero_only`이고 FINAL 독립 인증이 없다. **FINAL 정상 도착 PASS로 재분류하지 않는다.** fault 뒤 새61물리샘플의 quiet1.000000052초는 안전 정지 증거만이다. quiet root 최대속도1.011301/0.548719mm/s, span0.013351/0.007629mm였다. 기존 aggregate `outcomes.zero`는 PRE 첫 ZERO를 가리키므로 FINAL 근거로 쓰지 않는다.
 
-v19 첫 시도는 매 tick allow JSON load·반복 baseline normalization을 없애고 같은 graph 비교를 cache했다. 물리 정지 상태에서 precollect/freeze하되 자동 GC는 유지했다. 그러나 새 기록 객체의 gen2 수집이 readback 구간에서 **558.984ms** 멈췄다. driver의 실제 TF age0.502374초로 guard가 차단했다. 첫 시도는 timing 해결 FAIL이며 실패를 보존했다. fault latch 후 driver exit0, 해당 비상 요청에 결합한 zero 영수증, 원래 identity/GID·graph·actor·contact 및 zero targets 확인 뒤 ZERO-ONLY 물리61샘플을 새로 관찰해 quiet PASS를 얻었다. 비영 재인가 없음.
+GC 제한 구간은317.790467/310.173294wall초, peak RSS7,248,240,640/7,221,178,368bytes, 증가584,306,688/577,949,696bytes로 기존 제한 이내다. finally의 paused 복원에서 automatic GC=true, active=false, freeze count0이다. TF/GID fault 기록은 양쪽0이며 graph 변경/접촉 fault도 없었다. 전체 session startup/정지 GC 시간은 각 `actual_summary_v19.json`의 timing에 보존돼 있고, 이번 실패를 GC로 돌리지 않았다.
 
-확인된 GC 원인에 한해 마지막 v19b 시도에서 cyclic GC를 주행의 엄격한 제한 구간에만 지연했다. reference counting은 동작한다. 정지 상태 precollect 후 진입, 최대600초·RSS 증가768MiB·절대8GiB를 매 tick 검사하고 위반 시 fault 처리한다. 독립 ROS driver/observer의 실제 TF wall≤0.5초·sim≤0.1초와 identity/GID 검사는 그대로이며, 별도 프로세스 driver가 첫 시도에서 실제 stale을 차단했다. finally에서 timeline.pause 이후 GC를 반드시 복원한다. CPU 시간초과·메모리초과 예외 복원 검사를 수행했다.
+기존 capture는 정지 RGB-D만 보존한다. 실제 주행 영상 capture가 없어 optional 동영상은 생성하지 않았다. 새로운 frame capture를 제어 loop에 넣거나 pose 기반 가짜 애니메이션을 만들지 않았다.
 
-실제 지연 구간297.738초, RSS 시작6,665,392,128 bytes, peak7,211,487,232 bytes(증가 약521MiB), 복원 시 자동GC=true·active=false·freeze count0다. 이번 pulse_start부터 마지막 물리 샘플까지 GC0/1/2 pause는 모두0건이다. active guard 최대52.713ms, graph 비교2.140ms, actor 증분4.745ms, physics update31.084ms, readback/직렬화33.020ms다. driver TF age 최대78.994ms·sim16.667ms, session age42.778ms였다. Startup/정지 구간의 GC는 별도이며 전체 session GC 최대258.287ms를 숨기지 않았다. **이 한 번의 engineering 통과는 미래 timing 보장이 아니다.**
+## 검사·보존 및 다음 gate
 
-GOAL_OVERSHOOT/PATH_TRACKING_ENVELOPE/OBSERVED_GOAL_NOT_REACHED 등 명시적 제한 fault를 zero-only eligibility에 추가했다. 기존 driver 종료·진짜 request-bound receipt·identity/actor/graph/contact·zero wheel/controller gate는 유지한다. identity/contact/graph fault는 여전히 거절한다. CPU eligibility 및 기존 zero identity/receipt 검사는 PASS다. 이번 실제 postfault 증거는 TF_STALE이며, 새 GOAL_OVERSHOOT eligibility의 실제 물리 발동은 NOT_TESTED다. 안전한 zero-only가 불가능하면 UNKNOWN/FAIL을 그대로 남긴다.
+[통합 원자료 인덱스/요약](construction_site_reproducibility_summary_20261101_v20.json)은 각 root174개 파일(총348개)의 SHA, 두 실행별 fresh vision/B4/B5/ROI·목표·stop·Twist/base/wheel·시간·TF·GC·contact·exit를 기록한다. 각 root의 `actual_summary_v19.json`, `evidence_check_v19.json`, `leg_0_stop.json`, raw steps/commands/contacts, provisional/final 및 runtime log도 보존했다. `leg_1_stop.json`과 FINAL `stop_confirmed.json`은 양쪽 누락이며 이를 새로 조작해 만들지 않았다.
 
-최종 leg의 완료 응답 대기에 leg 시작 후20초를 재사용하던 기존 코드는 실제 긴 FINAL 주행 후 대기를 건너뛸 수 있었다. v19b에서 정상 certificate 발행 후 새5초 응답 deadline으로 수정했다. 이번 driver가 정상 완료 certificate를 수락하고 exit0한 것으로 경로를 검증했다.
+최종 [보존 검사](construction_site_final_preservation_20261101_v20.json): 기준선+신규 raw **1072개 hash 항목 불일치0**, 역사적/신규 snapshot 각각69개 일치, prepared73개씩 일치, provisional digest·기록된 evidence hash PASS. known-lock9 hash/count subset PASS([검사](construction_site_known_locks_20261101_v20.json)); 과학 전체 readiness 인증은 아니다. source compile PASS, ROI/hash binding PASS. Kit/training0, 소유 driver/observer/Kit PID 모두 소멸, rustdesk 보존. 누락된 FINAL 인증과 전체 렌더 의존성 closure는 각각 FAIL/UNKNOWN으로 남겼다. 초반 capture 파일 생성 전 확인의 `ls`/`tail` 비존재와 읽기 검색 무일치는 점검 과정의 비정상 exit로 남아 있으며 Kit 반복을 추가/삭제하는 근거로 쓰지 않았다.
 
-## 실행·검사·보존
+변경·추가 파일은 root baseline JSON2개와 SHA sidecar2개, reproduction README, 신규 offline analysis helper3개(`freeze`, `baseline_complete`, `reproducibility_summary`), 본 보고서와 보조 JSON/log, `reports/latest_report.md`, `docs/PROJECT_STATE.md`다. v01–v19 소스·output·과거 보고서·원본 USD·weights·locks는 보존했다. 두 runner exit1도 그대로 남겼다. Git stage/push·외부 publish는 하지 않았다.
 
-실제 런타임은 `/home/user/anaconda3/envs/hh_isaac51/bin/python`, Isaac Sim5.1, ROS jazzy/domain191, perception `sdg_tools`다. 각 prepare/run 명령은 다음과 같고 실제 argv·환경·input hashes·스냅샷은 각 root에 보존했다.
+**다음 권고는 별도 좁은 offline lifecycle 작업이다.** 기존 v19b 성공과 v20 실패의 정상 stop update를 재생하여 같은 호출 내 MOVING→BRAKING→ZERO 전이를 명시적으로 관측·검증할 방법을 검토한다. 정지 속도·위치·yaw·quiet·GID/TF/접촉 기준을 낮추거나 BRAKING 검사를 무조건 삭제하지 않는다. 새 버전 후보의 전이 기록/인증 일관성과 fault 거절을 CPU에서 먼저 확인하고, 그 뒤 별도 허가된 bounded engineering 확인을 제안한다. 이번 작업에서는 수정·세 번째 Kit·v21 sweep을 시작하지 않았다.
 
-```bash
-python3 scripts/construction_site_perception_runner_20261101_v19.py --prepare-only
-/home/user/anaconda3/bin/python3 scripts/construction_site_perception_runner_20261101_v19.py --run --output /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_PERCEPTION_APPROACH_20261101_v19_01
-python3 scripts/construction_site_perception_runner_20261101_v19b.py --prepare-only
-/home/user/anaconda3/bin/python3 scripts/construction_site_perception_runner_20261101_v19b.py --run --output /home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_PERCEPTION_APPROACH_20261101_v19_02
-```
+그 gate를 통과하기 전에는 fixed-condition 과학 pilot을 보류한다. 이후 별도 **작은 cross-representation pilot/admission**에서 독립 HR/LR/CAD inference checkpoint 및 자산 경로를 명시하고 비교할 수 있다. LR은 reduced acquisition 조건에서 **독립 재구성**한 scan이며 HR mesh decimation이 아니다. CAD는 GeoCAD 자산/모델과 명시적으로 연결해야 하며 Proxy와 혼동하지 않는다. 현재 protocol의 HR_Scan/LR_Scan/Proxy/GeoCAD membership을 임의로 축소하거나 다시 설계하지 않는다.
 
-CPU replay/오프셋 민감도·graph 비교·GC 예외 복원 PASS, lifecycle v19/v19b 각3개 PASS, 기존 zero identity6개·receipt5개 PASS, 신규 source compile PASS다. known-lock9 hash/count subset PASS이며 과학 전체 의존성 재인증은 아니다. v18 입력59/65개와 v19 입력70/73개 hash 불변 PASS, 양쪽 provisional digest·존재 evidence hash PASS다. v19_01 eligibility=false, v19_02=true를 보존했고 outer final은 실제 Kit 종료 후 독립 재검증했다. 양쪽 cleanup receipt는 각각 별도 request에 결합돼 있다. 강제 종료·추가 retry 없이 소유 PID가 모두 소멸했고, 최종 Kit/training process0·기존 rustdesk만 유지했다. 작업 디렉터리에 .git이 없어 stage/push는 하지 않았다.
-
-신규 코드는 scripts의 `construction_site_perception_{runner,session}_20261101_v19.py`/`v19b.py`와 `construction_site_drive_ros_20261101_v19.py`, evaluation의 `construction_site_follower_20261101_v19.py`/`construction_site_runtime_20261101_v19.py`/`v19b.py`, analysis의 `construction_site_regression_20261101_v19.py`/`construction_site_lifecycle_test_20261101_v19.py`/`v19b.py`/`construction_site_summary_20261101_v19.py`/`construction_site_evidence_check_20261101_v19.py`다. 이 보고서, latest_report, PROJECT_STATE를 갱신했다. 원본 USD·supplier graph·model·protocol·v01–v18 source/output은 변경하지 않았다.
-
-주요 근거는 각 root의 `actual_summary_v19.json`, `evidence_check_v19.json`, `attempt_0001/leg_{0,1}_stop.json`, raw steps/commands/contacts, fresh RGB-D/model/ROI/B4/B5, provisional/final과 exit log다. 두 번째 root의 `active_timing_v19.json`, `correction_basis_v19b.json`, `final_preservation_resources_v19.json`에 시간·수정 근거·보존 검사를 기록했다.
-
-남은 UNKNOWN은 독립 반복 재현성, 다른 start/scene/representation에서의 타당성, 장시간 timing 일반 보장, 실제 로봇 적용이다. 이번 고정 현장 engineering chain 완료와 과학 비교 readiness는 구분한다. 다음은 이 v19b 실행 snapshot·명령·증거를 handoff 기준으로 고정하는 것이다. 추가 실행이나 HR/LR/CAD 확장은 별도 작업으로 다룬다. HPO/training은 PAUSED, 연구 분모0을 유지한다.
+향후 축은 **representation × load completeness × occlusion**으로 검토하되 수치 수준·표본 수·합의를 새로 만들지 않는다. paired base scenario/seed·장면/start pose·camera/calibration·RGB-D 획득·관측 정책·frozen recipe/checkpoint 선택 규칙·ROI 도움 수준/검토 기준·B4/B5·controller·collision·TF/GID·stop/quiet·timeout·metric/실패 denominator를 표현 간 동등하게 고정해야 한다. 수동 ROI 보조를 사용할 경우 이를 공통 protocol로 사전 명시하고 fully autonomous 결과와 구분한다. Real Test189는 recipe locking 후 이미 평가됐으므로 tuning에 재사용하지 않는다. real external validation은 red-only이며 cement·실로봇 deployment로 일반화하지 않는다. 이번 0/2는 engineering 원시 빈도이며 정식 성능·동등성·비열등성 주장으로 확장하지 않는다.
