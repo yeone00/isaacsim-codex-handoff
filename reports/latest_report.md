@@ -1,65 +1,29 @@
-# v25 HR pilot admission — BLOCKED / motion0
+# v26 HR pilot — PhysX blocker 제거, 실제 shape 확인, render NO-GO / motion0
 
-2026-11-02 (Asia/Seoul). **새 v24 HR 장면에서 Kit 정확히 1회, RETRY0. Engineering 성공 0/1, 비영 명령0, PRE/FINAL 미시작.** 원인은 이번 연결에서 추가한 renderer semantic annotator와 기존 graph 허용 목록의 충돌이다. 기존 guard가 정상 거절했으며 완화하거나 두 번째 Kit를 실행하지 않았다. 그와 별개로 기존 v21에도 존재하는 PhysX schema 오류 10건을 발견하여 다음 admission의 독립 blocker로 남겼다. HPO/training PAUSED, formal science denominator0, LR/CAD/324/432 실행0.
+2026-11-02 (Asia/Seoul). **실제 Kit 정확히 1회, RETRY0. 기존 PhysX schema Error 10→0, 실제 union shape28/native0 확인. 새 영상의 HR 외관·fallback 검증이 불충분하여 motion0에서 중단했다.** Perception/PRE/FINAL 성공은 없다. Engineering admission BLOCKED, task NOT_STARTED, formal scientific denominator0, HPO/training PAUSED. LR/CAD는 실행·수정하지 않았다.
 
-실제 raw root: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v25_05` (약13MiB). `attempt_0001/`에 새 stage/RGB/depth/calibration/renderer semantic buffer/PhysX support/contact/physics clock/ROS 관찰/cleanup 요청/exit 증거가 있다. `_01`–`_04`는 **Kit를 시작하지 않은 offline prepare 실패**이며 삭제하지 않았다. 숫자05가 다섯 번째 Kit 시도를 뜻하지 않는다.
-
-| 독립 항목 | 결과와 한계 |
-|---|---|
-| HR 장면·모델 선택 | PASS. HR scene SHA `5b928d33d614c1328d3df87a66ea188844711f6b5bf6661e0f4c40a5f24cb0b4`, HR M50 SHA `257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca` 재확인. 모델 실행은 안 됨. |
-| 정적 full composition | PASS. 실제300 visual slot/선택 HR reference/transform, enabled static28/native enabled0, 공통 Plane binding과 union을 기존 독립 checker로 재검사. 부모·참조 dependency hashes도 검사. |
-| 실제 열린 stage와 safety consumer | 새 run layer가 HR v24 scene을 직접 sublayer로 사용. live `collision_preflight.json`의 전체 collider inventory가 union28을 포함. 이 inventory는 USD 기반이며 cooked shapes 증거가 아님. |
-| 원래 rover/graph | PASS 범위: graph exact comparison, 허용 delta 밖 actor exact comparison, live graph admission. 허용 범위는 hash-bound v24 load/union 및 Plane의 단일 재질 binding. 원래 graph/actor/TF 검사를 끄지 않음. |
-| LIVE_RENDER_MATERIAL | 새640×480 RGB-D 획득 PASS, calibration8/8 PASS, valid depth290,691px. **전체 material admission은 INCONCLUSIVE/NO-GO**. 아래 영상 검토 참조. |
-| 실제 PhysX28/native0 | **NOT_RUN / UNKNOWN**. overlap query 구현은 있으나 capture graph guard에서 그 호출보다 먼저 중단. offline CollisionAPI28을 등록28로 바꾸어 주장하지 않음. |
-| 실제 휠 지지·shell | PASS 범위: stationary PhysX support2,214/2,214, 실제6wheel contact, corrected-ray certificate, shell gap/contact gate. union seam·native shape 부재·동적 하중을 인증하지 않음. |
-| PhysX parser 진단 | **BLOCKED**. nested articulation roots 및 mounted rolltainer 하위 rigid body의 missing xformstack reset10건. v21 baseline에도 같은 종류10건이 있음. 기존 성공을 근거로 무해 처리하지 않음. |
-| HR fresh YOLO/B4/B5/ROI | **NOT_RUN**. 새 RGB-D는 생성했지만 worker 시작 전 차단. 새 ROI·과거 ROI·predicted targets·GT pose 입력0. |
-| PRE_REACHED / FINAL_REACHED | 둘 다 NOT_RUN. curved sweep/leg별 live support/물리 주행/개별 stop certificate 미생성. |
-| 정상 stop / quiet | 정상 PRE/FINAL stop 없음. baseline quiet만1.000000052sim초 PASS, 측정 pose span0, COM peak0.000969488mm/s, origin peak0.000991107mm/s, FD0. 이를 post-command stop 성공으로 세지 않음. |
-| 실제 base/wheel motion | 비영 command0, pulse path0, baseline 측정75행. 6wheel q span0/peak dq0. 초기 settling 구간 전체의 wheel tensor 측정은 없으므로 모든 중력 settling 변위0이라고 하지 않음. |
-| contact | 저장168 events, 기존 정책상 unexpected0. 통과한 것은 관측된 stationary rover/ground 접촉 범위. union seam/contact behavior 전체는 UNKNOWN. |
-| zero cleanup | 요청·abort·직접 graph zero backstop 경로 실행. **ROS zero receipt MISSING / 인증FAIL**. isolation 전 중단되어 원래 observer는 zero publisher를 만들지 않았음. isolation을 허위 생성하거나 publisher guard를 완화하지 않음. |
-| exit / 독립 witness | Kit0, observer0, driver NOT_STARTED, runner1, outer NOT_READY/MISSING_WITNESS. 강제종료0, Kit/observer PID 소멸, 잔여 Kit/training0, 기존 RustDesk 보존. 독립 verdict BLOCKED. |
-
-## 구현과 실제 실패 지점
-
-실제 실행 소스는 `scripts/construction_site_perception_runner_20261102_v25.py`, `construction_site_perception_session_20261102_v25.py`, `construction_site_perception_adapter_20261102_v25.py`, `construction_site_pilot_link_20261102_v25.py`다. 원래 v21 runner/session/driver는 executed_code snapshot과 byte 일치를 먼저 확인하고 수정하지 않았다. v25 원본도 실실행 후 변경하지 않았다. raw root의 `executed_code/`, `prepare.json`, `code_versions.json`이 실행 코드·입력·환경을 묶는다.
-
-실행 명령은 다음의 **완료된 실패 receipt**다. 재실행 지시가 아니다.
+실제 root: `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v26_03`. `_01`, `_02`는 geometry worker의 오프라인 동등성 비교 실패이며 **Kit 미시작**이다. 실패 root·로그·receipt를 보존했다. 완료된 유일한 Kit 실행 명령:
 
 ```text
-python scripts/construction_site_perception_runner_20261102_v25.py --run --output /home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v25_05
+python scripts/construction_site_perception_runner_20261102_v26.py --run --output /home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v26_03
 ```
 
-runner가 실제 `/home/user/anaconda3/envs/hh_isaac51/bin/python`으로 v25 session을 실행했다. 기존 Jazzy/FastRTPS/domain191 empty probe 및 Kit/training/GPU resource 검사를 통과했다. 시작 시 GPU에는 RustDesk만 있었다. SimulationApp renderer/초기화·outer900/930초·close25초 상한과 기존 controller/stop/TF .5wall/.1sim/GID/contact/steer/GC·RSS 정책을 보존했다. motion 단계·MotionGC.enter·driver isolation 이전 중단이므로 이 정책들의 이번 주행 성능을 검증했다는 뜻은 아니다.
+| 항목 | 실제 결과 |
+|---|---|
+| PhysX parser 원인·처리 | **PASS 범위: 기존 오류 제거.** 원래 mount layer가 강체9/collider10을 이미 disabled로 만들었지만 rigid-body API9와 nested articulation root1을 남겨 두었다. v21과 v24 HR의 해당 유효 값·xform order·reset 상태는 동일했다. 신규 활성 articulation 손상이 아니라 공통 잔존 schema 문제다. 새 파생 layer에서 이 비활성 강체9의 `PhysicsRigidBodyAPI`/`PhysxRigidBodyAPI`, body의 `PhysicsArticulationRootAPI`/`PhysxArticulationAPI` 선언만 삭제했다. 실제 새 Kit의 해당 parser Error는 **0건**이다. 이전 성공을 무해성 근거로 쓰지 않았다. |
+| 수정 동등성 | **정적 PASS + live topology PASS.** 강체 enable false9, collider enable false10, active mount joint0을 확인한 뒤 수정. 모든 authored 물리 값·joint 관계·월드 변환과 원래 supplier graph 보존. xformOpOrder/reset/카메라/rover/질량·inertia/drive/controller를 바꾸지 않았다. live rover body11/DOF10·이름도 v21과 일치. 비영 주행 동역학 동등성을 실측한 것은 아니다. |
+| motion0 실제 shape·safety | **PASS 범위: 등록 membership.** PhysX interior query28/28 및 전체 load-region callback28/unique union path28, native registered0/native enabled USD0. safety consumer가 같은28개를 포함. 단순 CollisionAPI count가 아니다. 실제 stationary support **2214/2214**, wheel contact6, shell gate PASS, contact168/예상외0. v24의 비중첩 union/경계 proof 유지. 동적 seam crossing·주행 중 하중은 NOT_RUN이다. |
+| 새 render/RGB-D | **capture PASS, 외관 admission INCONCLUSIVE/NO-GO.** 새640×480 RGB+axial depth, calibration8/8, depth valid290,691. 원래 v21 허용 render graph 검사 PASS, 추가 semantic annotator 없음. site/pallet/load는 보이나 적재물이 매우 어둡고 표면 세부가 불분명하다. mounted rolltainer의 회색 Plane fallback은 front RGB에 보이지 않아 외관·가시성 검증을 완료하지 못했다. 새 RGB를 직접 보고 deadline 내 거절했으며 AprilTag 복원/시각 동등성을 주장하지 않는다. |
+| Perception 완료? | **NOT_RUN.** 실제 frozen HR M50 path/SHA 검증은 PASS지만 YOLO inference/B4/B5/수동 pallet ROI 제출0. 새 관측 목표 없음. 과거 RGB/ROI/goal 또는 USD GT를 입력으로 복사하지 않았다. |
+| 실제 PRE / FINAL | **둘 다 NOT_RUN.** driver 미생성, adapter 비영 command0, ROS 관측 비영 command0. 각 leg swept admission·normal BRAKE/zero/quiet 인증도 NOT_RUN. |
+| 정지 인증 | **approach certificate 없음.** baseline quiet만1.000000052sim초, pose span0, 측정6wheel q span0. 기존 aggregate의 `STOPPED=PASS`는 이 baseline quiet를 반영하며 PRE/FINAL 정지 성공이 아니다. 초기 settling 전체 회전량0을 뜻하지 않는다. |
+| cleanup / exit | abort·cleanup 요청·직접 graph zero backstop 실행. **실제 ROS zero receipt MISSING / valid=false** 유지. isolation 전 중단이라 publisher 미생성; `NOT_APPLICABLE_PRE_DRIVER` 분류를 별도 기록했으며 receipt를 만들거나 인증PASS로 바꾸지 않았다. Kit0/observer0, driver NOT_STARTED, runner1/NOT_READY, 원래 full-approach finalizer `MISSING_WITNESS`. 정상 shutdown log 확인, 강제종료·timeout0, 소유 PID 잔존0. 이것은 clean approach 성공이 아니다. |
+| 정확한 blocker | **`PILOT_LIVE_RENDER_NO_GO`**: 실제 HR 외관 및 공통 Plane fallback 검토 미완료. parser와 shape 검사 단계는 통과했다. 다음 구체 작업은 기존 카메라·supplier graph·물리·lighting을 보존하는 별도 관찰 방식으로 HR 재질과 frame 밖 fallback을 확인할 방법을 정하는 것이다. 이번 작업의 두 번째 Kit는 없다. |
 
-새 root에 world 단위1m·Z up을 명시했다. USD stage metadata는 sublayer에서 자동으로 계승되지 않으므로 반드시 필요한 연결이다. rover start/parent·camera transform과 supplier graph는 기존 v21 baseline에서 계승하며 다시 배치하지 않았다. 과거 capture/ROI/goal/success를 복사하지 않았다.
+Parser의 정확한 공통 prefix는 `/World/ENG_FE2E/Rover/base_link/MountedRolltainer/AssetRef`다. reset 오류9개는 그 아래 `rolltainer_body`, `caster_fr/rolltainer_link_01`, `caster_fr/rolltainer_wheel_01`, `caster_fl/rolltainer_link_02`, `caster_fl/rolltainer_wheel_02`, `caster_rr/rolltainer_link_03`, `caster_rr/rolltainer_wheel_03`, `caster_rl/rolltainer_link_04`, `caster_rl/rolltainer_wheel_04`다. nested root는 `rolltainer_body`와 상위 `/World/ENG_FE2E/Rover/base_link`의 중첩이다. [실제 v21/v25 로그·각 prim의 authored/composed stack](construction_site_physx_diagnosis_20261102_v26.json)에 전체 경로·layer·값이 있다. 원래 robot `rolltainer.usd`의 API/transform과 mount smoke v01의 enable=false override를 분리해서 확인했다. 단순 reset은 좌표를 바꾸고, world 보상 reset도 rover 추종을 끊는 CPU 반례가 있어 사용하지 않았다. 진단 JSON의 `mount_composed_identical=false`는 다른 `prim_stack` provenance까지 포함한 비교이며, [유효 값만의 독립 비교](construction_site_preservation_20261102_v26.json)는 동일하다.
 
-이번에 추가한 `semantic_segmentation` annotator가 실제 `/Render/PostProcess/SDGPipeline/Replicator_03_instance_segmentation_fast_Sync`를 만들었다. `check_capture_graph`가 `UNKNOWN_GRAPH_NODE`로 거절했다. 기존 actuation graph를 변경했다고 확인된 사건은 아니지만, 허용되지 않은 render graph 추가를 안전상 통과시킬 수 없었다. 이때 capture 파일은 완성됐으나 `physx_gate`, runtime render review, perception worker는 호출 전이었다. 자동 retry0을 지켰다.
+검증·증거: [집중 CPU24/24](construction_site_pilot_regression_20261102_v26_v02.json), [v21 event-aware stop20/20](construction_site_stop_cpu_20261102_v26.log), [known lock subset9 및108/432행](construction_site_known_locks_20261102_v26.json), [독립 post-exit witness·전체 raw hash index](construction_site_pilot_witness_20261102_v26.json). xform stack/활성 강체 변조, union collider 비활성화, 혼합 HR/LR visual, graph/actor 변조를 거절했고, 원래 허용 render node·fresh capture AST·matched HR model·exception/zero lifecycle을 확인했다. v21 driver·event-aware BRAKING·독립 stop verifier, GID/TF wall≤.5s/sim≤.1s·속도/steer·contact·memory/GC·최종 evidence hash 정책은 보존했다. 이번에는 motion 진입 전이므로 주행 성능을 인증하지 않는다. 진단 개발 오류3건·잘못된 변조 대상의 CPU 검사 실패1건·prepare 실패2건도 별도 로그/receipt로 남겼다.
 
-## 실제 영상의 제한된 사후 검토
+v26 runtime input/snapshot·provisional digest·실제로 존재하는 evidence hashes 모두 독립 재검사 PASS. 파생 `attempt_0001/site_drive.usda` SHA `0a4e245c065e492c510720fd91beb67bcc4e01680d08745701bdd2535b12c523`. 새 RGB SHA `c54fb5988b6bdc2da280133c0ac3bd4a00ef3c4d3f3780962f74afa87facedd5`. parent HR SHA `5b928d33d614c1328d3df87a66ea188844711f6b5bf6661e0f4c40a5f24cb0b4`, HR M50 SHA `257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca` 불변. [v21/v25 executed snapshots와 현재 원본 일치](construction_site_preservation_20261102_v26.json), [v24 manifest·세 overlay 불변](construction_site_static_preservation_20261102_v26.json) PASS. v24의 세 `STATIC_PREPARE_PASS`는 여전히 static-only다.
 
-새 RGB SHA `c696ab5f8303fc71831655161aeff01052394bb75c165d39938c9496e380bf90`. 직접 연 영상에서 원래 공사현장과 pallet, 매우 어두운 적재물이 보인다. intended HR material 품질을 이 영상만으로 확정하지 않는다. mounted rolltainer Plane은 front frame에 보이지 않으므로 공통 회색 fallback의 실제 가시 외관·ROI 영향도 인증하지 못했다. 원래 AprilTag 복원·동등 appearance 주장은 없다.
-
-Renderer semantic buffer는 실제 생성됐지만 labels는 BACKGROUND/UNLABELLED뿐이다. HR object segmentation PASS가 아니다. 보이는 pallet top은 있으나 새 ROI 승인·B5를 발급하지 않았다. [사후 검토](construction_site_pilot_render_review_20261102_v25.json)는 runtime admission 허가가 아니며 새 run에서 재사용할 수 없다.
-
-## 오프라인 검증과 실패 보존
-
-- [HR focused regression](construction_site_pilot_regression_20261102_v25.json) 14/14 PASS: exact scene/model/composition300/28/native0, collider consumer28, original graph, missing/disabled cell 및 ROS graph mutation 거절, worker parameter binding, v21 stop 연결, gate 순서, 새 output·stale target 없음, one-attempt/error lifecycle 및 input hashes. [실제 로그](construction_site_pilot_regression_20261102_v25.log).
-- 기존 `analysis/construction_site_stop_test_20261101_v21.py` 20/20 PASS/exit0/26.082초. 역사적 반환·정상 stop event·거절 counterexample 재검증이며 새 pilot 성공이 아니다. 최초 stdout은 이번 terminal 기록이며 별도 raw log를 꾸며 만들지 않았다.
-- [known lock subset](construction_site_known_locks_20261102_v25.json) 9 SHA 및108/432 row counts PASS. prelock v01→amendment through v03/geometry v02 보존. geometry lock 자체의 독립 expected hash는 UNKNOWN 유지. frozen science pairing/membership/seed/metrics/threshold를 수정하지 않았다.
-- offline `_01`: root stage metric assert; `_02`/`_03`: exact actor guard가 의도한 Plane material binding 차이1건을 포착; `_04`: 설치 USD에 없는 `Stage.GetCompositionErrors` 호출로 실패. `_05` 이전에 root metadata 명시·Plane 한 관계만 exact 허용·지원되는 used-layer 검사로 해결했다. [검증·실패 목록](construction_site_pilot_validation_20261102_v25.json). guard 거절과 API 오류를 삭제하지 않았다.
-- [최종 integrity](construction_site_pilot_integrity_20261102_v25.json): 실행 입력 hashes·snapshot·provisional digest·기존 evidence hashes 모두 PASS, HR scene 원본 SHA 불변, process absence PASS. [독립 witness 및 raw hash index](construction_site_pilot_witness_20261102_v25.json), [간략 출력](construction_site_pilot_witness_20261102_v25.log). Kit exit0과 engineering 실패를 별도로 보존했다.
-
-## 실행 후 오프라인 수정 및 다음 한 작업
-
-추가 annotator를 제거하여 v21의 실제 capture 함수와 **pinned pilot SOURCE metadata 외 AST exact 일치**하는 v25b adapter를 만들었다. v25b runner/session은 이를 연결하며 원래 graph checker·v21 event-aware stop verifier·28셀 overlap gate·render review를 유지한다. segmentation은 기존 frozen YOLO mask 경로이며, renderer semantic admission을 얻었다고 하지 않는다. v25b는 새 버전 소스일 뿐 **추가 Kit/prepare/worker 실행0**이다. [첫 correction 검사](construction_site_pilot_offline_fix_20261102_v25.json), [최종 compile·진단 gate 검사](construction_site_pilot_offline_fix_20261102_v25_v02.json).
-
-또한 v25b에는 owned runtime log의 PhysX schema Error를 capture·motion 전에 NO-GO로 기록하는 gate를 추가했다. 저장 v25/v21 로그에 대한 offline replay가 각각10건을 거절했다. 이는 robot/graph를 고치거나 예외를 허용한 것이 아니다. **v25b도 현재 LIVE_BLOCKED**이며 실행 준비 완료라고 하지 않는다.
-
-다음 작업은 HR에서 보존된 rolltainer physics schema 오류가 실제 활성 articulation/shape에 미치는 영향을 오프라인으로 판정하고, root/rover 보존 조건 안에서 해결할 수 있는지 결정하는 것이다. 이후 별도 한 HR admission에서 material/fallback의 가시 검토와 실제28/native0 shape 등록부터 다시 인증해야 한다. 기존 실패 root는 재사용하지 않는다. 이번 task에 추가 Kit는 없다.
-
-실제 clean HR PRE→FINAL 성공 이후에만 LR/CAD를 각각 같은 physical scene/controller·공통 reviewer/ROI 규칙·표현별 frozen model·fresh RGB-D와 별도 새 scene/output의 한 trial로 제안한다. 그때도 각 표현의 render/PhysX를 새로 확인한다. 이번0/1 engineering 실패는 표현 비교나 reliability 추정, scientific 실패 관측, Real Test189 재평가가 아니다. LR은 저감 acquisition 독립 재구성이며 HR decimation이 아니다. red-only real validation을 cement·실로봇 배포로 확대하지 않는다.
-
-변경: 신규 v25 link/runner/session/adapter, offline 수정 v25b runner/session/adapter, 신규 regression/witness 분석 스크립트, 위 reports·검사 JSON/로그, pilot-only DRAFT, `reports/latest_report.md`, `docs/PROJECT_STATE.md`. bulk USD/RGB/depth·기존 weights는 외부 원위치. 원래 USD/rover/graph/checkpoint/v24 세 overlay/v20 실패/v21 성공/과학 locks는 보존했으며 install/upgrade/training/push/remote 변경0이다.
+변경 파일은 새 v26 runner/session/adapter/link, `evaluation/construction_site_mount_invariant_20261102_v26.py`, 새 diagnosis/regression/witness 분석 코드와 reports, `reports/latest_report.md`, `docs/PROJECT_STATE.md`다. bulk USD/RGB/depth는 위 외부 root에 있다. 기존 v19–v25·원본 USD/ROS supplier graph/weights/frozen4-rep schema는 보존했고, pilot HR/LR/CAD DRAFT와 혼합하지 않았다. LR/CAD 실행0, HPO/training PAUSED, formal denominator0. Git 저장소가 없는 현재 폴더에서 stage/push/remote 변경은 하지 않았다.
