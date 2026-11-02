@@ -711,3 +711,12 @@ Canonical task design GT center/world/yaw를 잠금에서 검증해 평가에만
 48개HR heading/plane/mask/depth 치환과12국소민감도. LR mask만HR치환시X+4.693212mm, plane만0; CAD heading만(−4.291802,+3.229069)mm·mask만(+10.296628,−3.788228)mm로상호작용/상쇄확인. 실제plane높이차는LR+.004372/CAD+.011769mm·XY영향거의0. representation+matchedmodel+manualROI개별인과몫UNKNOWN. 단계기여도·pixel/depth·scene900행·GT벡터PNG·환경/hash기록완료. 첫_01은metadata부모layer단독USD기본.01m/Y-up assertionFAIL보존; actualruntime root를witnessSHA검증후_02PASS, side/asset증거_03PASS, provenance/그림_04PASS, helperobservedSHA추가최종_05PASS. helperhistorical독립expectedUNKNOWN/frozencoreASTPASS; expected수정0.
 
 새Kit/ROS/inference/training/주행0·정책/GT/scene/ROI수정0. HRengineering성공/v31·v32curvature실패·HRactualFINAL평가불변/LR·CADendpointNOT_RUN. Formalconfirmatoryscience분모0/HPOtrainingPAUSED. 다음은datum/치수관계를명시한pairedrepeatedload/occlusion단계측정계획과별도공통plannerrobustness전향연구검토; 새정책은새amendment필요/실패소급변경금지.
+
+
+## 2026-11-02 — v35 전향 measurement DRAFT + 공통 smooth-S offline feasibility 완료
+
+[보고서](../reports/construction_site_pilot_prospective_measurement_and_planner_20261102_v35.md), [measurement DRAFT](construction_site_pilot_measurement_amendment_DRAFT_20261102_v35.md), [paired18 PROPOSED](../manifests/construction_site_paired_variance_PROPOSED_20261102_v35.json). D(task-design support origin)/V(visualAABB)/B(B5 assumed rectangle)/observed goal/physical endpoint 및 frame/sign·stage별 분모를 분리했다. GT masks/AP/mAP 구현은 미완료이며 actuation graph 분리 annotation 제안. 각n=1·matchedM50/manualROI/독립metrology 없음·reviewer문자열차이와HR observed FINAL.279451cm 대design5.523288cm/LR·CAD NOT_RUN 보존. 3view×2repeat×3rep18행은새pose/seed를명시한미승인전향pilot이며분산뒤표본수산정/power주장없음.
+
+원래strictquintic HR .350094192/LR .387170521/CAD .366967770 재현·HR배열1e−12·독립선형계replay PASS. 같은start/perceivedgoal/yaw/15°/.7m/.95/.02m/s/forward-only에고정smooth-S primitive사용:상한.247883579/.274096983/.259815546/m. 세표현각±10mm3×3 총27점전부곡률PASS(최악.334000963/m);합성은관측아님. 실제USD fullcollider13/scene42·instanceproxy조향4개·.15m확장보강후각973350supportqueries실패0,확장envelope장애물거리하한.129149/.128940/.132583m. offline조건부PASS/LIVE_PHYSX_UNTESTED;livelegacyhelper불변. core31/독립38/speed27/hash1010/compile·artifact검사PASS. `_01`serialization/`_02`timeout/`_04`·`_05`AST실패보존,`_03`좁은다항식scope LR no-path/`_06`보강전결과와최종`_07`구분.
+
+새Kit/ROS/inference/training/motion0·원래LR/CAD실패소급변경0·formal science0/HPOPAUSED. 다음은전향protocol승인후별도3repengineeringqualification에서fresh관측/실제steer·support·tracking·PRE/FINAL정지검증이며이번실행승인아님. 이후paired반복분산/독립GT구현으로진행;432미실행.
