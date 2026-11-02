@@ -1,70 +1,53 @@
-# v40 — bitmap loader 실제 loss 연결 및 1회 GPU 학습 PASS
+# v41 — 실제 HPO 자격검증 실패, Stage-1 미시작
 
-2026-11-02 KST. **새 bitmap loader·CPU loss·전체 Train/Val QA·6장 1 epoch GPU engineering smoke PASS. Stage-1 readiness NO / HPO NOT_LAUNCHED / trials 0.** Full-data epoch pilot NOT_RUN. Kit/ROS/robot motion 0, retry 0, research denominator 0. p-value·과학적 성능 결론 없음.
+2026-11-02 KST. **STAGE1_READY=NO.** 두 ratio의 CPU 실제 loss 입력은 PASS이나, batch64 AMP 역전파 후 비유한 gradient가 검출됐다. 독립 Ray 시험은 같은 trial/epoch/YOLO 가중치 복구까지 확인했으나 optimizer state가 비어 있어 FAIL이다. 허용된 실행 한도를 지켜 GPU 재시도0, Ray 수정검증1회 뒤 종료했다. **Full-data epoch NOT_RUN / 실제 HPO launched·running·completed·pruned·failed 모두0.** 이는 AMP의 근본적 비호환이나 데이터 손상 판정이 아니다.
 
-## 구현과 실제 측정
+| 필수 게이트 | 결과와 실제 분모 |
+|---|---|
+| v40 보존·입력 코드 SHA | PASS: inventory53항목(중복 포함) 시작·종료 일치, legacy source4개 expected 일치. Known locks9/hash 및108·432행 PASS. v40 QA/smoke 재실행0 |
+| 새 정책 고정 | PASS: `PROSPECTIVE_BITMAP_NOAUG_v41`, 세 표현 공통. 탐색 실행은 사용자 v41 지시 범위이며 **최종 학위논문 정책 채택은 검토 대기** |
+| ratio2 CPU loss | PASS: 실제 bridge2scene×3rep=6장/27instance channel, target320²·reference error0/IoU1, installed loss selector6/6·positive anchors242, seg loss **4.261906624** |
+| ratio4 CPU loss | PASS: 동일6장/27channel, target160²·error0/IoU1, selector6/6·anchors242, seg loss **4.844833851** |
+| ratio2 GPU batch64 | **FAIL**, attempt1/exit1, 64 DISTINCT train images·workers8·AMP·nc1·640/AdamW. finite loss와 backward 완료 후 unscaled gradient assertion. 5.034743s, peak allocated **12,060,274,688 B (11.23 GiB)** / reserved **12,312,379,392 B** |
+| ratio4 GPU batch64 | **FAIL**, attempt1/exit1, 동일64장/설정. 같은 assertion, 4.844988s, peak allocated **9,522,654,208 B (8.87 GiB)** / reserved **11,368,660,992 B** |
+| Ray/ASHA/TPE end-to-end | **FAIL**. 첫 API binding 실패는 trial0. 수정 adapter로 실제 engineering trial1, epoch checkpoint1개 후 의도적 SIGINT·동일 root Tuner.restore. epoch2 진입 전 optimizer 검증 실패, 최종 ERROR1/완료0, 두 번째 checkpoint0 |
+| Full Train6000/Val1200 epoch | **NOT_RUN**: 앞선 필수 게이트 실패. throughput/full-val score UNKNOWN |
+| 실제40-trial Stage1 | **NOT_RUN**, PID 없음·백그라운드 작업 없음. 연구 confirmatory 분모0 |
 
-새 출력 root: `/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v40` (이하 ROOT). 원본과 v39 namespace를 재사용하지 않았다. `status.json`, `sha_inventory.json`, `environment.json`, `raw_*.log`에 실제 상태·경로·SHA·환경·로그를 보존했다.
+## 실제 증거와 실패의 의미
 
-[bitmap_loader_v40.py](../scripts/bitmap_loader_v40.py)는 설치 Ultralytics **8.4.129**의 `SegmentationTrainer`를 상속한다. Dataset→collate→`batch['masks']`/`batch['batch_idx']`→설치 `v8SegmentationLoss.calculate_segmentation_loss` 경로를 사용한다. 원본 usable load마다 한 binary channel을 유지하고 load_id 순서로 bbox/class/instance를 맞춘다. 분리된 component와 hole을 polygon으로 바꾸지 않는다. class 0 brick_load, pallet 제외, metadata usable=False 제외. 중복·음수 ID, pixel 수 불일치, 비binary 값, channel overlap을 거절한다. overlap_mask=False이며 image별 instance 채널을 batch_idx로 선택한다.
+외부 ROOT는 [/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41). [기계 판정·실측](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/final_evidence.json), [최종 상태](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/status.json), [입력 SHA](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/input_hashes.json), [최종 전달 SHA](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/delivery_sha256.json). 원본 v40 전체QA7200/7200·unique7139/nonexact350/IoU<.95=31·smoke PASS1/1은 입력 증거 SHA로 보존했다. metadata short canonical hash generator UNKNOWN은 그대로다. 이번에 전량 image QA를 반복하거나 Test400/Real Test189로 선택하지 않았다. Frozen manifest SHA `2a4782911ef334fc640e9f90ee8120e48ab3c30e25da47603004978835626bf8`; records SHA `e230ae083b4608428c4c1db94e6aca78484d8c0bd81477fc4e98c71fed352009`.
 
-공통 engineering 정책은 **증강 없음·정사각 letterbox·mask nearest**다. 640×480 원본은 640×640에 위아래 80px padding되어 두 사례 모두 원래 픽셀이 보존됐다. Mosaic/mixup/copy-paste/flip/affine/HSV/multi-scale은 사용하지 않았다. 기존 HPO augmentation recipe와 동일하지 않다. loss source `/home/user/anaconda3/envs/sdg_tools/lib/python3.11/site-packages/ultralytics/utils/loss.py:516` 이후는 mask 대신 proto를 bilinear로 target 크기에 맞춘다. 이번 full-resolution target은 640×640이고, 실제 loss boundary의 proto도 640×640이다. 향후 mask_ratio 2/4 경로는 별도 RatioDataset에서 nearest로 줄이며 lossless라고 주장하지 않는다.
+CPU [ratio2](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/cpu_ratio2/status.json) / [ratio4](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/cpu_ratio4/status.json)는 canonical→letterbox→nearest reference→실제 batch→설치 loss의 `single_mask_loss` 입력을 비교했다. batch_idx는 각 TRN instance4개×3image 뒤 VAL instance5개×3image의 순서다. 원래 TRN_000661 Load02 397px→ratio2 97px/ratio4 28px, VAL_000151 Load02 707px→178px/45px이며 두 component 모두 남는다. 같은 변환 reference와 exact이지 원본 해상도와 lossless가 아니다. 새 합성 reduction fixture에서는 80px/3components→ratio2 20px/2components, ratio4 5px/2components로 홀과 홀수좌표의 작은 island 소실을 명시적으로 확인했다. bridge를 합성 사례로 대체하지 않았다.
 
-| 실제 사례 (Load_02) | 기존 polygon IoU / 추가 px | 새 batch/loss target | component / 원본 px |
-|---|---:|---|---:|
-| TRN_000661 | 0.676320272572402 / 190 | 동일변환 reference IoU 1.0, exact | 2 / 397 |
-| VAL_000151 | 0.7846836847946725 / 194 | 동일변환 reference IoU 1.0, exact | 2 / 707 |
+GPU [ratio2 status](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/gpu_ratio2/status.json) / [ratio4 status](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/gpu_ratio4/status.json), `raw_gpu_ratio{2,4}.log`, `batch64_records.json` 참조. 두 재료 및 HR_Scan/LR_Scan/GeoCAD 모두 포함하고 TRN_000661도 포함한다. VAL_000151은 CPU proof에만 사용했다. GPU 입력64장의 reference error0이며 loss hook의 exact/selector assertions를 통과한 후 backward/unscale 뒤 실패했다. **OOM0/collate오류0, optimizer.step 미도달**이다. 현재 allocated/reserved는 ratio2 190,829,056/12,312,379,392 B, ratio4 174,998,016/11,368,660,992 B. 이 단일 minibatch의 메모리를 전체epoch 적합성으로 확대하지 않는다. 검사 코드가 loss/boundary 숫자를 성공 후에만 저장하여 GPU의 정확한 loss 값·selector 횟수는 UNKNOWN이다. finite loss assertion과 hook 통과는 실행 순서/traceback으로만 확인되며 수치를 복원·추정하지 않았다.
 
-`loss_proof.json`: 두 실제 이미지 CPU minibatch의 mask `[9,640,640]`, float32, 값 {0,1}, batch_idx `[0,0,0,0,1,1,1,1,1]`, positive anchors 81. 실제 segmentation loss **3.5717935562**, 전체 loss finite. CPU proof는 pretrained YOLO11n-seg head를 이용한 mask 경로 검사이며, 아래 GPU trainer는 nc=1 head로 실제 학습했다. 모델 계열은 동일 SegmentationModel/YOLO11n-seg다. `boundary_stress.json`은 설치 loss의 실제 instance selector가 역순 target index에서도 정확한 channel을 pixel BCE 입력에 전달함을 확인했다.
+이는 제가 추가한 `all finite gradient` 검사가 GradScaler의 정상 step-skip/update 전에 중단한 **qualification adapter의 한계**를 포함한다. 이를 AMP 비호환이라고 확정하거나 batch64 PASS로 바꾸지 않았다. 직접 minibatch 시험은 trainer 전체 optimizer warmup 경로의 증명이 아니다.
 
-ROOT의 `*_polygon_diff.png`는 green GT/red polygon extra, `*_batch_mask.png`는 실제 batch target이다. **정렬된 overlay는 `TRN_000661_letterbox_overlay.png`, `VAL_000151_letterbox_overlay.png`**다. 초기 `*_batch_overlay.png`는 RGB를 늘린 시각화 오류가 있어 보존하되 근거로 사용하지 않는다. padding 정렬을 고쳐 새 파일을 만들고 첫 사례를 육안 확인했다. 학습 tensor에는 이 시각화 오류가 없었다.
+Ray 설치 **2.58.0**, Ultralytics **8.4.129**, Python3.11.15/torch2.7.1+cu128/CUDA12.8/RTX5090. [첫 실패 로그](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/raw_ray_initial.log): Tuner와 ASHA 양쪽 metric/mode 지정은 실제 API에서 거절됐다(exit1/trial0). 새 [v41b adapter](../scripts/bitmap_ray_resume_v41b.py)는 Tuner에만 metric/mode를 지정하고 `ray.tune.report/get_checkpoint/Checkpoint/RunConfig`, 명시적 `TPESampler(seed42)`, ASHA epoch binding을 사용했다. [최초 실행 로그](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/raw_ray_attempt2_initial.log), [동일 root 재개 로그](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/raw_ray_attempt2_resume.log), [결과/error](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/ray_resume_results.json).
 
-## provenance와 전체 QA
+Engineering data는 Train9/Val6, batch6/workers2/AMP, 2epochs 예정이며 final HPO 자료와 출력 경로를 분리했다. Trial **c60cbc2a** 하나, checkpoint `ray_engineering_attempt2/trial_c60cbc2a_*/checkpoint_000000/last.pt` SHA **`feed31e5d2ac398a2487da570a1efd32f87f9744e685ed58a6113a83a81b82c1`**. 중단 전 epoch1만 실제 완료; train seg **4.78188**, CSV epoch elapsed **0.893268s**, Ray iteration **3.636154s**. pooled Val6/3rep `metrics/mAP50-95(M)` **0.00483**, val seg3.5585는 engineering 관측이며 성능결론이 아니다. 같은 trial ID, saved epoch0→start_epoch1, 저장 EMA→YOLO 가중치 exact assertion 통과 뒤 optimizer state 검사에서 중단했다. checkpoint optimizer states **0**, scaler **32768**(초기65536 대비 감소). 적어도 한 optimizer update가 overflow로 건너뛰어진 증거이며 **비어 있지 않은 optimizer 재개는 미입증**이다. EMA로 재개하는 설치 YOLO 동작이며 bitwise trajectory 동등성을 주장하지 않는다. 반복 epoch0·phantom trial은 관측되지 않았지만 epoch2 완료/두checkpoint/ASHA pruning 검증은 NOT_RUN이다. Ray driver는 trial error를 결과로 반환하여 exit0였으므로 shell 성공을 PASS로 취급하지 않았다.
 
-`METADATA_SHORT_HASH_ALGORITHM_UNKNOWN` 유지. bounded grep/AST에서 original nominal 생산기의 정확한 short-hash byte 계약을 찾지 못했다. 다른 nonideal hash 함수를 authority로 사용하지 않았다. `TRN_000001 Load_01`의 선언 `d4d2a2a4976b7a4d`를 교체하지 않았고 v39 실패도 그대로다. `provenance.json`에 세 사례의 선언값·원본/v03 전체 SHA·pixel 수, legacy source expected/observed SHA를 기록했다. 세 사례 모두 **VERIFIED_FULL_FILE + VERIFIED_MASK_PIXELS + METADATA_SHORT_HASH_UNKNOWN**이다. 이는 짧은 해시 검증 PASS 또는 데이터 훼손 판정이 아니다.
+## 다음 하나의 수정: AMP scaler 초기화와 optimizer update 증명
 
-`audit.jsonl`: **7,200/7,200 이미지 reference**(Train 6,000 / Val 1,200), 첫 실행 checked7200/skipped0, 55.262초. 모든 이미지 SHA, metadata SHA, scene/seed/split, load IDs, PNG SHA, binary target SHA, loader SHA와 원본 해상도 exact bitmap fidelity를 기록했다. 실제 오류·누락·overlap으로 제외한 사례 0. 재개 실행은 checked0/skipped7200, 1.575초였고 이미지/GT/metadata/code SHA를 재확인했다(`audit_invocations.jsonl`).
+[정책 amendment](../docs/bitmap_noaug_policy_amendment_20261102_v41.md)는 기존 augmented polygon HPO와 분리된 전향 bitmap/noaug arm이며 historical M50/four-rep protocol이 아니다. square letterbox/nearest/usable class0·load_id·nonoverlap 정책과 모든 증강0을 공통 고정했다. search bounds9개/mask_ratio{2,4}, pretrained YOLO11n-seg, AdamW/640/batch64/workers8/AMP/seed42, pooled Val selector,40/max60/grace15/reduction3·GPU1/shared budget은 변경하지 않았다. 최종 논문 채택은 검토 전이다.
 
-`fidelity.jsonl`/`fidelity_summary.json`: Train/Val **7,139 unique usable load instances** 전부 원본 polygon을 재래스터화해 비교했다. nonexact350, IoU<0.95 **31**; 이번 집계가 역사 train27+val4와 같음을 확인했다. 낮은 fidelity 사례를 제외하지 않았다. v01 원본 전체 SHA 일치 **6,653**, assembler 지정 replacement 원본 일치 **486**, 합계7,139. Audit 초기 per-case original source UNKNOWN이었던 replacement도 fidelity inventory의 지정 source root 비교로 해소했다. **짧은 metadata hash는 여전히 UNKNOWN**이며 완전한 provenance 인증을 주장하지 않는다. PNG/JSON/split/label은 수정하지 않았다.
+두 실패를 잇는 우선 수정 대상은 **첫 AMP update의 overflow와 비어 있는 optimizer state**다. 초기 scale128, step 전 loss/gradient/scaler 영속 기록, 실제 optimizer state>0 assertion, resume 시 저장 scaler 유지로 새 [minibatch v41c](../scripts/bitmap_qualify_v41c.py)와 [Ray v41c](../scripts/bitmap_ray_resume_v41c.py)를 준비했다. 이는 **compile만 PASS / 실행 NOT_RUN**이며 scale128로 해결된다고 주장하지 않는다. 기존 v41/v41b source와 실패 root를 보존했다. GPU ratio별 한 번 및 Ray 수정검증 한 번을 소진했으므로 이번 task에서 v41c 실행·새 root 재시도는 하지 않았다.
 
-최종 manifest expected SHA `2a4782911ef334fc640e9f90ee8120e48ab3c30e25da47603004978835626bf8` 일치. Canonical GT summary/instance CSV와 polygon fidelity lock dependency SHA도 일치. `rgb_pairing.json`: unique scene2,800 및 seed2,800, Train2000/Val400/Test400, HR_Scan/LR_Scan/GeoCAD 대응8,400개 파일 존재와 metadata scene/seed/split 일치. split 교집합0. Test1,200장은 존재/metadata 확인만 했으며 평가·선택에 사용하지 않았다. Real Test189 접근·평가·선택0; 기존 평가 이력은 유지한다. LR은 reduced-acquisition 독립 재구성이다.
-
-`stress.json` 및 `boundary_stress.json`: disconnected/hole, 두 load ownership, ignore load/배경, empty channel, binary bounds, overlap·wrong/duplicate ID·wrong split·pixel count 거절, negative bridge, installed loss 선택 PASS. 빈 usable scene은 source에서 거절하며 이번 locked Train/Val에는 해당 scene이 없었다. `ratio_checks.json`: 2/4 각각320²/160² target이 동일 nearest reference와 exact, 해상도 변경으로 원본과 lossless 비교는 하지 않았다. Ratio 경로의 GPU/Ray 전체 trial 실행 검증은 아직 없다.
-
-## GPU smoke — 실제 1회, 재시도 없음
-
-[bitmap_smoke_v40.py](../scripts/bitmap_smoke_v40.py), ROOT/smoke/status.json 및 epoch/results.csv. RTX5090, 시작 시 CUDA compute process 없음·Kit 실행파일 없음 확인. Python3.11.15/torch2.7.1+cu128/CUDA12.8. 설치·업그레이드·process 종료0.
-
-Train: TRN_000001·TRN_000661 ×3 reps=**6장**. Val: VAL_000151 ×3 reps=3장. 1 epoch, batch6/workers0/AMP False/mask_ratio1, imgsz640/AdamW/seed42, safe noaug. 이는 제한된 engineering 설정이며 frozen batch64/workers8 HPO와 같다고 주장하지 않는다. 실제 nc1 YOLO11n-seg head, 2,834,763 parameters.
-
-- **attempt1 / epoch1 / exit0 / PASS / retry0**. train box2.70187, **seg4.32745**, cls3.84952, dfl2.28389. epoch CSV elapsed1.16326초; wrapper 학습·검증 전체3.274879초.
-- peak allocated3,957,387,776bytes, reserved4,045,406,208bytes. CLI GPU memory3.77G. batch64 적합성으로 외삽하지 않는다.
-- 실제 train loss 경계: mask `[24,640,640]`, float32/binary; batch_idx·각 channel pixel 수·proto/positive anchors를 status에 기록했다. CPU exact 검사와 같은 loader SHA임을 final checks에서 확인했다.
-- epoch Val seg3.45772, pooled 3장 Mask mAP50-95 **0.00625**. 최종 best 재검증 값 **0.006449847824533119**는 별도 반환값이다. 이 작은 smoke 수치는 연구 성능·HPO 결과가 아니다. stock trainer가 final epoch의 새 last/best를 저장했으며 ROOT/smoke 아래에만 존재한다.
-
-**Full-data 1 epoch pilot NOT_RUN.** 무증강 정책을 기존 frozen common recipe로 포장하지 않았으며 추가 GPU 실행을 하지 않았다.
-
-## Stage-1 전달 및 남은 구체적 작업
-
-[bitmap_stage1_v40.py](../scripts/bitmap_stage1_v40.py)는 나중에 승인받아 실행할 별도 entrypoint다. Ray OptunaSearch(TPE,seed42)+ASHA,40 trials/max60/grace15/reduction3, single GPU 순차, YOLO11n-seg/640/batch64/workers8/AdamW/seed42/AMP, pooled Val `metrics/mAP50-95(M)` 최대화, 기존 9개 search bounds 및 mask_ratio{2,4}를 명시했다. train/val은 전체 records.json을 사용한다. epoch last.pt를 Ray checkpoint로 저장하고 Tuner unfinished resume와 YOLO checkpoint resume를 연결한다. 기존 output은 --resume 없이는 거절하며 errored trial 자동재시도하지 않는다. Stage2 Top5×3rep×150epochs는 미실행/구현범위 밖이다.
-
-후속 실행 명령(**이번 미실행**, 정책 수용과 실행 승인 후):
+지금 실행 가능한 read-only 재검증 명령(훈련 없음):
 
 ```bash
-/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_stage1_v40.py --output /home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v40/stage1_future --accept-safe-policy
-# 중단 후 동일 경로: 위 명령에 --resume 추가
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_evidence_v41.py
 ```
 
-**Stage-1 readiness NO.** 구체적 미해결은 (1) 기존 recipe와 다른 safe noaug 정책의 연구용 채택 여부, (2) mask_ratio2/4 실제 loss·validation 및 batch64 VRAM 적격화, (3) Ray epoch checkpoint 재개/ASHA 종료의 runtime 검증이다. 현재 script compile/--help PASS이고 search는 실행하지 않았다. metadata short hash provenance UNKNOWN도 별도 남는다. 구현된 bitmap loader와 완료 smoke를 다시 준비 단계로 되돌릴 이유는 없다. 다음 작업은 새 namespace에서 이 세 항목을 한정 검증하는 것이며 40-trial launch는 별도 승인 범위다.
+후속 작업에서 사용할 정확한 첫 GPU 게이트 명령열(**현재 미실행**, 기존 root에 덮어쓰지 않음):
 
-## v30 과거 조향 관측 — 새 안전한계 아님
+```bash
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_qualify_v41c.py init
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_qualify_v41c.py cpu --ratio 2
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_qualify_v41c.py gpu --ratio 2
+```
 
-`v30_retrospective.json`: 요청 SHA `9a77f63c3fe6c1f9e930f2bac46b3cf8505b246acecd2cc48a48747ceeae8215` 일치. named_joint_state의 q_rad/dq_rad_s,7,396 samples, sim3.050000159–126.316673255s; dt 중앙값0.016666668s/max0.033333335s. 실제 logged dq 절대 max: front_left16.856316/front_right26.355076/rear_left15.668217/rear_right11.979764 deg/s. 각 joint의 중앙·90/95/99% 및 q 차분 rate도 JSON에 보존했다. joint 누락0. sample 사이 peak·logged velocity 품질 불확실성은 남는다. 이것은 old quintic 성공 run의 retrospective 관측이며 **safe rate-abort UNDEFINED**, stationary sweep/graph 변경 승인·live 시험0, steering HOLD다.
+ratio2 실패 시 중단. PASS 뒤 ratio4 및 Ray2-checkpoint 재개를 새로 검증해야 하며 이후에만 full6000/1200 epoch로 진행한다. 기존 errored Ray trial을 자동 재시작하지 않는다. **지금 실행 가능한 qualified Stage1 명령은 없음**; v40 future launcher를 우회 실행하면 안 된다. 현재 살아 있는 search/supervisor PID가 없으므로 stop/resume 대상도 없다.
 
-## 변경·검사·보존
-
-신규 코드7개: bitmap_loader / bitmap_qualification / bitmap_smoke / bitmap_fidelity_inventory / bitmap_final_checks / bitmap_boundary_tests / bitmap_stage1 각 v40.py. 본 보고서·latest_report·PROJECT_STATE 갱신. 원본 scripts·dataset·labels·locks·weights·USD·v39 status/raw/historical31은 보존했고 v39 source evidence의 4개 expected SHA 일치를 다시 확인했다. 새 코드/입력 모델/설치 loss·trainer/출력 파일 SHA는 ROOT/sha_inventory.json이다. 신규 observed SHA를 기존 expected로 승격하지 않았다.
-
-Compile·CPU proof·synthetic/ownership·full source QA·full fidelity·RGB pairing·resume·GPU smoke PASS. short hash UNKNOWN. Future HPO runtime NOT_TESTED. 부수 metadata flat 경로 조회 head exit1은 실제 split/train 경로로 해결하고 limitations.json에 기록했다. 초기 overlay 오류도 보존·수정 기록했다. 학습 실패나 OOM은 없었으며 기존 v39 감사 실패는 지우지 않았다.
-
-재현 명령은 위 scripts의 proof/audit/fidelity/final_checks/boundary_tests 및 smoke entrypoint다. **완료된 proof/fidelity/smoke output에는 덮어쓰기/재시도하지 않는다**. audit만 SHA 검증 후 resume 가능하다. Handoff는 이 보고서의 정상 HANDOFF_REPORT marker로 동기화 요청하며 `.git` 없는 workspace에서 원격 반영 완료는 확인하지 않았다.
+신규 코드6개(qualify v41/v41c, Ray v41/v41b/v41c, evidence v41), 정책문서·본보고서·latest_report·PROJECT_STATE를 작성/갱신했다. compile PASS, CPU2/2 PASS, GPU0/2 FAIL, Ray resume FAIL, full-data/HPO NOT_RUN, known subset PASS. `code_output_sha256.json`은 최종 status 갱신 전 snapshot이며 최종 현재 파일 hash는 `delivery_sha256.json`을 사용한다. 부수 rg stdout/stderr glob 조회 exit2는 파일명이 없어 발생했고 trial 실패와 별개다. Ultralytics AMP check의 yolo26n 메시지는 별도 검사 모델이며 학습모델 교체가 아니다(기존 workspace weights 파일 mtime2026-11-01 확인). 설치·업그레이드0. 원본/weights/labels/splits/USD/v39/v40 수정0, Kit/ROS/motion0, steering HOLD·15°/20° 유지. 원격 mirror 완료는 확인하지 않았으며 정상 HANDOFF_REPORT marker로 동기화를 요청한다.
