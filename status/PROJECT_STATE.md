@@ -1,5 +1,13 @@
 # PROJECT_STATE — 2026-10-13 (Asia/Seoul)
 
+## 2026-11-02 — v44 기존972 B5 오프라인319계산 / 새가림54 actual 목표충족 / 인간사전검토 FAIL
+
+[v44 보고서](../reports/three_rep_B5_pose_and_occlusion_calibration_20261102_v44.md). 새 외부 THREE_REP_OCCLUSION_B5_20261102_v44에 original972 센서/예측mask SHA를 고정했다. old972 재렌더0/재추론0/학습0. 센서 바닥+사전PALLET_H.144/치수1.1m와연결표면proposal, erosion2·brick제외3·inlier80%/100점/3mm/tilt5/cov기준을 유지했다. pilot54는 B5 HR16/LR17/CAD18=51,거절1·원무검출2. 전체972는 B5 HR83/LR133/CAD103=319,datum479,원무검출174,sourceUnavailable0. 계산된 표본 조건부 norm중앙값88.179/219.746/93.396mm; 계산됨은독립물리정확도인증아님. old18중17 재계산가능/XY최대차.003786mm, HR S043O0 새ROI77.12%로거절하며old성공보존. old/smooth offline곡률통과4/83·3/133·4/103 및11/83·10/133·8/103, fullgeometry0/motion0.
+
+중요 절차미준수: 사용자요구의 사람사전검토 없이 Codex AI시각검토만으로54→972확장했다. HUMAN_REVIEW_BEFORE_ROLLOUT=FAIL,319는탐색자료/인간QA대기. gate가검토파일존재만확인한한계를 숨기지않았다. ROI접촉표·거리시점20대표·inlier/depth/잔차패널20개보존. NearFront/Far 대부분거절,80%완화/GTfallback0. 다음은사람검토와새버전normal/patch분리·결합정책이다.
+
+fixture setup에만oldO0 GT/depth사용,세표현최소targetdepth절반에공통판·minimax공통경계동결. offline108base×3O=324설정모두새±2%p예측충족(실측아님). 실제는별도 MID/FRONT54장만 Kit1회/33.59초close/36.33초exit0/retry0, RSS6.67977GiB·GPU6913MiB·rendererError0/owner잔존0/close_return미관측. 실제O0=0,O25 24.53–25.51%,O50 48.64–50.57%,54/54목표충족. 새검출HR18/LR17/CAD18,IoU≥.5 17/17/18,B5 18/17/17; old/smooth곡률2/18·0/17·4/17 및5/18·3/17·6/17은offline만. 새metadata calibrationSHA/uniqueframe54 PASS. old source5658+capture5832 SHA보존PASS/known9/countPASS/신규193expected mismatch0. 원래v43가림부족·metadata오류·weights·locks·Proxy·기존실패불변. READY_FOR_MOTION=NO,ROS/driver/조향/propulsion/play/PRE/FINAL/HPO0. 원격pull590839b→b049866으로v44지시확인,새보고서sync완료UNKNOWN/자동추가Kit없음.
+
 ## 2026-11-02 — v43 실제 정적 Isaac RGB-D·동결 M50 972/972 완료 / 주행0
 
 [v43 보고서](../reports/three_rep_occlusion_completeness_isaac_pilot_20261102_v43.md). HPO/AMP/Ray/훈련을 실행하지 않고 새 외부 THREE_REP_OCCLUSION_20261102_v43에 972계획/324paired scene을 고정했다. 기존 v01→v03/geometry v02·MNIDB_0001 제거궤적·동결 M50 사용. 단일 Kit에서 pilot54/54 뒤 같은 세션으로972/972 fresh RGB-D·matched 추론 완료, retry0/physics play0/ROS0/driver0/조향0/주행0, process exit0·owner잔존0. 시작→close470.27초, sampled RSS최대7.56924GiB/전체GPU7650MiB로8GiB/26000MiB한도 내. close_return 미관측과 정상 process exit를 구분한다.
