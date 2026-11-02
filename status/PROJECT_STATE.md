@@ -1,5 +1,13 @@
 # PROJECT_STATE — 2026-10-13 (Asia/Seoul)
 
+## 2026-11-02 — v43 실제 정적 Isaac RGB-D·동결 M50 972/972 완료 / 주행0
+
+[v43 보고서](../reports/three_rep_occlusion_completeness_isaac_pilot_20261102_v43.md). HPO/AMP/Ray/훈련을 실행하지 않고 새 외부 THREE_REP_OCCLUSION_20261102_v43에 972계획/324paired scene을 고정했다. 기존 v01→v03/geometry v02·MNIDB_0001 제거궤적·동결 M50 사용. 단일 Kit에서 pilot54/54 뒤 같은 세션으로972/972 fresh RGB-D·matched 추론 완료, retry0/physics play0/ROS0/driver0/조향0/주행0, process exit0·owner잔존0. 시작→close470.27초, sampled RSS최대7.56924GiB/전체GPU7650MiB로8GiB/26000MiB한도 내. close_return 미관측과 정상 process exit를 구분한다.
+
+Pilot 검출 HR17/18·LR17/18·CAD18/18, 평균GT pixelIoU .858409/.901282/.876891(무검출0 포함). 전체 검출238/324·292/324·268/324, IoU≥.5 231/324·218/324·267/324, 평균IoU .677861/.635470/.744906. 표현+matched model 기술 관측이며 통계적 우열·동등성·FullE2E·주행 성공 아님. B5는pilot O0에서 각6/18 계산, 가림34건 sensor datum거절/무검출2; 추가918건 freshROI미검토로 B5 NOT_RUN. oldquintic 곡률1/6·1/6·2/6, smoothS3/6·4/6·4/6은OFFLINE곡률만, fullgeometry평가0/liveHOLD 유지.
+
+Pilot actual O25 24.53–25.74%/O50 49.45–50.73%. 전체 O25 16.56–26.57%/O50 21.79–51.91%: Near사선target 일부가 깊이1m판 앞에 남는 ray-depth사례 확인. 정확한명목가림수준 실현 NOT_ESTABLISHED, 실제비율전부보존/제외·재라벨0. 초기hiddenpanel renderer Error1·metadata calibration_sha가depthSHA를가리킨오류·triplet frame_id공유를 보고, 원본metadata보존/전체972 rawprojection/view수치재구성PASS+별도보강기록. SHA193+historical108 mismatch0·known9/countPASS·324pairedscene·5832capturefileSHA PASS, geometrylock자체expectedUNKNOWN. CSV/PNG/실제overlay완료, 동결plan과현재상태별도ledger. Git없음/원격syncUNKNOWN. v30HR observed2.79451mm/design55.23288mm n1·v31LR/v32CAD곡률실패·v35/v36offline·v38steeringHOLD불변. 다음은면담실측공유후새버전판깊이/calibrationprovenance/sensor팔레트datum보강, 새Kit/모션자동재실행없음.
+
 ## 2026-11-02 — v38 정지 조향 isolation 구현 일부 / 실측 정책 미정 HOLD
 
 [v38 보고서](../reports/construction_site_steering_characterization_and_hr_live_20261102_v38.md). 새 engineering 모듈/one-shot preflight를 구현해 actual v30 stage의 anonymous session layer에서 정상 articulation exec3개 차단·exact 복원·source SHA 불변을 확인했다. second writer/±90°/NaN/복원누락/실제 edge 재연결 거절 포함 CPU7/7 PASS. expected 대비 unique dependency783 mismatch0, known9/count108·432 PASS. standalone USD 경고·부수rg경로exit2 보존, preflight exit2는 의도된 HOLD이며 PASS 아님.
