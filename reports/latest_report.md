@@ -1,47 +1,55 @@
-# v36 — 공통 smooth-S의 별도 engineering 어댑터와 결정 게이트
+# v37 — 승인된 HR smooth-S의 실제 조향 게이트 판정
 
-2026-11-02 KST. **소프트웨어 연결 가능성 PASS_OFFLINE / 실제 실행 HOLD.** 새 [어댑터](../evaluation/construction_site_common_planner_20261102_v36.py)와 [CPU 검사](../analysis/construction_site_common_planner_checks_20261102_v36.py)를 작성했다. 원래 quintic·driver·controller·stop·USD·weights·locks는 수정하지 않았다. Kit/ROS/비영 명령/센서 획득/추론 실행0. 신규 실제 endpoint0, formal scientific denominator0, HPO/training PAUSED. 이 문서는 v35 DRAFT나 18회 실험을 승인하지 않는다.
+2026-11-02 KST. **HOLD_STEERING_RESPONSE_UNVERIFIED. HR live pilot은 실행하지 못했다. Kit 0 / motion 0 / retry 0 / confirmatory science denominator 0.** 사용자 실행 승인은 유효하며 추가 승인을 요청하지 않았다. 실제 configured bound는 찾았으나, 그것을 smooth-S 추종 능력으로 해석할 수 없고 동일 원래 ROS supplier에서 안전한 작은 stationary steering 시험 입력을 만들 수 없다는 구체 근거가 확인됐다. 허용속도를 발명하거나 rate limiter/graph를 바꿔 이동하지 않았다.
 
-## 실제 API 연결과 변경 범위
+교수 면담용 [전체 연구·통계 계획](professor_briefing_research_and_statistics_plan_20261103_DRAFT.md)은 완료했다. 모든 미래 결과 칸은 PLANNED/NOT_RUN이고 p-value·새 실험 성과는 없다.
 
-v30 성공 실행의 `executed_code` follower v19, driver v21, stopping adapter v21, curvature encoder를 정적으로 읽었다. legacy 모듈 import 없이 필요한 순수 함수만 AST로 분리해 CPU 대조했다. 입력은 **관측된 world base_link (x m, y m, yaw rad)** 두 개이며 PRE/FINAL 구분·표현명·task GT는 planner 인자가 아니다. World Z-up, yaw +Z 반시계, x/y 교환 없음. rear=base−.338(cos yaw,sin yaw); 출력 행은 기존 그대로 `[base_x,base_y,body_yaw,rear_k,rear_s]`. 경로마다 처음/끝 heading과 끝 곡률0을 유지한다.
+## 실제 확인한 설정과 실행 코드
 
-v35 smooth-S 식·epsilon .05·A bracket ±.5·48회 이분법·4001 적분점→매4번째 1001점·wheelbase .7m·15°·.95 admission bound .363645332585095/m을 그대로 복제했다. 모델별 분기·상수·최적화가 없다. plan은 live 관측값을 받을 수 있는 순수 API이며 저장 목표는 테스트 입력에만 있다. 비유한 pose·불가능 목표·곡률 위반은 거절한다.
+v30 성공 root `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v30_03`의 실제 `executed_code` driver v21/follower v19/stopping adapter v21/runner/session을 정적으로 읽고, prepared stage를 **standalone USD**로 합성했다. legacy script import/Kit 실행 없이 조사했다. [원자료 JSON](construction_site_steering_gate_20261102_v37_01/steering_evidence.json)에 네 joint 전체 attribute·authored 여부·source layer, graph 연결, 코드 SHA, 환경/명령을 저장했다.
 
-follower는 rear 최근접 index를 사용하며 보간하지 않는다. 기존 횡오차 .025m/heading2°·feedback 보정 `k_ref−12e−6h`·KMAX clamp·3mm 정상 stop 요청·overshoot gate를 유지했다. **새 candidate에서만** 속도 상한을 `.02/sqrt(1+(.338*k_command)^2)`로 바꿨다. v35 base/rear .02m/s profile과 기존 follower .02 rear 요청의 불일치를 보정한다. 원래 .004 floor/거리 taper는 유지하므로 speed CSV 정속 시간은 실제 follower 시간과 다르다. `profile()`의 별도 열은 nominal time/rear speed/base speed/semantic omega/virtual steer이며 stop·가속 certification이 아니다.
+|실제 설정|로컬 값|판정|
+|---|---:|---|
+|네 steer joint `physxJoint:maxJointVelocity`|286.4788818359375 degrees/s ≈5 rad/s|설정된 joint 상한 확인; 그 속도로 원하는 각을 추종한다는 보장 아님|
+|angular drive stiffness/damping/maxForce|836.6141357421875 / 40 / 200, force drive|설정 확인; 실제 부하·타이어 접촉 하 응답 UNKNOWN|
+|joint lower/upper|약 ±52°|실험 허용 조향15°/기존 측정20° gate를 확대하지 않음|
+|Ackermann `maxSteeringAngleVelocity`|5 rad/s|이 값만으로 slew 제한이 작동한다고 판단 불가|
+|`steeringAngleVelocity` input|연결/작성값 없음; 설치 database 기본값0|실제 controller는 0일 때 target angle 즉시 변경 분기|
+|`invertSteering` / wheelBase|True / .7m|원래 graph 보존|
+|원래 driver|50ms, `v*k*COMP`, COMP=π/180 → v21 stopping adapter|SI `v*k`를 wire angular.z에 바로 넣지 않음|
 
-실제 driver는 follower `(v,k)`를 `v*k*COMP`, COMP=π/180 형태로 stopping adapter에 전달한다. 최종 wire는 `abs(wire_v)/.7*tan(radians(atan(.7*k)))`이고 graph의 degree/radian 해석과 invertSteering이 결합된다. angular.z에 SI `v*k`를 직접 넣으면 계약 위반이다. 양·음 k roundtrip과 부호 반전 음성검사를 수행했다. 새 모듈은 publisher/launcher가 없고 `require_live_qualification()`는 항상 거절한다. 기존 driver import를 자동 교체하지 않았다. 다음 연결 patch·정확한 launcher/command는 사용자 승인 이후 별도 검토해야 한다.
+Angular joint velocity의 USD 단위는 degrees/s다. 상한은 solver가 넘지 않도록 제한하는 값이며 achievable tracking certificate가 아니다. [NVIDIA PhysxJointAPI 정의](https://docs.omniverse.nvidia.com/kit/docs/omni_usd_schema_physics/latest/physxschema/class_physx_schema_physx_joint_a_p_i.html).
 
-## 오프라인 수치와 회귀 근거
+설치 `AckermannController.forward` 및 Ogn database를 읽었다. rate input 0이면 `steering_angle=command[0]`이고, max rate5는 이 snap 분기를 연속 변화로 바꾸지 않는다. [AST-only CPU 검사](construction_site_steering_gate_20261102_v37_01/cpu_counterexample.json)는 ±.2rad(각11.46°) target을50ms 간격으로 주면 virtual target 변화율8rad/s가 됨을 재현했다. **실제 wheel이8rad/s 움직였다는 결과가 아니다.** controller에는 |angle|<.0157rad에서 wheel target0으로 만드는 분기도 있어 nominal smooth geometry만으로 graph target rate를 보장하지 못한다.
 
-최종 [실행기록](construction_site_common_planner_20261102_v36_02/execution.json), [검사](construction_site_common_planner_20261102_v36_02/checks.json), [입력 SHA 대조](construction_site_common_planner_20261102_v36_02/integrity.json), [전체 CSV](construction_site_common_planner_20261102_v36_02/summary.csv), [JSON](construction_site_common_planner_20261102_v36_02/summary.json). 각 표현별 summary CSV/JSON과 9개 trace CSV도 같은 폴더에 있다. `_01`은 첫 검사 완료본이며 삭제하지 않았다. `_02`는 독립 전진·v35 speed/time 대조를 추가한 완료본이다. 새 명령은 아래와 같고 기존 output은 쓰기 전에 거절한다.
+원래 graph는 `atan2(−.7*angular.z, abs(linear.x))`의 degree 결과를 steering input으로 보낸다. v=0에서 z=0이면0, z≠0이면±90의 입력이 된다. 따라서 원래 wire 경로로 ±수°의 bounded stationary 조향 sweep을 지정할 수 없다. v36 encoder도 v=0일 때 z=0을 반환한다. angle clamp를 믿고±90 입력을 보내거나, articulation target에 직접 쓰거나, graph에 새 supplier를 넣는 시험은 이번 보존 조건의 독립 안전 입증이 없어 실행하지 않았다. 작은 조향을 시험하려고 base를 먼저 움직이는 것도 사전 rate gate를 우회하므로 하지 않았다.
 
-```bash
-/home/user/anaconda3/envs/sdg_tools/bin/python analysis/construction_site_common_planner_checks_20261102_v36.py reports/<새_미사용_폴더>
-```
+HR nominal feedforward28.406°/s는 요구량일 뿐이다. joint 상한286.479°/s보다 작다는 비교는 **필요조건 일부**이며, 50ms nearest-index·feedback·deadband·BRAKING·개별 Ackermann wheel 차등각을 포함한 실제 tracking 및 rate 검증을 대체하지 못한다. 이 결론은 “조향이 물리적으로 불가능하다”가 아니라 **현 입력 계약에서 사전 qualification 근거가 부족하다**는 뜻이다.
 
-저장 관측 nominal3과 같은 XY ±10mm 격자를 합친 **27개(저장3+합성24)**이며 신규 관측 표본이 아니다. 별도 exact-PRE→FINAL 합성 직선3개는 실제 PRE 정지 관측을 대체하지 않는다.
+## 확인 결과와 미실행 단계
 
-|nominal 표현|끝점 수학 오차 mm / °|sample max k / 연속 upper /m|steer upper °|sample steer rate °/s|정속 / taper 명목 s|
-|---|---:|---:|---:|---:|---:|
-|HR|0 / 0|.247883360 / .247883579|9.843864|28.252114|44.128604 / 57.503672|
-|LR|0 / 0|.274096761 / .274096983|10.861225|31.217733|44.191247 / 57.558026|
-|GeoCAD|0 / 0|.259815325 / .259815546|10.307769|29.722700|43.978209 / 57.349824|
+|항목|이번 결과|
+|---|---|
+|v30 prepared input + v36 authoritative expected SHA 대조|1,118 참조 비교, mismatch0. 중복 포함이며 독립 파일1118개라는 뜻 아님|
+|v36 CPU 회귀 새 output|27case / 55,221 checks PASS_OFFLINE, exit0|
+|원래 v21 정지 CPU 검사|20/20 PASS, exit0; 실제 새 PRE/FINAL 정지 아님|
+|base108/execution432|108/432행, exact base IDs, 4표현/base·각108 PASS|
+|실제 새 joint response / live steer rate|UNKNOWN / NOT_RUN|
+|v37 fresh RGB-D·HR M50·B4·count-preview/ROI·B5|NOT_RUN|
+|새 PhysX28/native0·6wheel support/contact·clearance·TF/GID·memory admission|NOT_RUN; v30 PASS를 새 live PASS로 복사하지 않음|
+|새 PRE/FINAL sweep·drive·BRAKING→zero→독립≥1s quiet|NOT_RUN|
+|endpoint E−Gobs / E−design, signed long/left/yaw, tracking max/RMS|NOT_RUN; 숫자 생성0|
+|새 RSS/contacts/Kit·driver·observer·runner exit|NOT_RUN; 위 CPU process exit와 구별|
+|ROS zero receipt|**MISSING/NOT_APPLICABLE_PRE_DRIVER**|
 
-위 0은 수치 적분 경로의 목표 일치이며 **실제 endpoint 관측이 아니다**. 모든27개 geometry 배열은 v35와 bitwise exact, speed/time은 저장 speed CSV와 tolerance 내 일치했다. finite·양의 rear arc·독립 rear segment 전진·끝 tangent/곡률·같은 admission·원본 command와 speed 외 결과 동일·wire encode/decode PASS. 경로별 min progress/길이/speed/time 및 sample dk/ds를 CSV에 남겼다. 연속 `|dk/ds|` 상한은 `(|A|2π/.05+6|Δyaw|)/L²`, nominal HR35.412840/LR39.131723/CAD37.256834 /m²다. 이에 따른 .02m/s 조향 rate 보수 상한은28.406088/31.389156/29.885231°/s다. **실제 actuator limit NOT_VERIFIED**이며 이 수치를 허용 한도로 만들어 쓰지 않는다.
+새 [CPU 회귀 폴더](construction_site_common_planner_checks_20261102_v37_01/execution.json), [manifest·검사 기록](construction_site_steering_gate_20261102_v37_01/manifest_and_checks.json). geometry lock 자체의 독립 expected UNKNOWN은 그대로다. 이번에는 전체 geometry join 재감사를 반복하지 않았고 기존 authority와 새 count/pairing 확인의 범위를 구분한다.
 
-잘못된 rear/base frame, 반대 조향 부호, unsafe curvature, 뒤쪽 불가능 목표, NaN 입력, live guard 거절 PASS. v35 collision/out-of-map 음성대조와 전체 sweep/support 결과를 hash로 연결해 보존했다. 원래 v35 source recorded SHA·권위 dependency expected SHA를 다시 비교했으며 expected 변경0이다. 개별 snapshot 추가 observed SHA는 독립 expected 인증으로 승격하지 않았다. geometry lock 자체 독립 expected UNKNOWN은 유지한다.
+개발 실패도 보존: 첫 v37 AST harness는 mock Base 생성자의 positional `name` 지원 누락으로 exit1이었다. legacy controller 문제가 아니며 새 harness만 수정 후 PASS했다. 실패 내용은 manifest_and_checks에 남겼다. 부수 `rg`는 존재하지 않는 `extsPhysics` 경로 검색에서 exit2였고, 설치 code와 공식 schema 문서로 단위를 확인했다. 둘 다 Kit/live 실패나 retry로 합치지 않는다.
 
-## 안전 판정과 다음 engineering qualification 제안 — 사용자 승인 필수
+## 변경 범위와 바로 다음 작업
 
-**PASS_OFFLINE:** 27개 adapted sampled path가 v35와 정확히 같아 동일 static scene/확장 AABB/전체 collider13개·instance-aware front steering4개/5mm support 결과를 재사용할 근거가 있다. v35 각 표현 support973,350/실패0, expanded obstacle 거리 하한 HR .129149/LR .128940/CAD .132583m다. 새 USD/PhysX 검사를 실행한 것은 아니다. sampler rear 간격은 nominal .876–.880mm로5mm 이내다. 독립 경로들의 union을 이어 주행하면 안 된다.
+새 코드: `analysis/construction_site_steering_gate_20261102_v37.py`, `analysis/construction_site_steering_cpu_20261102_v37.py`. 새 보고서2개·증거/CPU 폴더2개, latest_report와 PROJECT_STATE 갱신. **안전한 live bridge 준비 완료로 주장하지 않으며 새 driver/runner는 만들지 않았다.** raw Kit output root도 없다. 원래 quintic/HR weights/USD/protocol·기존 v30 성공/v31·v32 실패·v35 제안18행은 수정하지 않았다. HPO/training/scale-model/18회/324·432 실행0, GPU job0.
 
-**UNKNOWN/HOLD:** 50ms driver update에서 nearest index가 건너뛰는 구간, 횡/heading 보정과 governor의 실제 속도, BRAKING에서 고정되는 마지막 k가 만드는 이동은 nominal time 배열로 증명되지 않는다. 점별 steer-rate는 feedforward 요구량이며 실제 command rate·조향 torque/지연·slip·contact·settled suspension·PhysX ray/support·정상 stop proof는 LIVE_PHYSX_UNTESTED다. 새 모듈의 시간표로 open-loop 주행하면 검증한 경로와 다른 실행이 된다. offline geometry PASS만으로 nonzero 실행을 허용하지 않는다. 기존 HR quintic 성공은 새 후보의 안전 증거가 아니다.
+다음 최소 기술 작업은 작은 stationary steering 명령을 별도 characterization 모드에서 만들되 sole writer·base zero·contact/support·20° 측정 gate·footprint·원래 graph 복원과 fail-closed stop을 증명할 계측 연결이다. 이것은 graph/actuator 입력 경로를 다루므로 v37에서 검증 없이 끼워 넣지 않았다. 이 characterization과 50ms 실제 command/개별 wheel rate·tracking admission을 확보한 뒤에만 v30 실행 snapshot의 copy-on-write session/driver에 v36 `plan/command`를 연결한다. rear .338m, base/rear≤.02m/s, COMP/invertSteering, v21 stop, clearance .10m, GC8GiB/+768MiB를 유지한다. fresh PRE와 실제 stopped PRE→fresh 독립 FINAL을 각각 plan/sweep/stop한다.
 
-다음 작업은 **별도 사용자 승인된 engineering namespace의 nominal HR/LR/CAD 각1행, planned3** 제안이다. 아직 승인/시작0이며18-run variance·formal study와 분모를 분리한다. 운영자가 먼저 (1) v35 measurement/planner 정책과 새 candidate speed 계약, (2) 동일3표현 코드·순서·nominal pair와 실패 처리, (3) actuator 조향 rate 근거 및 해당 경계 검증, (4) 실제 driver 연결 diff/발견된 Kit launcher와 정확한 command·새 output·abort 담당자를 승인해야 한다. 이 보고서는 실행 명령 승인 요청이나 실행 허가가 아니다.
-
-승인 후에도 motion 전 fresh live PhysX clearance/contact/ray/support·steering footprint·기존10cm clearance/추종 여유를 재검사한다. fresh capture→v28 count-only ROI preview/단일 finalized 제출→frozen matched M50→fresh B4/B5→observed PRE를 같은 정책으로 사용한다. GT는 입력 금지이며 task-design은 평가에만 둔다. 8GiB GC/+768MiB·TF/GID·BRAKE·zero/quiet limits와 controller settings를 그대로 재확인하고 약화하지 않는다. 실제 steering-rate 근거를 얻지 못하면 motion HOLD다.
-
-각 PRE는 event-aware normal request→BRAKING→output zero→독립 fresh quiet 증명 후 평가한다. 그 **실제 stopped PRE**에서 observed FINAL로 독립 replan/sweep/admission하고 동일 stop 증명을 반복한다. 실제 E−Gobs와 E−Gdesign의 signed long/left/norm cm 및 wrap yaw deg를 별도 기록하고 trace max/RMS·누락·실패도 남긴다. planned3/각 단계 시도/실제 motion 분모와 예외·timeout·종료코드를 보존하며 자동 재시도·표본 교체하지 않는다. 1회 dry-run이나 engineering3으로18회 분산 실험 readiness/통계 power를 선언하지 않는다.
-
-기존 HR FINAL observed .279451cm/design5.523288cm 및 정상 정지 성공, LR/CAD original curvature FAIL와 실제 endpoint NOT_RUN은 불변이다. 새 GT/mAP/독립 metrology를 만들지 않았다. 원본 protocol prelock v01→amendment v03/geometry v02, sample membership/seed/weights/B5/threshold는 변경0이다. 변경 파일은 새 adapter·검사·v36 출력/본 보고서, latest_report 및 PROJECT_STATE다. Git status는 이 폴더에 .git이 없어 실패했으며 stage/push/remote 변경0이다.
+HR smooth-S가 아직 통과하지 않았으므로 **LR/GeoCAD live port는 이번에 진행하지 않는다.** HR가 두 leg·두 독립 stop·안전/종료를 통과한 이후의 최소 port 범위는 동일 코드/정책에서 selection·matched model·asset metadata만 LR로 바꾸는 fresh one-shot, 그 결과를 보존하고 동일 GeoCAD one-shot이다. 표현별 planner tuning·HR rescue·자동 retry를 추가하지 않는다. 기존 HR FINAL 관측목표 .279451cm/design5.523288cm와 LR/CAD 원래 curvature FAIL은 불변이다.
