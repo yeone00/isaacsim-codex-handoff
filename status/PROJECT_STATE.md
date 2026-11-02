@@ -736,3 +736,8 @@ Canonical task design GT center/world/yaw를 잠금에서 검증해 평가에만
 
 ## v36 공통 planner 소프트웨어 bridge — 2026-11-02
 [결정 게이트](../reports/construction_site_common_planner_integration_20261102_v36.md). 새 engineering-only adapter와 CPU replay를 작성했다. v35 공통 smooth-S geometry27개 exact 일치, 실제 legacy rear/base API·wire 부호·speed 상한 회귀 PASS_OFFLINE. 신규 모듈만 base/rear speed 계약을 보정했고 원본 follower/driver/locks는 불변. `_01` 완료와 추가 검사 `_02` 완료를 모두 보존. 실제 actuator rate NOT_VERIFIED, live PhysX/50ms 추종·BRAKING·독립 stop UNKNOWN으로 motion HOLD. nominal engineering3은 사용자 승인 필수 제안이며 실행0, variance18 미승인/미실행, formal denominator0, HPO/training PAUSED. 기존 HR 성공/LR·CAD curvature FAIL와 endpoint NOT_RUN 보존. Kit/ROS/추론/센서획득0. Git status는 .git 부재로 실패; stage/push 없음.
+
+
+## 2026-11-02 — v39 bitmap repair 미완료 / CPU audit 실패 보존
+
+[보고서](../reports/three_rep_hpo_disconnected_mask_repair_20261102_v39.md). 신규 THREE_REP_HPO_20261102_v39 source 감사1회 exit1: metadata short hash를 PNG SHA로 해석한 검사 가정 미입증. 원본v01/v03의 세 표본 PNG 전체SHA동일·pixel수동일이며 데이터 훼손으로 단정하지 않음. 기준hash수정0. 두 bridge IoU .676320272572402/190px 및 .7846836847946725/194px 재현. 전체7200 QA완료0·신규영향수UNKNOWN·bitmap adapter/loss path미완료. compilePASS, smoke NOT_RUN/시도0, Stage1 launch-readyNO/NOT_LAUNCHED/trials0. manifest2800/scene seed unique·expectedSHA 및 fidelity/summary dependencySHA PASS, 전체capture pairing미검증. Kit/ROS/motion/retry/science0, steeringHOLD. v30 steps.jsonl angle/time telemetry존재, rate계산0·안전한계UNDEFINED. 다음은 original nominal hash 생성계약 확보 후 새버전 fullQA/adapter/loss검증. 역사성공/실패와원본labels/weights/locks/USD변경0. GitHub는handoff sync요청이며원격완료미확인.
