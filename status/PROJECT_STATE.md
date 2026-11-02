@@ -720,3 +720,7 @@ Canonical task design GT center/world/yaw를 잠금에서 검증해 평가에만
 원래strictquintic HR .350094192/LR .387170521/CAD .366967770 재현·HR배열1e−12·독립선형계replay PASS. 같은start/perceivedgoal/yaw/15°/.7m/.95/.02m/s/forward-only에고정smooth-S primitive사용:상한.247883579/.274096983/.259815546/m. 세표현각±10mm3×3 총27점전부곡률PASS(최악.334000963/m);합성은관측아님. 실제USD fullcollider13/scene42·instanceproxy조향4개·.15m확장보강후각973350supportqueries실패0,확장envelope장애물거리하한.129149/.128940/.132583m. offline조건부PASS/LIVE_PHYSX_UNTESTED;livelegacyhelper불변. core31/독립38/speed27/hash1010/compile·artifact검사PASS. `_01`serialization/`_02`timeout/`_04`·`_05`AST실패보존,`_03`좁은다항식scope LR no-path/`_06`보강전결과와최종`_07`구분.
 
 새Kit/ROS/inference/training/motion0·원래LR/CAD실패소급변경0·formal science0/HPOPAUSED. 다음은전향protocol승인후별도3repengineeringqualification에서fresh관측/실제steer·support·tracking·PRE/FINAL정지검증이며이번실행승인아님. 이후paired반복분산/독립GT구현으로진행;432미실행.
+
+
+## v36 공통 planner 소프트웨어 bridge — 2026-11-02
+[결정 게이트](../reports/construction_site_common_planner_integration_20261102_v36.md). 새 engineering-only adapter와 CPU replay를 작성했다. v35 공통 smooth-S geometry27개 exact 일치, 실제 legacy rear/base API·wire 부호·speed 상한 회귀 PASS_OFFLINE. 신규 모듈만 base/rear speed 계약을 보정했고 원본 follower/driver/locks는 불변. `_01` 완료와 추가 검사 `_02` 완료를 모두 보존. 실제 actuator rate NOT_VERIFIED, live PhysX/50ms 추종·BRAKING·독립 stop UNKNOWN으로 motion HOLD. nominal engineering3은 사용자 승인 필수 제안이며 실행0, variance18 미승인/미실행, formal denominator0, HPO/training PAUSED. 기존 HR 성공/LR·CAD curvature FAIL와 endpoint NOT_RUN 보존. Kit/ROS/추론/센서획득0. Git status는 .git 부재로 실패; stage/push 없음.
