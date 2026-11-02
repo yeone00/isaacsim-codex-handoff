@@ -702,3 +702,12 @@ Kit0/observer0/driver미시작/runner1, 비영0, ROSzero MISSING/NOT_APPLICABLE_
 Canonical task design GT center/world/yaw를 잠금에서 검증해 평가에만 사용: 예측 target XY 오차 HR5.415594366/LR5.844601652/CAD5.754615494cm. HR 실제 FINAL observed-goal .279451388cm와 canonical5.523288386cm/.039722360°를 구분, 기존 evaluator posthoc main/relaxed PASS·strict FAIL. 정식 science 편입 없음. LR/CAD physical endpoint NOT_RUN 유지. 독립 segmentation GT 없어 precision/recall/AP/mAP UNKNOWN; 예측 mask overlap/동일 ray 3D 차이는 accuracy가 아님. 실제 ROI reviewer code HR-v30 대 LR/CAD-v28 불일치를 raw 우선 기록, 동일 reviewer 완전통제 주장 제한.
 
 첫 분석 run은 CSV interaction column ValueError FAIL로 부분 출력/failure.json 보존. 수정 뒤 별도 _02 출력 exit0/compile 및 artifact checks PASS, XY/curvature/feasibility PNG3·CSV/JSON 완료. Kit/ROS/inference/훈련0, 원본 planner/ROI/asset/model/locks/USD/기존 실패 변경0. 연구denominator0/HPOtraining PAUSED. 다음은 원래 공통 정책의 prospective paired 반복, 선택적 구제 없는 별도 공통 경로 robustness 검토이며 대체 안전 경로 존재 UNKNOWN.
+
+
+## 2026-11-02 — v34 저장 B5 datum/오차 예산 오프라인 완료
+
+[보고서](../reports/construction_site_pilot_b5_datum_and_error_budget_20261102_v34.md), [재현 코드](../analysis/construction_site_pilot_b5_datum_and_error_budget_20261102_v34.py), [수치 예산](../reports/construction_site_b5_datum_and_error_budget_20261102_v34_05/datum_budget.csv). HR/LR/CAD B5 전체 출력 1e−10 이내·PRE/FINAL dictionary exact 재현. 실제 prepared stage m/Z-up 및 300slot×3 transform/bounds를 standaloneUSD로 확인: Fixture/Load원점·slot평균은canonical(−25.888,30.509)와 일치하지만 visualAABB중심은(−14.25,−14.25)mm. Asset밑면z[0,.057]를SideStanding−90°회전한 비대칭배치로 앞면은설계중심503.5mm앞/B5반치수475mm여서종방향−28.5mm항 확인. 전체side q98(X)는authored우측경계보다HR46.735/LR51.878/CAD52.911mm안쪽. axis90평가예산+실제heading잔여로세cm벡터닫힘; 독립물리GT·segmentationGT없이전부sensingerror라하지않음.
+
+48개HR heading/plane/mask/depth 치환과12국소민감도. LR mask만HR치환시X+4.693212mm, plane만0; CAD heading만(−4.291802,+3.229069)mm·mask만(+10.296628,−3.788228)mm로상호작용/상쇄확인. 실제plane높이차는LR+.004372/CAD+.011769mm·XY영향거의0. representation+matchedmodel+manualROI개별인과몫UNKNOWN. 단계기여도·pixel/depth·scene900행·GT벡터PNG·환경/hash기록완료. 첫_01은metadata부모layer단독USD기본.01m/Y-up assertionFAIL보존; actualruntime root를witnessSHA검증후_02PASS, side/asset증거_03PASS, provenance/그림_04PASS, helperobservedSHA추가최종_05PASS. helperhistorical독립expectedUNKNOWN/frozencoreASTPASS; expected수정0.
+
+새Kit/ROS/inference/training/주행0·정책/GT/scene/ROI수정0. HRengineering성공/v31·v32curvature실패·HRactualFINAL평가불변/LR·CADendpointNOT_RUN. Formalconfirmatoryscience분모0/HPOtrainingPAUSED. 다음은datum/치수관계를명시한pairedrepeatedload/occlusion단계측정계획과별도공통plannerrobustness전향연구검토; 새정책은새amendment필요/실패소급변경금지.
