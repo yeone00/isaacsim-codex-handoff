@@ -1,53 +1,67 @@
-# v41 — 실제 HPO 자격검증 실패, Stage-1 미시작
+# v42 — AMP 실제 갱신 PASS, Ray 복원 후 optimizer 진행 미입증으로 full epoch 중단
 
-2026-11-02 KST. **STAGE1_READY=NO.** 두 ratio의 CPU 실제 loss 입력은 PASS이나, batch64 AMP 역전파 후 비유한 gradient가 검출됐다. 독립 Ray 시험은 같은 trial/epoch/YOLO 가중치 복구까지 확인했으나 optimizer state가 비어 있어 FAIL이다. 허용된 실행 한도를 지켜 GPU 재시도0, Ray 수정검증1회 뒤 종료했다. **Full-data epoch NOT_RUN / 실제 HPO launched·running·completed·pruned·failed 모두0.** 이는 AMP의 근본적 비호환이나 데이터 손상 판정이 아니다.
+2026-11-02 KST. **STAGE1_READY=NO / STAGE1_TECHNICAL_READY=NO.** v41c의 초기 scaler128은 두 mask ratio에서 첫 실제 AdamW update를 통과했다. Ray는 같은 trial로 epoch2를 완료하고 raw optimizer/model/EMA/scaler/scheduler를 정확히 복원했다. 다만 epoch2에서 optimizer step이 증가하지 않아 요청한 재개 후 학습 진행 증명을 충족하지 못했다. **추가 실행 없이 중단: full Train6000/Val1200 epoch NOT_RUN, HPO launched/completed/pruned/errored 모두0.** 이것은 AMP 비호환 또는 optimizer 복원 손상이라는 결론이 아니다.
 
-| 필수 게이트 | 결과와 실제 분모 |
-|---|---|
-| v40 보존·입력 코드 SHA | PASS: inventory53항목(중복 포함) 시작·종료 일치, legacy source4개 expected 일치. Known locks9/hash 및108·432행 PASS. v40 QA/smoke 재실행0 |
-| 새 정책 고정 | PASS: `PROSPECTIVE_BITMAP_NOAUG_v41`, 세 표현 공통. 탐색 실행은 사용자 v41 지시 범위이며 **최종 학위논문 정책 채택은 검토 대기** |
-| ratio2 CPU loss | PASS: 실제 bridge2scene×3rep=6장/27instance channel, target320²·reference error0/IoU1, installed loss selector6/6·positive anchors242, seg loss **4.261906624** |
-| ratio4 CPU loss | PASS: 동일6장/27channel, target160²·error0/IoU1, selector6/6·anchors242, seg loss **4.844833851** |
-| ratio2 GPU batch64 | **FAIL**, attempt1/exit1, 64 DISTINCT train images·workers8·AMP·nc1·640/AdamW. finite loss와 backward 완료 후 unscaled gradient assertion. 5.034743s, peak allocated **12,060,274,688 B (11.23 GiB)** / reserved **12,312,379,392 B** |
-| ratio4 GPU batch64 | **FAIL**, attempt1/exit1, 동일64장/설정. 같은 assertion, 4.844988s, peak allocated **9,522,654,208 B (8.87 GiB)** / reserved **11,368,660,992 B** |
-| Ray/ASHA/TPE end-to-end | **FAIL**. 첫 API binding 실패는 trial0. 수정 adapter로 실제 engineering trial1, epoch checkpoint1개 후 의도적 SIGINT·동일 root Tuner.restore. epoch2 진입 전 optimizer 검증 실패, 최종 ERROR1/완료0, 두 번째 checkpoint0 |
-| Full Train6000/Val1200 epoch | **NOT_RUN**: 앞선 필수 게이트 실패. throughput/full-val score UNKNOWN |
-| 실제40-trial Stage1 | **NOT_RUN**, PID 없음·백그라운드 작업 없음. 연구 confirmatory 분모0 |
+## 실제 실행·게이트
 
-## 실제 증거와 실패의 의미
+새 ROOT: `/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v42`. 기존 v39/v40/v41 output 및 원본 소스는 덮어쓰지 않았다. 정책 `PROSPECTIVE_BITMAP_NOAUG_v41`, class0 brick_load, HR_Scan/LR_Scan/GeoCAD 및 red/cement 공통 square letterbox/nearest bitmap/noaug 유지. GPU batch64/workers8/AMP/AdamW/640/seed42 유지. full pilot mask_ratio=2를 실행 전 코드에 고정했고, 실제 실행은 하지 않았다.
 
-외부 ROOT는 [/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41). [기계 판정·실측](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/final_evidence.json), [최종 상태](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/status.json), [입력 SHA](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/input_hashes.json), [최종 전달 SHA](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/delivery_sha256.json). 원본 v40 전체QA7200/7200·unique7139/nonexact350/IoU<.95=31·smoke PASS1/1은 입력 증거 SHA로 보존했다. metadata short canonical hash generator UNKNOWN은 그대로다. 이번에 전량 image QA를 반복하거나 Test400/Real Test189로 선택하지 않았다. Frozen manifest SHA `2a4782911ef334fc640e9f90ee8120e48ab3c30e25da47603004978835626bf8`; records SHA `e230ae083b4608428c4c1db94e6aca78484d8c0bd81477fc4e98c71fed352009`.
+| 관문 | 판정 | 실제 증거 |
+|---|---|---|
+| 입력/보존·새 namespace | PASS | init exit0, 기존 inventory/records/manifest/코드 및 previous provenance 총64개 참조 expected=observed. 7200 records, Train2000×3/Val400×3 pairing 검사. GPU compute 경쟁작업 없음, Kit executable 없음, 수동 process 목록에서도 ROS 작업 미관측 |
+| ratio2 CPU preflight | PASS | 기존 v41c 필수6이미지/2scene×3rep canonical nearest reference 및 실제 loss selector exact. exit0 |
+| ratio2 GPU 한 번 | PASS | 첫 step에서 state290/step1/파라미터290개 변경/finite weights |
+| ratio4 CPU preflight | PASS | ratio4의 올바른160² reference exact 및 실제 loss selector. exit0 |
+| ratio4 GPU 한 번 | PASS | 첫 step에서 state290/step1/파라미터290개 변경/finite weights |
+| Ray 동일 trial 복원·2 checkpoints | PASS | trial `f2db5f54`, Tuner.restore, epoch0→start_epoch1, model/EMA/optimizer/scaler/scheduler exact assertions, checkpoint2개 |
+| Ray 복원 뒤 실제 optimizer 진행 | **FAIL (미입증)** | epoch2 완료에도 optimizer step1→1 / 모든 AdamW state tensor 동일 / scaler growth_tracker1→1. 따라서 통합 Ray 관문 FAIL |
+| 전체6000/1200 1 epoch | **NOT_RUN** | train0/6000, val0/1200; loss/metric/VRAM/walltime 측정 없음 |
+| Stage1 40 trials | **NOT_RUN** | launched/completed/pruned/errored0. 별도 engineering trial1개를 HPO trial로 합산하지 않음 |
 
-CPU [ratio2](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/cpu_ratio2/status.json) / [ratio4](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/cpu_ratio4/status.json)는 canonical→letterbox→nearest reference→실제 batch→설치 loss의 `single_mask_loss` 입력을 비교했다. batch_idx는 각 TRN instance4개×3image 뒤 VAL instance5개×3image의 순서다. 원래 TRN_000661 Load02 397px→ratio2 97px/ratio4 28px, VAL_000151 Load02 707px→178px/45px이며 두 component 모두 남는다. 같은 변환 reference와 exact이지 원본 해상도와 lossless가 아니다. 새 합성 reduction fixture에서는 80px/3components→ratio2 20px/2components, ratio4 5px/2components로 홀과 홀수좌표의 작은 island 소실을 명시적으로 확인했다. bridge를 합성 사례로 대체하지 않았다.
+## AMP 실측
 
-GPU [ratio2 status](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/gpu_ratio2/status.json) / [ratio4 status](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/gpu_ratio4/status.json), `raw_gpu_ratio{2,4}.log`, `batch64_records.json` 참조. 두 재료 및 HR_Scan/LR_Scan/GeoCAD 모두 포함하고 TRN_000661도 포함한다. VAL_000151은 CPU proof에만 사용했다. GPU 입력64장의 reference error0이며 loss hook의 exact/selector assertions를 통과한 후 backward/unscale 뒤 실패했다. **OOM0/collate오류0, optimizer.step 미도달**이다. 현재 allocated/reserved는 ratio2 190,829,056/12,312,379,392 B, ratio4 174,998,016/11,368,660,992 B. 이 단일 minibatch의 메모리를 전체epoch 적합성으로 확대하지 않는다. 검사 코드가 loss/boundary 숫자를 성공 후에만 저장하여 GPU의 정확한 loss 값·selector 횟수는 UNKNOWN이다. finite loss assertion과 hook 통과는 실행 순서/traceback으로만 확인되며 수치를 복원·추정하지 않았다.
+각 GPU는 distinct64 이미지·두 재료·세 표현이며 실행 attempt1/exit0. v42 사본은 기존 v41c의 비유한 gradient assertion을 제거하고 최대12 step 한정으로 정상 scaler.step/skip/update를 허용했다. 실제 두 실행은 첫 step에 성공하여 추가 step·overflow skip·재시도는 모두0이다. 초기 scale128 외 optimizer/loss/데이터 설정은 유지했다. 가중치 tensor 전체 finite 검사, optimizer step counter, 전후 파라미터 비교를 함께 수행했다.
 
-이는 제가 추가한 `all finite gradient` 검사가 GradScaler의 정상 step-skip/update 전에 중단한 **qualification adapter의 한계**를 포함한다. 이를 AMP 비호환이라고 확정하거나 batch64 PASS로 바꾸지 않았다. 직접 minibatch 시험은 trainer 전체 optimizer warmup 경로의 증명이 아니다.
+| mask_ratio | 상태 / attempt / exit | train seg loss | 첫 성공 step / AdamW counter / state수 | 변경 tensor수 | scaler / skip수 | 단일step images/s | gate wall초 | peak allocated / reserved bytes |
+|---|---|---:|---|---:|---|---:|---:|---|
+| 2 | PASS / 1 / 0 | 3.261194944 | 1 / 1.0 / 290 | 290 | 128→128 / 0 | 51.969 | 5.365702 | 12070773760 / 12322865152 |
+| 4 | PASS / 1 / 0 | 3.416858912 | 1 / 1.0 / 290 | 290 | 128→128 / 0 | 55.660 | 5.175161 | 9537396736 / 11377049600 |
 
-Ray 설치 **2.58.0**, Ultralytics **8.4.129**, Python3.11.15/torch2.7.1+cu128/CUDA12.8/RTX5090. [첫 실패 로그](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/raw_ray_initial.log): Tuner와 ASHA 양쪽 metric/mode 지정은 실제 API에서 거절됐다(exit1/trial0). 새 [v41b adapter](../scripts/bitmap_ray_resume_v41b.py)는 Tuner에만 metric/mode를 지정하고 `ray.tune.report/get_checkpoint/Checkpoint/RunConfig`, 명시적 `TPESampler(seed42)`, ASHA epoch binding을 사용했다. [최초 실행 로그](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/raw_ray_attempt2_initial.log), [동일 root 재개 로그](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/raw_ray_attempt2_resume.log), [결과/error](/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_20261102_v41/ray_resume_results.json).
+ratio2/4 비유한 gradient tensor0/0, finite gradient absmax 113.875/114.75. 전체 loss vector/항목별 loss, 현재 allocated/reserved, 정확한 canonical pixel/instance selector 증거는 각 `gpu_ratio*/status.json`에 보존했다. images/s는 단일 forward/backward/update 측정이며 데이터 전체 학습 throughput으로 외삽하지 않는다. CPU seg loss는 ratio2 4.261906623840332, ratio4 4.844833850860596이다.
 
-Engineering data는 Train9/Val6, batch6/workers2/AMP, 2epochs 예정이며 final HPO 자료와 출력 경로를 분리했다. Trial **c60cbc2a** 하나, checkpoint `ray_engineering_attempt2/trial_c60cbc2a_*/checkpoint_000000/last.pt` SHA **`feed31e5d2ac398a2487da570a1efd32f87f9744e685ed58a6113a83a81b82c1`**. 중단 전 epoch1만 실제 완료; train seg **4.78188**, CSV epoch elapsed **0.893268s**, Ray iteration **3.636154s**. pooled Val6/3rep `metrics/mAP50-95(M)` **0.00483**, val seg3.5585는 engineering 관측이며 성능결론이 아니다. 같은 trial ID, saved epoch0→start_epoch1, 저장 EMA→YOLO 가중치 exact assertion 통과 뒤 optimizer state 검사에서 중단했다. checkpoint optimizer states **0**, scaler **32768**(초기65536 대비 감소). 적어도 한 optimizer update가 overflow로 건너뛰어진 증거이며 **비어 있지 않은 optimizer 재개는 미입증**이다. EMA로 재개하는 설치 YOLO 동작이며 bitwise trajectory 동등성을 주장하지 않는다. 반복 epoch0·phantom trial은 관측되지 않았지만 epoch2 완료/두checkpoint/ASHA pruning 검증은 NOT_RUN이다. Ray driver는 trial error를 결과로 반환하여 exit0였으므로 shell 성공을 PASS로 취급하지 않았다.
+## Ray의 성공 범위와 실패 원인 한 가지
 
-## 다음 하나의 수정: AMP scaler 초기화와 optimizer update 증명
+prepared v41c adapter의 새 v42 사본에서 raw float32 optimizer·live model·EMA·scaler·scheduler·실제 update counter를 `raw_state.pt`로 별도 저장하고 정확히 복원했다. 설치 Ultralytics의 last.pt는 optimizer를 fp16으로 직렬화하며 마지막 final_eval에서 strip할 수 있으므로 Ray report 전에 복사하고 raw 상태를 별도로 보존했다. raw 복원을 사용해 model/EMA와 AdamW `step`, `exp_avg`, `exp_avg_sq`를 tensor별 exact 비교했다. Scaler/scheduler도 state_dict exact 비교 PASS. last.pt checkpoint hash는 복원 직전 시작 callback에서 첫 저장 hash와 같았다. 두 번째 raw checkpoint hash 변경만을 optimizer 진행으로 해석하지 않았다.
 
-[정책 amendment](../docs/bitmap_noaug_policy_amendment_20261102_v41.md)는 기존 augmented polygon HPO와 분리된 전향 bitmap/noaug arm이며 historical M50/four-rep protocol이 아니다. square letterbox/nearest/usable class0·load_id·nonoverlap 정책과 모든 증강0을 공통 고정했다. search bounds9개/mask_ratio{2,4}, pretrained YOLO11n-seg, AdamW/640/batch64/workers8/AMP/seed42, pooled Val selector,40/max60/grace15/reduction3·GPU1/shared budget은 변경하지 않았다. 최종 논문 채택은 검토 전이다.
+| 완료 epoch | AdamW state수 / counter | scaler / growth_tracker | scheduler last_epoch / step_count | raw checkpoint SHA256 |
+|---|---|---|---|---|
+| 1 | 290 / 1.0 | 128.0 / 1 | 0 / 2 | `1bc6a06b06d818d04d5a845395729dbc7f32a8936d4fe3f226bc4f2a9750e6cf` |
+| 2 | 290 / 1.0 | 128.0 / 1 | 1 / 3 | `fde130bf888d081cce5fb65a75f697c8bf58cf894c07ddf91cb7305cd4a9eaba` |
 
-두 실패를 잇는 우선 수정 대상은 **첫 AMP update의 overflow와 비어 있는 optimizer state**다. 초기 scale128, step 전 loss/gradient/scaler 영속 기록, 실제 optimizer state>0 assertion, resume 시 저장 scaler 유지로 새 [minibatch v41c](../scripts/bitmap_qualify_v41c.py)와 [Ray v41c](../scripts/bitmap_ray_resume_v41c.py)를 준비했다. 이는 **compile만 PASS / 실행 NOT_RUN**이며 scale128로 해결된다고 주장하지 않는다. 기존 v41/v41b source와 실패 root를 보존했다. GPU ratio별 한 번 및 Ray 수정검증 한 번을 소진했으므로 이번 task에서 v41c 실행·새 root 재시도는 하지 않았다.
+last.pt epoch1 SHA `6cda7db72052f0c32e0d76217718f00b90830df805f5300662fc7b560ed090dc`, epoch2 SHA `112b62c469fafcd978f250a687918c141995f88f4aedd33a17e2450b770ad797`. checkpoint 디렉터리는 `ray_engineering/trial_f2db5f54_*/checkpoint_000000` 및 `checkpoint_000001`. `ray_interrupt.json`에 첫 checkpoint 뒤 의도한 driver SIGINT를 기록했고 start driver/restore driver 모두 exit0이었다. 기존 errored v41 trial을 재실행하지 않았다. 실제 새 engineering trial은1개이며 같은 ID로 training_iteration1→2, start_epoch1→epoch2, epoch0 반복/phantom 새 trial 없음. 첫 구간 wall 21.619초(중단 정리 포함), 복원 구간 wall 12.180초. Ray 자체 보고 누적 iteration 시간8.810478초. scheduler는0→1로 진행했다. ASHA pruning은 **NOT_DEMONSTRATED**이며 두 epoch 완료를 pruning 증명으로 부르지 않는다.
 
-지금 실행 가능한 read-only 재검증 명령(훈련 없음):
+고정 engineering Train9/Val6의 metric selector는 `metrics/mAP50-95(M)`이며 epoch1/2 pooled 값은 둘 다0.00060(보고 반올림)이다. Val seg46.71218 역시 engineering 관측으로 기록하며 과학적 성능·비열등성 결론이나 모델 선택에 쓰지 않는다.
+
+**정확한 원인:** tiny Ray 시험은 batch6, 설치 trainer 기본 nbs64, Train9이므로 epoch당2 minibatch다. resume 때 `accumulate=round(64/6)=11`로 시작하고 마지막 epoch라 warmup이 끝난다. epoch2의 global batch index ni=2,3, 지역 `last_opt_step=-1`에서 차이는3,4로11보다 작다. 따라서 optimizer_step을 호출하지 않는다. checkpoint 두 개의 모든 AdamW state tensor가 동일하고 scaler growth_tracker도1→1인 증거와 일치한다. 손상된 optimizer state가 원인이 아니라 **작은 시험 구성과 gradient accumulation의 조합**이 재개 후 update 증명을 막았다. 누적 gradient/last_opt_step 자체의 연속성도 저장하지 않았으므로 bitwise 학습 trajectory 동등성은 주장하지 않는다.
+
+**다음 정확한 패치 한 가지:** 후속 새 버전 tiny trial의 train subset을 이미 검증한 `batch64_records.json`의64개 distinct 이미지로 바꾸고 `batch=64, workers=8`을 사용한다. 구체적으로 `selected = json.loads((ROOT/'batch64_records.json').read_text()) + [r for r in rr if r['scene_id'] in valids]` 및 trial kw의 `batch=64, workers=8`로 바꾸면 nbs64에서 accumulate1로 두 epoch 각각 실제 update를 할 수 있다. report assertion에 `resumed epoch optimizer_step > saved optimizer_step`를 추가한다. 이는 후속 새 engineering 시험의 수정 제안이며 **이번 v42 trial을 수정·재실행하지 않았다**. 성공을 미리 보장하지 않는다.
+
+## 파일·명령·환경·보존
+
+신규 코드: `scripts/bitmap_qualify_v42c.py`, `scripts/bitmap_ray_resume_v42c.py`, `scripts/bitmap_full_epoch_v42c.py`. 마지막 파일은 조건부 1 epoch 경로를 준비하고 compile만 했으며 실행0이다. 코드의 full pilot hyperparameters는 lr0=.001/lrf=.1/momentum=.9/weight_decay=.0005/warmup_epochs3/box7.5/cls.5/dfl1.5, batch64/workers8/ratio2로 고정되어 있고 성능에 따라 선택하지 않았다. 실제 Stage1 entrypoint `bitmap_stage1_v40.py`는 여전히 v42 raw optimizer/scaler adapter로 연결되지 않았으므로 이를 실행하면 안 된다. technical readiness를 YES로 올리지 않았다.
+
+실제 명령은 아래이며 `command_*.json`에 절대 Python 경로·return code·start/end, `raw_*.stdout.log`와 `raw_*.stderr.log`에 원문을 보존했다.
 
 ```bash
-/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_evidence_v41.py
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_qualify_v42c.py init
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_qualify_v42c.py cpu --ratio 2
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_qualify_v42c.py gpu --ratio 2
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_qualify_v42c.py cpu --ratio 4
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_qualify_v42c.py gpu --ratio 4
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_ray_resume_v42c.py
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_ray_resume_v42c.py --resume
 ```
 
-후속 작업에서 사용할 정확한 첫 GPU 게이트 명령열(**현재 미실행**, 기존 root에 덮어쓰지 않음):
+Python3.11.15 / Ultralytics8.4.129 / Ray2.58.0 / torch2.7.1+cu128 / CUDA12.8 / RTX5090 / driver570.172.08. `environment.json`, `environment_versions.json`, GPU 전후 snapshot, input_hashes.json, previous_provenance.json, preservation_checks.json, ray_gate.json, status.json, delivery_sha256.json을 ROOT에 기록했다. 로그의 Ultralytics upgrade 알림은 설치/업그레이드 실행이 아니다. 설치0, OOM0, terminal exception0, 의도 SIGINT1, Ray trial ERROR0; 이와 별개로 필수 optimizer 진행 관문은 FAIL로 보존했다. 사전/사후 입력 SHA64참조 일치, 새 세 코드 py_compile PASS. v40 전체7200 QA 재실행0, METADATA_SHORT_HASH_ALGORITHM_UNKNOWN 유지. 기존 v39/v41 실제 실패와 원본 source/weights/labels/splits/USD 보존.
 
-```bash
-/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_qualify_v41c.py init
-/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_qualify_v41c.py cpu --ratio 2
-/home/user/anaconda3/envs/sdg_tools/bin/python scripts/bitmap_qualify_v41c.py gpu --ratio 2
-```
-
-ratio2 실패 시 중단. PASS 뒤 ratio4 및 Ray2-checkpoint 재개를 새로 검증해야 하며 이후에만 full6000/1200 epoch로 진행한다. 기존 errored Ray trial을 자동 재시작하지 않는다. **지금 실행 가능한 qualified Stage1 명령은 없음**; v40 future launcher를 우회 실행하면 안 된다. 현재 살아 있는 search/supervisor PID가 없으므로 stop/resume 대상도 없다.
-
-신규 코드6개(qualify v41/v41c, Ray v41/v41b/v41c, evidence v41), 정책문서·본보고서·latest_report·PROJECT_STATE를 작성/갱신했다. compile PASS, CPU2/2 PASS, GPU0/2 FAIL, Ray resume FAIL, full-data/HPO NOT_RUN, known subset PASS. `code_output_sha256.json`은 최종 status 갱신 전 snapshot이며 최종 현재 파일 hash는 `delivery_sha256.json`을 사용한다. 부수 rg stdout/stderr glob 조회 exit2는 파일명이 없어 발생했고 trial 실패와 별개다. Ultralytics AMP check의 yolo26n 메시지는 별도 검사 모델이며 학습모델 교체가 아니다(기존 workspace weights 파일 mtime2026-11-01 확인). 설치·업그레이드0. 원본/weights/labels/splits/USD/v39/v40 수정0, Kit/ROS/motion0, steering HOLD·15°/20° 유지. 원격 mirror 완료는 확인하지 않았으며 정상 HANDOFF_REPORT marker로 동기화를 요청한다.
+Full pilot의 과학적 단위는 실행할 경우 Train2000 paired scene×3=6000 이미지, Val400×3=1200 이미지다. 이번에는 해당 실행0이며 n6000 독립 scene 또는 최종 benchmark 성능을 주장하지 않는다. Test1200/Real Test189 접근·선택·평가0(Real Test189 기존 평가 이력은 유지). Kit0/ROS0/motion0/asset retune0, steering HOLD, v30 physical n1/v31-v32 curvature FAIL/v35-v36 offline/v40 QA 완료는 불변. 연구 confirmatory 분모0. 보고서·latest_report·PROJECT_STATE를 갱신하고 정상 HANDOFF_REPORT marker로 동기화를 요청한다. 원격 반영 완료는 로컬에서 확인하지 않았다.
