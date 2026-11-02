@@ -1,5 +1,11 @@
 # PROJECT_STATE — 2026-10-13 (Asia/Seoul)
 
+## 2026-11-02 — v38 정지 조향 isolation 구현 일부 / 실측 정책 미정 HOLD
+
+[v38 보고서](../reports/construction_site_steering_characterization_and_hr_live_20261102_v38.md). 새 engineering 모듈/one-shot preflight를 구현해 actual v30 stage의 anonymous session layer에서 정상 articulation exec3개 차단·exact 복원·source SHA 불변을 확인했다. second writer/±90°/NaN/복원누락/실제 edge 재연결 거절 포함 CPU7/7 PASS. expected 대비 unique dependency783 mismatch0, known9/count108·432 PASS. standalone USD 경고·부수rg경로exit2 보존, preflight exit2는 의도된 HOLD이며 PASS 아님.
+
+HOLD_CHARACTERIZATION_POLICY_UNDEFINED: 승인된 stationary 실측 rate 중단 한계 미확인. configured286.478882deg/s 또는 요구HR28.406deg/s를 허용 측정률로 만들지 않음. Kit0/driver0/stationary시험0/chassis motion0/retry0/science0; 실제 sole writer/stop/contact·support·TF/GID·memory·graph runtime 복원 미검증. live backend/setpoint generator 미완료, 측정 acquisition 없음; CPU isolation은 native 제어권 증명이 아님. ROSzero MISSING/NOT_APPLICABLE_PRE_DRIVER, HR PRE/FINAL 및 새 error/track/rate 모두 NOT_RUN. 다음 작은 단계는 출처가 있는 characterization rate/sweep 정책 확정이며 preflight 반복 금지. v39 LR/v40 CAD gate 미충족, 기존 HR v30 observed.279451cm/design5.523288cm·LR/CAD original curvature FAIL·v37HOLD 불변. HPO/훈련/scale/occlusion/18/324/432실행0. 원격handoff 완료는 미검증.
+
 ## 2026-11-02 — v37 승인된 HR smooth-S: 실제 조향 게이트 HOLD / 교수 브리핑 계획 완료
 
 [v37 보고서](../reports/construction_site_common_planner_hr_live_20261102_v37.md), [면담용 연구·통계 계획](../reports/professor_briefing_research_and_statistics_plan_20261103_DRAFT.md). 사용자 HR1회 승인은 유효하나 실제 추종 rate 미입증으로 Kit0/motion0/retry0. v30 실제 executed_code와 composed stage에서 네 steer joint max286.478882deg/s·drive836.614/40/200, graph maxSteeringAngleVelocity5rad/s를 확인했다. 그러나 unconnected steeringAngleVelocity 기본0은 snap 분기이며 AST 반례에서 target8rad/s 가능; actuator 응답값 아님. 원래 Twist graph는 v0에서 작은 stationary 조향각을 지정할 수 없어 안전한 응답 시험 미실행. joint 상한을 achievable rate로 승격하지 않았고 live bridge/새 raw Kit root 없음. 다음은 독립 stationary characterization 연결/안전 검증 후 fresh HR qualification이며 LR/CAD port는 HR PASS 뒤다.

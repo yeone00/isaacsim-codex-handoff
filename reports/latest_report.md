@@ -1,55 +1,70 @@
-# v37 — 승인된 HR smooth-S의 실제 조향 게이트 판정
+# v38 — 정지 조향 characterization 구현 일부 완료, 실제 측정 HOLD
 
-2026-11-02 KST. **HOLD_STEERING_RESPONSE_UNVERIFIED. HR live pilot은 실행하지 못했다. Kit 0 / motion 0 / retry 0 / confirmatory science denominator 0.** 사용자 실행 승인은 유효하며 추가 승인을 요청하지 않았다. 실제 configured bound는 찾았으나, 그것을 smooth-S 추종 능력으로 해석할 수 없고 동일 원래 ROS supplier에서 안전한 작은 stationary steering 시험 입력을 만들 수 없다는 구체 근거가 확인됐다. 허용속도를 발명하거나 rate limiter/graph를 바꿔 이동하지 않았다.
+2026-11-02 KST. **HOLD_CHARACTERIZATION_POLICY_UNDEFINED. Kit 0 / chassis motion 0 / stationary steer 시험 0 / driver 0 / retry 0 / research denominator 0.** v37을 재실행하거나 PASS로 바꾸지 않았다. 실제 wheel 응답을 얻지 못했으며 HR PRE/FINAL은 NOT_RUN이다.
 
-교수 면담용 [전체 연구·통계 계획](professor_briefing_research_and_statistics_plan_20261103_DRAFT.md)은 완료했다. 모든 미래 결과 칸은 PLANNED/NOT_RUN이고 p-value·새 실험 성과는 없다.
+단일 진입 blocker는 **정지 조향 시험에 적용할 승인된 실측 조향속도 중단 한계가 확인되지 않은 것**이다. 286.4788818359375°/s joint 설정이나 smooth-S의 요구속도를 허용 실측속도로 바꾸지 않았다. 사용자 지시의 “한계를 발명하지 말 것 / 정책이나 미검증 graph 변경이 필요하면 Kit 0”에 따라 중단했다. 별도 재승인을 요구한 것이 아니라 누락된 수치·출처를 질문했다. 답변이나 시간 경과를 승인으로 간주하지 않았다.
 
-## 실제 확인한 설정과 실행 코드
+## 이번에 실제 구현·검사한 것
 
-v30 성공 root `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v30_03`의 실제 `executed_code` driver v21/follower v19/stopping adapter v21/runner/session을 정적으로 읽고, prepared stage를 **standalone USD**로 합성했다. legacy script import/Kit 실행 없이 조사했다. [원자료 JSON](construction_site_steering_gate_20261102_v37_01/steering_evidence.json)에 네 joint 전체 attribute·authored 여부·source layer, graph 연결, 코드 SHA, 환경/명령을 저장했다.
+새 [모듈](../evaluation/construction_site_stationary_steering_20261102_v38.py)과 [preflight runner](../scripts/construction_site_steering_preflight_20261102_v38.py)를 작성·실행했다. 원본 stage를 read-only로 열고 anonymous session sublayer에서 정상 articulation controller 3개의 `execIn` 연결을 차단한 뒤, 그 계층만 제거해 graph signature exact 복원을 검사한다. 임시 delta는 증거로 export했지만 원본 USD는 저장하지 않았다. 정상 소유권일 때 test writer 비활성, test 소유권일 때 정상 writer 부재를 강제하는 검사와 timestamp/fsync JSONL 로그, per-wheel target/angle/rate·transform 및 propulsion zero/contact/support/TF/GID/clearance/memory 검사 함수를 구현했다.
 
-|실제 설정|로컬 값|판정|
-|---|---:|---|
-|네 steer joint `physxJoint:maxJointVelocity`|286.4788818359375 degrees/s ≈5 rad/s|설정된 joint 상한 확인; 그 속도로 원하는 각을 추종한다는 보장 아님|
-|angular drive stiffness/damping/maxForce|836.6141357421875 / 40 / 200, force drive|설정 확인; 실제 부하·타이어 접촉 하 응답 UNKNOWN|
-|joint lower/upper|약 ±52°|실험 허용 조향15°/기존 측정20° gate를 확대하지 않음|
-|Ackermann `maxSteeringAngleVelocity`|5 rad/s|이 값만으로 slew 제한이 작동한다고 판단 불가|
-|`steeringAngleVelocity` input|연결/작성값 없음; 설치 database 기본값0|실제 controller는 0일 때 target angle 즉시 변경 분기|
-|`invertSteering` / wheelBase|True / .7m|원래 graph 보존|
-|원래 driver|50ms, `v*k*COMP`, COMP=π/180 → v21 stopping adapter|SI `v*k`를 wire angular.z에 바로 넣지 않음|
+**완성된 live 측정 runner는 아니다.** 정책 미확정 상태에서 smooth sweep 수치·setpoint generator·Kit backend/제어권 전환 callback을 연결하지 않았다. source-level exec 차단은 native scheduler나 잔류 actuator target 차단의 증명이 아니다. 측정 함수는 실제 센서/PhysX 데이터를 취득하거나 zero/cleanup을 수행하지 않는다. 임시 supplier를 구현 일부 했다는 사실로 정상 ROS control을 인증하지 않는다.
 
-Angular joint velocity의 USD 단위는 degrees/s다. 상한은 solver가 넘지 않도록 제한하는 값이며 achievable tracking certificate가 아니다. [NVIDIA PhysxJointAPI 정의](https://docs.omniverse.nvidia.com/kit/docs/omni_usd_schema_physics/latest/physxschema/class_physx_schema_physx_joint_a_p_i.html).
-
-설치 `AckermannController.forward` 및 Ogn database를 읽었다. rate input 0이면 `steering_angle=command[0]`이고, max rate5는 이 snap 분기를 연속 변화로 바꾸지 않는다. [AST-only CPU 검사](construction_site_steering_gate_20261102_v37_01/cpu_counterexample.json)는 ±.2rad(각11.46°) target을50ms 간격으로 주면 virtual target 변화율8rad/s가 됨을 재현했다. **실제 wheel이8rad/s 움직였다는 결과가 아니다.** controller에는 |angle|<.0157rad에서 wheel target0으로 만드는 분기도 있어 nominal smooth geometry만으로 graph target rate를 보장하지 못한다.
-
-원래 graph는 `atan2(−.7*angular.z, abs(linear.x))`의 degree 결과를 steering input으로 보낸다. v=0에서 z=0이면0, z≠0이면±90의 입력이 된다. 따라서 원래 wire 경로로 ±수°의 bounded stationary 조향 sweep을 지정할 수 없다. v36 encoder도 v=0일 때 z=0을 반환한다. angle clamp를 믿고±90 입력을 보내거나, articulation target에 직접 쓰거나, graph에 새 supplier를 넣는 시험은 이번 보존 조건의 독립 안전 입증이 없어 실행하지 않았다. 작은 조향을 시험하려고 base를 먼저 움직이는 것도 사전 rate gate를 우회하므로 하지 않았다.
-
-HR nominal feedforward28.406°/s는 요구량일 뿐이다. joint 상한286.479°/s보다 작다는 비교는 **필요조건 일부**이며, 50ms nearest-index·feedback·deadband·BRAKING·개별 Ackermann wheel 차등각을 포함한 실제 tracking 및 rate 검증을 대체하지 못한다. 이 결론은 “조향이 물리적으로 불가능하다”가 아니라 **현 입력 계약에서 사전 qualification 근거가 부족하다**는 뜻이다.
-
-## 확인 결과와 미실행 단계
-
-|항목|이번 결과|
+| 항목 | 새 증거 / 판정 |
 |---|---|
-|v30 prepared input + v36 authoritative expected SHA 대조|1,118 참조 비교, mismatch0. 중복 포함이며 독립 파일1118개라는 뜻 아님|
-|v36 CPU 회귀 새 output|27case / 55,221 checks PASS_OFFLINE, exit0|
-|원래 v21 정지 CPU 검사|20/20 PASS, exit0; 실제 새 PRE/FINAL 정지 아님|
-|base108/execution432|108/432행, exact base IDs, 4표현/base·각108 PASS|
-|실제 새 joint response / live steer rate|UNKNOWN / NOT_RUN|
-|v37 fresh RGB-D·HR M50·B4·count-preview/ROI·B5|NOT_RUN|
-|새 PhysX28/native0·6wheel support/contact·clearance·TF/GID·memory admission|NOT_RUN; v30 PASS를 새 live PASS로 복사하지 않음|
-|새 PRE/FINAL sweep·drive·BRAKING→zero→독립≥1s quiet|NOT_RUN|
-|endpoint E−Gobs / E−design, signed long/left/yaw, tracking max/RMS|NOT_RUN; 숫자 생성0|
-|새 RSS/contacts/Kit·driver·observer·runner exit|NOT_RUN; 위 CPU process exit와 구별|
-|ROS zero receipt|**MISSING/NOT_APPLICABLE_PRE_DRIVER**|
+| second writer 동시 활성 | CPU 거절 PASS |
+| −90°, +90° / NaN target | 각각 CPU 거절 PASS; clamp로 처리하지 않음 |
+| 원래 graph 복원 누락 | CPU 거절 PASS |
+| 실제 composed stage의 정상 exec edge 재연결 | CPU 거절 PASS |
+| 임시 계층 제거 / 원래 graph exact / source stage hash 유지 | PASS_CPU |
+| 위 CPU 검사 합계 | 7/7; physical test 7회라는 뜻 아님 |
+| 기록된 expected 대비 입력 SHA | 중복 path를 합친 783개, mismatch 0 |
+| prelock v01 → amendment v02/v03 + geometry v02 known subset | 9개 SHA 및 108/432 count PASS; 전체 readiness 아님 |
+| runner exit | **2, 의도된 preflight HOLD**; live 실패나 PASS로 바꾸지 않음 |
+| native sole writer·잔류 target flush·원래 ROS graph runtime 복원 | NOT_RUN / UNKNOWN |
+| stationary support/contact/footprint·10cm clearance·brake/zero/quiet | NOT_RUN |
+| smooth setpoint / wheel actual rate·tracking·settling/reversal·base transform | NOT_RUN |
+| fresh RGB-D 640×480 → HR M50 → B4 → count-preview ROI → B5 | NOT_RUN |
+| 실제 HR PRE / 측정 PRE에서 독립 FINAL / 두 정상 stop | NOT_RUN |
+| Kit/driver/observer exits | NOT_APPLICABLE_NOT_STARTED; runner exit2와 구분 |
+| ROS zero receipt | **MISSING/NOT_APPLICABLE_PRE_DRIVER** |
 
-새 [CPU 회귀 폴더](construction_site_common_planner_checks_20261102_v37_01/execution.json), [manifest·검사 기록](construction_site_steering_gate_20261102_v37_01/manifest_and_checks.json). geometry lock 자체의 독립 expected UNKNOWN은 그대로다. 이번에는 전체 geometry join 재감사를 반복하지 않았고 기존 authority와 새 count/pairing 확인의 범위를 구분한다.
+## 실제 source·ownership 확인
 
-개발 실패도 보존: 첫 v37 AST harness는 mock Base 생성자의 positional `name` 지원 누락으로 exit1이었다. legacy controller 문제가 아니며 새 harness만 수정 후 PASS했다. 실패 내용은 manifest_and_checks에 남겼다. 부수 `rg`는 존재하지 않는 `extsPhysics` 경로 검색에서 exit2였고, 설치 code와 공식 schema 문서로 단위를 확인했다. 둘 다 Kit/live 실패나 retry로 합치지 않는다.
+성공 v30의 실제 source는 워크스테이션 `/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v30_03/executed_code/` 아래 session v30, driver v21, follower v19, stopping adapter v21이다. stage는 같은 root의 `prepared_site_drive.usda`다. 설치 source는 `/home/user/anaconda3/envs/hh_isaac51/lib/python3.11/site-packages/isaacsim/exts/isaacsim.robot.wheeled_robots/isaacsim/robot/wheeled_robots/` 아래 `controllers/ackermann_controller.py`, `ogn/python/nodes/OgnAckermannController.py`를 읽었다. legacy Python import/실행 없이 검사했다.
 
-## 변경 범위와 바로 다음 작업
+정상 graph의 controller 3개는 front/rear 구동4개, front steer2개, middle 구동2개를 각각 쓴다. 네 steer joint 모두 angular drive를 갖지만 composed joint에 mimic schema/관계는 없고 정상 graph에서 rear steer target writer는 발견되지 않았다. 따라서 “네 wheel이 동일하게 명령된다”는 전제를 두지 않는다. [joint schema·관계 원자료](construction_site_steering_characterization_20261102_v38_01/joint_ownership.json).
 
-새 코드: `analysis/construction_site_steering_gate_20261102_v37.py`, `analysis/construction_site_steering_cpu_20261102_v37.py`. 새 보고서2개·증거/CPU 폴더2개, latest_report와 PROJECT_STATE 갱신. **안전한 live bridge 준비 완료로 주장하지 않으며 새 driver/runner는 만들지 않았다.** raw Kit output root도 없다. 원래 quintic/HR weights/USD/protocol·기존 v30 성공/v31·v32 실패·v35 제안18행은 수정하지 않았다. HPO/training/scale-model/18회/324·432 실행0, GPU job0.
+실제 angular drive stiffness/damping/maxForce는 v37 근거의 836.6141357421875/40/200, joint configured cap은 286.4788818359375°/s다. 설치 Ackermann의 rate input은 default0/snap이고 .0157rad deadband·invertSteering=True·wheelbase .7m를 갖는다. 원래 Twist의 v=0 경로는 0 또는 ±90°여서 작은 stationary angle supplier로 사용하지 않았다. v30 session의 `check_graph`는 baseline graph 변경을 거절하므로 기존 session에 direct writer를 끼워 실행하지 않았다. 임시 characterization과 원래 정상 제어의 policy/state 전환은 별도 검증 대상이다.
 
-다음 최소 기술 작업은 작은 stationary steering 명령을 별도 characterization 모드에서 만들되 sole writer·base zero·contact/support·20° 측정 gate·footprint·원래 graph 복원과 fail-closed stop을 증명할 계측 연결이다. 이것은 graph/actuator 입력 경로를 다루므로 v37에서 검증 없이 끼워 넣지 않았다. 이 characterization과 50ms 실제 command/개별 wheel rate·tracking admission을 확보한 뒤에만 v30 실행 snapshot의 copy-on-write session/driver에 v36 `plan/command`를 연결한다. rear .338m, base/rear≤.02m/s, COMP/invertSteering, v21 stop, clearance .10m, GC8GiB/+768MiB를 유지한다. fresh PRE와 실제 stopped PRE→fresh 독립 FINAL을 각각 plan/sweep/stop한다.
+15° 명령 한계와 독립 측정20° emergency gate, 기존 quiet의 1s/.002m/s/.002m span은 확인했다. 그러나 quiet의 translation 기준을 모든 stationary motion 허가로 해석하지 않았고, stationary yaw/steer tracking 허용오차도 새로운 승인값으로 만들지 않았다. 새 logger의 해당 필드는 authority가 없으면 거절한다. 정책 출처와 관련 source 줄·SHA는 [정책 증거](construction_site_steering_characterization_20261102_v38_01/policy_source_evidence.json)에 있다. 이는 명시된 authority의 제한된 검색 결과이며 workstation 전체에 문서가 없다는 단정은 아니다.
 
-HR smooth-S가 아직 통과하지 않았으므로 **LR/GeoCAD live port는 이번에 진행하지 않는다.** HR가 두 leg·두 독립 stop·안전/종료를 통과한 이후의 최소 port 범위는 동일 코드/정책에서 selection·matched model·asset metadata만 LR로 바꾸는 fresh one-shot, 그 결과를 보존하고 동일 GeoCAD one-shot이다. 표현별 planner tuning·HR rescue·자동 retry를 추가하지 않는다. 기존 HR FINAL 관측목표 .279451cm/design5.523288cm와 LR/CAD 원래 curvature FAIL은 불변이다.
+## HR와 다음 port 판정
+
+HR nominal smooth-S 약28.406°/s, LR31.389°/s, CAD29.885°/s는 **기존 계산상의 요구량**이다. 새 실측률은 전 wheel UNKNOWN이다. 50ms 실제 nearest-index/feedback, Ackermann inside/outside 개별 target, deadband 통과, saturation, v21 BRAKING→zero 때의 target 변화와 실제 추종은 NOT_QUALIFIED다. 임시 stationary 시험만 통과해도 정상 ROS route 인증을 대체하지 못한다.
+
+따라서 HR motion을 시작하지 않았다. E−observed/E−design의 signed long/left/yaw 및 norm, QC5mm/2°, main11cm/strict5.5cm, actual track RMS/max, contacts, zero receipts, fresh quiet, RSS/peak/growth/scope는 모두 새 측정 NOT_RUN이다. 예전 값을 새 run의 결과에 채워 넣지 않았다. 8GiB/+768MiB/600s, rear .338m, base/rear≤.02m/s, COMP=π/180, 원래 v21 stopping/TF/GID/union28/native0/6-wheel 정책을 약화하지 않았다.
+
+**다음 작은 단계 하나:** 출처가 명시된 characterization 전용 정책에 실측 rate 중단 한계와 그 한계로 정의한 작은 smooth stationary sweep을 확정한다. 그 전까지 현재 preflight를 반복하거나 Kit를 띄우지 않는다. 정책 확보가 곧 live PASS는 아니며, native sole writer와 복원·stop은 같은 one-shot에서 실제 증명해야 한다.
+
+HR 두 leg와 독립 두 stop이 미통과이므로 **v39 LR / v40 GeoCAD 실행 승인 gate 미충족**이다. HR 성공 후에만 identical policy의 fresh matched LR one-kit을 v39, 이어 GeoCAD 별도 one-shot을 v40으로 정할 수 있다. 이번 LR/CAD 실행0, 표현별 tuning/target 이동/fallback0. original quintic과 제안 smooth-S branch를 별도로 보존했다.
+
+## 교수 브리핑에서 유지할 기존 결과
+
+| 기존 근거 | 변경 없는 해석 |
+|---|---|
+| v30 HR physical simulator | observed target 기준0.279451cm, design datum 기준5.523288cm; n=1 기술 관측 |
+| v31 LR / v32 CAD | old quintic curvature admission FAIL, 실제 motion/endpoint NOT_RUN |
+| v35/v36 | offline27case/55,221checks PASS_OFFLINE, 새 실측 아님 |
+| v37 | COMPLETE report / HOLD_STEERING_RESPONSE_UNVERIFIED, Kit0/motion0/retry0/science0 |
+| v38 | CPU isolation 일부 구현, 정책 부재로 실측0·HR NOT_RUN |
+
+새 HPO는 disconnected-instance bitmap→stock polygon artificial bridge 문제(기존31 low-fidelity 사례)로 여전히 막혀 있다. scale model/explicit occlusion/18·324·432/훈련/확증통계는 실행0. p-value나 통계적 성공률을 만들지 않았다. 2026-11-03 면담 자료의 미래 계획을 완료 성과로 제시하지 않는다.
+
+## 원자료·검사·변경 범위
+
+[raw result](construction_site_steering_characterization_20261102_v38_01/result.json), [negative tests](construction_site_steering_characterization_20261102_v38_01/negative_tests.json), [events](construction_site_steering_characterization_20261102_v38_01/events.jsonl), [783개 expected/observed](construction_site_steering_characterization_20261102_v38_01/integrity.json), [실행 명령·환경·stderr](construction_site_steering_characterization_20261102_v38_invocation.json), [known locks](construction_site_known_locks_20261102_v38.json), [최종 SHA inventory](construction_site_steering_characterization_20261102_v38_final_hashes.json). command의 runtime은 실제 발견한 hh_isaac51 Python+standalone USD libs이며 **SimulationApp/Kit 실행이 아니다**.
+
+새 코드 두 파일 compile PASS. 새로운 stdout/stderr를 삭제하지 않았다. standalone USD는 기존 disabled camera relationship의 out-of-reference-scope 경고를 출력했고 invocation에 보존했다. 부수 `rg`가 잘못된 evaluation geometry 파일 경로에서 exit2인 것도 정책 증거에 기록했다. 이를 physical 시험 실패·재시도로 합치지 않는다. 기존 raw 전체를 새로 재해시했다는 주장은 하지 않으며, 비교한 dependency 범위는 integrity에 명시한다.
+
+변경은 새 v38 코드2개·보고서/증거, `reports/latest_report.md`, `docs/PROJECT_STATE.md`다. 원본 source/locks/weights/USD 및 v30–v37 성공·실패 출력 수정0, 설치0, 기존 process 종료0, GPU작업0. GitHub handoff는 완료 메시지의 marker로 요청하며 원격 동기화 완료를 로컬에서 주장하지 않는다.
