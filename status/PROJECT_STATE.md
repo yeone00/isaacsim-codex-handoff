@@ -683,3 +683,14 @@ FreshRGB-D/calibration8/8·HRmatchedfrozenYOLOconf.791759/mask7710·B4 PASS, 새
 LRengineering0/1FAIL 보존, Kit/observer0·driver미시작·runner1/NOT_READY/MISSING_WITNESS. 비영명령0·ROSzero MISSING/NOT_APPLICABLE_PRE_DRIVER, baselinequiet는접근성공아님. watchdog/강제종료/잔존0. ownerPID2724175 phaseRSS최대sample6.18753GiB/VRAM별도, motionGC NOT_ENTERED로8GiB/+768MiB/600초scopePASS주장없음. taskGT main/strict/relaxed는endpoint미주행으로NOT_ASSESSED. input115/snapshot/provisional/evidencehash PASS, compile·stop20/20·known9/count PASS. 최초systemPython witness cv2부재실패로그보존, 기존sdg_tools로read-only검사완료/설치0. v30raw218종료후보존불일치0.
 
 HRv30 1/1과LRv31 0/1은기술적서술관측이며표현성능·동등성·일반신뢰도증거아님. 추가HR/GeoCAD/324/432실행0·science분모0/HPOtrainingPAUSED. 다음은저장LR목표의공통planner admission margin offline검토이며이번재시도없음. 공통정책변경필요시별도versionedproposal, 기존실패소급변경금지. LR독립성공전GeoCAD실행권고조건미충족.
+
+
+## 2026-11-02 — v32 세 번째 GeoCAD pilot / B5 PASS 뒤 동일 곡률 admission FAIL
+
+[보고서](../reports/construction_site_pilot_geocad_admission_20261102_v32.md), [독립 witness](../reports/construction_site_pilot_witness_20261102_v32.json), [저장자료 산술·보존](../reports/construction_site_runtime_summary_20261102_v32.json). 사용자 v32 명시 지시에 따라 LR 실패를 유지하고 세 번째 GeoCAD를 같은 정책으로 실행했다. 과거 LR 성공 전 CAD 금지 권고는 이번 지시로 대체되며 안전 gate/실패기록 변경0. GeoCAD asset/model/parent SHA PASS, shared visual300/prototype1/여섯 bound subset/native0/union28, HR대비 fixedworld2065·300slot exact PASS, 변조5/5거절. 원래 quintic/곡률.363645333/m·target/controller/camera/graph/GC/stop 정책 불변.
+
+새 PILOT_SITE_GEOCAD_ADMISSION_20261102_v32_01에 Kit1/retry0. fresh640×480RGB-D/calibration8/8·frozenGeoCAD YOLOconf.959305346/mask7703/B4 PASS. 새RGB/detection/count-only overlay직접검토 preview1/final1 ROI138/138·B5 center(−25.9367052594,30.4783510578)/heading89.453897834° PASS. PhysX28/native0/consumer28/support2214/2214·sixwheel·parserError0·contact168/예상외0 PASS. PRE CURVATURE_INFEASIBLE로 driver전거절: 저장1mmquintic산술 max.366967770/m, HR.350094192/LR.387170521/m. 구제/목표보정/새planner0. engineering0/1FAIL, PRE/FINAL/독립정지/FINAL sweep NOT_RUN.
+
+Kit0/observer0/driver미시작/runner1, 비영0, ROSzero MISSING/NOT_APPLICABLE_PRE_DRIVER, baselinequiet는접근성공아님. watchdog/강제종료/잔존0, ownerPID2740591 sampledphaseRSS최대6.05355GiB·VRAM별도, preworker8GiBPASS/motionGC NOT_ENTERED. 입력/snapshot/provisional/evidenceSHA PASS; known9/count108/432·inheritedpairing·compile·stoppingadapterCPU8/8 PASS. HRraw218/LRraw192 hash mismatch0. source/weights/locks/기존결과보존.
+
+세표현각1회 결과 HR1/1·LR0/1·CAD0/1은 고정정책 아래 기술관측이며 통계적충분성/geometry단독열등성/동등성/실로봇검증이 아니다. 후속은 별도prospective공통plannerrobustness연구: 수mm목표민감도와 동일steering/obstacle/sweep하 대체경로존재(현재UNKNOWN)를 확인하고 새정책은 세표현모두에 freshtrial 또는 명시적offline replay로 적용한다. 실패소급변경금지. 이번새planner구현/실행·HR/LR반복·training/HPO·324/432없음, science분모0.
