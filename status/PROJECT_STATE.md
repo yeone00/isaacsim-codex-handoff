@@ -1,3 +1,11 @@
+
+## 2026-11-02 — v45 실제3×3 평가2916·두재질108완료 / B5파일럿54·확장HOLD
+
+[v45 보고서](../reports/three_rep_crossrep_mixed_target_audit_20261102_v45.md). original972/324pairedkey를직접검증하고10525inputSHA·193expected·known9/countPASS. HR/LR/CAD만3×3각324=2916추론, diagonal972maskpixel exact/IoU최대1.11e−16. equal-domain meanIoU .614619/.538966/.707187. 공통검출218/공통IoU50 173, HR86miss trace·4threshold진단·C×actual·oracle CSV/PNG완료.
+
+red1+cement1새정적108actual/36paired설정·저장RGB3모델324평가완료. 실제O25 23.7857–25.4809%/O50 49.2238–50.4256%,108/108±2%p. matched red/cement/miss/ambiguous HR18/10/5/3,LR13/18/0/5,CAD11/25/0/0각36. 최고confidence genericclass0선택이며semantic재질분류NOT_ESTABLISHED. locked좌우명이영상좌우와반대인결함보존/actual좌우별도. Kit1회139.321초close/RSS7.72075GiB/exit0/owner잔존0/close_return0; Warning824·초기prototype참조경고600보존.
+
+B5wrapper첫54FAIL(__file__누락)보존후새v45b51계산/1datum거절/2무검출;918추가NOT_RUN(HUMAN_REVIEW_PENDING). old/smooth곡률4/51·12/51,fullgeometry0/motion0. 로컬v44실행존재확인·5658SHA재검증/역사319계산humanreviewFAIL유지;요청문v44미실행전제와구분. cross첫호출manifest부재실패·compile괄호오류도기록. 다음은사람ROI검토후별도918rollout및fixtureprototypeclosure/좌우명패치이며추가Kit자동실행없음. 원본/weights/locks불변,HPO/Ray/훈련/ROS/조향/주행0/steeringHOLD. 보고서marker sync요청/원격완료UNKNOWN.
 # PROJECT_STATE — 2026-10-13 (Asia/Seoul)
 
 ## 2026-11-02 — v44 기존972 B5 오프라인319계산 / 새가림54 actual 목표충족 / 인간사전검토 FAIL

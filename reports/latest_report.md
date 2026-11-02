@@ -1,152 +1,139 @@
-# v44 — 기존972장 B5 재분석 및 새54장 외부 가림 보정 실측
+# v45 — v43 대응 감사·3×3 교차 평가·두 재질 정적 시험 실제 결과
 
-2026-11-02 KST. **기존972건은 재렌더·재추론 없이 오프라인 B5를 처리했다: 계산319 / datum 거절479 / 기존 무검출174 / source unavailable0. 별도 새54건은 실제 Kit 취득·동결 모델 추론을 완료했고,54건 모두 새 가림 목표±2%p 이내였다. READY_FOR_MOTION=NO, 주행·조향·physics play·HPO·훈련0.**
+2026-11-02 KST. **324개 대응 장면 검사 PASS, 원래 972개 저장 RGB에서 2,916개 모델–이미지 평가 완료, 새 두 팔레트 정적 RGB-D 108/108 완료.** 추가로 새 혼합 영상에 세 모델을 적용한 324개 추론을 완료했다. 새 주행·조향·ROS·physics play·HPO·Ray·학습은 0이다. B5는 새 파일럿54 중51계산/1거절/2무검출, 추가918은 사람 ROI 검토 게이트 때문에 NOT_RUN이다. 전체 요청을 무조건 PASS로 판정하지 않는다.
 
-다만 요청한 **사람의 사전 검토 없이 Codex의 AI 시각검토만으로54→972 오프라인 확장을 진행한 절차 미준수**가 있다. `HUMAN_REVIEW_BEFORE_ROLLOUT=FAIL`로 기록한다. 아래319건은 실제 계산 산출물이지만 사람의 검증을 마친 정확한 pose 표본으로 인증하지 않는다. 검토 파일 존재만 확인한 gate는 이 요구를 충분히 강제하지 못했다. 사후 AI 검토나 이 보고서가 사전 사람 검토를 대체하지 않는다.
+외부 원자료·CSV·PNG·마스크 root: `/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_CROSS_AND_MIXED_20261102_v45`. 원본 v43 root는 변경하지 않았다. HR_Scan / LR_Scan / GeoCAD만 비교했다. LR은 독립 저취득 재구성이며 HR decimation이 아니다.
 
-외부 산출물: `/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_OCCLUSION_B5_20261102_v44`.
+## v43 실제 데이터 감사 A1–A4
 
-## 1. 보존한 v43와 이번 작업 경계
+실제 파일에서 972행·324 scene_id·각3표현을 확인했다. material/C/명목O/거리/시점/조명/잔존 벽돌 membership/trajectory/panel 좌표/rover pose가 동일하고 카메라 extrinsic·intrinsic은 절대오차1e−9 이내다. seed·geometry·mask membership은 `scene_specs_locked.json`의 공유 설정 SHA로 결합했다. **실제 가림률은 표현별 값이며 공통키의 equality 조건으로 강요하지 않았다.** `v43_audit_common_324.csv`는 324키×3행=972행이다. `pairing_checks.csv`는324행이다.
 
-v43은972개 실제 정적 RGB-D·동결 M50 추론이며972회 로버 주행이 아니다. 각 표현324건, 검출 존재 HR238/LR292/CAD268, GT visible-mask IoU≥.5 HR231/LR218/CAD267, 무검출을0으로 포함한 평균 IoU .677861/.635470/.744906이다. CAD가 이 전체 표본의 mask 지표에서 가장 높고 LR은 검출 존재 수가 가장 많다. HR의 기존54 파일럿 평균IoU .858409는 전체972 .677861과 구분한다. 검출 존재가 mask 품질·pose 정확도를 보장하지 않는다. AP/mAP나 인과적 표현 우열·통계적 동등성을 주장하지 않는다.
+원본 capture receipt의5832개 파일 SHA를 포함해10525개 입력 SHA를 다시 검증했다. 원본 expected193개 dependency도 재검증 PASS, known9 잠금/count PASS. prelock v01→amendment v02/v03→geometry v02를 사용하며 geometry lock 자체 독립 expected는 UNKNOWN으로 유지한다. 입력SHA 목록은 `immutable_input_sha256.json`이다.
 
-v43의 가림 실제 분포 O25 16.56–26.57%, O50 21.79–51.91%, 명목과2%p 초과 차이24/38건을 보존했다. 기존 calibration_sha 필드의 depth SHA 오기·triplet frame_id 공유·초기 hidden-panel renderer 오류도 그대로다. v43 CSV·RGB-D·예측 mask·metadata·실패 기록·18개 B5 결과는 수정하지 않았다.
+검출 패턴 순서는 HR/LR/CAD다.
 
-handoff 저장소는 사용자 명령에 따라 `git pull --ff-only origin main`으로590839b→b049866 fast-forward했고 갱신된 `handoff/next_task.md`를 읽었다. 중첩 Codex를 띄우지 않고 이 세션에서 v44를 수행했다. 원본 workspace에는 `.git`이 없어 push나 remote 변경은 하지 않았다. v44 원격 동기화 완료는 UNKNOWN이다.
+|pattern|count|
+|---|---|
+|000|16|
+|001|8|
+|010|27|
+|011|35|
+|100|1|
+|101|7|
+|110|12|
+|111|218|
 
-## 2. GT 없는 센서 datum 정책과54건 선행 계산
+세 표현 모두 검출218개, 모두 선택IoU≥.5인 장면173개다. 공통 집합 수치:
 
-`scripts/three_rep_B5_sensor_20261102_v44.py`의 정책·코드 SHA를 **B5 계산 및 task-error 평가 전에** 고정했다. estimator는 저장된 RGB/depth/예측 brick mask와 raw camera calibration만 읽는다. GT mask/amodal/scene specs/task center/성공 라벨은 estimator에 전달하지 않는다. representation/C/O/view 라벨에 따라 파라미터를 바꾸지도 않는다. GT와 task-design datum은 별도 후단 평가에서만 사용한다.
+|subset|representation|n|mean|median|q25|q75|
+|---|---|---|---|---|---|---|
+|unconditional|HR_Scan|324|0.6778607675001871|0.9436559586448814|0.0|0.9687446276416856|
+|unconditional|LR_Scan|324|0.635469737434991|0.9330338364369778|0.00018034816530355|0.96564490177102|
+|unconditional|GeoCAD|324|0.7449061042583013|0.91595543409712|0.7692379911918337|0.9494533095952435|
+|all_three_detected|HR_Scan|218|0.9317449862104317|0.9601122834793296|0.934603889391912|0.9725991626454661|
+|all_three_detected|LR_Scan|218|0.760510596591542|0.948084770328331|0.879136598920006|0.9693901351837773|
+|all_three_detected|GeoCAD|218|0.9044663808248516|0.9262181936835148|0.8845150609706857|0.9528629684167381|
+|all_three_iou50|HR_Scan|173|0.9462096440467551|0.961253612716763|0.939622641509434|0.974950560316414|
+|all_three_iou50|LR_Scan|173|0.9452838394387848|0.9606907822092664|0.9374570446735396|0.9725792630676948|
+|all_three_iou50|GeoCAD|173|0.9082511039888367|0.9278562259306804|0.886687306501548|0.9562144935568796|
 
-관측 영상 하단40%의 depth를 backprojection해 바닥 높이 mode와 근수평 평면을 찾는다. 기존 frozen core의 사전 물리 치수 `PALLET_H=.144m`, `PALLET_X/Y=1.1m`를 사용해 **관측 바닥 위 .144±.020m**의 연결 표면 후보를 predicted brick 주변에서 제안한다. predicted brick mask는 pallet로 간주하지 않고3px 팽창해 제외한다. 각 후보2px erosion 뒤 동일한 최소100 inlier, inlier ratio≥.80, residual threshold3mm/p95≤3mm, tilt≤5°, XY covariance 최소고유값>1e−5m²를 적용한다. pallet 후보 footprint 최대extent≤1.1√2m와 sensed-ground 상대 높이를 추가 확인한다. 통과 후보 중 inlier 수/잔차 순서로 결정하며 task GT 오차를 보지 않는다.
+전체 평균은 무검출을0으로 유지했다. 검출된 서로 다른 집합의 조건부 평균을 직접 비교하지 않는다. 같은 장면 전부 검출 집합에서는 HR−LR 평균차.17123, HR−CAD .02728, LR−CAD −.14396이다. 모두 IoU≥.5인 집합에서는 HR−LR .000926이다. 조건부 표본 선택이 결과를 바꾼다. 전체 unconditional HR−LR .04239의 탐색95% CI [−.02698,.11007], HR−CAD −.06705 [−.11763,−.01866], LR−CAD −.10944 [−.17904,−.04311]. 모든 win/loss/tie와 CI는 `paired_diagonal_deltas.csv`다. 원래108 base_scenario_id를 재표집해 O triplet을 유지한2000회 cluster bootstrap(seed261102)이다. 다중검정 보정된 확증적 우열·동등성·비열등성 주장은 하지 않는다.
 
-이것은 새 센서 기반 자동 ROI 정책이다. v43의 고정 polygon을 다른 거리·시점에 복사하지 않았다. 높이·연결성으로 이미 분할한 후보 위의 plane-fit 지지율이므로 **독립적인 pallet 정답 정확도나 metrology 인증은 아니다.** 녹색 overlay는 제안 영역이고 자홍색은 실제 선택 ROI다. 녹색 후보에는 벽 하단 띠가 포함될 수 있지만 그 존재가 그 후보의 채택을 뜻하지 않는다.
+`hr_86_misses.csv`에 정확한 원래 HR 무검출86개 ID와 LR/CAD의 검출·신뢰도·IoU, 원래 조건 및 actual 가림률을 저장했다. `hr_86_threshold_trace.csv`/`threshold_sweep.csv`에는 별도 conf.05 추론의 후보를 .05/.10/.25/.50으로 필터한 진단이 있다. HR86개 중 .05에서22개 검출,14개 IoU≥.5 회복,8개는 충분한 GT 일치가 없는 검출이다. .10에서는14검출/12일치, .25/.50에서는0이다. 부정확 검출8개를 모두 배경 false-positive라고 단정하지 않는다. low-conf candidate trace와 GT-match logs로 구분 가능하다. 새 최적 threshold를 선택하거나 baseline으로 승격하지 않았다. 낮은 threshold 호출의 NMS와 .25 직접호출은 별도 기록했으며 .25 집계도 원래와 일치했다. 대표 GT 윤곽 및 low-confidence overlay를 저장했다.
 
-원래54장 선행 재분석:
+`Cxactual_occlusion_summary.csv`는 C×명목O와 거리/시점/조명/재질의 세분 분모·조건부/무조건 IoU를 제공한다. `Cxactual_occlusion_bootstrap.csv`와 `C_actual_occlusion.png`는 measured continuous 가림 및 구간별 기술분석/cluster CI다. 기존 O50 최저21.79%를50%로 취급하지 않았다. 원래 Near 사선에서 표면 일부가1m판보다 앞에 있었던 설명은 유지한다. 새 상관 패턴을 깊이 문제의 독립 인과 증명으로 부르지 않는다. factorial cell 반복1이어서 세부집단 분산 추론은 제한된다.
 
-|단계|HR|LR|CAD|합계|
-|---|---:|---:|---:|---:|
-|B5_COMPUTED|16/18|17/18|18/18|51/54|
-|DATUM_REJECTED|1|0|0|1|
-|NO_DETECTION|1|1|0|2|
-|old quintic 곡률만 통과 / 계산 가능|1/16|1/17|2/18|4/51|
-|smooth-S 곡률만 통과 / 계산 가능|4/16|4/17|4/18|12/51|
+GT는 표현별 렌더의 semantic brick_load union이다. 단일 load에서의 union을 두 인스턴스 판별능력이라고 하지 않는다. visible GT는 외부 판 적용후 가시면, external-only amodal은 판을 숨긴 투영이며 자기 가림 뒤 전체 형상 GT가 아니다. 972개 shape640×480·정렬·GT외부픽셀·mask IoU 재계산 PASS. fragment count/작은 연결성분은 `instance_audit_cases.csv`, 설명은 `instance_eval_audit.md`다. 높은 신뢰도 class0/동률최소index를 선택했다. `GT_matching_oracle_diagnostic.csv`는 GT와 가장 잘 맞는 후보를 **점수 계산에만** 택한 상한이며 deployable selection/B4/B5 입력이 아니다. 원래 diagonal은 모델 출처와 렌더 표현이 함께 달라진다. pixel IoU와 IoU threshold는 AP/mAP가 아니다.
 
-`B5_pilot_roi_contact_sheet.png`와 원해상도 HR/LR/CAD의 O0/O25/O50·C20 대표 ROI를 AI가 시각검토한 뒤 전체를 처리했다. **실제 사람 검토는 없었다.** 그 한계를 명시한 `pilot_visual_review.json`, `diverse_visual_review.json`을 보존한다. 전체 처리 후에는 계산 가능한 거리×시점×표현 장면군에서20개 사례를 골라 `B5_diverse_accepted_review.png`로 추가 확인했다. `inlier_depth_panels/`의20개 그림에는 실제 RGB의 ROI/inlier/outlier, 실제 axial depth와 선택 픽셀, fitted normal·d·signed residual histogram을 표시한다. 후단 그림은 사전 사람 검토 증거가 아니다.
+## B — 균형3×3 실제 교차 추론
 
-## 3. 기존972건의 실제 derived pose와 누락 분모
+각 셀324장, 전체2,916 모델–이미지 기록이며 원본 고유 RGB는972장이다. 새 캡처2,916장이 아니다. off-diagonal1,944개를 새로 추론했다. 감사 강화를 위해 diagonal972개도 재추론해 원본 검출972/972 일치·선택mask pixel 차이0·IoU최대오차1.11e−16(허용1e−6)을 확인했다. 원본 inference는 불변이다.
 
-|기존 RGB-D 오프라인 처리|HR|LR|CAD|
-|---|---:|---:|---:|
-|전체 대상|324|324|324|
-|B5_COMPUTED|83|133|103|
-|DATUM_REJECTED|155|159|165|
-|NO_DETECTION|86|32|56|
-|SOURCE_UNAVAILABLE|0|0|0|
-|B5 center error norm 중앙값, mm|88.179|219.746|93.396|
-|동 norm p95, mm|433.887|2234.776|415.732|
-|평균 signed longitudinal, mm|−48.778|−476.904|−41.503|
-|평균 signed left, mm|−63.224|−209.186|−77.878|
-|평균 absolute yaw error, deg|24.000|28.295|25.191|
+공통 설정 imgsz1280/conf.25/NMS IoU.70/mask threshold.5, RGB→BGR 입력 변환은 실제 v43와 같다. 모델은 class0 brick_load 하나뿐이다. 모델 origin과 render domain을 별도 축으로 저장했다.
 
-오차 통계는 **계산된83/133/103건에만 조건부**다. 서로 다른 가용 표본이므로 이 숫자로 표현 간 공정한 pose 정확도 순위를 선언하지 않는다. computed는 frozen B5가 숫자를 반환했다는 뜻이며, 검출 mask가 틀리면 큰 pose 오차도 그대로 남는다. 예컨대 LR의 `FE2E_S053_O50_v43_LR_Scan`은 norm2236.168mm다. 이상치를 제거하거나0으로 채우지 않았다.
+|model|render|n|detected|iou50|iou75|mean_iou|conditional_mean_iou|ci_low|ci_high|
+|---|---|---|---|---|---|---|---|---|---|
+|GeoCAD|GeoCAD|324|268|267|249|0.7449061042583013|0.9005581260436178|0.6959725880196681|0.7904551809443802|
+|GeoCAD|HR_Scan|324|255|253|229|0.7068197634838084|0.8980768759558977|0.6629781373014091|0.7538930487703471|
+|GeoCAD|LR_Scan|324|242|238|222|0.6698358267182636|0.8968049911434602|0.6184550040620893|0.7201613656900535|
+|HR_Scan|GeoCAD|324|187|180|172|0.5250607636892106|0.9097309488518945|0.4548252398018959|0.5900517652583691|
+|HR_Scan|HR_Scan|324|238|231|224|0.6778607675001871|0.9228020532355489|0.6169801267197396|0.7391859663243942|
+|HR_Scan|LR_Scan|324|222|218|216|0.640934467910467|0.9354178720855464|0.5769428440807477|0.7051572437295114|
+|LR_Scan|GeoCAD|324|233|144|125|0.40075416676188913|0.5572718885444294|0.3422991449838768|0.4650870366171675|
+|LR_Scan|HR_Scan|324|280|198|191|0.5806754601146292|0.6719244609897852|0.5238485391091462|0.637294589525746|
+|LR_Scan|LR_Scan|324|292|218|210|0.635469737434991|0.7051102566059488|0.5811706619151105|0.6895051406353249|
 
-task-design datum은 기존 잠금의 world center(−25.888,30.509)m /yaw90°다. pred−datum의 longitudinal=+Y, left=−X, yaw modulo180, XY norm을 썼다. 이는 authored task frame 기준 오차이며 독립 실물 metrology 오차가 아니다. C20도 residual-load 중심으로 datum을 옮기지 않았다.
+|model|n|equal_domain_mean_iou|ci_low|ci_high|diagonal_mean|off_diagonal_mean|diagonal_minus_off|
+|---|---|---|---|---|---|---|---|
+|GeoCAD|972|0.707187231486791|0.664006766315515|0.7511361933105911|0.7449061042583013|0.6883277951010359|0.05657830915726536|
+|HR_Scan|972|0.6146186663666215|0.5554279075370795|0.6726860278422411|0.6778607675001871|0.5829976157998388|0.09486315170034831|
+|LR_Scan|972|0.5389664547705031|0.48937936983701247|0.58928474322182|0.635469737434991|0.4907148134382592|0.14475492399673184|
 
-장면군별 계산 가능 수(각36건):
+이 표본의 동일 render 열에서도 CAD 모델은 무조건 평균IoU가 가장 높았으며, LR은 더 많은 검출과 낮은 선택mask 일치가 함께 나타난다. 순수 기하 인과효과나 sim-to-real 검증으로 확대하지 않는다. 같은 이미지 내 모델간 차이·승패와 base cluster CI는 `same_image_paired_comparisons.csv`다. `cross_rep_detection_IoU_heatmap.png`에 검출/IoU/IoU≥.5를 함께 표시했다. 후보 confidence·GT-match는 `cross_all_candidate_GT_match_logs.csv`, 후보/선택mask는 `cross_predictions/<model>__<case>/`에 저장했다.
 
-|거리/시점|HR|LR|CAD|
-|---|---:|---:|---:|
-|Near/Front|1|1|1|
-|Near/30°|12|20|13|
-|Near/60°|10|17|14|
-|Mid/Front|30|34|36|
-|Mid/30°|19|26|25|
-|Mid/60°|11|18|14|
-|Far/Front|0|0|0|
-|Far/30°|0|8|0|
-|Far/60°|0|9|0|
+## C — 빨강1+시멘트1 실제 정적108장
 
-완전성별 B5 계산 수는 HR C100/C60/C20=21/21/41, LR40/39/54, CAD34/29/40(각108건)이다. 전체의 C×O, actual occlusion min/max/mean, 재질·거리·시점·조명·표현별 분모는 `B5_pose_planner_summary.csv`에 있다. 모든 case의 연속 실제 가림률을 유지하며 명목 O 라벨을 실제 비율로 바꿔치기하지 않았다.
+3표현×red C3×O3×좌우2×seed2=108개,36개 공통 설정이다. cement는C100이며 외부판이 빨강 target에만 적용되도록 target bbox 범위에 panel을 구성했다. 고정 center-front/Mid camera·상속 Nominal 조명, x오프셋±.75m, seed별 공통 y오프셋±.02m를 사전에 고정했다. 각 표현의 red/cement 자산을 각각 사용했다. 별도 물리 pallet2개와 GT stack label2개가 있으며 화면crop·mask overlap0이다. 색상 heuristic은 적용하지 않았다.
 
-479건의 datum 거절은 `NO_CONNECTED_PALLET_SURFACE_PASSED_UNCHANGED_PLANE_GATES`다. Far의 작은 연결 ROI는 erosion 뒤100점/면적 조건을 못 만족하는 사례가 있고, Near/Front에서는 높이 후보가 bevel/side 표면까지 연결되어80% gate를 넘지 못하는 사례가 있다. 실제 `FE2E_S001_O0_v43_HR_Scan` 후보는2214/3288=67.34%로 거절됐다. 모든 Near 실패의 원인을 단일 사례로 일반화하지 않는다.
+`mixed_108_cases_locked.csv`와 `mixed/policy_locked.json`은 관측 전 고정했다. 첫12장은 C100/O0×좌우2×seed2×표현3이며 `mixed/pilot_12_released.json`과 `mixed_pilot12_GT_contact_sheet.png`로 먼저 공개했다. 나머지96장도 같은 단일 세션에서 취득했다. 패널은 모든 표현 target 최소 depth의절반에 두고, 추론 결과를 보지 않고3표현 silhouette의 공통 minimax column을 고정했다. 각 표현별 튜닝은 없다.
 
-**구체 후속 수정:** 바닥 위 높이만으로 묶인 후보를 센서 depth의 국소 surface normal·불연속으로 나눠 bevel/수직면을 분리하고, 동일 pallet의 분리된 coplanar patch를 사전 치수 안에서 결합하는 새 전향 버전을 검토한다. Far는 기존 해상도에서 erosion 뒤100점 미만이면 이 결합 정책 또는 별도 고해상도 관측이 필요하다.80%/100점 기준을 낮추거나 GT ROI로 채우는 방안은 쓰지 않았다. 이번에는 이 새 정책을 사후 튜닝·재실행하지 않았다.
+실제 O0=0, O25=23.7857–25.4809%, O50=49.2238–50.4256%, **108/108 새±2%p 범위 충족**. GT의 사용은 fixture calibration과 사후 scoring뿐이며 frozen-model 추론·후보선택에는 없다. 캡처 결과는 actual만108행, 나머지 예정행을 성공으로 채우지 않았다.
 
-기존 v43 B5 18건 중17건은 새 계산도 가능했고 XY 변화 최대0.003786mm다. 나머지 `FE2E_S043_O0_v43_HR_Scan`은 새 connected ROI에서573/743=77.12%로 거절됐다. 기존 v43의 계산 값을 지우거나 새 실패로 소급 바꾸지 않았다. `old18_new_derived_comparison.csv`는17개 비교 가능 사례만 담고, 빠진1건은 전체54/972 결과 CSV의 명시적 거절로 남긴다.
+선택baseline은 class0 최고신뢰도다. 선택mask red IoU≥.5/cement<.5이면 RED_TARGET, 반대이면 WRONG_CEMENT, 검출없으면 MISS, 그 외 AMBIGUOUS_OR_LOW_IOU로 사전에 점수화했다. 이 IoU association cut .5의 명시적 scoring 규칙은 실행 inference 소스에 기록되며, 별도 관측 전 policy파일에는 association cut이 상세히 기록되지 않았다는 문서 한계가 있다. 모델이 언어로 지시한 빨강을 이해하거나 빨강/시멘트를 분류했다고 하지 않는다.
 
-## 4. Offline planner와 실제 motion의 분리
+|scope|model|render|n|red|wrong_cement|miss|ambiguous|oracle_red50|oracle_cement50|both_coverage|
+|---|---|---|---|---|---|---|---|---|---|---|
+|matched|GeoCAD|GeoCAD|36|11|25|0|0|25|35|24|
+|matched|HR_Scan|HR_Scan|36|18|10|5|3|21|27|17|
+|matched|LR_Scan|LR_Scan|36|13|18|0|5|24|28|18|
+|all3|GeoCAD|GeoCAD|36|11|25|0|0|25|35|24|
+|all3|GeoCAD|HR_Scan|36|13|22|0|1|21|36|21|
+|all3|GeoCAD|LR_Scan|36|10|26|0|0|22|36|22|
+|all3|HR_Scan|GeoCAD|36|19|0|15|2|21|0|0|
+|all3|HR_Scan|HR_Scan|36|18|10|5|3|21|27|17|
+|all3|HR_Scan|LR_Scan|36|14|22|0|0|19|35|18|
+|all3|LR_Scan|GeoCAD|36|9|0|2|25|20|1|0|
+|all3|LR_Scan|HR_Scan|36|12|6|1|17|21|19|9|
+|all3|LR_Scan|LR_Scan|36|13|18|0|5|24|28|18|
 
-센서 calibration에서 기존 mount offset으로 복원한 start와 **새 predicted B5 중심**으로 기존 PRE offset을 생성했다. task GT center는 planner 입력에 없다. v30 executed follower의 strict quintic은 AST 함수만 추출했다. v36 smooth-S도 별도 OFFLINE branch로 사용했다. offset.338m, wheelbase.7m, steering15°, curvature bound `.95*tan15°/.7=.363645332585095/m`를 변경하지 않았다.
+matched만108평가, all3는동일108저장영상에서324평가다. Oracle coverage는 GT-best matching 상한이며 실제 최고confidence 선택과 다르다. `mixed_target_confusion_heatmap.png`, `mixed_material_GT_predictions_contact_sheet.png`, `two_stack_candidate_predictions.csv`와 모든 candidate masks/overlays가 있다. semantic material recognition은 **NOT_ESTABLISHED**다.
 
-|기존972에서 계산된 B5에 조건부|HR|LR|CAD|
-|---|---:|---:|---:|
-|평가 가능|83|133|103|
-|old strict 곡률만 통과|4/83|3/133|4/103|
-|smooth-S 곡률만 통과|11/83|10/133|8/103|
+발견한 결함: locked red_position의 left/right가 실제 영상 좌우와108개 모두 반대다. 원래case ID/잠금/표본은 수정하지 않았고 `mixed_instance_geometry_audit.csv`의 actual_red_position에 영상에서 측정한 좌우를 별도로 제공한다. 양쪽이 균형이라 aggregate 분모는 유지되지만 좌우별 해석에는 반드시 actual 열을 사용해야 한다.
 
-old branch 합계: 통과11, CURVATURE_INFEASIBLE259, LOCAL_PATH_DISTANCE26, FORWARD_GOAL_REQUIRED23. smooth branch: 통과29, bearing search bracket 내 경로 없음279, curvature 거절11. strict 곡률 거절 뒤 최대곡률은 예외 하나만 제거한 별도 진단 사본으로만 구했고 거절을 통과로 바꾸지 않았다. 각 magnitude와 이유는 `B5_972_offline_results.csv`에 있다.
+## A5 — B5 부분완료와 기존v44의 충돌 해결
 
-full swept geometry/collision/support, 실제 actuator response·steering ownership·safe stop는 NOT_QUALIFIED다. geometry 평가 분모0, 실제 motion0/물리 PRE·FINAL0/실제 stop0이며 live 성공률은 N/A다. v38 조향 정책 HOLD를 해제하지 않았다.
+요청문은v44 미실행이라고 했지만 로컬에는v44 manifest/실행CSV/소스/로그가 실제 존재했다. manifest가 고정한5658개 sourceSHA를 직접 재검증해 PASS,972행 역사자료를 `B5_v44_historical_verified.csv`로 구분해 참조했다. 이 자료의319계산/479거절/174무검출 및 **HUMAN_REVIEW_BEFORE_ROLLOUT=FAIL**을 그대로 보존했다. v44를 없는 실행으로 만들거나319건을v45 새 결과로 세지 않았다.
 
-## 5. 새 v44 가림 fixture: 오프라인108개 base 검증 후 실제54건
+v45는 sensor-only estimator의 감사한 AST 함수만 추출해 새54 pilot에서 재실행했다. erosion2/brick exclusion3/inlier80%·100point·3mm/5° 및height/연결표면gate 유지, GT ROI 보정0이다. 첫wrapper는 `__file__` 누락으로54건 FAILED였다. 실패 CSV/log/source를 보존하고 새v45b에서 namespace만 수정해54건 재검사했다: **계산51(HR16/LR17/CAD18), datum거절1, 원무검출2**. 추가918은 사람의 ROI검토 전 확장게이트 때문에 NOT_RUN이다. `B5_972_offline_results.csv`에 최종상태와 최초실패상태를 함께 남겼으며 실패54개를 분모에서 지우지 않았다. v45b estimate의codeSHA는추출된원함수source를 가리키며 wrapper SHA는final_validation에별도 있다.
 
-`analysis/three_rep_occlusion_fixture_20261102_v44.py`는 **fixture 설정 전용**으로 기존 O0 GT target mask/depth를 읽는다. 새 판의 깊이는 각 paired scene의 세 표현 target pixel 중 최소 axial depth의 절반으로 정한다. 따라서 세 표현의 원래 표적 표면보다 앞이다. 세 silhouette의 column cumulative ratio에 대한 minimax 오차가 가장 작은 **공통 한 경계**를 골라 판 world vertices/appearance를 고정했다. 모델 confidence/IoU/B5/planner 결과를 목적함수로 쓰지 않았고, 표현별 판 조정도 없다.
+계산51건의 task-design(-25.888,30.509)/yaw90°에 대한 signed X/Y/heading과 old/smooth offline 결과는 `offline_planner_summary.csv`다. old곡률4/51, smooth12/51 통과이며 full geometry0/실제로버0이다. heading은180°주기 convention을 유지했으며 큰오차도그대로 남겼다. independent physical metrology 인증이 아니다. 다음 구체 작업은 **54개sensor ROI/plane의 사람 검토 기록을 확보한 뒤 별도버전으로918개 rollout**이다. 같은알고리즘 재실행이 미충족 사람검토를 대신하지 않는다.
 
-새 tolerance `abs(actual−nominal)≤.02`는 v44 engineering targeting 기준으로 사전 고정했다. v43의 사후 제외 기준이 아니다. 전체108base×3O=324 scene 설정의 sensor/GT ray 투영 예측은 모두 이 범위였다. **이는 오프라인 예상324개이며 실제 보정 후972장 취득이 아니다.** 실제 실행은 MID/FRONT/site Nominal의6base×3O×3rep=새54장만 했다. 추가 문제 triplet 재취득이나972 중복 획득은 하지 않았다.
+## 실행·실패·보존 및 판정
 
-같은 source stage·C membership·seed·카메라·재질·조명을 사용했고, red FULL/T04/T04 및 cement FULL/T02/T02도 v43와 같다. 새 `_v44_` case ID와 별도 `occlusion_pilot54/`를 사용했다. 판은 collision API 없는 시각 fixture이며 driver를 시작하지 않는다. 유효 mesh points를 attach 전에 생성해 v43의 초기 points buffer 오류를 재발시키지 않았다. 새54건 metadata는 실제 calibration evidence SHA를 가리키고 unique frame_id54개를 갖는다.
+Kit1회, timeline stopped/OmniGraph attach전 비활성화/rover world pose 불변검사. 시작→close139.321초, sampled RSS최대7.72075GiB≤8GiB, exit0/owner잔존0. close_return관측0이며 process정상종료와구분한다. renderer `[Error]`0이지만 **Warning824줄, 초기flattened prototype 미해결reference 경고600줄**이 있다. 복사초기 내부 prototype을 새 layer에 가져오지 않아 발생했으며 capture전brick visual references를각자산class로설정한뒤실제양쪽mask를확인했다. 전체로그를warning-free라고하지않는다. 후속패치는fixture복제시내부reference closure를포함하거나초기clone을instance reference로구성한뒤attach전모든visualbinding을완료하는것이다. 이번추가Kit재시도없다.
 
-|새 실제 가림|범위|목표±2%p|
-|---|---|---:|
-|O0|0%|18/18|
-|O25|24.53–25.51%|18/18|
-|O50|48.64–50.57%|18/18|
+감사manifest 저장전 시작된 첫cross호출은FileNotFoundError로종료해 `cross_startup_failure.log`에보존했다. 이후manifest생성후 실제2,916추론완료. 초기mixed소스compile unmatched괄호FAIL도실행전수정했다. standalone sdg_tools의pxr불가도확인해실제Isaac USD library 경로로read-only fixture검사를수행했다. B5첫실패54와새v45b를구분했다.
 
-전체18 paired triplet의 공통판/초기 pose 및 모델 hash를 확인했다. outside-target0/54다. 이 파일럿 성공으로 보정 후Near/사선의 실제 목표 달성까지 인증하지 않는다. 그 장면들은 아직 오프라인 qualification뿐이다.
+실제 명령은 scripts/three_rep_cross_infer_20261102_v45.py 및mixed_infer를 `/home/user/anaconda3/envs/sdg_tools/bin/python`으로 실행, Kit은 `/home/user/anaconda3/envs/hh_isaac51/bin/python scripts/three_rep_mixed_session_20261102_v45.py`이다. 추론환경 torch2.7.1+cu128/ultralytics8.4.129/numpy2.4.6/Python3.11.15. 설치·업그레이드0. 코드snapshot은 `source/`, 전체SHA는 `final_validation.json`에 있다. 원본weights/USD/v43RGB-D/GT/추론/lockedartifacts expected를수정하지않았다.
 
-|새54장 실측|HR|LR|CAD|
-|---|---:|---:|---:|
-|캡처·동결 모델 추론|18/18|18/18|18/18|
-|검출 존재|18/18|17/18|18/18|
-|GT visible-mask IoU≥.5|17/18|17/18|18/18|
-|평균 pixel IoU, 무검출0|0.915966|0.876592|0.878682|
-|같은 v44 센서 정책 B5 계산|18/18|17/18|17/18|
-|old 곡률만 통과 / B5 계산|2/18|0/17|4/17|
-|smooth-S 곡률만 통과 / B5 계산|5/18|3/17|6/17|
+모델SHA:
 
-새52개 B5도 full geometry/live 검증은 없다. v43 pilot와 v44는 별도 새 RGB-D·별도 모델 출력이며 개선/악화된 개별 mask를 교체하지 않았다. 판의 깊이·경계 변경은 shadow/occluded appearance에도 영향을 줄 수 있다. 파일럿 평균 변화로 모델 성능이 일반적으로 개선됐다고 주장하지 않는다.
+- HR `257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca`
+- LR `d58e18a87f4cafba6fd92d8bade6e2ff12ad2380db427311b072859fd2cca42f`
+- CAD `bbfb9fc8d0c421154844f7e299b6d8162b9394eb07d36a31110f593c0813ce8f`
 
-Kit 시작요청 2026-11-02 20:39:13 KST → process exit20:39:49 KST. 시작→close 진입33.59초, process 종료까지36.33초. Kit1회·retry0, sampled owner RSS최대7,172,349,952bytes=6.67977GiB <8GiB, 전체GPU최대6913MiB.600초/26000MiB 한도를 지켰다. renderer Error0, exit0, owner PID3042803 잔존0. Python close_return event는0이며 process 정상 종료와 구분한다. 모든 그래프를 attach 전 비활성화했고 매 render의 timeline stopped·Rover matrix 불변을 확인했다. ROS/driver/steering/propulsion/physics play0이다.
+주요 실행sourceSHA:
 
-## 6. 검증·파일·다음 단계
+- `three_rep_B5_recheck_20261102_v45.py`: `f7ca0ea52e08ce691ef03c119336eea3588c8684635f97324f4ea03bdaaaa131`
+- `three_rep_cross_infer_20261102_v45.py`: `4b3dba7b4977971c06dabce0ac6ef26ae4126e34dc8bec2d933ad755f7d5c85c`
+- `three_rep_mixed_session_20261102_v45.py`: `357b6491313a950b3ed255ae9ae93433d44f15993be8dec4fbe5554e26e82e32`
+- `three_rep_B5_recheck_20261102_v45b.py`: `049498f51c8b1c08ac2a46c7bc2153ee42eec860a476171cc7476a58b4255967`
+- `three_rep_mixed_infer_20261102_v45.py`: `40690fac7d191222897066ef48b9409a536d7a346844195a5fc4ddd87276d171`
+- `three_rep_final_verify_20261102_v45.py`: `960f63a5bb776907467e67267c0b5d8f82f33701ab70c6eb807c01299fb8ab9c`
+- `three_rep_cross_results_20261102_v45.py`: `0c14c8994c29aa324ea4231756011c29a59b9f3e63c9a34e2752f422e9b7d679`
+- `three_rep_extra_diagnostics_20261102_v45.py`: `4216f288eedbd35273f27fbf59645ac4aa63ce548f3028cbaa5309bcb4377b0e`
+- `three_rep_cross_audit_20261102_v45.py`: `9cf594def615511888015e8241bb1e53a251aac1ded1de65ba58bead6fab362a`
 
-원래972건 센서 source5,658파일 hash 및 v43 original capture5,832개 hash 비교 PASS, source unavailable0. 모델은 기존 adapted M50 REALVAL_MASKBEST v01이며 이번에 재학습·재선택하지 않았다: HR `257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca`, LR `d58e18a87f4cafba6fd92d8bade6e2ff12ad2380db427311b072859fd2cca42f`, CAD `bbfb9fc8d0c421154844f7e299b6d8162b9394eb07d36a31110f593c0813ce8f`.
+판정: A1–A4 실제CSV/그림및B2,916/C108actual취득·324추론 **RUN**, B5파일럿54 **RUN**, 추가918B5 **NOT_RUN/HUMAN_REVIEW_HOLD**. mask성과는주행성과가아니다. RealTest189는이미역사평가완료이며선택/재평가에사용0, real외부검증red-only범위불변. v30HR n1성공과v31/v32curvatureFAIL/v38steeringHOLD는불변이다.
 
-원본 pose evaluator SHA `cc95b96c3305dcbe257a40fcf16f0e68a9e58ae0d5ae43f9cbd31e80ffec0988` 및 추출 함수 AST를 검증했다. v01→v03/geometry v02 known9 SHA·108/432행 PASS, geometry lock 자체 독립 expected UNKNOWN은 유지한다. 새 Kit 직전 기존193개 expected 참조도 mismatch0이었다. 추정 코드의 GT파일/task-datum 읽기 부재·319채택 plane의 동일 수치 gate·새54 provenance 및 target tolerance PASS다. **사전 인간 검토 절차는 FAIL**이며 수치/보존 PASS와 분리한다.
-
-실제 명령은 다음이며 모두 exit0이다. 마지막 검증은 새 output 생성형이라 이미 있는 root에 무작정 반복하지 않는다.
-
-```text
-sdg_tools/bin/python scripts/three_rep_B5_sensor_20261102_v44.py --prepare
-sdg_tools/bin/python scripts/three_rep_B5_sensor_20261102_v44.py --pilot
-sdg_tools/bin/python scripts/three_rep_B5_sensor_20261102_v44.py --all
-sdg_tools/bin/python analysis/three_rep_occlusion_fixture_20261102_v44.py
-hh_isaac51/bin/python scripts/three_rep_occlusion_session_20261102_v44.py
-sdg_tools/bin/python scripts/three_rep_occlusion_infer_20261102_v44.py
-```
-
-위 실행기는 `/home/user/anaconda3/envs/` 아래 실제 경로다. supervisor가 새 Kit command/env 일부·PID·stdout·process exit를 `occlusion_pilot54/invocation.json`, `kit_stdout.log`, `process_exit.json`에 기록했다. 코드 diff는 `source_diff.txt`; diff의 exit1은 텍스트 차이 표시이며 실험 terminal 실패가 아니다. 분석·검증·그림 코드 source도 `executed_code/`에 보존한다. 새 scientific package 설치0, 기존 프로세스 종료/GPU reset0, old972 YOLO 재추론0, old972 재취득0, 학습0이다. 명시된 절차 FAIL 이외에 terminal 실행 실패·재시도는0이다.
-
-주요 출력:
-
-- `B5_54_pilot_reanalysis.csv`, `B5_972_offline_results.csv`: 원래 source에 대한 **v44 derived** 상태·pose·오차·curve. 원래v43 파일이 아니다.
-- `B5_pose_planner_summary.csv`, `B5_progress.json`, `old18_new_derived_comparison.csv`.
-- `v44_occluder_calibration_pilot54.csv`, `v44_pilot54_offline_planner.csv`, `v44_new_pilot_summary.json`, `v44_new_pilot_planner_summary.json`.
-- `derived/<original_case>/`: sensor ROI/plane/calibration evidence·result·offline planner. `occlusion_pilot54/captures/<new_case>/`: 새 실제 RGB-D/GT/overlay/예측. `occlusion_pilot54/sensor_B5/`: 새 관측에서 계산한 sensor pose.
-- `B5_availability_distance_view.png`, `B5_signed_pose_errors.png`, `v44_vs_v43_occlusion_and_IoU.png`, ROI 접촉표2개 및 `inlier_depth_panels/`20개.
-- `manifest.json`, `source_972_frozen.json`, `sensor_policy_locked.json`, `original_source_preservation.json`, `final_validation.json`, `diverse_visual_review.json`, `known_locks.json` 및 모든 실제 stdout 로그.
-
-변경은 새 v44 scripts4개·analysis6개, 이 보고서, latest_report와 PROJECT_STATE다. bulk는 Git 밖이며 원래 stage·locks·weights·Proxy·benchmark·v43원자료·실패 기록을 보존했다. Test1200/Real Test189 선택·재평가0, real validation의 red-only 한계를 유지한다.
-
-다음은 **사람이54 ROI와 거리/시점20개 대표 inlier 패널을 검토해319계산치의 사용 범위를 정하는 것**이다. Near/Front 및Far의 센서 후보 분리/결합 보강은 새 버전으로 명세하고 검토 뒤 수행해야 한다. Near/사선 보정판의 실제 검증도 이번54가 대신하지 않는다. v30 HR n1의 observed endpoint2.79451mm 대 design55.23288mm, v31/v32 old-quintic 거절, v35/v36 offline, v38 live steering HOLD는 그대로다. 새 조향 시험·추가 Kit·실제 주행을 자동 시작하지 않았다.
+변경파일은새v45/v45b code9개, 본보고서/latest_report/PROJECT_STATE다. bulk는Git밖에있다. `.git`없음으로stage/push없고원격동기화완료는UNKNOWN이다. HANDOFF marker는정상보고서동기화요청이며실험추가승인이아니다.
