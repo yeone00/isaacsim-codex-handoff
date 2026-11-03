@@ -1,161 +1,172 @@
-# 기존 USDZ 환경4종 실제 시각화 및 대체 가능성 검토
+# B1 / Jeonju 학습용 합성데이터 재생성 준비
 
-2026-11-03 KST. **네 에셋 모두 현재 PC의 Isaac Sim5.1에서 실제로 렌더링됐다. 그러나 네 파일 모두 Mesh/Collider가0개라 지금 상태로 물리 주행 환경을 대체할 수는 없다.** 우선 검토 추천은 **B1_CLOSED_EV**, 등급은 **B(조건부 대체 가능)**다. 넓은 통로·공사 구획·기둥·자재가 실제 이미지에서 관측된다는 근거이며, 주행 공간·작업 성공·권리 허가가 인증됐다는 뜻은 아니다.
+조사·실행일: 2026-11-03 KST. **기준 환경은 `B1_CLOSED_EV.usdz`로 선정했다. 별도 Stage 구성, HR/LR/GeoCAD 18장 렌더, 공통 canonical annotation, YOLO 변환 및 CPU 로더 연결까지 실행했다.** 전체 8,400장 생성과 학습은 수행하지 않았다. 실행 경로는 준비됐지만, 기존 ISO400 조명을 그대로 이식했을 때 나타난 하이라이트 포화와 새 배경의 전체 가시성 검사는 미해결이다. 따라서 상태는 **소규모 연결 검증 PASS / 대량 생성 품질 미승인**이다.
 
-## 1. 실행 범위와 실제 산출물
+기존 `Constructionsite_isaac.usdz`는 평가용으로 유지했다. 원본 USDZ·브릭·기존 코드·평가 Stage·PROJECT_STATE는 변경하지 않았다. 검사 대상 20개 입력 SHA256이 작업 전 기록과 일치한다. 물리 재생·로봇 이동·ROS·학습·optimizer update는 모두 0이다.
 
-- 원본 경로: `/home/user/hh/isaac_cosmos/assets/assets/environment/`.
-- 정적 Kit 2세션, 에셋4×(첫6시점+보완12시점)=**72장**, 별도 Mesh 렌더 대조군2장, 총74개960×600 PNG를 저장·decode 확인했다. 4개 비교패널2장과 환경별6시점패널도 만들었다.
-- 기존 연구 Stage를 열어 바꾸지 않았다. 각 에셋은 **새 anonymous Stage의 subLayer**로 읽고 새 SessionLayer에 카메라/조명만 추가했다. USD 저장0, 로버 삽입/주행0, 팔레트 삽입0, Physics play0, ROS0, YOLO 추론/학습0, 기존 연구 재실행0이다.
-- 원본5개USDZ+PROJECT_STATE+기존출처보고서 총7파일 시작/종료SHA 불변PASS. 기존 연구 코드·기존 결과를 수정하지 않았다. PROJECT_STATE와 latest_report도 갱신하지 않았다.
-- 실제 실행/카메라transform·시점별품질·설정·종료코드는 companion 폴더의 `run_manifest.json`, `capture_results.json`, `detail_capture_v02/capture_results.json`, `session_events.jsonl`, `kit_stdout.log`, `process_exit.json`에 있다.
+## 1. 환경 선정과 사용 범위
 
-| 환경 | bytes | SHA256 |
+| 항목 | B1_CLOSED_EV | Jeonju_122151 |
 |---|---|---|
-| 5F_CLOSED_EV | 86326118 | `892ca7c846bbf2b48399176350185a50fb95bee8997fc1ec57ae50337c822b81` |
-| 5F_OPEN_EV | 129619954 | `e597ce4c9af6f1c41f9f9c0a8cbc5d3145cc02ea9266d36ebf9557768c873dca` |
-| B1_CLOSED_EV | 271964190 | `de908a9e91ab433556db57d2e584422801a3e93f3d469b6bf2c324ecb9e0586d` |
-| Jeonju_122151 | 286042665 | `618d0e3d2587ab2f4f0f42cc24e0db46fcf848026b1285832c50157737aea611` |
+| 실제 렌더에서 확인한 구역 | 길게 열린 통로, 반복 기둥, 가림막, 현장 물품 | 엘리베이터·콘크리트 전실 중심 |
+| 이번 작업 적합성 | 여러 파레트와 거리 변화에 사용할 통로가 비교적 명확 | 선택 가능한 전실 배경은 있으나 이번 목적에서는 B1 통로가 편리 |
+| 결정 | **학습용 기준으로 선정** | 대안으로 보존, 이번 브릭 smoke는 수행하지 않음 |
 
-## 2. 네 환경 대표 비교 이미지
+두 파일의 렌더에서 확인한 구역은 다르다. 같은 건물의 일부인지, 동일 스캔의 다른 crop인지까지 증명하지 않았다. 선정에는 완전한 동일성 증명이 필요하지 않다. 이전 실제 렌더와 구조 검사는 [환경 비교 보고서](alternative_environment_asset_review_20261103.md)에 있다.
 
-아래는 **각 원본 NuRec에서 실제로 렌더링한 이미지**다. 생성형 이미지·다른 배경·가짜 바닥으로 대체하지 않았다.
+두 환경은 NuRec Volume 기반이며 이전 구조 검사에서 Mesh/Collision/Rigidbody가 없었다. 이번 용도는 정적 RGB와 annotation 생성이다. **화면에 보이는 바닥을 물리적으로 주행 가능한 바닥으로 인증한 것이 아니다.** NuRec의 외관은 Mesh와 동일하게 재조명되지 않으며 스캔에 포함된 사람·물체 잔상도 배경 특성이다. 제작자·이용 권한은 여전히 UNKNOWN이며 [출처 조사](construction_environment_usd_provenance_audit.md)의 결론을 사용 가능 승인으로 바꾸지 않는다.
 
-![4개 환경 로봇 높이 후보 비교](alternative_environment_asset_review_20261103_v01/four_environment_comparison.png)
-
-카메라는 원본 좌표(0,0,z=.65m)에 배치하고 방향을 달리했다. z=.65는 대략적인 낮은 카메라 시점용 설정이다. **원본 바닥 높이를 독립 측정하지 않았으므로 실제 지면에서 .65m라는 metrology 인증은 아니다.** 기존 로버 카메라의 정확한 mount/extrinsics를 이식한 실험도 아니다. 8방향 및z1.5m 보완뷰를 모두 보존했다.
-
-![4개 전체 crop 조감도](alternative_environment_asset_review_20261103_v01/four_environment_overviews.png)
-
-전체 조감도는 원본 neural crop bounding box에 맞춰 잡았다. 큰 외곽 범위·빈 공간 때문에 유효 재구성 부분이 작게 보인다. **회색 격자는 Isaac viewport의 편집용 guide이며 원본 바닥 Mesh/Collider가 아니다.** 보완 촬영에서는 grid를숨겼다. crop 전체모습은 유지하고 별도 가까운 조감도를 추가했다. crop를 실제 사용 가능한 면적·층높이로 해석하지 않는다.
-
-## 3. 환경별 실제 공간 관측
-
-### 5F_CLOSED_EV
-
-승강기 폐문, 창, 석고보드/콘크리트 벽과 짧은 전실, 바닥의 거친 표면가 실제 화면에서 보인다. 짧은 전실/복도; 넓은 접근·회전 공간과 Far시점 확보 미검증. 장애물/벽체: 폐문 승강기·측면 벽·모서리·좌측 개구부. 자재 배치 후보: 전실 바닥이 후보로 보이나 1.1m 팔레트와 로버 통과 동시 확보 미검증. 품질 한계: 창 과노출, 캡처 범위 밖/근접 시 blur; 외곽/하부 crop는 실제 바닥이 아님.
-
-[원본 전체 조감도](alternative_environment_asset_review_20261103_v01/images/5F_CLOSED_EV__overview.png) · [로봇 높이 후보 시점](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_CLOSED_EV__camera_z0p65_S.png) · [바닥](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_CLOSED_EV__floor_near_origin.png) · [장애물](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_CLOSED_EV__camera_z0p65_W.png) · [배치공간 관측](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_CLOSED_EV__standing_z1p50_S.png)
-
-![5F_CLOSED_EV의 실제 렌더6시점](alternative_environment_asset_review_20261103_v01/5F_CLOSED_EV_review_panel.png)
-### 5F_OPEN_EV
-
-5F_CLOSED와 유사한 전실, 열린 승강기 개구와 내부 모습; 개구 가장자리 잔상/반투명 왜곡가 실제 화면에서 보인다. 승강기 인계/문 앞 인식의 조건부 후보; 동일형상·정합은 미검증. 장애물/벽체: 승강기 문틀·문턱·벽과 모서리; 애니메이션/물리 Door는 없음. 자재 배치 후보: 문 앞 단거리 배치 후보; 문턱/승강기 내부 지지 구조 미검증. 품질 한계: 열린 개구부의 잔상·반투명 왜곡, crop Z가11.94m로 사용 가능한 단층 높이를 뜻하지 않음.
-
-[원본 전체 조감도](alternative_environment_asset_review_20261103_v01/images/5F_OPEN_EV__overview.png) · [로봇 높이 후보 시점](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_OPEN_EV__camera_z0p65_SW.png) · [바닥](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_OPEN_EV__floor_near_origin.png) · [장애물](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_OPEN_EV__camera_z0p65_W.png) · [배치공간 관측](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_OPEN_EV__standing_z1p50_S.png)
-
-![5F_OPEN_EV의 실제 렌더6시점](alternative_environment_asset_review_20261103_v01/5F_OPEN_EV_review_panel.png)
-### B1_CLOSED_EV
-
-지하층으로 보이는 넓은 공사 통로, 기둥, 천장 배관/덕트, 임시 비닐 구획, 콘·안내판·소화기·자재가 실제 화면에서 보인다. 네 에셋 중 운반 접근/장애물 맥락의 우선 후보; 실제 폭/회전반경/전 구간 연결성 미측정. 장애물/벽체: 기둥·비닐 구획·콘·안내판·자재; 사람 모양 흐림/잔상도 보여 동적 장애물로 인증할 수 없음. 자재 배치 후보: N방향 통로 옆 빈 바닥이 후보; 배치와 swept clearances는 미검증. 품질 한계: 이동체로 의심되는 흐림/잔상과 재구성 구멍;66×124m crop를 가용 면적으로 사용하면 안 됨.
-
-[원본 전체 조감도](alternative_environment_asset_review_20261103_v01/images/B1_CLOSED_EV__overview.png) · [로봇 높이 후보 시점](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/B1_CLOSED_EV__camera_z0p65_N.png) · [바닥](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/B1_CLOSED_EV__floor_near_origin.png) · [장애물](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/B1_CLOSED_EV__camera_z0p65_W.png) · [배치공간 관측](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/B1_CLOSED_EV__standing_z1p50_S.png)
-
-![B1_CLOSED_EV의 실제 렌더6시점](alternative_environment_asset_review_20261103_v01/B1_CLOSED_EV_review_panel.png)
-### Jeonju_122151
-
-노출 콘크리트 벽과 열린 승강기, 청색 문/분전함, 공사 안내물이 있는 전실가 실제 화면에서 보인다. 승강기 주변 단거리 관측/인계 후보; crop 밖/넓은 이동 구역 품질은 미검증. 장애물/벽체: 문틀·노출벽·모서리·청색 문; 문턱의 지지/높이 미측정. 자재 배치 후보: 전실 일부 바닥이 후보; 물체를 실제 배치하지 않았으며 통로 여유 미검증. 품질 한계: 큰 crop61×129m 대비 origin 주변 관측 위주; 벽/개구 가까이 view-dependent blur.
-
-[원본 전체 조감도](alternative_environment_asset_review_20261103_v01/images/Jeonju_122151__overview.png) · [로봇 높이 후보 시점](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/Jeonju_122151__camera_z0p65_SW.png) · [바닥](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/Jeonju_122151__floor_near_origin.png) · [장애물](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/Jeonju_122151__camera_z0p65_W.png) · [배치공간 관측](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/Jeonju_122151__standing_z1p50_S.png)
-
-![Jeonju_122151의 실제 렌더6시점](alternative_environment_asset_review_20261103_v01/Jeonju_122151_review_panel.png)
-
-
-5F_CLOSED와5F_OPEN은 비슷한 전실로 보이며 승강기 문 상태의 차이가 화면에 나타난다. 다만 두 파일의 metric 정합·완전한 동일 공간이라는 판정은 하지 않았다. open파일의 문/개구에는 잔상·반투명 왜곡이 관측되므로 ‘열려 보인다’는 사실을 로봇이 안전하게 통과할 수 있다는 뜻으로 사용하지 않는다. 승강기 움직임/문 opening joint는 없으며 정적 재구성이다.
-
-B1의 N방향에는 사람 형상처럼 보이는 흐림/잔상이 있어 실제 고정 장애물이나 동적 사람 검증으로 사용할 수 없다. Jeonju는 열린 승강기와 노출 콘크리트 전실을 확인했지만 이름만으로 건물·층·권리자를 확정하지 않았다. 어느 이미지에도 팔레트를 합성 배치하거나 ‘이곳이충분하다’는 clearance 상자를 그리지 않았다.
-
-## 4. USD 구조·물리 활용 가능성
-
-| 환경 | 형식 | 원본Mesh/Collider | crop XYZ 크기(m) | 렌더 | 권리 |
-|---|---|---|---|---|---|
-| 5F_CLOSED_EV | NuRec | 0 / 0 | 9.92 × 15.91 × 5.07 | PASS | UNKNOWN |
-| 5F_OPEN_EV | NuRec | 0 / 0 | 14.40 × 36.36 × 11.94 | PASS | UNKNOWN |
-| B1_CLOSED_EV | NuRec | 0 / 0 | 65.90 × 124.03 × 8.80 | PASS | UNKNOWN |
-| Jeonju_122151 | NuRec | 0 / 0 | 61.10 × 128.57 × 12.53 | PASS | UNKNOWN |
-
-원본 네 파일은 전부 metersPerUnit=1, Z-up, composed prim5개이며 대체로다음 구조다.
+원본 경로:
 
 ```text
-USDZ/default.usda → gauss.usda
-/World
-  /gauss                         [Xform]
-    /gauss                       [Volume]
-      /density_field             [OmniNuRecFieldAsset]
-      /emissive_color_field      [OmniNuRecFieldAsset]
-           filePath → Jeonju_*.nurec
+/home/user/hh/isaac_cosmos/assets/assets/environment/B1_CLOSED_EV.usdz
+/home/user/hh/isaac_cosmos/assets/assets/environment/Jeonju_122151.usdz
 ```
 
-**확인됨:** 네 파일 각각 Mesh0 / CollisionAPI0 / RigidBodyAPI0 / PhysicsScene0 / Camera0 /Light0. 외곽Volume의extent/crop와nurecfield만으로 영상이 나타난다. 바닥 Geometry와 벽체 Collider가 없다. 바닥의평탄도·경사·마찰·지지·문턱·최소통로폭은 UNKNOWN이다. 실제 사진 같은 바닥이 보여도 바퀴가놓이는 물리표면은아니다.
+B1 SHA256: `de908a9e91ab433556db57d2e584422801a3e93f3d469b6bf2c324ecb9e0586d`.
 
-기존 Constructionsite는 Mesh1·CollisionAPI 적용prim1이 확인된다. 이것도원본환경전체의groundsupport/벽충돌·모든 paired조건의성공을인증한다는뜻은아니다. 이번에는기존 환경을다시렌더하거나주행검증하지않았다. 전수숫자·Prim계층·API·crop·멤버는 `USD_structure_and_collision.csv`, `USD_structure_details.json`에있다.
+## 2. ROI, 좌표계 및 새 Stage
 
-**물리화에 필요한 작업:** 실제측량/확인된모델에정합한바닥·벽·기둥·문틀·문턱·장애물geometry를새버전에작성하고Collider/마찰/지지/전체로봇sweptfootprint를검증해야한다. 단순히보이지않는Plane하나를넣으면모든문제가지원되는것처럼보일수있으므로이번에는추가하지않았다. 물리shape와neural appearance의정합이깨지면시각상빈곳에서충돌하거나보이는벽을관통한다.
+작업 루트:
 
-## 5. NuRec 지원 및 렌더링 확인
+```text
+/home/user/hh/isaac_cosmos/sdg_final/B1_SYNTHETIC_REGEN_PREP_20261103_v01
+```
 
-실제 실행은기존 `/home/user/anaconda3/envs/hh_isaac51/bin/python`의SimulationApp,IsaacSim5.1,RTX5090,driver570.172.08,RayTracedLighting,singleGPU다. `--/UJITSO/geometry=true`,원본 renderSettings를적용했다. timeline은모든update/capture중stopped로확인했고원본을save하지않았다. 카메라/ReviewFillLight는임시layer에만추가했다. 소스에있는neural조명표현은일반Mesh의물리적re-lighting과같다고가정하지않는다.
+이하 `P`는 위 경로다. 새 Stage는 `P/smoke_HR_Scan_v01/preview_stage.usda`이며 LR·GeoCAD에도 별도 preview가 있다. B1과 정규화 브릭을 참조한다. 기존 평가 Stage는 참조하거나 수정하지 않는다. Preview는 첫 번째 red 장면 `B1_TRN_000027`을 저장했으며 카메라는 `/World/B1Training/Camera`다.
 
-첫 세션25 PNG와보완 세션49 PNG를각각저장했고process exit는둘다0. 각 asset별 분리 로그에서 `Failed to create nrend renderer`0건이다. 실제 이미지 내용도확인해단순 PNG 파일 존재만으로렌더PASS라하지않았다. close_called는있고app.close_returned이벤트는없으므로정상process종료와Pythonclose복귀를구분한다.
+| 정의 | 값 / 확인 범위 |
+|---|---|
+| 작업 root | `/World/B1Training`, 원점 world `(0,0,0)m`, Z축 회전 +90° |
+| 좌표 대응 | local +X → world +Y, local +Y → world −X |
+| 사용 ROI | **world x=[−2.0,+2.0], y=[−0.9,+7.7]m** |
+| 바닥 기준 | world z=0m, 시각적 임시 기준. 측량한 평탄도·높이 아님 |
+| 카메라 | local 높이 0.600m, 원점 주변 기존 jitter, 주 목표 방향으로 조준 |
+| 주 파레트 위치 | local `(jitter_x + distance, jitter_y, 0)` |
+| 복수 파레트 | 기존 `cluster_offsets` 그대로, 최대 5개 |
+| 전체 manifest 기하 검사 | 회전된 1.1×1.1m 파레트 footprint **2800/2800이 선언 ROI 안** |
 
-공식 [IsaacSim5.1 Neural Volume Rendering](https://docs.isaacsim.omniverse.nvidia.com/5.1.0/assets/usd_assets_nurec.html)은NuRec시각화와추가collisionplane사용예를설명한다. [공식저장소issue635](https://github.com/isaac-sim/IsaacSim/issues/635)에는5.1/Blackwell및particle/volume지원문제기록이있다.이를사전점검했지만,**이번로컬네파일은실제렌더에성공했으므로그issue를그대로적용해실패라고판정하지않았다.** 반대로이성공을모든NuRec버전·다른GPU·센서지원보증으로일반화하지않는다.
+ROI 검사는 배치 사각형의 범위 검사다. 벽과의 교차, 실제 support, NuRec 표면과의 접촉을 검증하지 않는다. 인공 바닥이나 collider는 추가하지 않았다. 카메라와 물체에 같은 root 변환을 적용했으며, 평가용 rover 시작 자세와 연결하지 않는다.
 
-첫bbox기반촬영중일부crop-min+1m카메라는실제공간아래/밖을보아blur·빈영역이나왔다. 이결과를삭제하지않고initial24 contact sheet와raw이미지에남겼다. 보완촬영은같은원본에원점주변z.65/yaw8방향,z1.5N/S,바닥·가까운조감도12뷰를정적으로추가한것이다. 이시점탐색은실험모델선택이나HPO가아니다. 원본 정점/mesh를가정해임의이미지로대체하지않았다.
+![실제 ROI 카메라와 브릭 배치](synthetic_dataset_regeneration_plan_b1_jeonju_20261103_v01/roi_and_placement.png)
 
-## 6. 기존 환경과 비교
+왼쪽은 물체 없는 실제 B1 렌더, 오른쪽은 기존 브릭/파레트를 배치한 실제 렌더다. ROI 전체가 한 카메라에 모두 보인다는 뜻은 아니다. 수치 ROI와 각 장면의 카메라 world matrix는 config/ledger에 별도로 기록했다.
 
-| 평가항목 | 기존 환경 | 대안과 차이 |
-|---|---|---|
-| 현장 적합성 | 넓은 콘크리트 건설현장Mesh 배경 | 실제 공사 전실/통로 NuRec; B1이 운반 맥락에 가장 유리 |
-| 이동 가능 공간 | 기존 배치/잠금·과거 주행 기록 존재, 전 조건 경로 성공 아님 | B1 통로 유력, 나머지 작은 승강기 전실 중심 |
-| 자재 적재 공간 | 기존 fixture/팔레트 배치와 좌표 존재 | 빈 바닥 후보는 보이나1.1m pallet+rover여유 미검증 |
-| 카메라 환경 | 동결 HR/LR/CAD 모델과 원래RGB-D 정책 | view-dependent blur/holes, window exposure, baked appearance |
-| 물리 시뮬레이션 | 환경Mesh1/CollisionAPI1 확인; 과거 전체task success와 구분 | Mesh0/Collider0/RigidBody0/PhysicsScene0 |
-| 환경 수정 비용 | 기존 fixtures/robot/lighting pipeline | 높음: staticphysics map+neural alignment+sensor/lighting정합 |
-| 연구 재현성 | 기존protocol/seed/geometry/modelhash 보존 | 새 workspace/scene hash와 관측정책 잠금 필요 |
-| 라이선스 | upstream 미확정, CGTrader 후보 No-AI 여부 미해결 | 네 파일 모두 제작자·원URL·연구권리UNKNOWN |
+## 3. 기존 파이프라인 연결과 변경점
 
-특히현재 설계 중심(-25.888,30.509)m는5F_CLOSED/5F_OPEN/Jeonju의crop XY밖이다. B1에서는bbox안이지만실제표면·빈공간안이라는증거는아니다. **기존로버/팔레트/목표물의절대world좌표를그대로복사하는것은유효한이식이아니다.** 로봇과팔레트모델·상대fixture치수·물리상수는재사용가능성이있지만새workspace의검증된frame/지지/충돌조건에새로결합해야한다.
+초기 placeholder 개발 설정 대신 실제 최종 nominal v03 manifest와 production 코드를 사용했다.
 
-## 7. A/B/C 평가와 추천
+| 단계 | 재사용한 실제 근거와 동작 |
+|---|---|
+| 표본·split | `final_experiment_base_manifest_2800_v03.csv`, SHA `2a4782911ef334fc640e9f90ee8120e48ab3c30e25da47603004978835626bf8` |
+| RGB 배치/카메라 | `/home/user/step21_b2b_production_rgb_iso400_v02.py`의 순수 함수·상수만 AST로 추출 |
+| 브릭 | `_normalized/{red,cement}_brick_{HR_Scan,LR_Scan,GeoCAD}.usd`, v43 기록의 자산 해시 대조 |
+| canonical | `/home/user/nonideal_canonical_nominal_replay_v02.py`의 solid 5-brick bundle 패턴, load별 하나의 instance |
+| YOLO 변환 | `/home/user/canonical_gt_to_yolo_seg_v03.py`의 기존 contour 연결/직렬화 함수 |
+| 학습 설정 | `FINAL_MODEL_DEVELOPMENT_LOCK_v01.json`, HPO_R5 JSON 및 최종 HR `args.yaml` |
 
-- A(즉시대체유력): **0개**. 네 파일 모두물리Geometry와사용권리확인이부족하다.
-- B(조건부대체가능): **4개**. 실제RGB공간은확인됐으며독립Geometry/Collision/센서정합/권리확보가필요하다.
-- C(대체부적합확정): **0개**. 현재자료만으로영구사용불가나모든경로부재를증명하지않았다. 모든에셋의활용성을낙관한다는뜻은아니며사용목적은다르다.
+레거시 Python 모듈의 top-level을 import하거나 실행하지 않았다. 기존 코드의 실행 부작용을 피하고 정적으로 읽은 함수만 새 Stage에 연결했다. 원본 hash와 사용한 함수는 새 코드와 `run_manifest.json`에 기록했다.
 
-| 환경 | 평가 | 확인한 장점 | 미검증/제약 | 추천순위 |
-|---|---|---|---|---|
-| 5F_CLOSED_EV | B: 조건부 | 승강기 폐문, 창, 석고보드/콘크리트 벽과 짧은 전실, 바닥의 거친 표면 | 짧은 전실/복도; 넓은 접근·회전 공간과 Far시점 확보 미검증 | 2 |
-| 5F_OPEN_EV | B: 조건부 | 5F_CLOSED와 유사한 전실, 열린 승강기 개구와 내부 모습; 개구 가장자리 잔상/반투명 왜곡 | 승강기 인계/문 앞 인식의 조건부 후보; 동일형상·정합은 미검증 | 3 |
-| B1_CLOSED_EV | B: 조건부 | 지하층으로 보이는 넓은 공사 통로, 기둥, 천장 배관/덕트, 임시 비닐 구획, 콘·안내판·소화기·자재 | 네 에셋 중 운반 접근/장애물 맥락의 우선 후보; 실제 폭/회전반경/전 구간 연결성 미측정 | 1 |
-| Jeonju_122151 | B: 조건부 | 노출 콘크리트 벽과 열린 승강기, 청색 문/분전함, 공사 안내물이 있는 전실 | 승강기 주변 단거리 관측/인계 후보; crop 밖/넓은 이동 구역 품질은 미검증 | 4 |
+유지한 항목:
 
-**가장 적합한 우선 후보:B1_CLOSED_EV.** 현재건설자재운반연구와가장가까운통로·기둥·공사구획·현장자재가동시에보이고,작은승강기전실보다접근/적재구역후보를설계할여지가있어보인다. 이것은영상에근거한조건부우선순위이며통로폭이나팔레트1.1m배치가능성을실측확정한결과가아니다. 후속검토는B1의품질좋은부분한구역에서측량/정합geometry와workspace를먼저확보하는것이타당하다.5F두종은승강기앞단거리전달/인식장면이라는연구질문에더적합할수있다.
+- paired scene seed, material, load/layer 수, A/B 적층, yaw, 거리, gap, jitter, LG1–LG5, split membership.
+- RGB 640×480, focal 18.14756mm, aperture 20.955/15.291mm, 높이 0.6m, rt_subframes=8, 준비 5회+capture 1회.
+- ISO400, shutter50, fNumber5, tonemap6. 물리 시간은 진행하지 않는다.
+- 정규화 브릭 190×90×57mm에 기존 rotateX −90° 적용: 배치 footprint 190×57mm, 층 높이 90mm. 75 bricks/layer, 파레트 1.1×1.1×0.144m. 실제 생성 개수 검사 통과.
+- annotation class0 `brick_load`, 파레트 unlabelled, canonical mask 100px 이상 조건. bbox는 같은 마스크에서 파생한다.
+- 공통 canonical은 개별 HR/LR/CAD의 실제 표면 silhouette와 다를 수 있는 **기존 정의**다. 기존 GT 파일을 가져다 붙이지 않고 새 B1 카메라에서 다시 렌더했다.
+- polygon은 RETR_EXTERNAL/CHAIN_APPROX_SIMPLE, 단순화 없음, 분리 contour는 기존 최소 bridge로 연결, 정규화 좌표 소수점 6자리. bitmap master도 보존.
 
-## 8. HR/LR/CAD 연구 영향 — 재실험은 하지 않음
+명시적으로 바뀐 항목:
 
-1. **배치와 좌표:** 로봇·팔레트 모델과 상대 치수는 재사용할 수 있다. 하지만 새 task-design center, 접근면, 관측 pose와 paired base scenario를 별도로 정해야 한다. 기존 geometry lock을 덮어쓰지 않고 새 환경 버전과 원래 결과를 분리한다. HR/LR/GeoCAD는 같은 조건과 관측 정책으로 대응시킨다. LR은 저감 취득 조건의 독립 재구성이며 HR decimation으로 대체하지 않는다.
+- 학습 배경 B1, 새 `B1_` scene ID, 새 출력 경로.
+- 기존 A_OPEN/B_STRUCTURAL/C_CLUTTER의 **서로 다른 공간 anchor를 하나의 B1 ROI로 통합**했다. 기존 zone은 `source_zone`으로 남겼다. 따라서 과거 세 공간의 분포까지 재현했다고 주장하지 않는다.
+- 기존 jitter를 ROI의 local anchor로 사용했다. 원본 zone anchor 및 과거 visibility/replacement 열은 계보 기록이다. **기존 배경에서 얻은 visibility 수치는 B1의 유효성 판정에 사용하지 않는다.**
+- 현재 요청의 HR/LR/CAD 3종을 실행했다. Proxy는 8개 자산 registry에 보존했으며 생성하지 않았다. LR은 저취득 조건에서 독립 재구성한 표현이며 HR decimation이 아니다.
 
-2. **경로와 주행:** 기존 rear offset .338m, wheelbase .7m, steering15°, 보수 곡률 상한 .363645332585095/m을 무단 변경하지 않는다. 이 상한에 대응하는 반경은 약2.75m다. 좁은 전실에서는 접근 공간을 특히 확인해야 하지만, 이것만으로 모든 경로가 불가능하다고 판정할 수는 없다. v47의 local planner/bracket 거절도 배경 교체만으로 해결됐다고 말할 수 없다. 새 occupancy·swept geometry·support·stopped handoff 검증이 필요하며 이번에는 경로 탐색이나 주행을 하지 않았다.
+## 4. 실제 실행 결과
 
-3. **카메라와 조명:** 기존 mount/extrinsics는 검증된 로봇 모델에서 재사용하되, 새 world base TF 및 실제 바닥 frame에 정합해야 한다. NuRec의 빛과 그림자는 촬영된 모습이므로 새로 넣은 벽돌의 조명·그림자·occlusion과 맞지 않을 수 있다. RGB 렌더 성공은 depth 정확도, semantics, 가시성 또는 B5 평면 추정의 보증이 아니다. 별도 RGB-D 관측 계약과 바닥·벽체 depth 정합 검증이 필요하다.
+smoke는 deterministic train 4개·val 2개 scene을 선택했다. red/cement, 1/2 loads, A/B 패턴을 포함하며 test RGB는 열거나 렌더하지 않았다.
 
-4. **SDG와 YOLO:** 새 환경의 성능을 주장하려면 새 조건의 fresh paired 데이터를 준비해야 한다. 기존 SDG는 원래 환경 자료로 보존한다. 재학습이 반드시 필요한지는 아직 알 수 없다. 먼저 동결 모델과 전향 검증용 GT로 도메인 변화 영향을 평가하고, 필요할 때 별도 학습·validation 설계를 한다. Test189를 모델 선택이나 튜닝에 재사용하지 않는다. 이번 데이터 재생성·추론·훈련은 모두0이다.
+| 검사 | 실제 결과 |
+|---|---|
+| B1 + HR/LR/GeoCAD import·RGB capture | **각 6/6, 총 18장 PASS** |
+| smoke load/brick 생성 수 | 각 표현 8 loads, 기대 brick 수와 일치 |
+| 새 공통 canonical | 6 scenes, **8개 load 마스크**, primary 6/6 ≥100px |
+| YOLO export | `yolo_smoke_v02`, 각 표현 train4/val2/test0 |
+| polygon과 bitmap 일치 | **8/8 IoU=1.0, XOR=0**. 전체 데이터에 일반화하지 않음 |
+| 실제 Ultralytics CPU 로더 | **18/18 이미지·class·segmentation mask decode PASS** |
+| 학습 recipe API 검증 | `get_cfg` PASS, 학습/optimizer step 0 |
+| 2800개 배치 범위 | footprint ROI 내부 2800, 외부 0 |
+| 원본 보존 | 등록한 입력 **20/20 SHA 일치** |
+| 대량 렌더/전체 가시성/학습 | **NOT_RUN** |
 
-5. **기존 결과의 사용 범위:** 원래 IoU·검출/B5 수율·위치오차·planner 거절·거리/가림/조명 효과·collision/support·물리 PRE/FINAL을 새 환경의 성능으로 옮겨 주장할 수 없다. 원래 결과는 그대로 유지하고 새 환경에서는 해당 항목을 재검증해야 한다. 같은 RGB를 다시 분석한 자료를 독립 관측으로 늘리지 않는다. 실물 red-only 검증을 cement나 새 현장의 실제 주행 검증으로 확대하지 않는다.
+![실제 동일 장면 HR LR CAD 비교](synthetic_dataset_regeneration_plan_b1_jeonju_20261103_v01/matched_three_rep_camera_panel.png)
 
-6. **실구동 게이트:** 사람 ROI 검토 PENDING, 역사 v44 사전 검토 FAIL, v38 승인된 실측 steering abort 규칙 HOLD는 그대로다. 이번 정적 촬영 성공은 새 주행이나 정지 조향의 허가가 아니다.
+![실제 RGB 위 공통 canonical mask와 bbox](synthetic_dataset_regeneration_plan_b1_jeonju_20261103_v01/canonical_mask_bbox_overlay.png)
 
-## 9. 출처·라이선스
+18개 RGB에서 공유하는 마스크는 8개다. 표현별로 연결된 총 24개 instance label을 24회의 독립 관측으로 세지 않는다.
 
-네 파일은 앞선 [출처 조사](construction_environment_usd_provenance_audit.md)에서 확인한 assets.zip/assets.z01→assets_full.zip 묶음에 들어 있다. 그러나 **제작자·원 다운로드 URL·학술/ML/논문 그림 사용 권한은 모두 UNKNOWN**이다.
+**첫 실패도 보존했다.** Isaac runtime와 기본 Python에는 ultralytics가 없어 import probe가 실패했다. 설치하지 않고 기존 `sdg_tools` 환경을 찾았다. 최초 exporter는 새 metadata 병합의 중복 key로 실패했으며 `yolo_smoke_v01`을 보존했다. 새 adapter의 병합을 수정하여 `yolo_smoke_v02`가 통과했다. RGB를 다시 생성하거나 실패 출력을 덮지 않았다. `failed_attempts.json`에 기록했다.
 
-`Jeonju`·`EV`라는 이름, 한국어 안내문, NuRec 기술만으로 고레로보틱스 소유나 제작이라고 판정하지 않았다. NVIDIA의 NuRec 기술 라이선스와 촬영된 콘텐츠의 권리는 별개다. 기존 Constructionsite를 이 파일들로 바꾸더라도 출처·권리 문제가 자동으로 해결되지 않는다.
+## 5. 즉시 실행 가능 여부와 남은 품질 문제
 
-묶음 전달자나 촬영·재구성 담당자에게 소유권, 촬영 장소와 동의, 정확한 파일 버전, 연구·합성데이터·ML 활용, 논문 이미지 공개 및 수정·공유 범위를 확인해야 한다. 이번 이미지는 내부 검토 자료이며 논문 게재 권한 확인을 대신하지 않는다.
+**Stage 구성·브릭 배치·annotation export·YOLO 입력 연결은 실행 가능하다. 완성된 학습 데이터셋이라고 부를 단계는 아니다.**
 
-## 10. 결론과다음단계
+1. **하이라이트 포화:** 기존 조명값을 그대로 유지한 결과, `B1_TRN_000033` cement의 공통 목표 마스크 안에서 RGB 세 채널 모두 ≥250인 비율이 HR 95.315%, LR 79.622%, CAD 97.818%다. CAD `B1_VAL_000058` red도 75.876%다. 이는 새 성공 기준이 아닌 진단 수치다. 흰 영역의 세부 정보가 약하므로 자연스러운 합성 또는 인식 학습 품질을 PASS로 확정하지 않는다. 원본 material이나 frozen 조명값을 몰래 수정하지 않았다. 전체 수치는 `photometric_smoke_18.csv`에 있다.
+2. **새 배경의 전체 QA:** 기존 v03 배경의 primary visibility≥0.5 선별 이력을 B1에 승계할 수 없다. 이번 adapter는 ≥100px mask와 생성 수를 확인하지만, isolated denominator를 통한 visibility ratio, 전체 2800개의 벽·기둥 간섭 및 sparse 배경 품질은 검사하지 않았다. 기존 가시성 조건을 유지하는 새 B1 QA를 전체 생성과 함께 수행해야 한다. sample을 조용히 삭제·교체해서는 안 된다.
+3. **시각적 접촉:** z=0은 임시 기준이고 NuRec에는 지원 Mesh가 없다. 일부 시점에서는 파레트가 떠 보이거나 그림자 접촉이 부자연스러울 수 있다. 정적 RGB 배치와 물리 support 검증을 구분한다.
+4. **권한:** B1/Jeonju의 출처·라이선스는 UNKNOWN이다. 데이터·논문 이미지를 공개할 권한은 이 기술 smoke로 확인되지 않는다.
 
-**실제 모습 확보 PASS / 물리 주행 준비 미충족 / 권리UNKNOWN.** B1_CLOSED_EV를조건부 1순위로추천하며,새 연구 환경으로즉시채택/기존실험교체하지않는다. 다음구체단계는B1의검토구역에대한권리와실측/정합floor·wallgeometry를확보하고,원하는거리/시점·팔레트/로버경로가그검증구역안에들어가는지새버전으로설계하는것이다.
+다음 품질 조치는 **train 장면만 사용한 공통 photometric 설정 검토 → 필요하면 새 배경 전용 설정을 별도 버전으로 명시 → 동일한 3표현 smoke 재확인**이다. 표현별로 다른 노출을 맞추거나 test/Real Test189 성능으로 설정을 고르면 안 된다. 기존 ISO400 recipe에서 설정이 달라지면 변경 사실을 기록해야 하며 이번 작업에서 승인·확정된 것으로 취급하지 않는다. 원본 에셋의 material 교체나 새 방법론 도입은 하지 않았다.
 
-변경은새보고서와신규이미지/검사로그/CSV/JSON/실행코드snapshot뿐이다. 원본 USD/기존 Stage/실험 결과/PROJECT_STATE 불변. 두실제Kitprocess종료0,source SHA7/7 PASS,PNG74/74decodePASS. 도중연구실패를지우거나physics성공으로표시한항목0. 초기바닥밖시점·blur·빈crop영역은실제자료로보존했다. 원격 push/publish는수행하지않았다.
+## 6. 데이터 구성과 YOLO 학습 연결
+
+계획된 새 B1 데이터는 paired base 2800개, 표현별 train2000/val400/test400, 총 **8400 RGB**다. 같은 base scene은 표현 사이에서 동일 split에 놓인다. 새 B1 internal test이며 기존 Constructionsite 시뮬레이션 평가와 별개다. 기존 Real Test189는 이미 평가된 자료이고 설정 선택에 재사용하지 않는다. 실제 외부 검증은 red-only 범위를 유지한다.
+
+`P/yolo_smoke_v02/{HR_Scan,LR_Scan,GeoCAD}/data.yaml`은 실제 CPU 로더가 읽었다. 정사각 letterbox 후 image/mask 텐서까지 확인했으며 GPU 학습·증강 통과를 의미하지 않는다. 각 이미지와 공통 label은 새 출력에 symlink로 연결한다. 원본 브릭·기존 RGB/GT는 복사하거나 변경하지 않는다.
+
+학습 adapter는 기존 polygon YOLO11m-seg/HPO_R5 설정을 불러온다. 초기 가중치 `/home/user/yolo11m-seg.pt`, imgsz640, epochs150, AdamW, seed42, AMP, 기존 mosaic/HSV 등 증강을 유지한다. 새 HPO를 수행하지 않는다. 설정 API를 확인한 현재 training runtime은 `sdg_tools`, ultralytics **8.4.129**다. 역사적 전체 환경과의 완전한 bitwise 재현을 주장하지 않는다.
+
+요청 batch64와 과거 freeze에 기록된 실제 physical batch32의 차이는 `training_command_plan.json`에 남겼다. 새 adapter는 64로 명시하며 조용히 낮추지 않는다. GPU 메모리·실제 training step qualification은 미실행이다. v40–42의 별도 bitmap/noaug 경로 및 v42 resume qualification 실패는 해결했다고 간주하지 않고, 이번에는 실제 완료 이력이 있는 기존 polygon 경로를 사용했다.
+
+## 7. 실행 파일과 다음 단계
+
+새 코드:
+
+- `scripts/prepare_b1_sdg_regeneration_20261103_v01.py`: 입력 hash/lock 확인, paired manifest·ROI·recipe 생성.
+- `scripts/b1_sdg_capture_20261103_v01.py`: 새 Stage RGB와 선택적 공통 canonical, scene별 완료 ledger/resume.
+- `scripts/export_b1_yolo_20261103_v01.py`: 공통 canonical→기존 polygon·bbox·YOLO 패키지.
+- `scripts/check_b1_sdg_preparation_20261103_v01.py`: 입력 보존·2800 footprint·실제 CPU loader 검사.
+- `scripts/train_b1_historical_recipe_20261103_v01.py`: 기본은 설정 dry-run, 별도 실행 flag가 있어야 학습.
+- `scripts/visualize_b1_sdg_preparation_20261103_v01.py`: 실제 렌더 기반 비교 패널과 annotation overlay.
+
+이미 수행한 연결 검사는 아래 명령으로 만든 새 결과에 기록되어 있다. 같은 output에 재실행하면 덮어쓰지 않고 실패하도록 구성했다.
+
+```bash
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/check_b1_sdg_preparation_20261103_v01.py \
+  --prep /home/user/hh/isaac_cosmos/sdg_final/B1_SYNTHETIC_REGEN_PREP_20261103_v01 \
+  --dataset /home/user/hh/isaac_cosmos/sdg_final/B1_SYNTHETIC_REGEN_PREP_20261103_v01/yolo_smoke_v02 \
+  --output /home/user/hh/isaac_cosmos/sdg_final/B1_SYNTHETIC_REGEN_PREP_20261103_v01/loader_checks_v01
+```
+
+**향후 전체 생성 명령 형태** — 이번에는 실행하지 않았고 위 품질 문제 해결 후 새 출력명으로 사용한다. 아래는 HR 예시다. LR_Scan/GeoCAD도 같은 config/manifest로 각각 fresh Kit에서 실행하며 `--canonical`은 HR 공통 pass에만 붙인다. 동시 GPU 실행을 전제하지 않는다.
+
+```bash
+/home/user/anaconda3/envs/hh_isaac51/bin/python -u scripts/b1_sdg_capture_20261103_v01.py \
+  --config /home/user/hh/isaac_cosmos/sdg_final/B1_SYNTHETIC_REGEN_PREP_20261103_v01/config.json \
+  --output /home/user/hh/isaac_cosmos/sdg_final/B1_SYNTHETIC_REGEN_PREP_20261103_v01/production_HR_Scan_future_v01 \
+  --representation HR_Scan --mode production --canonical --allow-production
+```
+
+`--allow-production`은 실수 방지용 실행 flag이며 품질 승인이나 권한 확인을 대신하지 않는다. 중단된 **동일 실행**에는 `--resume`을 추가할 수 있고 config/representation hash 확인 후 완료 scene을 건너뛴다. 전체 생성 전 위에서 지적한 visibility QA를 연결해야 한다.
+
+순서는 **노출·접촉 검토 및 B1 QA 연결 → 세 표현 전체 RGB/공통 GT 생성 → 2800 pairing·가시성·polygon fidelity 검사 → exporter로 새 YOLO 패키지 → training adapter dry-run → 별도 GPU qualification과 YOLO 재학습**이다. Exporter는 `--config`, HR/LR/CAD 세 `--runs`, 새 `--output`을 받는다. Training adapter는 `--prep`, 완성된 `--dataset`, 새 `--output`을 받으며 기본은 학습하지 않는다. `--execute-training`은 전체 2000/400/400 패키지가 확인되어야 실행된다. 현재 smoke 데이터에는 학습 실행을 허용하지 않는다.
+
+## 8. 보존과 인수인계
+
+핵심 증거는 `P/run_manifest.json`, `source_authority_checks.json`, `preflight_v01/roi_footprint_preflight_2800.csv`, `loader_checks_v01/checks.json`, `yolo_smoke_v02/package_checks.json`, `polygon_fidelity.csv`, `bbox_instances.csv`, `training_dryrun_v01/training_command_plan.json`이다. 각 capture의 `invocation.json`, `status.jsonl`, `capture_ledger.json`, `used_layer_sha256.json` 및 stdout을 보존했다. 새 코드의 SHA도 manifest에 있다.
+
+PROJECT_STATE SHA256은 작업 전후 `d919282dee1a880b3b5ca678563697e7fb45cf0b650b494801b918a95d7f19aa`로 동일하다. 보고서와 새 코드·새 이미지/Stage/JSON만 생성했다. 작업 디렉터리에 Git 저장소가 확인되지 않아 remote sync는 UNKNOWN이며 push하지 않았다.
+
+**최종 판단:** B1 통로 ROI가 이번 학습 배경의 기준이다. 기존 배치·canonical·YOLO 흐름은 실제로 연결됐고 18장 smoke로 실행 증거를 확보했다. 다만 밝은 조건의 디테일 손실과 전체 새 배경 QA가 남아 있으므로, 대량 생성·YOLO 재학습 준비가 무조건 완료됐다고 보고하지 않는다. 기존 평가 환경과 기존 결과는 그대로 유지한다.
