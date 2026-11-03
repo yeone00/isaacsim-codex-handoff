@@ -1,172 +1,176 @@
-# B1 / Jeonju 학습용 합성데이터 재생성 준비
+# B1 적벽돌 HR/LR/CAD 촬영 품질 개선
 
-조사·실행일: 2026-11-03 KST. **기준 환경은 `B1_CLOSED_EV.usdz`로 선정했다. 별도 Stage 구성, HR/LR/GeoCAD 18장 렌더, 공통 canonical annotation, YOLO 변환 및 CPU 로더 연결까지 실행했다.** 전체 8,400장 생성과 학습은 수행하지 않았다. 실행 경로는 준비됐지만, 기존 ISO400 조명을 그대로 이식했을 때 나타난 하이라이트 포화와 새 배경의 전체 가시성 검사는 미해결이다. 따라서 상태는 **소규모 연결 검증 PASS / 대량 생성 품질 미승인**이다.
+실행일: 2026-11-03 KST. **적벽돌 전용 manifest를 새로 만들고, 추가 ROI 5곳을 실제 렌더했다. 추천 3곳에서 HR/LR/CAD 동일 조건 72장을 비교하여 브릭·파레트의 과다 노출을 개선했다.** 전체 데이터 생성과 YOLO 학습은 수행하지 않았다.
 
-기존 `Constructionsite_isaac.usdz`는 평가용으로 유지했다. 원본 USDZ·브릭·기존 코드·평가 Stage·PROJECT_STATE는 변경하지 않았다. 검사 대상 20개 입력 SHA256이 작업 전 기록과 일치한다. 물리 재생·로봇 이동·ROS·학습·optimizer update는 모두 0이다.
+추천은 **R1 기둥 통로를 기본, R5 반대 방향 통로와 R4 자재 배경을 보조**로 사용하는 것이다. 공통 촬영 제안은 **ACES(op6), ISO25, shutter50, fNumber5, dome intensity=`8000+0.05×기존값`**이다. 세 표현에 같은 식을 적용했다. 이는 기존 조명 범위를 명시적으로 변경한 새 제안이며 과거 ISO400 실험 결과를 대체하지 않는다.
 
-## 1. 환경 선정과 사용 범위
+작업 루트 `P`:
 
-| 항목 | B1_CLOSED_EV | Jeonju_122151 |
+```text
+/home/user/hh/isaac_cosmos/sdg_final/B1_RED_QUALITY_20261103_v01
+```
+
+## 1. 실행 범위와 판정
+
+| 항목 | 실제 실행 결과 |
+|---|---|
+| 노출 분리 진단 | 같은 train 장면 2개 × 최초 10설정 + 후속 4설정 = 28개 HR RGB |
+| ROI 탐색 | 기존 R0 + **추가 5곳**, 각 빈 환경과 실제 HR 적벽돌 렌더 |
+| 상세 paired 비교 | 3 ROI × 4 train 장면 × 2촬영 설정 × 3표현 = **72 RGB** |
+| 빈 환경 | 위 모든 촬영과 같은 pose/settings로 106장, 전체 RGB는 배치106+빈환경106=212장 |
+| canonical/YOLO | 36개 load 마스크 저장, polygon **36/36 IoU1.0·XOR0** |
+| 실제 CPU 데이터 로더 | **72 이미지·108 instance label decode PASS**, 학습 없음 |
+| 새 적벽돌 manifest | **1400개 paired scene**, train1000/val200/test200, cement0 |
+| 향후 전체 이미지 수 | 적벽돌 1400×3=**4200장**. 기존 두 재질 8400장 계획과 구분 |
+| 보존 확인 | 입력20 SHA, 이전 준비 출력117파일, 이전 준비 코드 모두 불변 |
+| 미검증 | 전체1400의 시각 품질·NuRec 가림·바닥 높이/접촉·물리 지지 |
+
+상세72장은 독립 base scene 4개의 반복 조건이다. 노출 진단까지 포함한 서로 다른 source train scene은 6개다. 저장된 canonical36개는 노출/ROI 반복을 포함하고 byte hash는 6종이다. 이를 36개의 독립 장면 또는 메트롤로지 검증으로 세지 않는다. test/val 이미지를 촬영 조건 선택에 사용하지 않았다.
+
+## 2. 노출·톤매핑·조명을 나눈 진단
+
+기존 설정은 실제 renderer에서 ISO400/shutter50/fNumber5/op6이었다. 같은 geometry·camera·원본 material을 유지하고 ISO100/25/6.25, shutter200, fNumber10, dome×0.1/0.01, op0을 각각 비교했다. 후속으로 ISO100+shutter200+fNumber10, Reinhard(op2), Hable(op5)를 비교했다.
+
+설치된 `omni.rtx.settings.core`의 `post_widgets.py`에서 **op0=Clamp, op6=ACES**를 확인했다. Clamp는 exposure adjustment를 건너뛴다는 로컬 설명과 실제 거의 흰 렌더가 일치했다. op0을 노출 개선안으로 채택하지 않았다. 파일 위치와 SHA는 `P/run_manifest.json` 및 아래 근거 기록에 남겼다.
+
+직접 비교 결과:
+
+- ISO100, shutter200, fNumber10 각각은 비슷한 감소 효과를 보였다. 하지만 밝은 LG5 장면에서는 파레트 clipping이 남았다.
+- `B1_TRN_000005`에서 ISO25만 적용해도 실제 파레트 표면의 any-channel=255 비율이 **96.24%**였다. ISO6.25는 이를 제거했지만 덜 밝은 장면의 HR 표면이 지나치게 어두워졌다.
+- 조명만 줄이는 것도 삽입된 브릭·파레트에 영향을 주었다. NuRec 배경과 Mesh가 동일한 방식으로 재조명된다고 가정하지 않았다. 같은 camera에서 빈 배경도 별도로 저장했다.
+- 따라서 표현별 노출 보정 대신 **공통 ISO25 + 공통 조명 범위 압축**을 상세 paired 실험에서 확인했다. model AP·test 성능·학습 결과로 설정을 고르지 않았다.
+
+![두 파레트 밝은 장면의 노출 후보](b1_red_brick_sdg_quality_optimization_20261103_v01/exposure_comparison_B1_TRN_000005.png)
+
+[다른 동일 장면의 14개 조건 비교](b1_red_brick_sdg_quality_optimization_20261103_v01/exposure_comparison_B1_TRN_000027.png). 수치는 `P/analysis_v01/exposure_metrics_28.csv`에 있다. 최종 조합은 아래의 별도72장 paired 결과로 평가한다.
+
+**첫 실행 오류 보존:** 최초 노출20장 세션은 exit0와 `PASS_CAPTURE` JSON을 남겼지만, 빈 Stage에서 instance-ID annotator가 빈 배열을 처리하며 **renderer Error120건**을 기록했다. 이 세션을 clean PASS로 취급하지 않는다. RGB·원본 로그를 보존했고, v03부터 빈 배경 촬영 중 ID annotator를 detach한 뒤 물체 생성 후 attach하도록 수정했다. 이후 ROI/후속노출/HR/LR/CAD의 **5세션은 renderer Error0**이었다. prototype 등 Warning은 삭제하지 않았다. 후속 구현은 실제 brick/pallet ID mask가 비어 있으면 실패한다.
+
+## 3. 추가 ROI 5곳과 카메라
+
+모든 survey에는 동일한 HR 적벽돌 `B1_TRN_000027`과 ISO25를 사용했다. source jitter를 유지했으므로 아래 실제 camera 좌표는 ROI root 원점과 다르다. yaw는 world +X 기준 반시계, 모든 survey의 camera pitch는 **−5.0845°**, 높이는 world z≈0.600m다. 640×480 및 기존 렌즈는 그대로다.
+
+| 후보 | 실제 camera xyz(m) | yaw | 확인한 장점 / 단점 | 판단 |
+|---|---|---:|---|---|
+| R0 기존 | (−0.077,0.337,0.600) | +90° | 통로 확보 / 벽·천장 스캔 얼룩 | 대조군 |
+| **R1_NORTH_2** | (−1.077,2.337,0.600) | +90° | 기둥·벽 배경, 비교적 단순한 앞 바닥 / 벽 얼룩·광원 잔상 | **기본 추천** |
+| R2_NORTH_4 | (0.923,4.337,0.600) | +90° | 목표 색 대비 / 가까운 벽 blur·우측 청록 잔상 | 비추천 |
+| R3_NORTH_7 | (−0.077,7.337,0.600) | +90° | 배경 변화 / 벽·기둥이 목표 RGB를 심하게 간섭 | **제외** |
+| **R4_EAST** | (−2.663,1.077,0.600) | 0° | 벽·자재·구조가 비교적 선명 / 적색 배경 물품·전경 검은 상자·바닥 얼룩 | **clutter 보조** |
+| **R5_WEST** | (1.663,0.923,0.600) | 180° | 넓은 통로·기둥·바닥 배경 / 전경 상자와 밝은 배경 광원 | **보조 추천** |
+
+![빈 환경과 실제 HR 배치: 기존1+추가5](b1_red_brick_sdg_quality_optimization_20261103_v01/roi_empty_and_HR_6.png)
+
+선정 구역의 root 및 **배치 검토 사각형**은 다음과 같다. 아래 범위 전체가 collision-free이거나 측정된 평탄 영역이라는 뜻은 아니다. 실제 상세 촬영은 다음 절의 네 장면에 한정된다.
+
+| 추천 ROI | root 원점 / 회전 | world 검토 구역 |
 |---|---|---|
-| 실제 렌더에서 확인한 구역 | 길게 열린 통로, 반복 기둥, 가림막, 현장 물품 | 엘리베이터·콘크리트 전실 중심 |
-| 이번 작업 적합성 | 여러 파레트와 거리 변화에 사용할 통로가 비교적 명확 | 선택 가능한 전실 배경은 있으나 이번 목적에서는 B1 통로가 편리 |
-| 결정 | **학습용 기준으로 선정** | 대안으로 보존, 이번 브릭 smoke는 수행하지 않음 |
+| R1 | (−1,2,0)m / +90° | x[−3,1], y[1.1,9.7]m |
+| R5 | (2,1,0)m / 180° | x[−5.7,2.9], y[−1,3]m |
+| R4 | (−3,1,0)m / 0° | x[−3.9,4.7], y[−1,3]m |
 
-두 파일의 렌더에서 확인한 구역은 다르다. 같은 건물의 일부인지, 동일 스캔의 다른 crop인지까지 증명하지 않았다. 선정에는 완전한 동일성 증명이 필요하지 않다. 이전 실제 렌더와 구조 검사는 [환경 비교 보고서](alternative_environment_asset_review_20261103.md)에 있다.
+local 검토 범위는 전방 X[−0.9,7.7], 횡방향 Y[−2,2]m다. 원본 camera/object에 같은 rigid root 변환을 적용한다. camera matrix, 빈 이미지, 배치 이미지, load/brick 개수 및 pallet world bbox는 각 run의 `capture_ledger.json`과 `analysis_v01/roi_metrics_6.csv`에 있다.
 
-두 환경은 NuRec Volume 기반이며 이전 구조 검사에서 Mesh/Collision/Rigidbody가 없었다. 이번 용도는 정적 RGB와 annotation 생성이다. **화면에 보이는 바닥을 물리적으로 주행 가능한 바닥으로 인증한 것이 아니다.** NuRec의 외관은 Mesh와 동일하게 재조명되지 않으며 스캔에 포함된 사람·물체 잔상도 배경 특성이다. 제작자·이용 권한은 여전히 UNKNOWN이며 [출처 조사](construction_environment_usd_provenance_audit.md)의 결론을 사용 가능 승인으로 바꾸지 않는다.
+**중요한 NuRec annotation 제한:** R3는 RGB에서 벽 간섭이 보였지만 실제 brick instance-ID 면적이 R0와 똑같이 **16397px**였다. 따라서 ID/segmentation만으로 NuRec 체적 렌더의 가림을 충분히 반영한다고 확인할 수 없다. 이 후보를 mask 면적만 보고 통과시키지 않았다.
 
-원본 경로:
+![제외한 R3의 RGB와 ID mask](b1_red_brick_sdg_quality_optimization_20261103_v01/R3_rejected_RGB_and_ID.png)
+
+## 4. 추천 구역의 HR/LR/CAD 동일 조건 비교
+
+| source train scene | 역할 | 거리 | 층/loads | 기존 광도 factor |
+|---|---|---:|---|---|
+| TRN_000889 | 가까운 정상 적재 | 1.356m | 4층/1 | LG1 |
+| TRN_001420 | 먼 정상 적재 | 3.537m | 4층/1 | LG3 |
+| TRN_001074 | 가까운 부분 적재 | 1.276m | 1층/2 | LG5 |
+| TRN_001736 | 먼 부분 적재 | 3.910m | 1층/2 | LG2 |
+
+source seed·yaw·gap·cluster·jitter·camera look-at을 유지했다. 각 ROI와 설정에서 **HR/LR/CAD camera matrix·seed·촬영 설정 exact equality 24 triplets PASS**다. 정상/부분 적재는 기존 layer/load 설정이며 새로운 O25/O50 차폐판 실험을 도입하지 않았다.
+
+![먼 정상 적재의 동일 HR LR CAD](b1_red_brick_sdg_quality_optimization_20261103_v01/improved_FAR_FULL.png)
+
+[가까운 정상](b1_red_brick_sdg_quality_optimization_20261103_v01/improved_NEAR_FULL.png) · [가까운 부분](b1_red_brick_sdg_quality_optimization_20261103_v01/improved_NEAR_PARTIAL.png) · [먼 부분](b1_red_brick_sdg_quality_optimization_20261103_v01/improved_FAR_PARTIAL.png) · [HR 기존/개선 대조](b1_red_brick_sdg_quality_optimization_20261103_v01/HR_baseline_vs_improved.png)
+
+LR의 줄무늬·어두운 질감과 CAD의 비교적 균일한 표면은 원본 상태로 남겼다. 서로 같은 외관이 되도록 texture/material 또는 표현별 exposure를 바꾸지 않았다. LR은 독립 저취득 재구성이며 HR decimation이 아니다.
+
+## 5. 정량 품질과 annotation
+
+clipping은 **RGB 중 하나 이상이 정확히255인 픽셀 비율**이다. near-white는 세 채널 모두≥250, near-black은 세 채널 모두≤5다. HSV의 높은 색 포화도와 밝기 clipping을 구분하여 CSV에 따로 기록했다. 아래는 동일한12 ROI/scene 조건에 대한 **scene별 비율의 단순 평균**이며 통계적 우열 검정이 아니다.
+
+| 실제 표면 ID mask | HR 기존→개선 | LR 기존→개선 | CAD 기존→개선 |
+|---|---:|---:|---:|
+| 브릭 clipping | 22.562% → **0%** | 18.253% → **0%** | 55.788% → **0%** |
+| 파레트 clipping | 95.351% → **0%** | 95.345% → **0%** | 96.624% → **0%** |
+| 전체 RGB clipping | 18.281% → 0.661% | 17.727% → 0.663% | 21.052% → 0.661% |
+
+![동일 조건 clipping 비교](b1_red_brick_sdg_quality_optimization_20261103_v01/clipping_comparison.png)
+
+개선36장의 실제 브릭·파레트 표면에서는 **각 장면 모두 clipping0**이었다. 공통 canonical 영역은 실제 구멍·edge·background를 포함할 수 있으므로 동일 수치로 혼동하지 않는다. 그 영역의 clipping 평균은 HR0.057%/LR0.063%/CAD0.051%, 최대는 각각0.480%/0.551%/0.427%였다.
+
+밝은 세부를 되찾는 대신 어두운 표면 비율은 늘었다. 개선 브릭 near-black 평균은 HR7.177%/LR9.874%/CAD0.430%, 최대 HR16.281%/LR17.616%/CAD1.196%다. 구멍·그늘과 원본 질감도 포함하므로 이 값만으로 결함을 분류하지 않는다. 배경 전체 near-black은 개선 장면에서도 최대 약0.049%로 화면 전체가 검게 무너진 상태는 아니었다. 광원·밝은 배경까지 clipping0이라고 주장하지 않는다.
+
+canonical은 기존 solid 5-brick bundle, class0 `brick_load`, pallet unlabelled, ≥100px를 유지했다. actual 표현 silhouette를 공통 GT로 대신하지 않았다. 이번 테스트의 target mask는 **1642~111031px(화면0.535~36.143%)**, target border-touch0이었다. 가까운 view의 파레트는 화면 아래에서 일부 잘릴 수 있으므로 파레트 전체 촬영 보장으로 해석하지 않는다.
+
+same-background one-load-only denominator를 추가로 렌더한 load 가시성 비율은 **0.764432~1.0**, primary는1.0이었다. 이는 다른 load에 의한 가림 진단이며, **legacy LR far-from-environment visibility 또는 NuRec-free amodal visibility가 아니다.** R3 관찰 때문에 이 값만으로 환경 가림을 PASS로 인증할 수 없다.
+
+노출 전후 동일 pose의 canonical은 **12/12 조건에서 byte 일치**했다. 기존 v03 polygon 함수로 변환한 **36/36 마스크 IoU1.0/XOR0**이고, 실제 Ultralytics8.4.129 CPU 로더에서 표현별24장·36instances, 총72장·108labels가 읽혔다. optimizer/augmentation 학습 검증은 아니다.
+
+![공통 canonical와 bbox 확인](b1_red_brick_sdg_quality_optimization_20261103_v01/canonical_bbox_comparison.png)
+
+근거: `P/analysis_v01/paired_metrics_72.csv`, `canonical_instances_36.csv`, `polygon_fidelity.csv`, `mask_exposure_invariance_12.csv`, `CPU_loader_checks.json`. smoke YAML은 `data.SMOKE_ONLY.yaml`이며 모든 원본 split은 train이다. val alias는 로더 연결용일 뿐 실제 validation 분리가 아니다. 이 smoke 패키지를 학습 데이터로 사용하면 안 된다.
+
+## 6. 파레트 접촉·바닥·물리적 제한
+
+모든 pallet bbox의 world z 최솟값은 약 **2.24×10⁻¹⁰m(수치상0)**다. 이는 새 Stage가 가정한 z=0 기준과 일치한다는 뜻이다. NuRec 바닥의 실제 높이·평탄도와 일치한다는 증거는 아니다. RGB에는 접촉 그림자가 약하고 떠 보이는 구도가 남는다.
+
+이를 더 확인하려고 CAD24개의 동일 빈 배경에서 `distance_to_image_plane`과 실제 camera projection을 저장했다. **24/24 배열의 유효한 양의 finite depth 비율이0**이었다. 이 출력으로 바닥 plane을 추정할 수 없으며 임의의 floor correction을 적용하지 않았다. `NuRec_empty_depth_diagnostic_24.csv`, `paired_CAD_v01/empty_depth/`가 근거다.
+
+따라서 **밝기·형상 식별 개선은 확인, 자연스러운 바닥 접촉 완성은 미확인**이다. collider/인공 바닥/물리 지지/로봇 주행은 추가하거나 검증하지 않았다. 추후 접촉 realism을 강화하려면 원본 제작 좌표·바닥 기준 확인 또는 별도 작업 Stage의 명시적인 support/shadow geometry 설계가 필요하다. 원본 USDZ를 수정하는 조치가 아니다.
+
+## 7. 새 적벽돌 전용 manifest와 촬영 설정
 
 ```text
-/home/user/hh/isaac_cosmos/assets/assets/environment/B1_CLOSED_EV.usdz
-/home/user/hh/isaac_cosmos/assets/assets/environment/Jeonju_122151.usdz
+P/red_only_plan_v03/red_only_manifest_1400_v03.csv
+P/red_only_plan_v03/red_only_config_v03.json
+P/red_only_plan_v03/checks.json
 ```
 
-B1 SHA256: `de908a9e91ab433556db57d2e584422801a3e93f3d469b6bf2c324ecb9e0586d`.
+기존1400개 red source seed와 split membership을 그대로 보존했다. 새 scene ID는 `B1R_` prefix이며 이전 B1 ID·원본 scene ID·source zone·기존 조명값을 별도로 남겼다. cement와 Proxy는 새 학습 asset registry 및 행에서 제외했다. 기존 cement 자산·결과는 삭제하지 않았고 다른 복수 자재 연구의 활용 가능성을 그대로 보존했다.
 
-## 2. ROI, 좌표계 및 새 Stage
+| 조명 factor | 기존 intensity | 새 intensity |
+|---|---:|---:|
+| LG1 | 8000 | 8400 |
+| LG2 | 16000 | 8800 |
+| LG3 | 32000 | 9600 |
+| LG4 | 64000 | 11200 |
+| LG5 | 96000 | 12800 |
 
-작업 루트:
+이는 USD light intensity이며 현장에서 측정한 lux가 아니다. 광도 순서는 유지했지만 범위는 달라졌다. **새 manifest의 dome_intensity는 이미 변환된 값**이다. 다시 `8000+0.05×`를 적용하면 안 되므로 새 config의 runtime scale=1/bias=0으로 기록했다. 품질 pilot jobs는 원래 값을 입력으로 받아 변환식을 한 번 적용했다.
 
-```text
-/home/user/hh/isaac_cosmos/sdg_final/B1_SYNTHETIC_REGEN_PREP_20261103_v01
-```
+old source zone A_OPEN→R1, B_STRUCTURAL→R5, C_CLUTTER→R4로 매핑했다. 표현별로 ROI를 다르게 고르지 않는다. 과거 세 zone의 세계좌표·분포를 그대로 재현했다는 뜻은 아니다. 과거 visibility/replacement 열은 source 계보이며 새 B1 QA 결과로 쓰지 않는다. lens/640×480/height0.6m/거리/yaw/적층/배치/seed/GT 정의는 유지했다.
 
-이하 `P`는 위 경로다. 새 Stage는 `P/smoke_HR_Scan_v01/preview_stage.usda`이며 LR·GeoCAD에도 별도 preview가 있다. B1과 정규화 브릭을 참조한다. 기존 평가 Stage는 참조하거나 수정하지 않는다. Preview는 첫 번째 red 장면 `B1_TRN_000027`을 저장했으며 카메라는 `/World/B1Training/Camera`다.
+## 8. 실행 파일·추적성·다음 단계
 
-| 정의 | 값 / 확인 범위 |
-|---|---|
-| 작업 root | `/World/B1Training`, 원점 world `(0,0,0)m`, Z축 회전 +90° |
-| 좌표 대응 | local +X → world +Y, local +Y → world −X |
-| 사용 ROI | **world x=[−2.0,+2.0], y=[−0.9,+7.7]m** |
-| 바닥 기준 | world z=0m, 시각적 임시 기준. 측량한 평탄도·높이 아님 |
-| 카메라 | local 높이 0.600m, 원점 주변 기존 jitter, 주 목표 방향으로 조준 |
-| 주 파레트 위치 | local `(jitter_x + distance, jitter_y, 0)` |
-| 복수 파레트 | 기존 `cluster_offsets` 그대로, 최대 5개 |
-| 전체 manifest 기하 검사 | 회전된 1.1×1.1m 파레트 footprint **2800/2800이 선언 ROI 안** |
-
-ROI 검사는 배치 사각형의 범위 검사다. 벽과의 교차, 실제 support, NuRec 표면과의 접촉을 검증하지 않는다. 인공 바닥이나 collider는 추가하지 않았다. 카메라와 물체에 같은 root 변환을 적용했으며, 평가용 rover 시작 자세와 연결하지 않는다.
-
-![실제 ROI 카메라와 브릭 배치](synthetic_dataset_regeneration_plan_b1_jeonju_20261103_v01/roi_and_placement.png)
-
-왼쪽은 물체 없는 실제 B1 렌더, 오른쪽은 기존 브릭/파레트를 배치한 실제 렌더다. ROI 전체가 한 카메라에 모두 보인다는 뜻은 아니다. 수치 ROI와 각 장면의 카메라 world matrix는 config/ledger에 별도로 기록했다.
-
-## 3. 기존 파이프라인 연결과 변경점
-
-초기 placeholder 개발 설정 대신 실제 최종 nominal v03 manifest와 production 코드를 사용했다.
-
-| 단계 | 재사용한 실제 근거와 동작 |
-|---|---|
-| 표본·split | `final_experiment_base_manifest_2800_v03.csv`, SHA `2a4782911ef334fc640e9f90ee8120e48ab3c30e25da47603004978835626bf8` |
-| RGB 배치/카메라 | `/home/user/step21_b2b_production_rgb_iso400_v02.py`의 순수 함수·상수만 AST로 추출 |
-| 브릭 | `_normalized/{red,cement}_brick_{HR_Scan,LR_Scan,GeoCAD}.usd`, v43 기록의 자산 해시 대조 |
-| canonical | `/home/user/nonideal_canonical_nominal_replay_v02.py`의 solid 5-brick bundle 패턴, load별 하나의 instance |
-| YOLO 변환 | `/home/user/canonical_gt_to_yolo_seg_v03.py`의 기존 contour 연결/직렬화 함수 |
-| 학습 설정 | `FINAL_MODEL_DEVELOPMENT_LOCK_v01.json`, HPO_R5 JSON 및 최종 HR `args.yaml` |
-
-레거시 Python 모듈의 top-level을 import하거나 실행하지 않았다. 기존 코드의 실행 부작용을 피하고 정적으로 읽은 함수만 새 Stage에 연결했다. 원본 hash와 사용한 함수는 새 코드와 `run_manifest.json`에 기록했다.
-
-유지한 항목:
-
-- paired scene seed, material, load/layer 수, A/B 적층, yaw, 거리, gap, jitter, LG1–LG5, split membership.
-- RGB 640×480, focal 18.14756mm, aperture 20.955/15.291mm, 높이 0.6m, rt_subframes=8, 준비 5회+capture 1회.
-- ISO400, shutter50, fNumber5, tonemap6. 물리 시간은 진행하지 않는다.
-- 정규화 브릭 190×90×57mm에 기존 rotateX −90° 적용: 배치 footprint 190×57mm, 층 높이 90mm. 75 bricks/layer, 파레트 1.1×1.1×0.144m. 실제 생성 개수 검사 통과.
-- annotation class0 `brick_load`, 파레트 unlabelled, canonical mask 100px 이상 조건. bbox는 같은 마스크에서 파생한다.
-- 공통 canonical은 개별 HR/LR/CAD의 실제 표면 silhouette와 다를 수 있는 **기존 정의**다. 기존 GT 파일을 가져다 붙이지 않고 새 B1 카메라에서 다시 렌더했다.
-- polygon은 RETR_EXTERNAL/CHAIN_APPROX_SIMPLE, 단순화 없음, 분리 contour는 기존 최소 bridge로 연결, 정규화 좌표 소수점 6자리. bitmap master도 보존.
-
-명시적으로 바뀐 항목:
-
-- 학습 배경 B1, 새 `B1_` scene ID, 새 출력 경로.
-- 기존 A_OPEN/B_STRUCTURAL/C_CLUTTER의 **서로 다른 공간 anchor를 하나의 B1 ROI로 통합**했다. 기존 zone은 `source_zone`으로 남겼다. 따라서 과거 세 공간의 분포까지 재현했다고 주장하지 않는다.
-- 기존 jitter를 ROI의 local anchor로 사용했다. 원본 zone anchor 및 과거 visibility/replacement 열은 계보 기록이다. **기존 배경에서 얻은 visibility 수치는 B1의 유효성 판정에 사용하지 않는다.**
-- 현재 요청의 HR/LR/CAD 3종을 실행했다. Proxy는 8개 자산 registry에 보존했으며 생성하지 않았다. LR은 저취득 조건에서 독립 재구성한 표현이며 HR decimation이 아니다.
-
-## 4. 실제 실행 결과
-
-smoke는 deterministic train 4개·val 2개 scene을 선택했다. red/cement, 1/2 loads, A/B 패턴을 포함하며 test RGB는 열거나 렌더하지 않았다.
-
-| 검사 | 실제 결과 |
-|---|---|
-| B1 + HR/LR/GeoCAD import·RGB capture | **각 6/6, 총 18장 PASS** |
-| smoke load/brick 생성 수 | 각 표현 8 loads, 기대 brick 수와 일치 |
-| 새 공통 canonical | 6 scenes, **8개 load 마스크**, primary 6/6 ≥100px |
-| YOLO export | `yolo_smoke_v02`, 각 표현 train4/val2/test0 |
-| polygon과 bitmap 일치 | **8/8 IoU=1.0, XOR=0**. 전체 데이터에 일반화하지 않음 |
-| 실제 Ultralytics CPU 로더 | **18/18 이미지·class·segmentation mask decode PASS** |
-| 학습 recipe API 검증 | `get_cfg` PASS, 학습/optimizer step 0 |
-| 2800개 배치 범위 | footprint ROI 내부 2800, 외부 0 |
-| 원본 보존 | 등록한 입력 **20/20 SHA 일치** |
-| 대량 렌더/전체 가시성/학습 | **NOT_RUN** |
-
-![실제 동일 장면 HR LR CAD 비교](synthetic_dataset_regeneration_plan_b1_jeonju_20261103_v01/matched_three_rep_camera_panel.png)
-
-![실제 RGB 위 공통 canonical mask와 bbox](synthetic_dataset_regeneration_plan_b1_jeonju_20261103_v01/canonical_mask_bbox_overlay.png)
-
-18개 RGB에서 공유하는 마스크는 8개다. 표현별로 연결된 총 24개 instance label을 24회의 독립 관측으로 세지 않는다.
-
-**첫 실패도 보존했다.** Isaac runtime와 기본 Python에는 ultralytics가 없어 import probe가 실패했다. 설치하지 않고 기존 `sdg_tools` 환경을 찾았다. 최초 exporter는 새 metadata 병합의 중복 key로 실패했으며 `yolo_smoke_v01`을 보존했다. 새 adapter의 병합을 수정하여 `yolo_smoke_v02`가 통과했다. RGB를 다시 생성하거나 실패 출력을 덮지 않았다. `failed_attempts.json`에 기록했다.
-
-## 5. 즉시 실행 가능 여부와 남은 품질 문제
-
-**Stage 구성·브릭 배치·annotation export·YOLO 입력 연결은 실행 가능하다. 완성된 학습 데이터셋이라고 부를 단계는 아니다.**
-
-1. **하이라이트 포화:** 기존 조명값을 그대로 유지한 결과, `B1_TRN_000033` cement의 공통 목표 마스크 안에서 RGB 세 채널 모두 ≥250인 비율이 HR 95.315%, LR 79.622%, CAD 97.818%다. CAD `B1_VAL_000058` red도 75.876%다. 이는 새 성공 기준이 아닌 진단 수치다. 흰 영역의 세부 정보가 약하므로 자연스러운 합성 또는 인식 학습 품질을 PASS로 확정하지 않는다. 원본 material이나 frozen 조명값을 몰래 수정하지 않았다. 전체 수치는 `photometric_smoke_18.csv`에 있다.
-2. **새 배경의 전체 QA:** 기존 v03 배경의 primary visibility≥0.5 선별 이력을 B1에 승계할 수 없다. 이번 adapter는 ≥100px mask와 생성 수를 확인하지만, isolated denominator를 통한 visibility ratio, 전체 2800개의 벽·기둥 간섭 및 sparse 배경 품질은 검사하지 않았다. 기존 가시성 조건을 유지하는 새 B1 QA를 전체 생성과 함께 수행해야 한다. sample을 조용히 삭제·교체해서는 안 된다.
-3. **시각적 접촉:** z=0은 임시 기준이고 NuRec에는 지원 Mesh가 없다. 일부 시점에서는 파레트가 떠 보이거나 그림자 접촉이 부자연스러울 수 있다. 정적 RGB 배치와 물리 support 검증을 구분한다.
-4. **권한:** B1/Jeonju의 출처·라이선스는 UNKNOWN이다. 데이터·논문 이미지를 공개할 권한은 이 기술 smoke로 확인되지 않는다.
-
-다음 품질 조치는 **train 장면만 사용한 공통 photometric 설정 검토 → 필요하면 새 배경 전용 설정을 별도 버전으로 명시 → 동일한 3표현 smoke 재확인**이다. 표현별로 다른 노출을 맞추거나 test/Real Test189 성능으로 설정을 고르면 안 된다. 기존 ISO400 recipe에서 설정이 달라지면 변경 사실을 기록해야 하며 이번 작업에서 승인·확정된 것으로 취급하지 않는다. 원본 에셋의 material 교체나 새 방법론 도입은 하지 않았다.
-
-## 6. 데이터 구성과 YOLO 학습 연결
-
-계획된 새 B1 데이터는 paired base 2800개, 표현별 train2000/val400/test400, 총 **8400 RGB**다. 같은 base scene은 표현 사이에서 동일 split에 놓인다. 새 B1 internal test이며 기존 Constructionsite 시뮬레이션 평가와 별개다. 기존 Real Test189는 이미 평가된 자료이고 설정 선택에 재사용하지 않는다. 실제 외부 검증은 red-only 범위를 유지한다.
-
-`P/yolo_smoke_v02/{HR_Scan,LR_Scan,GeoCAD}/data.yaml`은 실제 CPU 로더가 읽었다. 정사각 letterbox 후 image/mask 텐서까지 확인했으며 GPU 학습·증강 통과를 의미하지 않는다. 각 이미지와 공통 label은 새 출력에 symlink로 연결한다. 원본 브릭·기존 RGB/GT는 복사하거나 변경하지 않는다.
-
-학습 adapter는 기존 polygon YOLO11m-seg/HPO_R5 설정을 불러온다. 초기 가중치 `/home/user/yolo11m-seg.pt`, imgsz640, epochs150, AdamW, seed42, AMP, 기존 mosaic/HSV 등 증강을 유지한다. 새 HPO를 수행하지 않는다. 설정 API를 확인한 현재 training runtime은 `sdg_tools`, ultralytics **8.4.129**다. 역사적 전체 환경과의 완전한 bitwise 재현을 주장하지 않는다.
-
-요청 batch64와 과거 freeze에 기록된 실제 physical batch32의 차이는 `training_command_plan.json`에 남겼다. 새 adapter는 64로 명시하며 조용히 낮추지 않는다. GPU 메모리·실제 training step qualification은 미실행이다. v40–42의 별도 bitmap/noaug 경로 및 v42 resume qualification 실패는 해결했다고 간주하지 않고, 이번에는 실제 완료 이력이 있는 기존 polygon 경로를 사용했다.
-
-## 7. 실행 파일과 다음 단계
-
-새 코드:
-
-- `scripts/prepare_b1_sdg_regeneration_20261103_v01.py`: 입력 hash/lock 확인, paired manifest·ROI·recipe 생성.
-- `scripts/b1_sdg_capture_20261103_v01.py`: 새 Stage RGB와 선택적 공통 canonical, scene별 완료 ledger/resume.
-- `scripts/export_b1_yolo_20261103_v01.py`: 공통 canonical→기존 polygon·bbox·YOLO 패키지.
-- `scripts/check_b1_sdg_preparation_20261103_v01.py`: 입력 보존·2800 footprint·실제 CPU loader 검사.
-- `scripts/train_b1_historical_recipe_20261103_v01.py`: 기본은 설정 dry-run, 별도 실행 flag가 있어야 학습.
-- `scripts/visualize_b1_sdg_preparation_20261103_v01.py`: 실제 렌더 기반 비교 패널과 annotation overlay.
-
-이미 수행한 연결 검사는 아래 명령으로 만든 새 결과에 기록되어 있다. 같은 output에 재실행하면 덮어쓰지 않고 실패하도록 구성했다.
+최종 paired 렌더 명령 형태(이번에 세 표현 각각 실행 완료):
 
 ```bash
-/home/user/anaconda3/envs/sdg_tools/bin/python scripts/check_b1_sdg_preparation_20261103_v01.py \
-  --prep /home/user/hh/isaac_cosmos/sdg_final/B1_SYNTHETIC_REGEN_PREP_20261103_v01 \
-  --dataset /home/user/hh/isaac_cosmos/sdg_final/B1_SYNTHETIC_REGEN_PREP_20261103_v01/yolo_smoke_v02 \
-  --output /home/user/hh/isaac_cosmos/sdg_final/B1_SYNTHETIC_REGEN_PREP_20261103_v01/loader_checks_v01
+/home/user/anaconda3/envs/hh_isaac51/bin/python -u scripts/b1_red_quality_capture_20261103_v05.py \
+  --config /home/user/hh/isaac_cosmos/sdg_final/B1_RED_QUALITY_20261103_v01/config.json \
+  --jobs /home/user/hh/isaac_cosmos/sdg_final/B1_RED_QUALITY_20261103_v01/paired_quality_jobs.json \
+  --output /home/user/hh/isaac_cosmos/sdg_final/B1_RED_QUALITY_20261103_v01/paired_HR_v01 \
+  --representation HR_Scan --canonical
 ```
 
-**향후 전체 생성 명령 형태** — 이번에는 실행하지 않았고 위 품질 문제 해결 후 새 출력명으로 사용한다. 아래는 HR 예시다. LR_Scan/GeoCAD도 같은 config/manifest로 각각 fresh Kit에서 실행하며 `--canonical`은 HR 공통 pass에만 붙인다. 동시 GPU 실행을 전제하지 않는다.
+LR은 같은 v05로 `paired_LR_v01`, CAD는 depth/camera_params 저장을 추가한 v06으로 `paired_CAD_v01`에서 실행했다. geometry·settings·카메라는 동일하다. 이미 존재하는 출력에는 덮어쓰지 않고 실패한다. 각 session의 invocation/code/config/jobs SHA, events, per-case metadata, stdout과 원본 Error/Warning을 보존했다.
 
-```bash
-/home/user/anaconda3/envs/hh_isaac51/bin/python -u scripts/b1_sdg_capture_20261103_v01.py \
-  --config /home/user/hh/isaac_cosmos/sdg_final/B1_SYNTHETIC_REGEN_PREP_20261103_v01/config.json \
-  --output /home/user/hh/isaac_cosmos/sdg_final/B1_SYNTHETIC_REGEN_PREP_20261103_v01/production_HR_Scan_future_v01 \
-  --representation HR_Scan --mode production --canonical --allow-production
-```
+최종 코드:
 
-`--allow-production`은 실수 방지용 실행 flag이며 품질 승인이나 권한 확인을 대신하지 않는다. 중단된 **동일 실행**에는 `--resume`을 추가할 수 있고 config/representation hash 확인 후 완료 scene을 건너뛴다. 전체 생성 전 위에서 지적한 visibility QA를 연결해야 한다.
+- `scripts/b1_red_quality_capture_20261103_v05.py`: train-only, 최대64개로 제한한 RGB/canonical 품질 pilot.
+- `scripts/b1_red_quality_capture_20261103_v06.py`: 같은 pilot에 빈 배경 depth 진단 추가.
+- `scripts/prepare_b1_red_manifest_20261103_v03.py`: red-only1400 및 공통 설정 제안 생성.
+- `scripts/finalize_b1_red_quality_20261103_v01.py`: paired/노출/annotation CSV와 실제 이미지 패널 생성.
 
-순서는 **노출·접촉 검토 및 B1 QA 연결 → 세 표현 전체 RGB/공통 GT 생성 → 2800 pairing·가시성·polygon fidelity 검사 → exporter로 새 YOLO 패키지 → training adapter dry-run → 별도 GPU qualification과 YOLO 재학습**이다. Exporter는 `--config`, HR/LR/CAD 세 `--runs`, 새 `--output`을 받는다. Training adapter는 `--prep`, 완성된 `--dataset`, 새 `--output`을 받으며 기본은 학습하지 않는다. `--execute-training`은 전체 2000/400/400 패키지가 확인되어야 실행된다. 현재 smoke 데이터에는 학습 실행을 허용하지 않는다.
+v02~v04와 첫 오류 로그도 보존했다. legacy 모듈 top-level을 실행하지 않고 기존 geometry/annotation/polygon의 정적으로 확인한 함수만 재사용했다. `P/run_manifest.json`과 최종 checks가 원본 보존 및 실행 계보다. 이전 준비117파일과 코드, 등록입력20개의 hash가 같았다. PROJECT_STATE hash는 `d919282dee1a880b3b5ca678563697e7fb45cf0b650b494801b918a95d7f19aa`로 유지했다. 원격 동기화는 UNKNOWN이며 push하지 않았다.
 
-## 8. 보존과 인수인계
+다음은 **이 세 ROI와 공통 설정을 바탕으로 전체1400의 RGB/annotation 시각 QA 정책을 정하고, NuRec 가림과 바닥 접촉의 한계를 처리한 뒤 별도 대량 생성**하는 단계다. 원래 v01 capture는 ISO400/단일ROI를 hardcode하므로 새 config를 그대로 전달하면 안 된다. 이번 quality entrypoint는 train-only·64개 제한이며 production val/test 생성기는 이번 작업에서 실행하지 않았다. 아직 YOLO 학습·새 HPO·기존 평가 재실행은 하지 않는다.
 
-핵심 증거는 `P/run_manifest.json`, `source_authority_checks.json`, `preflight_v01/roi_footprint_preflight_2800.csv`, `loader_checks_v01/checks.json`, `yolo_smoke_v02/package_checks.json`, `polygon_fidelity.csv`, `bbox_instances.csv`, `training_dryrun_v01/training_command_plan.json`이다. 각 capture의 `invocation.json`, `status.jsonl`, `capture_ledger.json`, `used_layer_sha256.json` 및 stdout을 보존했다. 새 코드의 SHA도 manifest에 있다.
-
-PROJECT_STATE SHA256은 작업 전후 `d919282dee1a880b3b5ca678563697e7fb45cf0b650b494801b918a95d7f19aa`로 동일하다. 보고서와 새 코드·새 이미지/Stage/JSON만 생성했다. 작업 디렉터리에 Git 저장소가 확인되지 않아 remote sync는 UNKNOWN이며 push하지 않았다.
-
-**최종 판단:** B1 통로 ROI가 이번 학습 배경의 기준이다. 기존 배치·canonical·YOLO 흐름은 실제로 연결됐고 18장 smoke로 실행 증거를 확보했다. 다만 밝은 조건의 디테일 손실과 전체 새 배경 QA가 남아 있으므로, 대량 생성·YOLO 재학습 준비가 무조건 완료됐다고 보고하지 않는다. 기존 평가 환경과 기존 결과는 그대로 유지한다.
+**결론:** 적벽돌3표현의 highlight clipping은 이번 동일 조건 smoke에서 해결됐고, 구멍·적층·원본 질감 차이를 확인할 수 있는 공통 촬영 설정과 추천 ROI3곳을 확보했다. NuRec의 가림 annotation과 접촉 realism은 별도 제한으로 남는다. 기존 Constructionsite 평가 환경·원본 자산·기존 실험/모델·PROJECT_STATE는 유지했다.
