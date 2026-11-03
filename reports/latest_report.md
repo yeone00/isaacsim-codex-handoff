@@ -78,6 +78,6 @@ topic 설정 이력: 2026-11-03 15:41에 Claude Code의 `!` 입력창으로 숨�
 
 1. ~~topic 설정~~ → 완료(일반 터미널에서 `set_ntfy_topic.sh`. `!` 입력창 방식은 실패함).
 2. ~~테스트 1–5와 휴대폰 수신 확인~~ → 완료, PASS.
-3. ~~GitHub push 자동화 활성화~~ → 연구자 승인(2026-11-03 15:49 KST). `~/.config/claude-ntfy/HANDOFF_PUSH_APPROVED` 생성(600). 사전 점검: origin과 0/0, 추적 파일 변경 0, `git push --dry-run` Everything up-to-date. 이후 응답 마지막 줄에 `HANDOFF_REPORT:`가 있으면 기존 `sync_report.sh`가 실행된다. 이 스크립트는 `reports/latest_report.md`와 `status/PROJECT_STATE.md`만 commit/push하고, force push는 하지 않는다(pull --ff-only). push가 일어나면 GitHub Actions가 기존 ntfy 알림 "Codex report uploaded"를 보낸다. 끄려면 플래그 파일을 지운다.
+3. ~~GitHub push 자동화 활성화~~ → 연구자 승인(2026-11-03 15:49 KST). `~/.config/claude-ntfy/HANDOFF_PUSH_APPROVED` 생성(600). 사전 점검: origin과 0/0, 추적 파일 변경 0, `git push --dry-run` Everything up-to-date. 이후 응답 마지막 줄에 `HANDOFF_REPORT:`가 있으면 기존 `sync_report.sh`가 실행된다. **첫 실제 push PASS(15:50:14):** commit `5964542`가 origin/main에 올라갔고 로컬과 0/0, `latest_report.md` 제목이 이 보고서로 바뀌었다. GitHub Actions "Notify Codex report upload"는 success였고, 휴대폰 수신은 연구자가 확인했다. commit과 알림 문구의 "Codex"는 기존 스크립트를 그대로 쓴 결과다. 이 스크립트는 `reports/latest_report.md`와 `status/PROJECT_STATE.md`만 commit/push하고, force push는 하지 않는다(pull --ff-only). push가 일어나면 GitHub Actions가 기존 ntfy 알림 "Codex report uploaded"를 보낸다. 끄려면 플래그 파일을 지운다.
 4. Codex `notify`와 Claude `Stop` 훅이 같은 `sync_report.sh`를 쓴다. 두 도구를 같은 시각에 쓰면 push가 겹칠 수 있다(`pull --ff-only`라 이력을 덮어쓰지는 않고 실패로 끝남).
 5. `handoff/next_task.md`가 아직 v48 로봇 과제다. B1 SDG 작업을 다음 과제로 둘지 결정이 필요하다.
