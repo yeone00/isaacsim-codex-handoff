@@ -1,196 +1,161 @@
-# 건설현장 Environment USD 원본 출처·라이선스 추적 조사
+# 기존 USDZ 환경4종 실제 시각화 및 대체 가능성 검토
 
-조사일: **2026-11-03 KST**. 판정은 **CONFIRMED(직접 근거), LIKELY(유력하나 추가 검증 필요), UNKNOWN(현재 확인 불가)**로 구분한다.
+2026-11-03 KST. **네 에셋 모두 현재 PC의 Isaac Sim5.1에서 실제로 렌더링됐다. 그러나 네 파일 모두 Mesh/Collider가0개라 지금 상태로 물리 주행 환경을 대체할 수는 없다.** 우선 검토 추천은 **B1_CLOSED_EV**, 등급은 **B(조건부 대체 가능)**다. 넓은 통로·공사 구획·기둥·자재가 실제 이미지에서 관측된다는 근거이며, 주행 공간·작업 성공·권리 허가가 인증됐다는 뜻은 아니다.
 
-## 1. 조사 개요
+## 1. 실행 범위와 실제 산출물
 
-**핵심 결론:** 현재 연구에서 참조한 배경의 확인 가능한 로컬 상위 입력은 `Constructionsite_isaac.usdz`다. 연구 파일은 `Downloads/assets_full.zip` 안의 동일 멤버 및 다운로드 폴더의 복사본과 **바이트 단위 SHA256 일치**한다(CONFIRMED). 그러나 이 USDZ 자체가 이미 합성 stage를 export한 패키지여서, 외부에서 최초 배포한 원본 DCC 파일·실제 제작자·최초 다운로드 URL·당시 라이선스까지 확정되지는 않았다(UNKNOWN).
+- 원본 경로: `/home/user/hh/isaac_cosmos/assets/assets/environment/`.
+- 정적 Kit 2세션, 에셋4×(첫6시점+보완12시점)=**72장**, 별도 Mesh 렌더 대조군2장, 총74개960×600 PNG를 저장·decode 확인했다. 4개 비교패널2장과 환경별6시점패널도 만들었다.
+- 기존 연구 Stage를 열어 바꾸지 않았다. 각 에셋은 **새 anonymous Stage의 subLayer**로 읽고 새 SessionLayer에 카메라/조명만 추가했다. USD 저장0, 로버 삽입/주행0, 팔레트 삽입0, Physics play0, ROS0, YOLO 추론/학습0, 기존 연구 재실행0이다.
+- 원본5개USDZ+PROJECT_STATE+기존출처보고서 총7파일 시작/종료SHA 불변PASS. 기존 연구 코드·기존 결과를 수정하지 않았다. PROJECT_STATE와 latest_report도 갱신하지 않았다.
+- 실제 실행/카메라transform·시점별품질·설정·종료코드는 companion 폴더의 `run_manifest.json`, `capture_results.json`, `detail_capture_v02/capture_results.json`, `session_events.jsonl`, `kit_stdout.log`, `process_exit.json`에 있다.
 
-유력한 공개 후보는 CGTrader **Construction site 3D Scan**, 상품ID **4762918**, 게시 계정 **thisismy7thaccountlmao**다(LIKELY). 외관과 규모가 유사하나 공개 원본 파일의 mesh/texture SHA를 확보하지 못했다. **이 계정을 실제 제작자로 확정하거나 해당 페이지 라이선스를 현재 USD에 확정 적용하지 않는다.**
-
-읽기 전용 검색 범위는 `/home/user/hh`, `/home/user/Downloads`, `/home/user/Documents`의 USD/USDA/USDC/USDZ 전체다. **376파일**, USDZ 내부 layer를 더해 중복 identifier를 제거한 **406레이어**, 내부 패키지 멤버 **890개**, composition arc **20,934개**를 조사했다. 이 중 연구용 배경 패키지로 연결되는 파일225개와 다른 환경 파일을 포함한 **관련 후보234파일**을 별도 분류했다. 다른 로봇/벽돌 USD도 전수 목록에 남겼으며 이것들을 모두 건설현장 환경으로 부르지는 않았다.
-
-`Documents/Kit/shared/screenshots`는 권한 거부로 검색하지 못했다. 따라서 PC 전체·삭제된 파일·외부 저장장치까지 전수 확인했다는 뜻은 아니다. 기존 Python 모듈 실행·Isaac Sim/Kit·ROS·렌더·시뮬레이션·USD 저장·패키지 설치는0이다. standalone `pxr.Sdf` 및 `Usd/UsdGeom`으로 layer·배열을 읽었다. 기존 PROJECT_STATE, 코드, USD, 실험 결과, 기존 보고서는 변경하지 않았다.
-
-증거 폴더: [construction_environment_usd_provenance_evidence_20261103_v01](construction_environment_usd_provenance_evidence_20261103_v01/). 모든 파일의 경로·크기·mtime·ctime·SHA는 `usd_file_inventory.csv`; birth time은 `usd_birth_times.csv`; 관련성·원본/파생 분류·실사용 확인 범위는 `environment_relevant_file_inventory.csv`다. 각 파일의 실사용을 파일 존재만으로 확정하지 않았다.
-
-## 2. 현재 연구에서 사용한 환경 USD 식별
-
-네 요청 후보는 **모두 실제 존재**한다(CONFIRMED). 다운로드 폴더의 동일명 복사본도 구분했다.
-
-|ID/역할|검증한 절대 경로|bytes|SHA256|
-|---|---|---:|---|
-|F1 연구배경패키지|`/home/user/hh/isaac_cosmos/assets/assets/environment/Constructionsite_isaac.usdz`|286948692|`c0bb44d1ef17c96028ec4137e9527675585362634fdac436c15ac4b9ceb81efa`|
-|F1D 다운로드복사|`/home/user/Downloads/assets_full/assets/environment/Constructionsite_isaac.usdz`|286948692|`c0bb44d1ef17c96028ec4137e9527675585362634fdac436c15ac4b9ceb81efa`|
-|F2 별도NuRec|`/home/user/hh/isaac_cosmos/assets/assets/environment/5F_CLOSED_EV.usdz`|86326118|`892ca7c846bbf2b48399176350185a50fb95bee8997fc1ec57ae50337c822b81`|
-|F2D 다운로드복사|`/home/user/Downloads/assets_full/assets/environment/5F_CLOSED_EV.usdz`|86326118|`892ca7c846bbf2b48399176350185a50fb95bee8997fc1ec57ae50337c822b81`|
-|F3 연구base scene|`/home/user/hh/isaac_cosmos/sdg_practice/construction_scene_rover_recovery.usd`|30340|`865bb3fd13189bfc4d9e51124828cc646b209ddb06ca5e3412b0e0ef232fd978`|
-|F4 조명파생|`/home/user/hh/isaac_cosmos/sdg_final/CONSTRUCTION_SITE_E2E_LIT_20261022_v01/construction_site_e2e_lit.usda`|1478|`4e0ad262a0ce2a733e86e82e2ba69aa0eee42bb87c33086925117956bbddade8`|
-|F5 v30 실제입력|`/home/user/hh/isaac_cosmos/sdg_final/PILOT_SITE_HR_ADMISSION_20261102_v30_03/prepared_site_drive.usda`|196408|`72fda3227219a7f39fea4a3393d3adb036bf6e8eb029adaa4292a62f50bd396f`|
-|F6 v43 정적overlay|`/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_OCCLUSION_20261102_v43/static_overlay_v43.usda`|2164|`30f5da0c94de61feead321df67f0b85777268fa0669f08a4d6ff05bfc758f275`|
-
-|ID|현재 파일시스템 birth time|mtime(KST)|
+| 환경 | bytes | SHA256 |
 |---|---|---|
-|F1|2026-08-11 16:44:34.466532731 +0900|2026-08-10T17:24:21+09:00|
-|F1D|2026-08-11 16:48:47.227510359 +0900|2026-08-10T17:24:21+09:00|
-|F2|2026-08-11 16:44:30.760861323 +0900|2026-04-02T15:32:30+09:00|
-|F2D|2026-08-11 16:48:44.680359729 +0900|2026-04-02T15:32:30+09:00|
-|F3|2026-08-27 18:23:19.576203221 +0900|2026-08-28T11:40:18.494819+09:00|
-|F4|2026-10-22 11:59:30.957970749 +0900|2026-10-22T11:59:30.957971+09:00|
-|F5|2026-11-02 04:08:30.336595983 +0900|2026-11-02T04:08:30.338596+09:00|
-|F6|2026-11-02 19:58:12.816080422 +0900|2026-11-02T19:58:12.816080+09:00|
+| 5F_CLOSED_EV | 86326118 | `892ca7c846bbf2b48399176350185a50fb95bee8997fc1ec57ae50337c822b81` |
+| 5F_OPEN_EV | 129619954 | `e597ce4c9af6f1c41f9f9c0a8cbc5d3145cc02ea9266d36ebf9557768c873dca` |
+| B1_CLOSED_EV | 271964190 | `de908a9e91ab433556db57d2e584422801a3e93f3d469b6bf2c324ecb9e0586d` |
+| Jeonju_122151 | 286042665 | `618d0e3d2587ab2f4f0f42cc24e0db46fcf848026b1285832c50157737aea611` |
 
-birth time은 **이 파일시스템에서 파일이 만들어진 시각**이며 3D 콘텐츠의 최초 제작 시각이 아니다. mtime은 ZIP의 보존된 과거 시각일 수 있다. ctime은 inode 상태 변경 시각으로 생성 시각과 다르다. `key_file_stat.txt` 및 전수 CSV에 별도로 기록했다.
+## 2. 네 환경 대표 비교 이미지
 
-- **F1 실제 연구 의존성 CONFIRMED:** F3의 `/World/ConstructionSite`가 `../assets/assets/environment/Constructionsite_isaac.usdz`를 직접 reference한다. 최신 v43의 static overlay→v30 prepared stage→기존 task scene→F3→F1 계보도 확인했다. v43 저장 capture_record의 source_stage는F5다. 기존 `docs/PROTOCOL_LOCKS.md`의 base scene 경로 및 SHA와 현재 F3가 일치한다.
-- **F2 실사용 UNKNOWN:** 로컬 환경 묶음에 있으나 F3/F4/F5/F6의 건설현장 배경 계보에 들어 있지 않다. package 이름만으로 본 연구에서 사용했다고 쓰지 않는다.
-- **F4 실제 연구 preview branch CONFIRMED:** 기존 2026-10-22 보고서 및 `static_preview.png`가 있는 조명 파생 씬이다. F4는 v43→v30 계보의 필수 조상과는 별도 분기다.
-- **전체225 연결파일의 개별 runtime 사용 UNKNOWN:** 연결됨·생성됨과 실제 실행됨은 다르다. 핵심 runtime 입력/의존성만 확인 표시했다.
+아래는 **각 원본 NuRec에서 실제로 렌더링한 이미지**다. 생성형 이미지·다른 배경·가짜 바닥으로 대체하지 않았다.
 
-## 3. 원본 및 파생 파일 계보
+![4개 환경 로봇 높이 후보 비교](alternative_environment_asset_review_20261103_v01/four_environment_comparison.png)
 
-확인된 **로컬 유입 계보**는 다음과 같다. 화살표가 인터넷 최초 배포자까지 증명하지는 않는다.
+카메라는 원본 좌표(0,0,z=.65m)에 배치하고 방향을 달리했다. z=.65는 대략적인 낮은 카메라 시점용 설정이다. **원본 바닥 높이를 독립 측정하지 않았으므로 실제 지면에서 .65m라는 metrology 인증은 아니다.** 기존 로버 카메라의 정확한 mount/extrinsics를 이식한 실험도 아니다. 8방향 및z1.5m 보완뷰를 모두 보존했다.
+
+![4개 전체 crop 조감도](alternative_environment_asset_review_20261103_v01/four_environment_overviews.png)
+
+전체 조감도는 원본 neural crop bounding box에 맞춰 잡았다. 큰 외곽 범위·빈 공간 때문에 유효 재구성 부분이 작게 보인다. **회색 격자는 Isaac viewport의 편집용 guide이며 원본 바닥 Mesh/Collider가 아니다.** 보완 촬영에서는 grid를숨겼다. crop 전체모습은 유지하고 별도 가까운 조감도를 추가했다. crop를 실제 사용 가능한 면적·층높이로 해석하지 않는다.
+
+## 3. 환경별 실제 공간 관측
+
+### 5F_CLOSED_EV
+
+승강기 폐문, 창, 석고보드/콘크리트 벽과 짧은 전실, 바닥의 거친 표면가 실제 화면에서 보인다. 짧은 전실/복도; 넓은 접근·회전 공간과 Far시점 확보 미검증. 장애물/벽체: 폐문 승강기·측면 벽·모서리·좌측 개구부. 자재 배치 후보: 전실 바닥이 후보로 보이나 1.1m 팔레트와 로버 통과 동시 확보 미검증. 품질 한계: 창 과노출, 캡처 범위 밖/근접 시 blur; 외곽/하부 crop는 실제 바닥이 아님.
+
+[원본 전체 조감도](alternative_environment_asset_review_20261103_v01/images/5F_CLOSED_EV__overview.png) · [로봇 높이 후보 시점](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_CLOSED_EV__camera_z0p65_S.png) · [바닥](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_CLOSED_EV__floor_near_origin.png) · [장애물](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_CLOSED_EV__camera_z0p65_W.png) · [배치공간 관측](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_CLOSED_EV__standing_z1p50_S.png)
+
+![5F_CLOSED_EV의 실제 렌더6시점](alternative_environment_asset_review_20261103_v01/5F_CLOSED_EV_review_panel.png)
+### 5F_OPEN_EV
+
+5F_CLOSED와 유사한 전실, 열린 승강기 개구와 내부 모습; 개구 가장자리 잔상/반투명 왜곡가 실제 화면에서 보인다. 승강기 인계/문 앞 인식의 조건부 후보; 동일형상·정합은 미검증. 장애물/벽체: 승강기 문틀·문턱·벽과 모서리; 애니메이션/물리 Door는 없음. 자재 배치 후보: 문 앞 단거리 배치 후보; 문턱/승강기 내부 지지 구조 미검증. 품질 한계: 열린 개구부의 잔상·반투명 왜곡, crop Z가11.94m로 사용 가능한 단층 높이를 뜻하지 않음.
+
+[원본 전체 조감도](alternative_environment_asset_review_20261103_v01/images/5F_OPEN_EV__overview.png) · [로봇 높이 후보 시점](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_OPEN_EV__camera_z0p65_SW.png) · [바닥](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_OPEN_EV__floor_near_origin.png) · [장애물](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_OPEN_EV__camera_z0p65_W.png) · [배치공간 관측](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/5F_OPEN_EV__standing_z1p50_S.png)
+
+![5F_OPEN_EV의 실제 렌더6시점](alternative_environment_asset_review_20261103_v01/5F_OPEN_EV_review_panel.png)
+### B1_CLOSED_EV
+
+지하층으로 보이는 넓은 공사 통로, 기둥, 천장 배관/덕트, 임시 비닐 구획, 콘·안내판·소화기·자재가 실제 화면에서 보인다. 네 에셋 중 운반 접근/장애물 맥락의 우선 후보; 실제 폭/회전반경/전 구간 연결성 미측정. 장애물/벽체: 기둥·비닐 구획·콘·안내판·자재; 사람 모양 흐림/잔상도 보여 동적 장애물로 인증할 수 없음. 자재 배치 후보: N방향 통로 옆 빈 바닥이 후보; 배치와 swept clearances는 미검증. 품질 한계: 이동체로 의심되는 흐림/잔상과 재구성 구멍;66×124m crop를 가용 면적으로 사용하면 안 됨.
+
+[원본 전체 조감도](alternative_environment_asset_review_20261103_v01/images/B1_CLOSED_EV__overview.png) · [로봇 높이 후보 시점](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/B1_CLOSED_EV__camera_z0p65_N.png) · [바닥](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/B1_CLOSED_EV__floor_near_origin.png) · [장애물](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/B1_CLOSED_EV__camera_z0p65_W.png) · [배치공간 관측](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/B1_CLOSED_EV__standing_z1p50_S.png)
+
+![B1_CLOSED_EV의 실제 렌더6시점](alternative_environment_asset_review_20261103_v01/B1_CLOSED_EV_review_panel.png)
+### Jeonju_122151
+
+노출 콘크리트 벽과 열린 승강기, 청색 문/분전함, 공사 안내물이 있는 전실가 실제 화면에서 보인다. 승강기 주변 단거리 관측/인계 후보; crop 밖/넓은 이동 구역 품질은 미검증. 장애물/벽체: 문틀·노출벽·모서리·청색 문; 문턱의 지지/높이 미측정. 자재 배치 후보: 전실 일부 바닥이 후보; 물체를 실제 배치하지 않았으며 통로 여유 미검증. 품질 한계: 큰 crop61×129m 대비 origin 주변 관측 위주; 벽/개구 가까이 view-dependent blur.
+
+[원본 전체 조감도](alternative_environment_asset_review_20261103_v01/images/Jeonju_122151__overview.png) · [로봇 높이 후보 시점](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/Jeonju_122151__camera_z0p65_SW.png) · [바닥](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/Jeonju_122151__floor_near_origin.png) · [장애물](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/Jeonju_122151__camera_z0p65_W.png) · [배치공간 관측](alternative_environment_asset_review_20261103_v01/detail_capture_v02/images/Jeonju_122151__standing_z1p50_S.png)
+
+![Jeonju_122151의 실제 렌더6시점](alternative_environment_asset_review_20261103_v01/Jeonju_122151_review_panel.png)
+
+
+5F_CLOSED와5F_OPEN은 비슷한 전실로 보이며 승강기 문 상태의 차이가 화면에 나타난다. 다만 두 파일의 metric 정합·완전한 동일 공간이라는 판정은 하지 않았다. open파일의 문/개구에는 잔상·반투명 왜곡이 관측되므로 ‘열려 보인다’는 사실을 로봇이 안전하게 통과할 수 있다는 뜻으로 사용하지 않는다. 승강기 움직임/문 opening joint는 없으며 정적 재구성이다.
+
+B1의 N방향에는 사람 형상처럼 보이는 흐림/잔상이 있어 실제 고정 장애물이나 동적 사람 검증으로 사용할 수 없다. Jeonju는 열린 승강기와 노출 콘크리트 전실을 확인했지만 이름만으로 건물·층·권리자를 확정하지 않았다. 어느 이미지에도 팔레트를 합성 배치하거나 ‘이곳이충분하다’는 clearance 상자를 그리지 않았다.
+
+## 4. USD 구조·물리 활용 가능성
+
+| 환경 | 형식 | 원본Mesh/Collider | crop XYZ 크기(m) | 렌더 | 권리 |
+|---|---|---|---|---|---|
+| 5F_CLOSED_EV | NuRec | 0 / 0 | 9.92 × 15.91 × 5.07 | PASS | UNKNOWN |
+| 5F_OPEN_EV | NuRec | 0 / 0 | 14.40 × 36.36 × 11.94 | PASS | UNKNOWN |
+| B1_CLOSED_EV | NuRec | 0 / 0 | 65.90 × 124.03 × 8.80 | PASS | UNKNOWN |
+| Jeonju_122151 | NuRec | 0 / 0 | 61.10 × 128.57 × 12.53 | PASS | UNKNOWN |
+
+원본 네 파일은 전부 metersPerUnit=1, Z-up, composed prim5개이며 대체로다음 구조다.
 
 ```text
-외부 최초 제작/DCC 파일/최초 배포 URL             UNKNOWN
-                 ↓ 변환·편집 경위 UNKNOWN
-Downloads/assets.zip + assets.z01
-                 ↓ 셸기록: zip -s 0 assets.zip --out assets_full.zip
-Downloads/assets_full.zip
-                 ↓ 셸기록: unzip assets_full.zip -d ~/hh/isaac_cosmos/assets
-assets/assets/environment/Constructionsite_isaac.usdz
-                 ↓ reference
-sdg_practice/construction_scene_rover_recovery.usd
-                 ↓ 여러 task/mount/controller overlays
-        ┌────────┴─────────────────────┐
-preview→visible→runtime_fixed→lit     prepared/pilot layers→v30→v43 static overlay
-```
-
-`assets.zip` 448,196,322bytes와 `assets.z01` 629,145,600bytes는 파일시스템상 **2026-08-11 11:12 KST**에 생성됐다. 합친 `assets_full.zip`은1,077,341,918bytes, 같은 날16:44:22 KST 생성이다. 연구 F1의 birth16:44:34 KST는 압축 해제 순서와 일치한다. 관련 셸 명령은 `.bash_history-62733.tmp:1800,1802` 등4개 임시 history에 반복 보존돼 있다. history 자체의 신뢰 가능한 명령 실행 timestamp는 없으므로 사용자·정확한 실행 시각을 history만으로 확정하지 않았다.
-
-`assets_full.zip`은34 entry, README/LICENSE 항목0이다. **5개 environment USDZ 모두 ZIP 멤버/Downloads 해제본/연구 해제본 SHA 일치**(CONFIRMED). `download_archive_member_comparison.csv`, `archive_sha256.json`, `relevant_shell_history.csv`에 저장했다. 다른 로봇 파일의 연구용 변경 여부를 배경 원본 판정과 섞지 않았다.
-
-최신 v43 배경 의존성은 **16개 node/15개 arc**의 한 확인 경로로F1에 연결된다. 전체 절대경로는 `key_reference_chains.json`, 모든 연결 파일은 `source_reference_chains.json`에 있다. 원본 package를 합성/flatten하여 다른 원본처럼 기록하지 않았다.
-
-## 4. 파일별 메타데이터와 출처 단서
-
-### F1 — Constructionsite_isaac.usdz
-
-**CONFIRMED:** ZIP 내부는 `Constructionsite_isaac.usd` 26,786,345bytes와 JPEG410개, 총411멤버다. 내부 `.usd`는 헤더 `PXR-USDC`인 binary layer이며 이름의 확장자와 실제 포맷을 구분했다. 원본을 풀어 덮어쓰거나 USD로 재저장하지 않았다. layer1235 prim: Xform3/Scope1/Material410/Shader410/**Mesh1**/GeomSubset410이다.
-
-```text
+USDZ/default.usda → gauss.usda
 /World
-  /Env
-    /Looks/cb5ce5926fdd4ce2b8f8f548239dcfaf_..._jpg/...
-    /cb5ce5926fdd4ce2b8f8f548239dcfaf
-      /cb5ce5926fdd4ce2b8f8f548239dcfaf       [Mesh]
+  /gauss                         [Xform]
+    /gauss                       [Volume]
+      /density_field             [OmniNuRecFieldAsset]
+      /emissive_color_field      [OmniNuRecFieldAsset]
+           filePath → Jeonju_*.nurec
 ```
 
-메시는 **194,223정점 /382,994 삼각형 /1,148,982 face index**다. JPEG는 `0/cb5ce5926fdd4ce2b8f8f548239dcfaf_000.jpg` 등의 명칭이며410개다. 숫자는0-padding이 혼재하므로 `_1.jpg`가 있다고 가정하지 않고 실제 ZIP 명단을 사용했다. 샘플은2048×2048이며 모든 이미지의 해상도·EXIF 조사는 `texture_image_metadata.json`에 있다. **EXIF 보유0/410**. ID는 강한 검색 단서지만 MD5나 Sketchfab ID라는 것은 확인되지 않았다.
+**확인됨:** 네 파일 각각 Mesh0 / CollisionAPI0 / RigidBodyAPI0 / PhysicsScene0 / Camera0 /Light0. 외곽Volume의extent/crop와nurecfield만으로 영상이 나타난다. 바닥 Geometry와 벽체 Collider가 없다. 바닥의평탄도·경사·마찰·지지·문턱·최소통로폭은 UNKNOWN이다. 실제 사진 같은 바닥이 보여도 바퀴가놓이는 물리표면은아니다.
 
-layer metadata는 defaultPrim=`World`, upAxis=`Z`, metersPerUnit=1, documentation에 합성 stage에서 생성됐다는 문구다. author/copyright/license/URL 및 source-package의 customLayerData/assetInfo 출처 정보는 찾지 못했다. subLayers/reference/payload로 외부 원래 모델을 가리키는 링크도 없다. **이미 composed stage export를 거친 로컬 패키지**라는 점은 확인되지만, 어느 프로그램에서 최초 제작했는지·누가 변환했는지는 UNKNOWN이다. OmniPBR/MDL 명칭은 renderer material 기술이며 NVIDIA가 배경 저작자라는 증거가 아니다.
+기존 Constructionsite는 Mesh1·CollisionAPI 적용prim1이 확인된다. 이것도원본환경전체의groundsupport/벽충돌·모든 paired조건의성공을인증한다는뜻은아니다. 이번에는기존 환경을다시렌더하거나주행검증하지않았다. 전수숫자·Prim계층·API·crop·멤버는 `USD_structure_and_collision.csv`, `USD_structure_details.json`에있다.
 
-메타데이터가 비어 있다는 이유로 조사를 중단하지 않고 prim ID·410 texture·정점/면 수·기존 화면·묶음 파일·웹 후보까지 대조했다. 인터넷상 동일 ID 검색은 upstream URL을 복원하지 못했고 Sketchfab 동일 ID API는404였다. **이 ID를 임의의 Sketchfab 다운로드 링크로 확정하지 않는다.**
+**물리화에 필요한 작업:** 실제측량/확인된모델에정합한바닥·벽·기둥·문틀·문턱·장애물geometry를새버전에작성하고Collider/마찰/지지/전체로봇sweptfootprint를검증해야한다. 단순히보이지않는Plane하나를넣으면모든문제가지원되는것처럼보일수있으므로이번에는추가하지않았다. 물리shape와neural appearance의정합이깨지면시각상빈곳에서충돌하거나보이는벽을관통한다.
 
-### F2 — 5F_CLOSED_EV.usdz
+## 5. NuRec 지원 및 렌더링 확인
 
-**CONFIRMED:** 내부는 `default.usda`806bytes, `gauss.usda`2,243bytes, `Jeonju_114644.nurec`86,322,737bytes의3멤버다. `default.usda`는 `gauss.usda`를reference하고 `/World/gauss` Volume의density/emissive field가같은 `.nurec`를참조한다. `OmniNuRecFieldAsset`, `omni:nurec:isNuRecVolume` 등이있다. mesh/JPEG 기반 F1과 다른 표현이다. 같은묶음의다른환경은 Jeonju_115451/120448/122151 명칭을사용한다.
+실제 실행은기존 `/home/user/anaconda3/envs/hh_isaac51/bin/python`의SimulationApp,IsaacSim5.1,RTX5090,driver570.172.08,RayTracedLighting,singleGPU다. `--/UJITSO/geometry=true`,원본 renderSettings를적용했다. timeline은모든update/capture중stopped로확인했고원본을save하지않았다. 카메라/ReviewFillLight는임시layer에만추가했다. 소스에있는neural조명표현은일반Mesh의물리적re-lighting과같다고가정하지않는다.
 
-이명칭은촬영/작업명 단서이며 도시·촬영기관·권리자를 확정하지 않는다. renderSettings와 defaultPrim·단위가있지만 제작자·원 배포 URL·라이선스는 UNKNOWN이다. 현재 연구의F1과 동일 모델·원본이라고묶지않았다.
+첫 세션25 PNG와보완 세션49 PNG를각각저장했고process exit는둘다0. 각 asset별 분리 로그에서 `Failed to create nrend renderer`0건이다. 실제 이미지 내용도확인해단순 PNG 파일 존재만으로렌더PASS라하지않았다. close_called는있고app.close_returned이벤트는없으므로정상process종료와Pythonclose복귀를구분한다.
 
-### F3/F4/F5/F6 — 연구 파생 씬
+공식 [IsaacSim5.1 Neural Volume Rendering](https://docs.isaacsim.omniverse.nvidia.com/5.1.0/assets/usd_assets_nurec.html)은NuRec시각화와추가collisionplane사용예를설명한다. [공식저장소issue635](https://github.com/isaac-sim/IsaacSim/issues/635)에는5.1/Blackwell및particle/volume지원문제기록이있다.이를사전점검했지만,**이번로컬네파일은실제렌더에성공했으므로그issue를그대로적용해실패라고판정하지않았다.** 반대로이성공을모든NuRec버전·다른GPU·센서지원보증으로일반화하지않는다.
 
-F3은48 authored prim이며 background package reference에 rover/camera/target/light/graph 등을 추가한다. layer customLayerData에는 cameraSettings, authoring_layer=`./construction_scene_rover_recovery.usd` 등이 있으나 콘텐츠 author/copyright가 아니다. F4는4 authored prim의 lighting overlay로 runtime_fixed를subLayer로두고 Dome 색/강도와RectLight를정의한다. F5/F6은여러 기존task/fixture/representation layer를합성한다.외부robot/brick참조와background의저작권을분리해야한다.
+첫bbox기반촬영중일부crop-min+1m카메라는실제공간아래/밖을보아blur·빈영역이나왔다. 이결과를삭제하지않고initial24 contact sheet와raw이미지에남겼다. 보완촬영은같은원본에원점주변z.65/yaw8방향,z1.5N/S,바닥·가까운조감도12뷰를정적으로추가한것이다. 이시점탐색은실험모델선택이나HPO가아니다. 원본 정점/mesh를가정해임의이미지로대체하지않았다.
 
-`usd_layer_metadata.json`은406 layer의metadata, `usd_composition_arcs.csv`는subLayer/reference/payload의prim별경로, `usd_asset_texture_paths.csv`는외부asset/texture/MDL경로, `usd_prim_hierarchy.csv`는전체prim계층이다. 모든 layer를read-only로열었고최종 layer failure0이다. shader의string URL/프로그램명도별도검사했으나 배경 원저작자 URL은복원되지않았다. unresolved MDL·로컬의존성은라이선스허가로해석하지않았다.
+## 6. 기존 환경과 비교
 
-## 5. 최초 유입 경로 조사 결과
-
-**CONFIRMED:** 2026-08-11에생긴split ZIP/합친ZIP/해제본의존재·byte동일성과압축해제명령흔적. `Downloads`라는디렉터리명만으로특정인터넷사이트에서받았다고판정하지않았다.
-
-**LIKELY:** 이묶음이현재 연구의초기asset유입물이다. 연구용F1은2026-08-10exportmtime를보존하고2026-08-11해제birth를갖는다. F1을직접 참조하는 `construction_scene_step07.usd`/`..._restored.usd`의현재 mtime는2026-08-27, recovery파일birth도8월27일이다. 따라서이시점이초기scene구성의유력구간이다. 파일시각만으로최초 시뮬레이션 실행일을확정하지않았다.
-
-**UNKNOWN:** split ZIP을만든사람,메일/메신저/공유드라이브전달자,최초원 배포다운로드 URL,원본FBX/BLEND/OBJ의위치,구매/무료다운로드영수증,당시 약관. 관련파일의xattr에는다운로드출처가없었다. readable Chrome4개profile의 `History` DB를read-only/immutable로정확한archive/환경파일basename에한정조회했지만일치download행0이었다. activeWAL·삭제/정리/이전PC기록이포함되지않으므로다운로드가없었다는증명은아니다. 무관한개인방문기록·계정정보는보고서/증거에복사하지않았다.
-
-starter와 `isaac_cosmos`는Git저장소가아니다. 접근가능한handoff repo의candidate USD명 Git이력도0이었다. 변경된연구문서가있다고asset저작권허가가생기지는않는다. 관련상위형식/동일이름의FBX/BLEND/OBJ/MTL/glTF/GLB/README/LICENSE경로검색에서도upstream construction asset은찾지못했다. **범위내negative evidence**로남긴다.
-
-## 6. 인터넷 원본 배포처 검색 결과
-
-인터넷접근가능. 검색일2026-11-03. exact파일명·고유ID·construction-site/scan/interior·플랫폼별질의를진행했다. `web_search_log.json`에검색어·공식URL·실패를기록했다.
-
-|조사대상|결과|동일성 판정|
+| 평가항목 | 기존 환경 | 대안과 차이 |
 |---|---|---|
-|NVIDIA Isaac Sim5.1 공식환경목록|grid/warehouse/hospital/office등. 요청파일명·고유ID를동일원본으로연결하는항목미발견|UNKNOWN; `_isaac`파일명은NVIDIA제작/허가증거아님|
-|Omniverse/AirLab/GitHub|AirStack/RAVEN의ConstructionSite stage는발견. localpackage와mesh/texture연결근거없음|UNKNOWN; 이름일치만으로채택하지않음|
-|Sketchfab|관련scan 후보들. exactID검색미확인,직접IDAPI404,일부page403|UNKNOWN; 다른모델CC라이선스전용금지|
-|CGTrader|Construction site3DScan #4762918 발견|**LIKELY**; 아래대조한계있음|
-|Fab/Unreal관련|Joe013 stylized3688tris·immerge rubble scans등발견|local scan과동일 근거없음;상대라이선스차용금지|
+| 현장 적합성 | 넓은 콘크리트 건설현장Mesh 배경 | 실제 공사 전실/통로 NuRec; B1이 운반 맥락에 가장 유리 |
+| 이동 가능 공간 | 기존 배치/잠금·과거 주행 기록 존재, 전 조건 경로 성공 아님 | B1 통로 유력, 나머지 작은 승강기 전실 중심 |
+| 자재 적재 공간 | 기존 fixture/팔레트 배치와 좌표 존재 | 빈 바닥 후보는 보이나1.1m pallet+rover여유 미검증 |
+| 카메라 환경 | 동결 HR/LR/CAD 모델과 원래RGB-D 정책 | view-dependent blur/holes, window exposure, baked appearance |
+| 물리 시뮬레이션 | 환경Mesh1/CollisionAPI1 확인; 과거 전체task success와 구분 | Mesh0/Collider0/RigidBody0/PhysicsScene0 |
+| 환경 수정 비용 | 기존 fixtures/robot/lighting pipeline | 높음: staticphysics map+neural alignment+sensor/lighting정합 |
+| 연구 재현성 | 기존protocol/seed/geometry/modelhash 보존 | 새 workspace/scene hash와 관측정책 잠금 필요 |
+| 라이선스 | upstream 미확정, CGTrader 후보 No-AI 여부 미해결 | 네 파일 모두 제작자·원URL·연구권리UNKNOWN |
 
-공식목록확인근거: [NVIDIA5.1 Environment Assets](https://docs.isaacsim.omniverse.nvidia.com/5.1.0/assets/usd_assets_environments.html), [AirStack scene catalog](https://docs.theairlab.org/main/docs/simulation/scenes/). 카탈로그에없다는사실만으로모든NVIDIA배포물에없다고단정하지않는다.
+특히현재 설계 중심(-25.888,30.509)m는5F_CLOSED/5F_OPEN/Jeonju의crop XY밖이다. B1에서는bbox안이지만실제표면·빈공간안이라는증거는아니다. **기존로버/팔레트/목표물의절대world좌표를그대로복사하는것은유효한이식이아니다.** 로봇과팔레트모델·상대fixture치수·물리상수는재사용가능성이있지만새workspace의검증된frame/지지/충돌조건에새로결합해야한다.
 
-### 가장 유력한 CGTrader 후보 — 아직 동일성 미확정
+## 7. A/B/C 평가와 추천
 
-공식 상품페이지: [Construction site 3D Scan / model4762918](https://www.cgtrader.com/free-3d-models/scanned/various/3d-scanned-construction-site-performance-friendly). 페이지는제작/게시계정을 `thisismy7thaccountlmao`, 게시일2023-09-08, Matterport Pro3 스캔,BLEND/FBX/JPG와약295MB,정점약195,000/면약385,000으로표시한다. 이는**그상품에대한확인사항**이고우리USD의저작자확정이아니다.
+- A(즉시대체유력): **0개**. 네 파일 모두물리Geometry와사용권리확인이부족하다.
+- B(조건부대체가능): **4개**. 실제RGB공간은확인됐으며독립Geometry/Collision/센서정합/권리확보가필요하다.
+- C(대체부적합확정): **0개**. 현재자료만으로영구사용불가나모든경로부재를증명하지않았다. 모든에셋의활용성을낙관한다는뜻은아니며사용목적은다르다.
 
-local은194,223정점/382,994면으로표시값대비각약−.398%/−.521%차이다. 규모가가깝지만숫자는정확히같지않다. 변환/삼각분할/페이지반올림가능성을가정해동일성을확정하지않았다. 공개preview와local texture/기존render에서흰콘크리트기둥,창개구,노출케이블트레이,주황색전기함,바닥금속부재등유사한구성을대조했다.이단서와scan형태는LIKELY를뒷받침하지만객체가비슷하다는관측만으로CONFIRMED가되지않는다.
+| 환경 | 평가 | 확인한 장점 | 미검증/제약 | 추천순위 |
+|---|---|---|---|---|
+| 5F_CLOSED_EV | B: 조건부 | 승강기 폐문, 창, 석고보드/콘크리트 벽과 짧은 전실, 바닥의 거친 표면 | 짧은 전실/복도; 넓은 접근·회전 공간과 Far시점 확보 미검증 | 2 |
+| 5F_OPEN_EV | B: 조건부 | 5F_CLOSED와 유사한 전실, 열린 승강기 개구와 내부 모습; 개구 가장자리 잔상/반투명 왜곡 | 승강기 인계/문 앞 인식의 조건부 후보; 동일형상·정합은 미검증 | 3 |
+| B1_CLOSED_EV | B: 조건부 | 지하층으로 보이는 넓은 공사 통로, 기둥, 천장 배관/덕트, 임시 비닐 구획, 콘·안내판·소화기·자재 | 네 에셋 중 운반 접근/장애물 맥락의 우선 후보; 실제 폭/회전반경/전 구간 연결성 미측정 | 1 |
+| Jeonju_122151 | B: 조건부 | 노출 콘크리트 벽과 열린 승강기, 청색 문/분전함, 공사 안내물이 있는 전실 | 승강기 주변 단거리 관측/인계 후보; crop 밖/넓은 이동 구역 품질은 미검증 | 4 |
 
-공개preview2장과local410texture전체에SIFT+ratio.7+homography4px 진단을실행했다.최대rawinlier14였으나무관한texture부분이preview의극소영역으로모이는**퇴화대응**을확인하여**동일성증거로거절**했다. 성공처럼보고하지않았다. `public_preview_texture_matches.csv`, `texture_match_summary.json`, `public_candidate_identity_assessment.json`에수치와거절이유를보존했다. 실패한 match그림은확정 매칭그림이아니다.
+**가장 적합한 우선 후보:B1_CLOSED_EV.** 현재건설자재운반연구와가장가까운통로·기둥·공사구획·현장자재가동시에보이고,작은승강기전실보다접근/적재구역후보를설계할여지가있어보인다. 이것은영상에근거한조건부우선순위이며통로폭이나팔레트1.1m배치가능성을실측확정한결과가아니다. 후속검토는B1의품질좋은부분한구역에서측량/정합geometry와workspace를먼저확보하는것이타당하다.5F두종은승강기앞단거리전달/인식장면이라는연구질문에더적합할수있다.
 
-공개 원본 모델archive를받아mesh/texture SHA를대조하거나모델소유자확인을얻지못했다. **공식 상품URL은존재하지만실제우리파일의다운로드 URL·최초배포처인지는UNKNOWN**이다. publicpreview는검증용증거보관이며논문게재/재배포권리를획득한것이아니다. 상품page의일반HTTP직접fetch는200/emptybody,webreader는본문접근가능이었고previewJPEG는200이었다. 로그인/구매/권리 허가 우회는하지않았다.
+## 8. HR/LR/CAD 연구 영향 — 재실험은 하지 않음
 
-## 7. 원저작자 및 라이선스 검증
+1. **배치와 좌표:** 로봇·팔레트 모델과 상대 치수는 재사용할 수 있다. 하지만 새 task-design center, 접근면, 관측 pose와 paired base scenario를 별도로 정해야 한다. 기존 geometry lock을 덮어쓰지 않고 새 환경 버전과 원래 결과를 분리한다. HR/LR/GeoCAD는 같은 조건과 관측 정책으로 대응시킨다. LR은 저감 취득 조건의 독립 재구성이며 HR decimation으로 대체하지 않는다.
 
-**현재 연구USD에 확정 적용되는 라이선스: UNKNOWN. 학술 연구·논문 사용 허가: UNKNOWN.** localpackage/묶음안에licensetext가없다는것은공개도메인이라는뜻이아니다.
+2. **경로와 주행:** 기존 rear offset .338m, wheelbase .7m, steering15°, 보수 곡률 상한 .363645332585095/m을 무단 변경하지 않는다. 이 상한에 대응하는 반경은 약2.75m다. 좁은 전실에서는 접근 공간을 특히 확인해야 하지만, 이것만으로 모든 경로가 불가능하다고 판정할 수는 없다. v47의 local planner/bracket 거절도 배경 교체만으로 해결됐다고 말할 수 없다. 새 occupancy·swept geometry·support·stopped handoff 검증이 필요하며 이번에는 경로 탐색이나 주행을 하지 않았다.
 
-CGTrader후보의현재 표시는 **Royalty Free License (no AI)**다. 공식약관의21B는머신러닝/신경망 학습 사용에대한추가제한을두고,24조는무료파일도판매자가선택한라이선스를따른다고설명한다. [CGTrader공식약관20/21A/21B/24](https://www.cgtrader.com/pages/terms-and-conditions). **무료=제한없음,학위논문=모든활용자동 허용으로해석하지않는다.** 현재페이지를과거다운로드시점의확정약관으로소급하지않으며,해당candidate가다르거나이전별도 계약이있을가능성도열어둔다.
+3. **카메라와 조명:** 기존 mount/extrinsics는 검증된 로봇 모델에서 재사용하되, 새 world base TF 및 실제 바닥 frame에 정합해야 한다. NuRec의 빛과 그림자는 촬영된 모습이므로 새로 넣은 벽돌의 조명·그림자·occlusion과 맞지 않을 수 있다. RGB 렌더 성공은 depth 정확도, semantics, 가시성 또는 B5 평면 추정의 보증이 아니다. 별도 RGB-D 관측 계약과 바닥·벽체 depth 정합 검증이 필요하다.
 
-|확인할권리|현시점판정|필요근거|
-|---|---|---|
-|원저작자/원 배포기관|UNKNOWN;후보게시계정만확인|모델 파일 동일성+계정/권리자 확인|
-|학술 시뮬레이션 사용|UNKNOWN|실제 취득시점/취득주체의license/계약|
-|학위논문 스크린샷·결과이미지|UNKNOWN|이미지복제·배포·전자공개권한과표기의무|
-|합성데이터생성/모델학습·ML활용|UNKNOWN;후보가맞으면No-AI범위점검필수|과거허가/별도ML허가또는권리자서면해석|
-|USD변환·수정|UNKNOWN|정확한사용권및수정허용조건|
-|원본/수정USD·texture재배포|허가확인안됨|sourceasset재배포권한별도확인|
-|attribution/저작권고지의무|UNKNOWN|정확한asset별license및계약조건|
+4. **SDG와 YOLO:** 새 환경의 성능을 주장하려면 새 조건의 fresh paired 데이터를 준비해야 한다. 기존 SDG는 원래 환경 자료로 보존한다. 재학습이 반드시 필요한지는 아직 알 수 없다. 먼저 동결 모델과 전향 검증용 GT로 도메인 변화 영향을 평가하고, 필요할 때 별도 학습·validation 설계를 한다. Test189를 모델 선택이나 튜닝에 재사용하지 않는다. 이번 데이터 재생성·추론·훈련은 모두0이다.
 
-후보약관21A는프로젝트에포함된사용과독립 asset 재배포를구분한다.논문 이미지공개와편집 가능한USD/texture또는합성데이터셋공개를같은권리로보지않는다.지금자료만으로위법/적법판정을확정하지않는다.
+5. **기존 결과의 사용 범위:** 원래 IoU·검출/B5 수율·위치오차·planner 거절·거리/가림/조명 효과·collision/support·물리 PRE/FINAL을 새 환경의 성능으로 옮겨 주장할 수 없다. 원래 결과는 그대로 유지하고 새 환경에서는 해당 항목을 재검증해야 한다. 같은 RGB를 다시 분석한 자료를 독립 관측으로 늘리지 않는다. 실물 red-only 검증을 cement나 새 현장의 실제 주행 검증으로 확대하지 않는다.
 
-다른사이트일반규정도자동적용하지않았다. [Fab공식설명](https://www.fab.com/eula)은Standard와CC-BY를구분하고독립 asset 재배포제한등을설명한다. [CC BY4.0공식문서](https://creativecommons.org/licenses/by/4.0/)의표기의무를우리USD에적용하려면먼저우리asset에그라이선스가부여됐다는증거가필요하다. NVIDIA/Isaac Sim소프트웨어라이선스도외부콘텐츠권리를대체하지않는다.
+6. **실구동 게이트:** 사람 ROI 검토 PENDING, 역사 v44 사전 검토 FAIL, v38 승인된 실측 steering abort 규칙 HOLD는 그대로다. 이번 정적 촬영 성공은 새 주행이나 정지 조향의 허가가 아니다.
 
-## 8. 논문 사용 시 필요한 출처 표기
+## 9. 출처·라이선스
 
-**확정저작자처럼출처를꾸미지않는다.** 현재내부원고메모에는“로컬입력Constructionsite_isaac.usdz, 원 배포자·라이선스확인중,SHA256…;연구자는로버/목표물/조명등을추가”라고기록할수있다.그러나“출처미상”표기만으로공개권리를해결하지는못한다.
+네 파일은 앞선 [출처 조사](construction_environment_usd_provenance_audit.md)에서 확인한 assets.zip/assets.z01→assets_full.zip 묶음에 들어 있다. 그러나 **제작자·원 다운로드 URL·학술/ML/논문 그림 사용 권한은 모두 UNKNOWN**이다.
 
-동일성·허가 확보후채울표기틀:
+`Jeonju`·`EV`라는 이름, 한국어 안내문, NuRec 기술만으로 고레로보틱스 소유나 제작이라고 판정하지 않았다. NVIDIA의 NuRec 기술 라이선스와 촬영된 콘텐츠의 권리는 별개다. 기존 Constructionsite를 이 파일들로 바꾸더라도 출처·권리 문제가 자동으로 해결되지 않는다.
 
-> 환경배경: [확정제작자/권리자], “[확정모델명/버전]”, [공식원본 URL], [취득일/확인일], [정확한라이선스명·원문URL]. 본연구에서USD변환[실제확인된변경],로버·벽돌fixture·카메라·조명을추가함. [필요저작권고지/허가문서식별자].
+묶음 전달자나 촬영·재구성 담당자에게 소유권, 촬영 장소와 동의, 정확한 파일 버전, 연구·합성데이터·ML 활용, 논문 이미지 공개 및 수정·공유 범위를 확인해야 한다. 이번 이미지는 내부 검토 자료이며 논문 게재 권한 확인을 대신하지 않는다.
 
-CGTrader후보가맞더라도해당계정을기재하기전원본확인과historicallicense증거를확보해야한다. 캡션/방법/참고문헌/부록및온라인학위논문에대한고지위치를허가조건에맞춘다. CC BY가실제로확인되면제작자·원본·라이선스링크·변경내역을표기한다.별도 계약이면그문구를따른다.
+## 10. 결론과다음단계
 
-## 9. 출처 불명확 시 발생 가능한 문제와 대응 방안
+**실제 모습 확보 PASS / 물리 주행 준비 미충족 / 권리UNKNOWN.** B1_CLOSED_EV를조건부 1순위로추천하며,새 연구 환경으로즉시채택/기존실험교체하지않는다. 다음구체단계는B1의검토구역에대한권리와실측/정합floor·wallgeometry를확보하고,원하는거리/시점·팔레트/로버경로가그검증구역안에들어가는지새버전으로설계하는것이다.
 
-1. **파일 동일성/권리연결단절:** splitarchive전달자에게원다운로드page·원본압축파일·영수증·당시 license를요청한다. package의동일ID/410texture/정점수와F1SHA를제공해정확한 버전을찾는다.질문은사용자에게전달했지만본조사에서답변을받았다고기록하지않았다.
-2. **논문/ML/데이터배포범위불일치:** 확인대상에는스크린샷·결과 그림·온라인학위논문·합성데이터생성·학습/추론·USD변환·공동연구자공유·원본/수정본공개를명시한다.단순‘연구목적’허가로모두가능하다고추정하지않는다.
-3. **candidate license의No-AI가능성:** 원취득시점license와별도합의부터확인하고,기관도서관저작권담당/산학협력단등과적용 범위를검토한다. 현재후보약관을우리과거 연구에자동 소급하거나,ML사용을자동 허용하지않는다.
-4. **확인 불가가계속될경우:** 공개논문용이미지사용의서면 허가를확보하거나,권리가 명확한배경/직접제작배경으로대체하는별도계획을세운다.대체가실험조건/결과에미치는영향은별도version과재현성설명으로다룬다.이번작업에서는환경교체·재실험·기존 결과 수정을하지않았다.
-5. **증거보존:** 원본과수정본을구분해hash/받은날짜/전달자/원본 URL/licensecopy를보관한다. 원본USD/texture를논문부록이나공개저장소에첨부하기전재배포권을별도로검토한다.
-
-사람이추가 검색할정확한검색어: `"Constructionsite_isaac.usdz"`, `"Constructionsite_isaac.usd"`, `"cb5ce5926fdd4ce2b8f8f548239dcfaf"`, `"Construction site 3D Scan" "4762918"`, `"5F_CLOSED_EV.usdz"`, `"Jeonju_114644.nurec"`. 후보파일을정상취득하면archive/각textureSHA,194223points/382994triangles,410materialsubset,prim/UV배열을대조하고최종동일성 판정을갱신한다.근사면수·비슷한이미지만으로hash불일치를무시하지않는다.
-
-## 10. 최종 결론 및 추가 확인 필요 사항
-
-|질문|답변|판정|
-|---|---|---|
-|**Q1 최초원본 파일은?**|연구계보상확인된로컬상위 입력은F1 `Constructionsite_isaac.usdz`.ZIP멤버·다운로드복사·연구복사의SHA동일.이미export된USDZ이며그이전외부최초제작/DCC파일은미확인.|로컬상위 입력CONFIRMED / 외부최초원본UNKNOWN|
-|**Q2 실제 제작자는?**|확정 불가.CGTrader #4762918의게시계정thisismy7thaccountlmao가유력단서지만우리USD와byte동일성·권리자 신원미확인.|UNKNOWN;후보연결LIKELY|
-|**Q3 다운로드처·원본 URL은?**|현재PC유입은assets.zip+assets.z01→assets_full.zip→연구assets.공식CGTrader후보URL은존재하지만이PC파일이그곳에서받은것인지는입증못함.|로컬유입 계보CONFIRMED / 실제원다운로드 URLUNKNOWN|
-|**Q4 라이선스·학위논문 사용은?**|우리USD적용license미확인으로사용 가능확답불가.유력후보현재 표시No-AI;동일성·당시취득 조건·이미지/ML/공개범위서면 확인필요.|UNKNOWN|
-|**Q5 원본대비얼마나수정?**|받은로컬USDZ와연구용USDZ는byte변경0.그에대한4개핵심파생씬의points/facecounts/indices/normals/UV및worldtransform도exact동일.로버/목표물/카메라/조명등stage구성은추가됨.외부DCC원본→현재USDZ변환/수정정도는미확인.|검사한배경배열/변환불변CONFIRMED / 외부최초원본대비변경UNKNOWN|
-|**Q6 논문 전조치는?**|archive전달자·원취득자에게모델page/원본 파일/과거license/영수증요청→동일성검증→논문그림·ML·공개범위허가 확보→정확한출처작성.불가하면권리가 명확한대체안과연구영향을별도 검토.|추가 확인필수|
-
-Q5의수치근거는 `composed_environment_geometry_comparison.json`이다.4개stage(F3/F4/F5/F6)에서5개배열의NumPy전체바이트SHA와값/shape를대조했고mesh world transform도같다.관련조상layer의`/World/ConstructionSite`아래authoredopinion은원래package reference1개였다.이것은전체로봇실험모든stage의물리설정·조명불변이나외부원제작물과의동일성을뜻하지않는다. initialfingerprint CSV의`*_display_string_sha256`는배열표시문자열digest이며정확한전체배열판정에는사용하지않았다.
-
-**검사결과:** source USD376개+PROJECT_STATE1개=377개시작/종료SHA보존PASS,layer406개최종readPASS/failure0,packaged환경5개동일성PASS,4개핵심scene배경geometry/worldtransformPASS.외부원 제작자/원URL/licenseUNKNOWN. 보고서및신규증거폴더만작성했다.기존 보고서 덮어쓰기0,PROJECT_STATE 변경0,시뮬레이션0,외부 연락/게시/기존 파일 수정0.
-
-실패/한계도보존했다. initialpseudoRoot.GetAsText표시probe는지원되지않아exit1,첫backgroundinspection은child지속실행미확인으로결과없음,attempt02는SdfLayerOffsetPythonconverter,attempt03은빈assetpath예외로실패했다.이후offset읽기/빈경로처리를보완한attempt04는exit0으로406layer검사를완료했다.원본 조작으로오류를우회하지않았다.없던texture `_1.jpg`표본명probe도실패후실제ZIP명단으로해결했다.403/404/emptybody/timeout웹시도및퇴화image-matching도성공으로바꾸지않았다.지원코드snapshot·로그·SHA는증거폴더에있다.원격Git동기화상태는이번조사에서확인하지않았다.
+변경은새보고서와신규이미지/검사로그/CSV/JSON/실행코드snapshot뿐이다. 원본 USD/기존 Stage/실험 결과/PROJECT_STATE 불변. 두실제Kitprocess종료0,source SHA7/7 PASS,PNG74/74decodePASS. 도중연구실패를지우거나physics성공으로표시한항목0. 초기바닥밖시점·blur·빈crop영역은실제자료로보존했다. 원격 push/publish는수행하지않았다.
