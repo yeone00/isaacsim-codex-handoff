@@ -802,3 +802,20 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 ## 2026-11-02 — v47 219 design-oracle 거부 원인·frame audit 완료 / motion HOLD
 
 [보고서](../reports/three_rep_planner_219_failures_frame_audit_20261102_v47.md). v46 319×2목표×2정책1276상태/reason exact재현. 독립v43 capture rover matrix와시작점차이최대XY1.78e-14m/yaw8.91e-14°;camera-only이동가설기각,frame보정분기미생성. 설계219 old거리52/전방3/곡률164,smooth bracket219;물리전역불가능증명아님. 예측FAIL설계PASS89/71=old곡률87+전방2/smooth bracket60+곡률11보존. matched79/69에서설계PASS29/27,세예측모두FAIL중설계PASSold21/19,smooth15/13. 원본nominalHR중간경유최소대안실행0/219로실패보존,global approach+occupancy미해결. highIoU3+LR IoU0 17 depth/ROI표·8패널,78원본서명0·안내완료. 사람PENDING/역사v44FAIL/v45b918NOT_RUN/steeringHOLD유지. finalizer첫출력tabulate부재exit1보존후내장표출력으로수정. Kit/ROS/motion/추론/새B5/HPO0. latest_report및별도scale-video불변,Git없음remoteUNKNOWN.
+
+
+## 2026-11-03 — B1 학습배경 선정·SDG 연결·적벽돌 촬영품질 개선 (Codex, 보고서 기준 append)
+
+[출처조사](../reports/construction_environment_usd_provenance_audit.md) · [대체환경검토](../reports/alternative_environment_asset_review_20261103.md) · [재생성준비](../reports/synthetic_dataset_regeneration_plan_b1_jeonju_20261103.md) · [품질개선](../reports/b1_red_brick_sdg_quality_optimization_20261103.md). 학습배경 B1_CLOSED_EV.usdz(SHA de908a9e…586d) 선정, 평가용 Constructionsite_isaac.usdz 유지·불변. 두 환경 Mesh/Collider0, 이용권한 UNKNOWN(CGTrader 후보 미확정). 18장 smoke(HR/LR/CAD, canonical→polygon IoU1.0, CPU로더) "소규모 연결검증 PASS/대량생성 품질 미승인". ISO400 포화 진단 후 공통 ISO25/shutter50/f5/ACES·dome=8000+0.05×기존 제안, ROI 6곳 렌더 후 R1_NORTH_2/R5_WEST/R4_EAST 추천·R3_NORTH_7 제외, paired 72장 브릭·파레트 clipping0/36. red-only manifest 1400(train1000/val200/test200, SHA 56c8acbb…e0, dome 변환 반영) 작성. 첫 노출세션 renderer Error120 보존. NuRec depth 유효0/24, 바닥접촉 UNKNOWN. 전체생성/학습0, PROJECT_STATE는 당시 미갱신(SHA d919282d…f19aa).
+
+## 2026-11-03 — Claude Code 인수인계 감사 / NuRec 가림 RGB차분 근거 / GitHub·ntfy 연결
+
+[감사](../reports/claude_code_handoff_audit_20261103.md) · [설정](../reports/claude_code_github_ntfy_setup_20261103.md). 읽기전용 감사: 입력SHA11 일치, production entrypoint 부재 확인(v01 ISO400·단일ROI·2800 고정, v05/v06 train≤64). NuRec는 instance-ID/depth에 미반영; 기존 78쌍 오프라인 RGB차분에서 R3 brick mask 20.9% 빈배경동일(가림)·추천ROI ISO25 36장 <1%. Claude hooks(Stop/Notification/StopFailure)·ntfy 5시험 PASS(휴대폰 수신 연구자 확인)·HANDOFF push 승인후 첫 push 5964542 PASS. Isaac/학습0.
+
+## 2026-11-03 — B1 NuRec 가시도·matte 바닥 진단 HR 13job
+
+[보고서](../reports/b1_nurec_visibility_matte_pilot_20261105.md). train 13job(추천ROI 12층화 + R3 양성대조), E/EO/I/O/M 렌더. capture v01 FAIL(NUREC_PRIM_NOT_FOUND, 실제 /World/gauss/gauss; 예외에도 exit0 → 결과파일 검증으로 판정) 보존, v02 13/13 PASS·Error0. NuRec 숨김 물체전용 O 기준 유효(비가림 \|I−O\| 중앙 2–3/255), R3 hard 0.793/soft 0.424, 추천ROI 31load hard ≥0.991. matte/shadow-catcher 바닥은 NuRec 바닥을 검게 덮어 FAIL(보존).
+
+## 2026-11-05 — B1 HR/LR/CAD 가림비교·QA규칙 DRAFT·production pilot 비용 / 전체생성·학습 NOT_RUN
+
+[보고서](../reports/b1_nurec_visibility_3rep_and_production_pilot_20261105.md) · [QA DRAFT](b1_visibility_qa_rule_DRAFT_20261105_v01.md). 동일13job LR/CAD 각 13/13 PASS·Error0: 추천ROI hard_e2 최소 HR.997/LR.994/CAD.998(표현차 ≤.006), R3 .815/.814/.826. 빈배경 세션간 비트비동일(평균≤.16/255) → E 동일세션 원칙. QA: 주지표 실제 load mask 2px침식 hard, 보조 soft, LOW_SUPPORT/FLAG/WATCH/OK, base scene 3표현 공동FLAG, 자동삭제·대체 없음, 임계값 미확정(train만으로 결정 후 v02 잠금). matte/그림자 보류·접촉은 알려진 제한. production entrypoint v01–v03 + 검증기2(production, cross-rep pairing): train 12장면(41load) pilot. v01 E/O 3표현 PASS; v01 RGB전용 LR 11/12 브릭 미렌더 FAIL, v02(로딩대기/재시도) LR·CAD 11/12 FAIL, v03(삭제후 update8) 12/12 PASS·pairing PASS 78쌍·음성대조 FAIL 확인; 기존 E/O·진단·Codex 72장 mask IoU≥.85 누락징후 없음. 실측 장면당 HR/LR/CAD: RGB 4.91/3.16/3.27s, +E 5.93/3.99/~4.35s, +E+O 17.45/14.72/14.82s → 1400×3 약 4.4h/5.5h/18.3h(단일GPU), O비용은 NuRec 전환 ~11s. PROJECT_STATE를 입력해시로 쓰는 기존 스크립트는 이 append 이후 SOURCE_HASH_MISMATCH(production v01–v03은 명시 제외). 4,200장 생성0/YOLO학습0/val·test렌더0, 원본 USD·브릭·manifest 불변. 다음: QA DRAFT·구성(C1 권장)·FLAG 처리 승인 → train 전체 생성·검증 → 임계값 잠금 → val/test.
