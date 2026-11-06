@@ -839,3 +839,15 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - Ultralytics 8.4.129 trainer에서 `last_opt_step`은 지역 변수로 -1에서 다시 시작하고, accumulate=round(64/6)=11이다.
   - Train 9/batch 6 구성은 **연속 실행에서도 epoch 2 step 0**이다(CPU 정수 로직 재현). 따라서 Ray 복원, optimizer 재생성, scaler, EMA 문제는 배제했고(정적), 원인은 accumulation이다.
   - GPU 재현은 미실행이며 승인 대기다. STAGE1_READY=NO 유지.
+
+## 2026-11-06 — B1 train 1000×3 생성 완료·검증 PASS / QA 임계값 후보 제안(미잠금) (Claude Code)
+
+[보고서](../reports/b1_train_production_qa_20261106.md)
+
+- 생성(14:57–18:47 KST): HR / LR / CAD 각각 1000/1000 PASS, 장면 FAIL 0, primary 재시도 0, renderer [Error] 0. HR 95.5분, LR 65.4분, CAD 69.0분.
+- 검증: `verify_{HR_Scan,LR_Scan,GeoCAD}_v01.json` 모두 PASS. `crossrep_pairing_v01.json` PASS(1000장면, 5756 load 쌍, 위반 0). resume 불필요. exit code는 판정에 쓰지 않았다.
+- train QA: 8907행, `vis_hard_e2`(2px 침식)
+  - primary Load_01 최소 HR 0.990 / LR 0.988 / CAD 0.995
+  - 보조 load 18개 scene-load가 0.95 미만이다(최소 0.354). 주로 R1_NORTH_2의 반투명 NuRec floater가 원인이며 세 표현 일치.
+- 제안(승인 대기, **잠금 안 함**): T_flag 0.90, T_watch 0.95, N_min 100(대안 200). 이때 FLAG는 29행 / 10 scene-load, primary base-scene FLAG 0, 경계 걸침 1.
+- val/test 생성 0, 학습 0, val/test 분포 미열람.
