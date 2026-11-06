@@ -819,3 +819,23 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 ## 2026-11-05 — B1 HR/LR/CAD 가림비교·QA규칙 DRAFT·production pilot 비용 / 전체생성·학습 NOT_RUN
 
 [보고서](../reports/b1_nurec_visibility_3rep_and_production_pilot_20261105.md) · [QA DRAFT](b1_visibility_qa_rule_DRAFT_20261105_v01.md). 동일13job LR/CAD 각 13/13 PASS·Error0: 추천ROI hard_e2 최소 HR.997/LR.994/CAD.998(표현차 ≤.006), R3 .815/.814/.826. 빈배경 세션간 비트비동일(평균≤.16/255) → E 동일세션 원칙. QA: 주지표 실제 load mask 2px침식 hard, 보조 soft, LOW_SUPPORT/FLAG/WATCH/OK, base scene 3표현 공동FLAG, 자동삭제·대체 없음, 임계값 미확정(train만으로 결정 후 v02 잠금). matte/그림자 보류·접촉은 알려진 제한. production entrypoint v01–v03 + 검증기2(production, cross-rep pairing): train 12장면(41load) pilot. v01 E/O 3표현 PASS; v01 RGB전용 LR 11/12 브릭 미렌더 FAIL, v02(로딩대기/재시도) LR·CAD 11/12 FAIL, v03(삭제후 update8) 12/12 PASS·pairing PASS 78쌍·음성대조 FAIL 확인; 기존 E/O·진단·Codex 72장 mask IoU≥.85 누락징후 없음. 실측 장면당 HR/LR/CAD: RGB 4.91/3.16/3.27s, +E 5.93/3.99/~4.35s, +E+O 17.45/14.72/14.82s → 1400×3 약 4.4h/5.5h/18.3h(단일GPU), O비용은 NuRec 전환 ~11s. PROJECT_STATE를 입력해시로 쓰는 기존 스크립트는 이 append 이후 SOURCE_HASH_MISMATCH(production v01–v03은 명시 제외). 4,200장 생성0/YOLO학습0/val·test렌더0, 원본 USD·브릭·manifest 불변. 다음: QA DRAFT·구성(C1 권장)·FLAG 처리 승인 → train 전체 생성·검증 → 임계값 잠금 → val/test.
+
+## 2026-11-06 — B1 H1/C1 승인·train 생성 시작 / v42 Ray step 1→1 정적 원인 분석 (Claude Code)
+
+- 연구자 승인: FLAG 처리 H1, 생성 구성 C1(RGB와 같은 세션 E, HR canonical). 기록: `docs/b1_production_decisions_20261106_v01.md`. QA 임계값은 미확정이다. 잠금 틀은 `docs/b1_visibility_qa_rule_v02_LOCK_TEMPLATE_20261106.md`와 thresholds JSON TEMPLATE(모두 null)이다.
+- train 1000 × HR/LR/CAD 생성 시작(14:57 KST)
+  - driver: `scripts/run_b1_train_production_20261106_v01.sh`(v03, settle 8)
+  - root: `/home/user/hh/isaac_cosmos/sdg_final/B1_RED_PRODUCTION_TRAIN_20261106_v01`
+  - manifest sha 56c8acbb… 일치 확인
+  - 이 항목 작성 시점: **진행 중**(HR 약 720/1000, FAIL 0). 완료와 검증은 별도 항목에 기록한다.
+- 준비 도구(pilot smoke PASS, 학습 0)
+  - `analysis/b1_train_visibility_qa_20261106_v01.py`: train 전용, 임계값 미적용
+  - `scripts/export_b1_yolo_20261106_v02.py`
+    - 공통 HR canonical label, class0, 100px 이상
+    - pilot 41 instance polygon IoU 1.0, xor 0
+    - train·val·test가 모두 있을 때만 data.yaml을 만든다
+- handoff repo: `handoff/next_task_b1_sdg_20261106.md` 추가(commit a14600e, push). 로봇 v48 `next_task.md`는 미실행 상태로 유지. 유휴 Codex v47 세션(pid 3151745)은 종료하지 않았다.
+- v42 정적 분석([보고서](../reports/v42_ray_resume_optimizer_step_static_20261106.md))
+  - Ultralytics 8.4.129 trainer에서 `last_opt_step`은 지역 변수로 -1에서 다시 시작하고, accumulate=round(64/6)=11이다.
+  - Train 9/batch 6 구성은 **연속 실행에서도 epoch 2 step 0**이다(CPU 정수 로직 재현). 따라서 Ray 복원, optimizer 재생성, scaler, EMA 문제는 배제했고(정적), 원인은 accumulation이다.
+  - GPU 재현은 미실행이며 승인 대기다. STAGE1_READY=NO 유지.
