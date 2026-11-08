@@ -1156,3 +1156,30 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - 출력: `B1_MIX_SMOKE_RECIPEv04_20261108_v01`
 - 39개 본 학습은 기술적으로 준비됐다(약 10시간). 시작 전에 라벨 충돌 처리 결정과 v04 / 프로토콜 LOCK 승인이 필요하다.
 - test 0, HPO 0, 원본 라벨·split·baseline 변경 0.
+
+## 2026-11-08 — Real 라벨 보완(R1) 초안 + 사람 검토 패키지 + 평가 정의 + manifest / 프로토콜 v02 (학습·test 0) (Claude Code)
+
+[보고서](../reports/real_labels_v02_and_eval_definition_20261108.md)
+
+- 결정(연구자): R1(원본 보존, 보완 all-load 라벨 labels_v02), 공통 checkpoint 규칙 채택(Q2–Q5는 best_combined, Q1은 B1 val best; real val 라벨 승인 뒤 최종 잠금), 안 A 39 run.
+- **보완 대상**: AI 선별로 확인 79장(train 58, val 21) + AI 판정 불일치 1장(0415) = Tier A 80장.
+  - 정확한 최종 수는 400장 전체를 사람이 검토한 뒤 정한다(PENDING).
+- **초안**: SAM2.1 Base(sha f1a9cf2d…), AI 확인 후보 box 기반, 63장 102 instance(면적 2.8k–103k px)
+  - Tier A 중 17장은 초안이 없어 사람이 직접 그린다.
+  - 저장: `/home/user/hh/isaac_cosmos/real_benchmark/cvut_real_labels_v02_20261108/labels_v02_draft`(DRAFT, 사용 금지)
+  - 원본 yolo_real_v01 라벨 전체 hash가 전후 같다.
+- **검토 패키지**(Git 밖, 사람 얼굴 포함): sheets 34(400장 전부), per_image 80, 체크리스트 400행 + 102행(판정 칸 비어 있음, PENDING)
+  - 가이드와 체크리스트 텍스트: `reports/real_labels_v02_review_20261108_v01/`
+- **평가 정의**: Test189 GT는 그대로 두고 네 관점으로 평가한다.
+  - T-AP(원본), A-AP(모델 예측을 보지 않고 독립 구축하는 Test189-A), T-ignore, target-centric
+  - 주 지표는 Test189-A가 승인되면 A-AP, 아니면 target-centric이다.
+  - real val은 A(labels_v02, 선정용)와 T(원본) 두 가지다. 편향 분석은 보고서 §2.
+- **manifest v02**: `reports/mixing_design_20261108_v02/`(구성은 v01과 같고 실제 라벨만 labels_v02)
+- **프로토콜 후보 v02**: `docs/b1_mixing_experiment_protocol_LOCK_CANDIDATE_v02_20261108.{json,md}`(PENDING_LABEL_REVIEW, label sha TBD)
+- **코드**: trainer v07(labels_v02 APPROVAL 게이트, 프로토콜 LOCKED 요구)과 view 모듈
+  - 확정 도구 `finalize_real_labels_v02`: 미완료면 거부. 지금 실행하면 502행 미완료로 거부된다.
+  - 확정 도구 `finalize_lock`: candidate → LOCKED
+  - 게이트 동작은 정적 검사로 확인했다. GPU smoke는 승인된 라벨이 나온 뒤에 한다.
+- recipe v04 후보는 그대로 유효하고, 승인 즉시 finalize_lock으로 LOCKED를 만들 수 있다.
+- 39개 학습: 준비는 끝났고 사람 라벨 검토 대기다. 남은 순서는 검토 → 확정 → 프로토콜 v02와 v04 LOCK → v07 smoke → 39 run.
+- 학습 0, HPO 0, B1 test / Test189 추론 0. 사람 QA(B1 FLAG, labels_v02, Test189-A)는 모두 PENDING.
