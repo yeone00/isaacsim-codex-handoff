@@ -903,3 +903,25 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - 4167 instance, 빈 라벨 0, min polygon IoU 0.960
   - data.yaml 3개, 깨진 symlink 0
 - 학습 0, v42 GPU 재현 0. 다음 단계는 연구자 승인 대기다(YOLO 학습 recipe와 실행, v42 재현).
+
+## 2026-11-08 — v42 GPU 재현(B PASS / A FAIL), B1 사람 검토 자료, 공통 recipe DRAFT (Claude Code)
+
+[보고서](../reports/v42_gpu_repro_review_pack_recipe_20261108.md)
+
+- 연구자 승인: GPU 재현 2개와 검토 자료 준비. 본 학습과 HPO는 미승인이며 실행 0.
+- root: `/home/user/hh/isaac_cosmos/sdg_final/THREE_REP_BITMAP_REPRO_20261108_v01`. 1회씩 실행했고 재시도 0.
+- **실험 B(Ray 복원, batch 64 / accumulate 1): PASS**(`exp_B_gate.json` dbc86fe7…)
+  - checkpoint 0→1에서 AdamW step 1→2, real_updates 1→2, EMA 1→2, scaler tracker 1→2, model tensor 560개 변경
+  - 복원 exact PASS
+  - v42 "step 1→1"은 accumulate 1에서 재현되지 않았다.
+- **실험 A(accumulation, batch 6): FAIL**(`exp_A_result.json` 6149e5c4…)
+  - optimizer_step 호출 수(EMA 기준)는 정적 예측과 일치했다(A1 1회, A2 3회).
+  - 그러나 실제 AdamW step은 0이고 가중치도 불변이었다.
+  - 원인 추정: 실험 스크립트가 v42c의 GradScaler init_scale 128을 빼먹어, 기본값 65536에서 fp16 overflow가 나고 step을 건너뛰었다. 실험 설계 결함이다.
+  - 재실행은 하지 않았다(지시). FAIL 기록을 보존한다.
+  - AMP 검사로 `scripts/weights/yolo26n.pt`가 생성됐고 그대로 두었다.
+- 사람 검토 자료 `reports/b1_human_review_pack_20261108_v01/`
+  - 30 사례: FLAG 18(VAL_000148, TST_000188 포함), LOW_SUPPORT 6, 정상 primary 6
+  - 패널 30장, 체크리스트 md/csv(판정 칸 비움). **사람 검토 미실행.**
+- recipe `docs/b1_yolo_baseline_recipe_DRAFT_20261108_v01.md`(5e4a6f21…): DRAFT, 결정 항목 6개 빈칸
+- 판정: 학습은 조건부 가능(데이터와 batch 64 경로 READY). recipe 잠금, B1 학습 스크립트와 smoke, 실행 승인이 남았다. STAGE1(HPO) 준비는 여전히 NO다(B1용 entrypoint 없음).
