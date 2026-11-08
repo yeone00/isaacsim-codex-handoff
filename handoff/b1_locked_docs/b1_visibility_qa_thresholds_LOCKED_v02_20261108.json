@@ -1,0 +1,36 @@
+{
+  "status": "LOCKED",
+  "version": "v02",
+  "rule_doc": "docs/b1_visibility_qa_rule_LOCKED_v02_20261108.md",
+  "rule_doc_sha256": "RECORDED_IN_PROJECT_STATE_2026-11-08 (a file cannot contain its own hash; the rule doc records this JSON's hash)",
+  "template": {
+    "docs/b1_visibility_qa_rule_v02_LOCK_TEMPLATE_20261106.md": "830c6f7b66e5131baf29e088f996968089db81482c97f7c1d298e3c2b731a114",
+    "docs/b1_visibility_qa_thresholds_v02_TEMPLATE_20261106.json": "2eab752cfdcb3cd7fd90f7c7157c3f7538b819184052f8f45f4bf39b6a64a129"
+  },
+  "inherits": {
+    "docs/b1_visibility_qa_rule_DRAFT_20261105_v01.md": "b0f48fd2f29ce7c1176f86a8732062dfcea45c8016957f62c9407b97717299bd",
+    "docs/b1_production_decisions_20261106_v01.md": "cfa15a815c009b6565740f3b45c62f7a66cdb7e87cc7de922cef1a22c4ec7eb7",
+    "analysis/b1_train_visibility_qa_20261106_v01.py": "ea54419f4273f7c62ede40c950724003cedb5244f8ef62dd0dbfd7dc8f8767fa"
+  },
+  "metric": "vis_hard_e2",
+  "erosion_px": 2,
+  "tau": {"percentile": 99.9, "min": 2, "exclude_dilation_px": 15},
+  "soft_metric": "NOT_COMPUTED_C1",
+  "flag_handling": "H1",
+  "N_min": 100,
+  "T_flag": 0.90,
+  "T_watch": 0.95,
+  "category_order": ["px_e2 < N_min -> LOW_SUPPORT", "vis_hard_e2 < T_flag -> FLAG_NUREC_OCCLUSION", "vis_hard_e2 < T_watch -> WATCH", "else -> OK"],
+  "scene_flag_rule": "any representation Load_01 FLAG -> base scene FLAG for all three",
+  "decided_on_split": "train",
+  "evidence": {
+    "train_metrics_csv": "/home/user/hh/isaac_cosmos/sdg_final/B1_RED_PRODUCTION_TRAIN_20261106_v01/analysis_train_qa_v01/b1_visibility_qa_train_metrics_v01.csv",
+    "train_metrics_csv_sha256": "60fae5227ea3baac7b2a0fdca7790931b3fdc07bf9e2ab3402adbb1f72262407",
+    "threshold_grid_csv_sha256": "f25b207d51c20bf9d90135e486d94e2ba4891f03e3886079f92c02e3b4da01ec",
+    "threshold_evidence_json": "reports/b1_train_production_qa_20261106_v01/threshold_evidence.json",
+    "threshold_evidence_json_sha256": "24df4b7dbee6a69800607864baf5278cf0ddb8fb086c8740bcac9bf4cf5055c4"
+  },
+  "not_used": ["val/test QA distribution", "model performance", "Real Test189"],
+  "locked_at": "2026-11-08",
+  "approved_by": "researcher (instruction 2026-11-08: proceed to next step after the proposal in reports/b1_train_production_qa_20261106.md; proposal values adopted unchanged)"
+}
