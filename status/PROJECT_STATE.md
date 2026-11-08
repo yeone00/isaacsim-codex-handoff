@@ -1006,3 +1006,25 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - 마지막 30 epoch 평균 0.811, 기울기 ≈ 0 → 제안 기준 PLATEAU
   - val seg loss 0.75→2.14(과적합 신호)
 - 다음: 연구자가 A(스크립트 v05: skip된 non-finite batch 허용 + 감시, 권장) / B(loss fp32) / C(AMP off) / D(Ultralytics 복구) 중에서 결정한다. 모든 실패 기록은 보존했다.
+
+## 2026-11-08 — HR 실패 원인 점검, FP32 box loss(B안) recipe v03 amendment, 짧은 GPU 검증 (Claude Code)
+
+[보고서](../reports/b1_fp32_boxloss_verification_20261108.md)
+
+- **원인(확인된 메커니즘)**
+  - Ultralytics 8.4.129 AMP 경로에서 decode된 pred box는 fp16(anchor fp16, matmul fp16), target은 fp32다. CIoU 안의 `w1*h1`은 fp16이고 inter/union은 fp32다.
+  - 그래서 거의 완벽한 box에서 iou > 1 → alpha 분모 ≤ 0 → CIoU −inf / 음수 loss가 된다.
+  - 단위 시험: fp16 혼합 경로에서 −inf 최대 14, iou>1 최대 1.9만 / 200만이고, fp32는 0이다.
+  - 후반 probe(실패 run epoch 181 가중치, forward만): fp16 경로는 box loss inf 10/320 batch, 음수 CIoU loss 10,917(모든 batch), 예측값은 전부 유한했다. fp32 경로는 0이다.
+- **미확인:** 실패 batch의 정확한 재현, 다른 원인 부재, 장기 거동. 이미지·라벨 요인은 완전 배제하지 않았다.
+- 기존 inf 9건(epoch 107–182)과 scale 64→0.125는 `reports/b1_fp32_boxloss_20261108_v01/v02_HR_failed_run_inf_events.json`에 보존했다. v02 HR run은 FAILED 그대로다.
+- **recipe LOCKED v03 amendment**(box loss fp32, train_args는 v02와 차이 없음). v02와 v01은 보존했다.
+  - `docs/b1_yolo_baseline_recipe_LOCKED_v03_20261108.md` sha256 `83b67b298952b66b15c3b07468cc1670f3582bc03b3629a3bf6cff27e35bd6a0`
+  - `….json` sha256 `76654f9ba2f320147c0d64c205abfe9f11b96c7915cc810c486792c5d89cd3da`
+  - 모듈 `scripts/b1_fp32_boxloss_20261108_v01.py`(79b3d2f5…), 학습 스크립트 `train_b1_yolo_20261108_v05.py`(ca1175c8…, batch 단위 감사, NONFINITE_FORWARD / GRAD_OVERFLOW_SKIP 구분, 비정상이 있으면 FLAGGED)
+- **짧은 GPU 검증**(HR seed 42, 200 epoch 스케줄), root `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_SMOKE_RECIPEv03_FP32BOX_20261108_v01`
+  - stop5_compare: 학습 정상, fp16/fp32 box loss 차이 ≤ 0.00027. 판정은 FAIL_AUDIT(진단 probe 순서 결함, compare 모드 전용). 보존.
+  - stop3_nocompare: **PASS**. bbox_iou 입력 fp32 / fp32, autocast off, 실제 갱신 47/48, NONFINITE_FORWARD 0, GRAD_OVERFLOW_SKIP 1(초기)
+  - 짧은 시험에서는 후반 inf 조건이 재현되지 않으므로 해결됐다고 단정하지 않는다.
+- 과적합 분석(별도): epoch 95(0.821) 이후 mAP 구간 평균은 약 0.811로 평탄하다. val seg loss는 1.21→1.91로 늘었다. fp16 CIoU 음수 loss와 scale 감소가 교란 요인이다.
+- 200 epoch 재학습, LR/CAD, seed 43/44, HPO, test는 0. 다음은 연구자의 200 epoch 재학습(v03/v05) 승인이다.
