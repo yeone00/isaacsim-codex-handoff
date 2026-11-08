@@ -936,3 +936,31 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - A2(train 64, batch 6): step ni ep1 [0, 5], ep2 [15]. 예측과 일치했다. AdamW counter는 3, scale은 128이며 skip 0, 가중치가 바뀌었다.
 - 결론: v42의 "복원 후 step 1→1"의 원인은 accumulation 구조다(GPU로 확정). Ray 복원은 정상이다(실험 B PASS).
 - v01의 FAIL 기록은 보존했다.
+
+## 2026-11-08 — B1 YOLO recipe LOCKED v01, 1 epoch smoke PASS, 라벨 점검, 평가 코드 (Claude Code)
+
+[보고서](../reports/b1_yolo_training_prep_20261108.md)
+
+- v42 GPU 재현 완료로 정리: B PASS, A v01 FAIL(보존), A v02 PASS.
+- **recipe LOCKED v01**(연구자 지시 값 그대로)
+  - `docs/b1_yolo_baseline_recipe_LOCKED_v01_20261108.md` sha256 `cd3645e894af37f6580ba639750aa7995cc8b1e087e218d507b8ee9aedc18616`
+  - `….json` sha256 `c9b2458c62a679d29fe4e5afa5715549e7c7cbb2cb4cd84957dc8ef35007846b`
+  - 내용: seed 42 / 43 / 44, no-aug, mask_ratio 4, 60 epoch, AdamW lr0 0.001, batch 64, AMP scale 128, 선정은 val mask mAP50-95
+- **1 epoch smoke**(seed 42), root `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_SMOKE_20261108_v01`
+  - `train_b1_yolo_20261108_v01.py` HR: FAIL_AUDIT(감사 로직 결함: skip 0 요구, final_eval callback 재호출 미처리). 보존.
+  - `…_v02.py`(636248d0…): HR / LR / CAD 모두 PASS
+    - 실제 AdamW 갱신 13 / 14 / 13 of 16, AMP 초기 overflow skip 3 / 2 / 3(scale 128→16–32 뒤 안정), EMA 16
+    - peak GPU 10.2 / 11.5 GB, epoch당 약 6초, 데이터 1000 / 200 corrupt 0
+    - 패키지 변경 0
+- **라벨 점검**(`analysis/b1_label_pipeline_check_20261108_v01.py`)
+  - 높이 1–3px인 보조 load 4개(train)가 Ultralytics box_candidates로 학습에서 빠진다.
+  - 학습 mask와 정답의 IoU 중앙값: ≥2000px 0.98, 100–200px 0.53
+  - 불연속 GT 61개는 polygon 연결선으로 하나로 이어지고, 추가 면적은 ≤12px
+  - 첫 실행(assert 중단)은 보존했다.
+- **평가 코드** `analysis/eval_b1_yolo_20261108_v01.py`(0de45618…)
+  - 3×3, FLAG 포함 / 제외(ignore), 층별 분석, 장면 대응 bootstrap, seed 집계
+  - test는 LOCKED 평가 절차 없이는 거부한다(음성 대조군 확인).
+  - val smoke v01은 fp16 IoU overflow 버그로 INVALID 표시 후 보존했고, v02는 정상이다.
+  - B1에는 C100/C60/C20이 없다. L1–L4(25–100%)로 대체하고, C100 = L4다.
+- 사람 검토 안내 `reports/b1_human_review_pack_20261108_v01/REVIEW_GUIDE.md`: 판정 칸은 비어 있다.
+- 본 학습 0, HPO 0, test 0. 다음은 연구자의 사람 검토, 그다음 본 학습 승인이다.
