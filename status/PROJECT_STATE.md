@@ -881,3 +881,25 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
     - 라벨 정책은 v02와 같다.
     - train smoke: PARTIAL(data.yaml 없음), 2969 instance, min polygon IoU 0.966, 중복 root 음성 대조군 거부 확인
 - 학습 0, v42 GPU 재현 0.
+
+## 2026-11-08 — B1 val/test 생성 PASS, QA v02 적용, YOLO 패키지 COMPLETE (Claude Code)
+
+[보고서](../reports/b1_qa_v02_lock_and_valtest_20261108.md)
+
+- **val/test 200+200 × HR/LR/CAD**(13:35–15:09 KST)
+  - 각 표현 400/400 PASS, FAIL 0, renderer [Error] 0
+  - verify: HR 5842034b… / LR 542dd65c… / CAD e152c8cd… 모두 PASS
+  - pairing `crossrep_pairing_v01.json` 0c3c2f99… PASS(400장면, load 쌍 2324개)
+  - root: `/home/user/hh/isaac_cosmos/sdg_final/B1_RED_PRODUCTION_VALTEST_20261108_v01`
+- **metrics v02 동일성**: train에 다시 계산한 결과가 v01 CSV(60fae522…)와 바이트 단위로 같았다.
+- **val/test QA v02**(잠긴 값 그대로)
+  - 지표 705531e6…(3594행), 판정 `qa_v02_valtest_v01/b1_visibility_qa_v02.csv` b2c0600d…
+  - FLAG HR 7 / LR 8 / CAD 6, scene-load 8개(모두 보조 load), scene_flag=FLAG base scene 0
+  - primary 최소 0.988
+  - 임계값은 바꾸지 않았다.
+- **YOLO 패키지** `/home/user/hh/isaac_cosmos/sdg_final/B1_RED_YOLO_PACKAGE_20261108_v01`
+  - export v03(f579b2e1…), PASS_PACKAGE_COMPLETE, package_checks 3ff0a45e…
+  - 표현마다 1000 / 200 / 200
+  - 4167 instance, 빈 라벨 0, min polygon IoU 0.960
+  - data.yaml 3개, 깨진 symlink 0
+- 학습 0, v42 GPU 재현 0. 다음 단계는 연구자 승인 대기다(YOLO 학습 recipe와 실행, v42 재현).
