@@ -988,3 +988,21 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - 판정 칸은 비어 있다.
 - seed 42 driver `scripts/run_b1_baseline_seed42_20261108_v01.sh`(6f3ba359…): dry-run만 했다.
 - 본 학습 0, HPO 0, test 0. 다음은 사람 QA 검토, 그다음 seed 42 본 학습 승인이다.
+
+## 2026-11-08 — B1 seed 42 본 학습: HR FAILED(epoch 182 non-finite box loss), LR/CAD 미실행 (Claude Code)
+
+[보고서](../reports/b1_baseline_seed42_HR_failure_20261108.md)
+
+- 연구자 승인으로 seed 42 본 학습을 시작했다(recipe LOCKED v02, trainer v04, driver `run_b1_baseline_seed42_20261108_v01.sh`). root `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_BASELINE_20261108_v01`.
+- **HR: FAILED**(16:55–17:07)
+  - epoch 182의 마지막 batch box loss가 inf였고, 스크립트의 no-retry non-finite 검사에 걸려 중단했다.
+  - 그 전에도 epoch 107–179 사이 8회, 중간 batch에서 box loss inf가 있었다. 그때는 GradScaler가 skip했고(scale 64→0.125), 가중치 오염은 없었다.
+- driver가 중단해 **LR/CAD 학습 0, val 3×3 평가 0.** 재시도 0, 설정 변경 0.
+- 진단(학습 없음)
+  - last.pt(EMA)로 train 1000장을 한 장씩 계산하면 fp16/fp32 모두 유한했다. 이미지/라벨 원인일 가능성은 낮다.
+  - 학습 조건(원 가중치, BN batch 통계, fp16)에서만 생기며, 정확한 수치 원인은 UNCONFIRMED다.
+- 실패 전 181 epoch 곡선(진단용)
+  - 최고 val mask mAP50-95 0.821 @epoch 95(checkpoint 105b62c8…)
+  - 마지막 30 epoch 평균 0.811, 기울기 ≈ 0 → 제안 기준 PLATEAU
+  - val seg loss 0.75→2.14(과적합 신호)
+- 다음: 연구자가 A(스크립트 v05: skip된 non-finite batch 허용 + 감시, 권장) / B(loss fp32) / C(AMP off) / D(Ultralytics 복구) 중에서 결정한다. 모든 실패 기록은 보존했다.

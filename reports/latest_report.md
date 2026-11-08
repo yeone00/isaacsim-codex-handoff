@@ -1,131 +1,74 @@
-# B1 YOLO recipe v02(200 epoch) 잠금 · 200 epoch 대응 검증 · 학습곡선 분석 준비 · 사람 검토 패키지 (2026-11-08)
+# B1 seed 42 본 학습 — HR epoch 182에서 FAILED, LR/CAD 미실행 (2026-11-08)
 
-성격: 준비 단계다. **200 epoch 본 학습 0, HPO 0, test 0.** GPU 사용은 4 epoch에서 멈추는 smoke 2회(1회 FAILED 보존, 1회 PASS)뿐이다. 기존 데이터, 라벨, QA, 1 epoch smoke 결과, recipe v01은 그대로 두었다.
+성격: 연구자가 승인한 seed 42 본 학습(recipe LOCKED v02, 200 epoch, HR → LR → CAD). **HR run이 FAILED로 끝나 지시대로 중단했다.** 재시도 0, 설정 변경 0. LR/CAD 학습, val 3×3 평가, seed 43/44, HPO, test는 모두 0. 실패 로그와 checkpoint를 보존했다.
 
-## 요약
+## 1. 무슨 일이 있었나
 
-| 항목 | 결과 |
-|---|---|
-| recipe | **LOCKED v02**(md `064bbb1a…`, json `05d070a2…`). v01과의 차이는 epochs 60→200뿐이다. v01은 보존 |
-| 학습률 변화 | warmup(48 iteration)은 같다. epoch당 감소폭이 1.5e-5 → 4.5e-6으로 줄어든다. 실측 lr이 재현값과 오차 0으로 일치 |
-| 학습 스크립트 | `scripts/train_b1_yolo_20261108_v04.py`. v03은 smoke FAILED(final-eval 판별 결함)로 보존 |
-| 200 epoch 대응 smoke | HR seed 42, epochs=200 설정에서 4 epoch 후 중단: **PASS** |
-| 학습곡선 분석 | `analysis/b1_learning_curve_20261108_v01.py` 준비. smoke와 가짜 200 epoch 곡선으로 동작을 확인했다 |
-| 사람 검토 패키지 | 컨택트시트 5장과 ZIP(18MB). 분류 4개, 판정 칸은 비어 있다 |
-| seed 42 실행 절차 | `scripts/run_b1_baseline_seed42_20261108_v01.sh`(dry-run만) |
+- driver: `scripts/run_b1_baseline_seed42_20261108_v01.sh`, root `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_BASELINE_20261108_v01`
+- HR 시작 16:55:47 → 종료 17:07:22, `run_status.json` state=**FAILED**
+  - error: `RuntimeError('nonfinite loss; no retry')`
+  - driver가 exit 10으로 멈췄다. LR과 CAD는 시작하지 않았다.
+- 실패 지점: **epoch 182**. 마지막 batch의 box loss가 inf였고, 학습 스크립트의 "non-finite loss면 즉시 실패, 재시도 없음" 검사(`_handle_nan_recovery` override)에 걸렸다.
+  - Ultralytics 기본 동작이라면 last.pt로 되돌려 최대 3회 재시도했을 것이다. 이 기능은 재시도 금지 원칙에 따라 꺼 두었다.
+- **사실 그 전부터 같은 현상이 있었다.** epoch 107, 118, 120, 140, 146, 167, 171, 179에서 epoch 중간 batch 하나의 box loss가 inf였다.
+  - 그때마다 AMP GradScaler가 해당 step을 건너뛰고 scale을 절반으로 줄였다(64 → 32 → … → 0.125).
+  - 학습은 계속됐다. 스크립트 검사는 epoch 마지막 batch의 loss만 보기 때문에 epoch 182 전까지는 걸리지 않았다.
+- 전체 optimizer_step 호출 2912회 중 건너뛴 것은 10회다. epoch 1의 초기 scale 조정 1회 + inf batch 9회다.
 
-## 1. Recipe v02와 학습률
+## 2. 실패 전까지의 HR 학습곡선(181 epoch, 진단용 — 결과로 쓰지 않음)
 
-- 지시하신 값 그대로다. JSON의 train_args를 v01과 비교하면 다른 항목은 `epochs`(60→200) 하나뿐이다.
-- Ultralytics 선형 스케줄: lr(e) = lr0 × [(1 − e/E)·0.9 + 0.1]
-  - warmup은 3 epoch = 48 iteration이다. weight 그룹은 0에서, bias 그룹은 0.1에서 시작해 lr0·lf(e)로 이동한다.
+진단 분석 출력: `…/learning_curve_HR_failed_diag_v01/`. 그림: `b1_baseline_seed42_HR_failure_20261108_v01/curves_HR_Scan_seed42_FAILED.png`
 
-| epoch | E=60 lr | E=200 lr |
-|---:|---:|---:|
-| 1(warmup, 마지막 iteration) | 3.13e-4 | 3.13e-4 |
-| 4(warmup 직후) | 9.55e-4 | 9.87e-4 |
-| 30 | 5.65e-4 | 8.70e-4 |
-| 60 | **1.15e-4(마지막)** | **7.35e-4** |
-| 100 | — | 5.55e-4 |
-| 150 | — | 3.30e-4 |
-| 200 | — | 1.05e-4 |
+| epoch | train box / seg loss | val box / seg loss | val mask mAP50 / 75 / 50-95 | lr | AMP scale | GPU peak |
+|---:|---|---|---|---:|---:|---:|
+| 10 | 0.415 / 0.385 | 0.525 / 0.76 | 0.973 / 0.815 / 0.735 | 9.6e-4 | 64 | 10.4 GB |
+| 30 | 0.251 / 0.127 | 0.403 / 0.75 | 0.958 / 0.849 / 0.755 | 8.7e-4 | 64 | 10.9 GB |
+| 60 | 0.173 / 0.051 | 0.362 / 0.90 | 0.973 / 0.901 / 0.814 | 7.3e-4 | 64 | 11.6 GB |
+| **95(최고)** | 0.149 / 0.029 | 0.349 / 1.08 | 0.973 / 0.907 / **0.821** | 5.8e-4 | 64 | 12.4 GB |
+| 100 | 0.136 / 0.018 | 0.344 / 1.26 | 0.974 / 0.899 / 0.820 | 5.5e-4 | 64 | 12.5 GB |
+| 150 | 0.089 / 0.0025 | 0.332 / 1.78 | 0.973 / 0.893 / 0.811 | 3.3e-4 | 2 | 13.7 GB |
+| 181 | 0.074 / 0.0010 | 0.328 / 2.14 | 0.973 / 0.889 / 0.808 | 1.9e-4 | 0.25 | 14.4 GB |
 
-- **주의:** 200 run의 epoch 60은 lr이 아직 lr0의 73%다. 60 epoch run이 끝난 상태와 다르다. 그래서 "60/100/150/200 시점 비교"는 같은 200 run 안의 진행 정도를 보여 줄 뿐이다. 60 epoch으로 따로 학습한 결과를 대신하지 않는다.
-- 그림과 표: `b1_yolo_recipe_v02_prep_20261108_v01/lr_schedule_60_vs_200.png`, `.csv`, `lr_schedule_per_iteration.csv`
+- 마지막 30 epoch(152–181) 동안 val mask mAP50-95는 평균 0.811 ± 0.004, 기울기 −0.0004/10 epoch이었다. 제안 기준으로 읽으면 **PLATEAU**(변화 거의 없음)다.
+- 최고값은 **epoch 95**(0.821)였다. 그 뒤로는 완만하게 떨어졌다.
+- **과적합 신호:** train seg loss는 0.38에서 0.001로 계속 줄었다. 반면 val seg loss는 epoch 30의 0.75에서 epoch 181의 2.14로 커졌다.
+- 참고(한 seed, 실패한 run): HR에서는 200 epoch까지 갈 필요가 없어 보인다. 그러나 LR/CAD와 다른 seed가 없으므로 결론은 내리지 않는다.
+- epoch당 학습+val 시간은 3.8초다. GPU peak 메모리가 10.4GB에서 14.4GB로 점점 늘었다. 원인은 확인하지 않았다.
 
-![lr](b1_yolo_recipe_v02_prep_20261108_v01/lr_schedule_60_vs_200.png)
+## 3. 원인 분석
 
-## 2. 학습 스크립트 200 epoch 대응 검증
+- **이미지와 라벨 원인은 아닌 것으로 보인다.** `analysis/b1_nonfinite_loss_diag_20261108_v01.py`로 확인했다.
+  - 실패 run의 last.pt(epoch 181 EMA 가중치)로 train 1000장을 한 장씩 넣고 loss만 계산했다. 학습과 가중치 변경은 없다.
+  - fp16 autocast와 fp32 모두에서 **1000장 전부 box/seg loss가 유한**했다. fp32 box loss 최대는 0.62다.
+  - 결과: `…/diag_nonfinite_loss_v01/`
+- 따라서 inf는 특정 이미지 때문이 아니다. **학습 중의 조건에서만** 생기는 것으로 보인다.
+  - 그 조건: EMA가 아닌 원 가중치, BN의 batch 통계, 64장 batch 구성, fp16 forward와 loss
+  - 위 진단은 그 조건을 재현하지 못했다. last.pt에는 원 가중치(`model`)가 저장되지 않는다.
+  - 그래서 **수치적 정확한 원인(CIoU 계산의 fp16 범위 등)은 UNCONFIRMED**다.
+- 정황
+  - inf는 train box loss가 작아진 후반(epoch 107 이후)에만 나타났다.
+  - 매번 box loss 하나만 inf였고 seg/cls/dfl은 유한했다.
+  - inf batch가 생길 때마다 GradScaler가 그 step을 건너뛰어, **가중치는 오염되지 않았다.** 다음 epoch의 val 지표도 정상이었다.
+- 부작용: scale이 128 → 0.125로 계속 줄었다. growth_interval이 2000이라 다시 커지지 않는다. scale < 1이면 작은 gradient가 fp16에서 0이 될(underflow) 위험이 있다.
+- 감사 로직 관점: Ultralytics의 epoch 평균 train loss(tloss)는 inf batch를 포함해 계산한다. 그래서 inf가 있었던 epoch은 loss가 inf로 기록됐다. 학습이 끝났더라도 v04의 `finite_losses` 검사는 FAIL이었을 것이다.
 
-- v04가 v02 대비 추가한 것
-  - recipe v02만 받는다(sha 고정).
-  - iteration별 lr을 기록한다(모든 param group).
-  - val mask/box mAP50·mAP75·mAP50-95를 epoch마다 기록한다(Ultralytics 기본 로그에는 mAP75가 없다).
-  - epoch마다 학습+val 시간을 기록한다.
-  - `--stop-after-epochs`: SMOKE 전용. 200 epoch 스케줄은 그대로 두고 N epoch에서 멈춘다.
-- **v03 smoke FAILED(보존):** 중간에 멈추면 Ultralytics의 final_eval 재호출이 `epoch >= epochs` 조건에 걸리지 않아 assert로 멈췄다. v04는 "열린 epoch 기록이 있는가"로 판별한다. 학습 로직은 바뀌지 않았다.
-- **v04 smoke**: `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_SMOKE_RECIPEv02_20261108_v01/HR_Scan_seed42_stop4_v04`
-  - planned epochs 200, 4 epoch에서 중단, **PASS**
+## 4. 다음 진행을 위한 선택지(연구자 결정 필요 — 아무것도 실행하지 않았음)
 
-| epoch | optimizer 호출 / 실제 갱신(누적) | AMP skip | scale | train seg loss | val mask mAP50 / 75 / 50-95 | 학습+val 시간 | GPU peak |
-|---:|---|---:|---:|---:|---|---:|---:|
-| 1 | 16 / 15 | 1 | 64 | 1.93 | 0.058 / 0.000 / 0.013 | 6.6 s | 10.2 GB |
-| 2 | 16 / 31 | 0 | 64 | 0.95 | 0.170 / 0.008 / 0.049 | 3.8 s | 10.3 GB |
-| 3 | 16 / 47 | 0 | 64 | 0.75 | 0.166 / 0.014 / 0.054 | 3.7 s | 10.3 GB |
-| 4 | 16 / 63 | 0 | 64 | 0.61 | 0.777 / 0.413 / 0.427 | 3.7 s | 10.3 GB |
+| 안 | 내용 | recipe 변경 | 장단점 |
+|---|---|---|---|
+| **A(권장)** | 학습 스크립트 v05: GradScaler가 건너뛴 non-finite batch는 "AMP skip"으로 세고 run을 실패시키지 않는다. 실패 조건은 non-finite batch > 1%, scale < 2⁻⁸, 연속 3 batch 이상으로 정한다. inf batch의 이미지 목록과 loss 항목을 기록하고, epoch loss는 유한 batch만으로 따로 기록한다 | 없음(감사 정책만 바뀜) | 이번 HR에서 실제로 일어난 학습 경로(skip 후 계속)와 같다. scale 감소 위험은 감시로 대응한다 |
+| B | loss 계산만 fp32로 한다(forward는 AMP 유지) | v03 amendment | 원인일 가능성이 높은 부분을 직접 제거한다. 수치 경로가 바뀐다 |
+| C | AMP를 끈다(fp32 학습) | v03 amendment | 가장 안전하다. 느려지고 메모리가 늘며 v42 검증 조건과 달라진다 |
+| D | Ultralytics 기본 NaN 복구(last.pt로 되돌려 최대 3회) | 스크립트 정책 변경 | 재시도에 해당하므로 기존 원칙과 충돌한다 |
 
-- iteration별 lr 64개(weight 2그룹, bias 그룹)가 E=200 재현값과 **최대 차이 0.0**이었다. 예: iteration 0은 0 / 0 / 0.1, iteration 47은 9.70e-4 / 3.05e-3, iteration 48 이후는 9.87e-4.
-- 선정 checkpoint는 epoch 4다. final_eval은 따로 기록되어 선정에 섞이지 않았다.
-- 참고: 앞선 1 epoch smoke(v01 recipe)는 epochs=1이라 warmup이 0(min(3, E−1)=0)이었다. 그래서 첫 epoch loss가 훨씬 컸다(seg 8.25 vs 1.93). 이번 결과와 직접 비교하지 않는다.
-- 예상 시간: epoch당 약 3.7초 × 200이면 **run당 약 13분**, seed 42 세 표현이면 약 40분이다. 평가까지 넣으면 약 50분이다.
+- 어느 안이든 HR부터 새 디렉터리에서 다시 돌린다. 실패한 HR run은 그대로 보존한다.
+- A안이라면 HR의 결과 경로는 이번 실패 run과 거의 같을 것으로 예상한다. 비트 단위로는 같지 않다.
+- HR 곡선은 epoch 95 이후 개선이 없었다. 다만 epoch 수를 바꾸는 것은 recipe 변경이고 이번 범위가 아니다. LR/CAD 곡선까지 본 뒤 판단하는 것을 권한다.
 
-## 3. 학습곡선 · 수렴 분석 준비
+## 5. 보존한 파일
 
-- 스크립트: `analysis/b1_learning_curve_20261108_v01.py`
-- 출력
-  - run별 그림 6칸: train loss, val loss, val mask mAP50/75/50-95와 선정 epoch, lr, AMP skip과 실제 갱신, GPU 메모리와 epoch 시간
-  - 세 표현 비교 그림
-  - `epoch_table_*.csv`
-  - `checkpoints.csv`: 60/100/150/200 시점 값, 최고 epoch과 그 값
-  - `last30.csv`: 마지막 30 epoch의 평균, 표준편차, 최소, 최대, 10 epoch당 기울기, 그 이전 최고 대비 향상분
-  - `convergence.json`
-- 수렴 읽기(**제안 기준이며 판단은 연구자가 한다**)
-  - PLATEAU: 마지막 30 epoch 기울기의 절대값 < 0.002/10 epoch, 그리고 향상분 < 0.005
-  - STILL_IMPROVING: 기울기 ≥ 0.002/10 epoch, 또는 최고 epoch이 마지막 10 epoch 안에 있고 향상분 ≥ 0.005
-  - 그 외: UNCLEAR
-- 동작 확인
-  - 4 epoch smoke → INSUFFICIENT_EPOCHS(정상)
-  - 가짜 200 epoch 곡선 2개(scratchpad) → 포화형은 PLATEAU, 선형 증가형은 STILL_IMPROVING. 의도대로 분류됐다.
-- 예시 그림(4 epoch smoke): `b1_yolo_recipe_v02_prep_20261108_v01/example_curves_smoke_stop4.png`
-
-## 4. 사람 QA 검토 패키지
-
-- 위치: `/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/b1_human_review_pack_20261108_v02/`
-  - ZIP: `b1_human_review_20261108_v02.zip`(18MB, sha `ad2b668a…`). 분류별 폴더, 컨택트시트, `REVIEW_GUIDE_v02.md`, `review_checklist_v02.csv`(엑셀용 UTF-8 BOM)
-  - 컨택트시트: `contact_1_NORMAL_PRIMARY_1.jpg`, `contact_2_REP_DISAGREEMENT_1.jpg`, `contact_3_FLAG_1.jpg`, `contact_3_FLAG_2.jpg`, `contact_4_LOW_SUPPORT_1.jpg`
-
-| 분류 | 사례 수 | 내용 |
-|---|---:|---|
-| 1 정상 메인 load | 6 | 기준 눈높이용 |
-| 2 표현 간 판정 불일치 | 4 | VAL_000148 L3, TST_000188 L5, TRN_000926 L3(WATCH/FLAG/FLAG), VAL_000212 L4(LOW/OK/OK) |
-| 3 FLAG(세 표현 일치) | 15 | |
-| 4 LOW_SUPPORT | 5 | 1개는 판정 불일치라 분류 2로 옮겼다 |
-
-- 패널 하나에 원본 RGB + GT mask(초록) / 실제 mask(빨강), YOLO polygon(청록), 확대 RGB, 가림 지도가 HR/LR/CAD 행으로 나란히 있다. 컨택트시트에는 사례마다 세 표현의 판정과 vis를 적었다.
-- 판정 칸 8개(Q1–Q4, 최종, 검토자, 날짜, 메모)는 비어 있는지 스크립트로 확인했다. AI 판독은 넣지 않았다.
-- v01 패키지는 바꾸지 않았다(checklist sha `2bef5432…` 그대로).
-
-## 5. seed 42 본 학습 실행 절차(승인 대기)
-
-```
-~/.claude/hooks/isaacsim/ntfy_run.sh --name B1_baseline_seed42 -- \
-  scripts/run_b1_baseline_seed42_20261108_v01.sh
-```
-
-1. HR → LR → CAD 순서로 `train_b1_yolo_20261108_v04.py`를 실행한다(recipe v02, seed 42). root는 `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_BASELINE_20261108_v01`(아직 없음)이다.
-2. run마다 `run_status.json`의 state가 PASS여야 다음 run으로 간다. 아니면 멈추고, 재시도하지 않으며, 실패 기록은 보존한다. 기존 run 디렉터리가 있으면 덮어쓰지 않고 거부한다.
-3. 셋 다 PASS면 학습곡선 분석과 **val** 3×3 평가(bootstrap 1000)를 한다. test는 쓰지 않는다.
-- `DRY_RUN=1`로 명령 5개가 출력되는 것을 확인했다. 실제 실행은 하지 않았다.
-- 디스크 여유는 239GB, run당 예상 사용량은 수십 MB다.
-
-## 남은 일
-
-1. 사람 QA 검토(연구자)
-2. seed 42 본 학습 승인
-3. seed 42 학습곡선 검토 → seed 43/44 승인
-4. 본 학습 뒤, test 전에 평가 절차를 LOCKED로 확정
-
-## 파일
-
-- 신규 문서
-  - `docs/b1_yolo_baseline_recipe_LOCKED_v02_20261108.md`
-  - `docs/b1_yolo_baseline_recipe_LOCKED_v02_20261108.json`
-- 신규 코드
-  - `scripts/train_b1_yolo_20261108_v03.py`(FAILED 기록용)
-  - `scripts/train_b1_yolo_20261108_v04.py`(6f35400f…)
-  - `scripts/run_b1_baseline_seed42_20261108_v01.sh`(6f3ba359…)
-  - `analysis/b1_lr_schedule_replay_20261108_v01.py`
-  - `analysis/b1_learning_curve_20261108_v01.py`(56a7578f…)
-  - `analysis/b1_human_review_package_20261108_v02.py`
-- smoke root: `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_SMOKE_RECIPEv02_20261108_v01`
-  - v03 FAILED run과 v04 PASS run, stdout/stderr, command json, input_hashes, learning_curve_smoke_v01
+- `…/B1_YOLO_BASELINE_20261108_v01/`
+  - `driver.log`, `wrapper.log`, `input_hashes.txt`
+  - `HR_Scan_seed42/`(run_status FAILED와 traceback, audit.json, epochs.jsonl, last.pt(epoch 181), best.pt, `best_val_maskmAP5095.pt`(epoch 95, sha 105b62c8…))
+  - `diag_nonfinite_loss_v01/`, `learning_curve_HR_failed_diag_v01/`
+- 신규 코드: `analysis/b1_nonfinite_loss_diag_20261108_v01.py`
