@@ -964,3 +964,27 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - B1에는 C100/C60/C20이 없다. L1–L4(25–100%)로 대체하고, C100 = L4다.
 - 사람 검토 안내 `reports/b1_human_review_pack_20261108_v01/REVIEW_GUIDE.md`: 판정 칸은 비어 있다.
 - 본 학습 0, HPO 0, test 0. 다음은 연구자의 사람 검토, 그다음 본 학습 승인이다.
+
+## 2026-11-08 — B1 YOLO recipe LOCKED v02(200 epoch), 200 epoch 대응 smoke PASS, 학습곡선 도구, 검토 패키지 (Claude Code)
+
+[보고서](../reports/b1_yolo_recipe_v02_prep_20261108.md)
+
+- **recipe LOCKED v02**(연구자 지시: epochs 60→200, 나머지 동일). v01은 보존했다.
+  - `docs/b1_yolo_baseline_recipe_LOCKED_v02_20261108.md` sha256 `064bbb1a91a5248426017e150bfa1a288e63af1d9878cac4f604d62c8bb9d4b5`
+  - `….json` sha256 `05d070a2c7872b8c15065c0110237e401f0ebfc70a4da39f53b2519806c502f8`
+- 학습률: warmup 48 iteration은 같다. epoch당 감소 1.5e-5 → 4.5e-6, 200 run의 epoch 60 lr은 7.35e-4(60 run의 마지막 lr은 1.15e-4). 재현 `analysis/b1_lr_schedule_replay_20261108_v01.py`.
+- 학습 스크립트
+  - `train_b1_yolo_20261108_v03.py`: stop-after smoke FAILED(final_eval 판별 결함). 보존.
+  - `…_v04.py`(6f35400f…): HR seed 42, epochs=200, 4 epoch에서 중단 → **PASS**
+    - iteration별 lr 64개가 재현값과 차이 0
+    - AMP skip 1, 실제 갱신 63/64, epoch당 약 3.7초, GPU 10.3 GB
+  - root `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_SMOKE_RECIPEv02_20261108_v01`
+- 학습곡선 분석 `analysis/b1_learning_curve_20261108_v01.py`
+  - 60/100/150/200 시점 비교, 마지막 30 epoch 요약, 제안 수렴 기준(PLATEAU / STILL_IMPROVING / UNCLEAR)
+  - smoke와 가짜 곡선으로 동작을 확인했다.
+- 검토 패키지 `reports/b1_human_review_pack_20261108_v02/`
+  - 컨택트시트 5장, ZIP sha `ad2b668a…`
+  - 분류: 정상 6 / 판정 불일치 4 / FLAG 15 / LOW 5
+  - 판정 칸은 비어 있다.
+- seed 42 driver `scripts/run_b1_baseline_seed42_20261108_v01.sh`(6f3ba359…): dry-run만 했다.
+- 본 학습 0, HPO 0, test 0. 다음은 사람 QA 검토, 그다음 seed 42 본 학습 승인이다.
