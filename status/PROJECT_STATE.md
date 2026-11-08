@@ -1028,3 +1028,27 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - 짧은 시험에서는 후반 inf 조건이 재현되지 않으므로 해결됐다고 단정하지 않는다.
 - 과적합 분석(별도): epoch 95(0.821) 이후 mAP 구간 평균은 약 0.811로 평탄하다. val seg loss는 1.21→1.91로 늘었다. fp16 CIoU 음수 loss와 scale 감소가 교란 요인이다.
 - 200 epoch 재학습, LR/CAD, seed 43/44, HPO, test는 0. 다음은 연구자의 200 epoch 재학습(v03/v05) 승인이다.
+
+## 2026-11-08 — B1 seed 42 본 학습(recipe v03 FP32 box): HR / LR / CAD 200 epoch PASS, val 3×3 평가 (Claude Code)
+
+[보고서](../reports/b1_baseline_seed42_fp32box_20261108.md)
+
+- driver `scripts/run_b1_baseline_seed42_20261108_v02.sh`, trainer v05, recipe LOCKED v03. root `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_BASELINE_FP32BOX_20261108_v01`(새로 학습). 17:31–18:12.
+- **HR / LR / CAD 모두 PASS**
+  - NONFINITE_FORWARD 0, 음수 box loss batch 0, GRAD_OVERFLOW_SKIP은 HR과 LR의 ep1 b1 각 1회
+  - scale 최소 64, 최종 128–256. EMA 3200, GPU peak 14.8 GB
+  - epoch 107 이후 불안정은 재현되지 않았다.
+  - 학습 후 last.pt probe: fp32 경로의 음수와 비유한 CIoU는 0(fp16 경로였다면 inf 0–2 batch, 음수 약 9–10k).
+- 대표 모델(val mask mAP50-95 최고)
+  - HR 0.8208 @62(sha 27ba2931…), LR 0.8213 @32(0f6222d2…), CAD 0.8221 @32(bdf634af…)
+  - epoch 200의 값: 0.804 / 0.792 / 0.792
+  - 수렴 읽기: HR UNCLEAR(기울기 −0.0020), LR / CAD PLATEAU
+  - val seg loss 0.74–0.82 → 2.0–2.3(mask 과적합)
+- **val 3×3**(평가 코드 mAP50-95)
+  - 같은 표현: HR 0.849, LR 0.838, CAD 0.840
+  - 교차: HR→LR 0.615, HR→CAD 0.627, LR→HR 0.721, LR→CAD 0.450, CAD→HR 0.527, CAD→LR 0.259
+  - 장면 bootstrap에서 모든 평가 표현에서 같은 표현 모델이 우세했다(CI가 0을 포함하지 않음). seed 1개이고 동등성 주장은 하지 않는다.
+  - FLAG 제외 시 차이 ≤ 0.002
+- 제한: 사람 QA 최종 검토 미완료, seed 1개, 같은 표현 val 칸에 선정 편향
+- v02 FP16 실패 run은 별도 진단 자료로 남기고 결과에 합치지 않았다.
+- seed 43/44, HPO, test는 0. 다음은 연구자가 학습 예산 재검토와 seed 43/44 승인을 결정하는 것이다.

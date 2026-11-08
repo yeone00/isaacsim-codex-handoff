@@ -1,153 +1,159 @@
-# B1 HR 실패 원인 추가 점검 · FP32 box loss(B안) 구현 · 짧은 GPU 검증 (2026-11-08)
+# B1 seed 42 본 학습(recipe v03, FP32 box loss): HR / LR / CAD 200 epoch · val 3×3 평가 (2026-11-08)
 
-성격: 원인 분석, recipe v03 amendment, 짧은 GPU 시험(5 epoch과 3 epoch에서 중단)과 forward 전용 진단. **200 epoch 재학습 0, LR/CAD 0, seed 43/44 0, HPO 0, test 0.** v02 HR FAILED run(epoch 182)과 epoch 95 checkpoint(sha 105b62c8…)는 그대로이고 상태도 FAILED 그대로다.
+성격: 연구자가 승인한 본 학습이다(seed 42, 3 run). **seed 43/44 0, HPO 0, test 0.** 데이터, 라벨, QA 기준은 변경하지 않았다.
+**사람 QA 최종 검토는 아직 끝나지 않았다.** 이 결과는 QA FLAG / LOW_SUPPORT 판정과 라벨이 사람 승인 전이라는 제한을 가진다.
+v02 FP16 HR FAILED run(`B1_YOLO_BASELINE_20261108_v01`)은 진단 자료로만 보존하고, 아래 결과에 섞지 않았다.
 
 ## 요약
 
-| 질문 | 답 |
-|---|---|
-| B안이 정상 구현됐나 | **예.** 실제 학습 조건 smoke에서 bbox_iou 입력이 fp32 / fp32이고 autocast off, loss 출력도 fp32다. 실제 갱신, 가중치 변화, EMA 갱신 정상, 비정상 forward 0건 → **PASS** |
-| inf는 FP16 중간 계산에서 생기나, 비정상 예측이 넘어오나 | **FP16 중간 계산.** 후반 가중치 probe에서 inf가 난 10개 batch 모두 예측값(pred_dist, decode된 box)은 유한했다. 같은 예측으로 fp32 계산을 하면 0건이다 |
-| 수치 메커니즘 | CIoU 안에서 `w1*h1`은 fp16, 교집합과 합집합은 fp32로 계산된다. 거의 완벽한 box에서 iou > 1이 되면 `alpha = v/(v − iou + 1 + eps)`의 분모가 0 이하가 되어 −inf나 음수 loss가 나온다 |
-| 미확인 | 실패한 batch를 정확히 재현하는 것(원 가중치가 저장되지 않음), 다른 inf 원인이 없다는 것, 200 epoch 장기 거동, 이미지·라벨이 기여했을 가능성(완전 배제 아님) |
-| 200 epoch 재학습 | **진행해도 된다고 판단한다(승인 필요).** v05의 감사 정책으로 비정상 forward가 생기면 PASS가 아니라 FLAGGED로 남는다 |
-
-## 1. 계산 경로(Ultralytics 8.4.129, 소스를 읽어 확인)
-
-- trainer L496–503: `with autocast(amp)`: `loss, loss_items = model.loss(batch, preds)`. loss 전체가 autocast(fp16) 안에서 계산된다.
-- `v8DetectionLoss.get_assigned_targets_and_loss`(loss.py L402–470)
-  - `make_anchors`: anchor_points와 stride_tensor의 dtype이 feats와 같은 **fp16**이다(tal.py L396–405).
-  - `bbox_decode`(L393–400): softmax는 fp32로 autocast되지만 `matmul`은 fp16으로 autocast되고, `dist2bbox`는 fp16 anchor를 쓴다. 그래서 **pred_bboxes는 fp16**이다. smoke probe로 확인했다(decode 입력 fp16 / fp16).
-  - target_bboxes / stride_tensor는 fp32다.
-- `BboxLoss.forward`(L119–156) → `bbox_iou(pred fp16, target fp32, CIoU=True)`(metrics.py L142–167)
-  - `w1, h1 = b1_x2 − b1_x1, b1_y2 − b1_y1 + eps`: **fp16**(eps 1e-7은 fp16 subnormal)
-  - `inter`: fp16과 fp32가 섞여 **fp32**로 승격
-  - `union = w1*h1 + w2*h2 − inter + eps`: `w1*h1`은 fp16 곱이고 나머지는 fp32
-  - `alpha = v / (v − iou + (1 + eps))`(no_grad) → `iou − (rho2/c2 + v·alpha)`
-- DFL: `log_softmax(pred_dist)`는 fp32로 autocast된다. 실패 run에서 DFL loss는 항상 유한했다.
-
-## 2. 수치 원인 점검
-
-### 2-1 단위 시험(모델 없음, box 200만 쌍, `analysis/b1_ciou_fp16_unit_20261108_v01.py`)
-
-| 예측 노이즈 | A: pred fp16 / target fp32(학습 경로) | B: 같은 fp16 값을 fp32로 계산 | C: 모두 fp32 |
+| 항목 | HR | LR | CAD |
 |---|---|---|---|
-| 0.1 | iou>1 0, −inf 0 | 0 / 0 | 0 / 0 |
-| 0.01 | iou>1 **894** | 0 | 0 |
-| 0.001 | iou>1 **15,842**, −inf **7** | 0 | 0 |
-| 0.0001 | iou>1 **19,308**, −inf **14** | 0 | 0 |
+| run 상태(결과 파일) | **PASS** | **PASS** | **PASS** |
+| 최고 val mask mAP50-95(선정 epoch) | 0.8208(ep 62) | 0.8213(ep 32) | 0.8221(ep 32) |
+| epoch 200의 val mask mAP50-95 | 0.8041 | 0.7922 | 0.7915 |
+| 수렴 읽기(제안 기준) | UNCLEAR(완만한 감소) | PLATEAU | PLATEAU |
+| 같은 표현 val mAP50-95(평가 코드) | 0.849 | 0.838 | 0.840 |
 
-- 노이즈 0.001에서 유한한 loss만 보면 A는 음수 loss가 16,220개이고 최대 loss가 1.01이다(거의 완벽한 box인데 loss가 튐). C는 음수 0개, 최대 0.10이다.
-- B가 0건이라는 것은 문제가 **예측값의 반올림이 아니라 계산 정밀도가 섞이는 것**에 있다는 뜻이다.
-- 결과 파일: `b1_fp32_boxloss_20261108_v01/ciou_fp16_unit.json`, `ciou_fp16_finite_outliers.txt`
+- **수치 안정성:** 3 run 합계 9600 batch에서 비정상 forward loss 0, 평균 box loss가 음수인 batch 0이었다. AMP gradient overflow skip은 HR과 LR의 첫 batch 1회씩뿐이다. scale은 줄지 않고 64 → 128–256으로 커졌다.
+- **epoch 107 이후 box loss 불안정은 재현되지 않았다.**
+- 세 표현 모두 **epoch 32–62에서 최고**를 찍었다. 그 뒤로는 val mAP가 평탄하거나 조금 떨어졌고 val seg loss는 계속 늘었다(과적합 신호). seed 1개 기준으로, **200 epoch까지의 추가 학습은 val 성능을 올리지 않았다.**
+- **교차 평가:** 세 평가 표현 모두에서 같은 표현으로 학습한 모델이 가장 높았다. 표현이 바뀌면 크게 떨어지고, 떨어지는 정도는 방향에 따라 다르다(아래 §4).
 
-### 2-2 후반 학습 상태 probe(forward와 loss만, `analysis/b1_late_state_boxloss_probe_20261108_v01.py`)
+## 1. 실행
 
-- 대상: 실패 run의 last.pt(epoch 181 EMA). BN은 train mode, 64장 batch를 학습처럼 섞어 320 batch, autocast fp16
-- 같은 예측에 대해 원래 fp16 경로와 fp32 경로를 함께 계산했다.
+- driver: `scripts/run_b1_baseline_seed42_20261108_v02.sh`(recipe LOCKED v03, trainer v05, FP32 box 모듈 sha gate)
+- root: `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_BASELINE_FP32BOX_20261108_v01`(새 디렉터리, 처음부터 학습)
+- 시간: HR 17:31–17:44, LR –17:56, CAD –18:09, 분석과 평가 –18:12. run당 약 12.6분이다.
+- 판정은 run마다 `run_status.json`으로 했다(모든 check true, state PASS). 자동 재시도와 checkpoint 복구는 없었다.
+- 대표 모델(val mask mAP50-95 최고): 각 run의 `train/weights/best_val_maskmAP5095.pt`
+  - HR sha `27ba2931…`(ep 62), LR `0f6222d2…`(ep 32), CAD `bdf634af…`(ep 32)
 
-| | fp16 경로(v02) | fp32 경로(v03) |
-|---|---:|---:|
-| box loss inf인 batch | **10 / 320** | 0 |
-| −inf CIoU 개수 | 18 | 0 |
-| 음수 CIoU loss(iou>1) | **10,917**(320 batch 전부) | 0 |
-| 예측 pred_dist / decode box 유한 | 전부 유한(absmax 31.2) | — |
-| 유한 batch의 box loss 차이 | 최대 0.0017(fp32 평균 0.0095) | |
+## 2. 학습 안정성(모든 batch)
 
-- **inf는 비정상 예측이 넘어와서가 아니라 fp16 중간 계산에서 생긴다**고 판단한다.
-- 학습 중 빈도는 epoch 107–182의 1216 batch 중 9건(0.7%)이었고, probe에서는 3.1%였다. probe가 더 높은 이유는 EMA 가중치가 더 정확해서(거의 완벽한 box가 많아서)로 추정한다.
-- 결과: `b1_fp32_boxloss_20261108_v01/late_state_probe_summary.json`. 전체 per-batch 기록은 baseline root의 `diag_late_state_boxloss_probe_v01/`에 있다.
+| 항목 | HR | LR | CAD |
+|---|---|---|---|
+| optimizer 호출 / 실제 STEP | 3200 / 3199 | 3200 / 3199 | 3200 / 3200 |
+| GRAD_OVERFLOW_SKIP(위치, scale) | 1(ep1 b1, 128→64) | 1(ep1 b1, 128→64) | 0 |
+| NONFINITE_FORWARD | 0 | 0 | 0 |
+| batch 평균 box loss < 0 | 0 | 0 | 0 |
+| 비유한 loss batch | 0 | 0 | 0 |
+| scale 최소 / 최종 | 64 / 128 | 64 / 128 | 128 / 256 |
+| EMA updates | 3200 | 3200 | 3200 |
+| GPU peak allocated | 10.4 → 14.8 GB | 같음 | 같음 |
 
-### 2-3 무엇이 확인됐고 무엇이 미확인인가
+- scale이 커진 이유: GradScaler는 연속 2000 step 동안 skip이 없으면 scale을 두 배로 올린다. 이는 overflow가 없었다는 뜻이다.
+- **instance 단위 확인:** v05는 batch 평균만 기록한다. 그래서 학습 후 각 모델의 last.pt(epoch 200, 거의 완벽한 box가 많은 후반 상태)로 forward만 돌려 확인했다. 64장 batch 80개다.
 
-- **확인**
-  1. 학습 경로에서 pred box는 fp16, target은 fp32이고 CIoU 안에서 정밀도가 섞인다.
-  2. 이 경로는 거의 완벽한 box에서 −inf와 음수 loss를 만든다(단위 시험과 후반 probe).
-  3. 같은 예측을 fp32로 계산하면 0건이다.
-  4. 실패 run과 같은 양상이다: 후반(box loss가 작을 때)에만 생기고 box loss만 inf다.
-- **추가로 드러난 문제:** v02 학습은 후반 매 batch에 iou>1에서 오는 **음수 CIoU loss**를 포함하고 있었을 가능성이 높다. inf가 아니어서 감지되지 않았다. 이것이 후반 box gradient를 왜곡했을 수 있다(정량 미확인).
-- **미확인**
-  - 실패 batch 9건을 정확히 재현하는 것. 원 가중치와 batch 이미지 목록이 저장되지 않았다. v05부터 이미지 목록을 기록한다.
-  - 다른 inf 원인이 없다는 증명
-  - 200 epoch 장기 거동
-  - 이미지·라벨 요인: 단일 이미지 1000장 정상만으로는 완전히 배제하지 않는다. 특정 box 형태(얇은 띠 등)가 거의 완벽한 일치를 더 쉽게 만들어 빈도를 높였을 가능성이 남는다.
-- 기존 inf 9건과 조건 보존: `b1_fp32_boxloss_20261108_v01/v02_HR_failed_run_inf_events.json`
-  - epoch과 batch 위치: 107/11, 118/11, 120/12, 140/5, 146/8, 167/7, 171/11, 179/9, 182/15
-  - scale 변화: 64 → 0.125
-  - epoch 1 warmup의 초기 scale 조정 1건은 따로 구분했다.
-
-## 3. B안 구현과 짧은 GPU 검증
-
-- 모듈: `scripts/b1_fp32_boxloss_20261108_v01.py`
-  - `SegLossFP32Box`: `bbox_decode`와 `BboxLossFP32`를 autocast off, float32로 계산한다.
-  - 나머지 loss와 forward는 AMP 그대로다.
-- recipe: **LOCKED v03 amendment**(md `83b67b29…`, json `76654f9b…`). train_args는 v02와 차이가 없다. v02와 v01은 보존했다.
-- 학습 스크립트: `scripts/train_b1_yolo_20261108_v05.py`(ca1175c8…)
-- smoke root: `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_SMOKE_RECIPEv03_FP32BOX_20261108_v01`
-- 공통 조건: HR, seed 42, 200 epoch 스케줄 유지
-
-| run | 내용 | 결과 |
+| 모델 | fp16 경로(v02 방식): box loss inf batch / 음수 CIoU loss | **fp32 경로(학습에 쓴 방식)** |
 |---|---|---|
-| stop5_compare | 5 epoch. 매 batch fp16 경로를 함께 계산해 비교 | 학습은 정상(아래). **판정 FAIL_AUDIT**: 진단 코드 순서 문제로 dtype probe가 fp16 비교 계산의 첫 호출을 기록했다. 보존 |
-| **stop3_nocompare** | 3 epoch, 실제 학습과 같은 조건 | **PASS**. probe: bbox_iou 입력 fp32 / fp32, autocast off, decode 출력 fp32, loss fp32 |
+| HR | 1 / 10,018 | **0 / 0** |
+| LR | 0 / 9,076 | **0 / 0** |
+| CAD | 2 / 9,757 | **0 / 0** |
 
-stop5_compare의 epoch별 값:
+- 새 모델도 후반에는 fp16 경로였다면 inf와 음수 loss가 났을 상태다. 학습에 쓴 fp32 경로에서는 0건이다. 예측값은 전부 유한했다.
+- 이는 B안이 v02 실패 메커니즘을 제거했다는 것과 일치한다. 다만 seed 1개, 200 epoch에 대한 결과다.
 
-| epoch | 실제 갱신(누적) | NONFINITE_FORWARD | GRAD_OVERFLOW_SKIP | scale | box / seg loss | 최대 grad norm(unscaled) | Δ가중치 | val mask mAP50-95 |
-|---:|---:|---:|---:|---:|---|---:|---:|---:|
-| 1 | 15 | 0 | 1(batch 1) | 64 | 0.939 / 1.946 | 9142 | +1168 | 0.001 |
-| 2 | 31 | 0 | 0 | 64 | 0.746 / 0.953 | 1835 | +1753 | 0.001 |
-| 3 | 47 | 0 | 0 | 64 | 0.666 / 0.746 | 1210 | +2253 | 0.020 |
-| 4 | 63 | 0 | 0 | 64 | 0.627 / 0.653 | 911 | +2801 | 0.219 |
-| 5 | 79 | 0 | 0 | 64 | 0.577 / 0.583 | 907 | +3292 | 0.523 |
+## 3. 학습곡선과 수렴
 
-- 80 batch 비교: fp32와 fp16 box loss 차이는 최대 0.00027(상대 0.36%)이고 DFL 차이는 0이다. 초반에는 두 경로에서 비유한값과 음수 loss가 모두 0건이었다. 거의 완벽한 box가 아직 없기 때문이다.
-- 첫 batch의 GRAD_OVERFLOW_SKIP 1건은 forward loss가 유한했고, scale 128에서 gradient가 overflow난 것이다(초기 조정). NONFINITE_FORWARD와 구분되어 기록됐다.
-- GPU peak는 10.3GB, epoch당 약 3.8초로 v02와 같은 수준이다.
-- stop3와 stop5의 epoch 1–3 loss가 같았다. 같은 조건에서 일치한다.
-- **주의:** 짧은 시험은 학습 초반 상태라 후반의 간헐적 inf 조건(거의 완벽한 box)을 만들지 못한다. 그래서 FP32로 문제가 해결됐다고 **단정하지 않는다.** 후반 상태 근거는 §2-2의 forward probe뿐이다.
+![compare](b1_baseline_seed42_fp32box_20261108_v01/compare_mask_map5095.png)
 
-## 4. 학습 감사 로직 정비(v05)
+run별 그림 6칸: `b1_baseline_seed42_fp32box_20261108_v01/curves_{HR_Scan,LR_Scan,GeoCAD}_seed42.png`
 
-- v04의 결함(epoch 마지막 batch의 loss만 검사)을 고쳤다. 이제 **모든 batch**의 loss 항목을 기록한다.
-- optimizer_step마다 STEP / GRAD_OVERFLOW_SKIP / NONFINITE_FORWARD로 분류하고 다음을 기록한다.
-  - scale 전후, unscaled grad norm, AdamW counter
-  - 비정상 forward가 난 batch의 이미지 파일 목록
-- epoch 평균은 Ultralytics 값을 그대로 둔다(inf가 있으면 inf). 비정상 batch를 빼고 정상 학습처럼 처리하지 않는다. 유한 batch만의 평균은 `…_DIAGNOSTIC_ONLY` 필드로 따로 둔다.
-- 판정
-  - NONFINITE_FORWARD가 1건이라도 있으면 **FLAGGED_NONFINITE_FORWARD**(PASS 아님). driver는 PASS일 때만 다음 표현으로 넘어간다.
-  - 즉시 FAILED: 가중치 비유한, 연속 3 batch 비정상, scale < 2⁻⁸, val fitness 비유한
-  - 재로드와 재시도는 없다.
+| val mask mAP50-95 | HR | LR | CAD |
+|---|---:|---:|---:|
+| 최고(epoch) | 0.8208(62) | 0.8213(32) | 0.8221(32) |
+| epoch 60 | 0.8090 | 0.8020 | 0.8172 |
+| epoch 100 | 0.8154 | 0.8031 | 0.8046 |
+| epoch 150 | 0.8074 | 0.8011 | 0.8039 |
+| epoch 200 | 0.8041 | 0.7922 | 0.7915 |
+| 30 epoch 구간 평균 21–50 / 81–110 / 171–200 | 0.795 / 0.810 / 0.809 | 0.798 / 0.804 / 0.799 | 0.793 / 0.810 / 0.802 |
+| 마지막 30 epoch 평균 ± sd | 0.809 ± 0.003 | 0.799 ± 0.002 | 0.802 ± 0.004 |
+| 마지막 30 epoch 기울기(/10 epoch) | −0.0020 | −0.0011 | −0.0019 |
+| 수렴 읽기(제안) | UNCLEAR | PLATEAU | PLATEAU |
 
-## 5. 기존 HR 결과와 과적합 분석(별도)
+- HR이 UNCLEAR인 이유는 기울기(−0.0020)가 PLATEAU 기준(|기울기| < 0.002)을 아주 조금 넘었기 때문이다. 내용상으로는 "평탄 또는 완만한 감소"다. 세 표현 모두 **추가 학습으로 val 성능이 오르는 신호는 없다.**
+- epoch 200의 mask mAP50 / mAP75: HR 0.972 / 0.901, LR 0.972 / 0.890, CAD 0.973 / 0.884
 
-- v02 HR run은 **FAILED 그대로**다. 200 epoch 완료 결과로 쓰지 않는다. epoch 95 checkpoint는 보존만 한다.
-- 분석: `b1_fp32_boxloss_20261108_v01/v02_HR_post_epoch95_overfitting_analysis.json`, `.png`
-  - val mask mAP50-95 최고는 0.821(epoch 95)이다. 그 뒤 기울기는 −0.0004/10 epoch이다.
-  - 구간 평균은 80–110: 0.811, 111–140: 0.813, 141–170: 0.811, 152–181: 0.811이다. **성능 저하는 매우 작다.** 사실상 0.81 근처에서 평탄하고, 0.821은 단일 epoch 최고값이다.
-  - val seg loss는 1.21 → 1.54 → 1.81 → 1.91로 꾸준히 늘었고, train seg loss는 0.025 → 0.002로 줄었다. **loss 기준으로는 mask head 과적합 신호가 분명하다.** mAP는 거의 변하지 않았다.
-  - 교란 요인: fp16 CIoU의 음수 loss(후반 매 batch), epoch 107 이후 scale이 0.25까지 감소, seed 1개, 실패 run. 이 요인들의 기여는 분리하지 못했다.
-- epoch은 200 그대로 두었다. HR / LR / CAD 결과를 본 뒤 공통 학습 예산을 재검토한다(연구자 결정).
+**과적합(Train/Val loss 차이)**
 
-## 6. 200 epoch 재학습 진행 판단
+| | HR train seg / val seg | LR | CAD |
+|---|---|---|---|
+| epoch 32 | 0.118 / 0.76 | 0.140 / 0.82 | 0.120 / 0.74 |
+| epoch 100 | 0.016 / 1.29 | 0.015 / 1.47 | 0.012 / 1.43 |
+| epoch 200 | 0.0004 / 2.03 | 0.0004 / 2.32 | 0.0006 / 2.02 |
 
-- **권고: 진행해도 된다(승인 필요).**
-  - B안이 dtype 수준에서 정상 구현됐다.
-  - 확인된 메커니즘(fp16과 fp32가 섞인 CIoU)을 제거한다.
-  - 후반 상태 probe에서 fp32 경로는 0건이었다.
-  - v05 감사가 비정상을 숨기지 않고 FLAGGED로 남긴다.
-- 실행하려면 seed 42 driver를 v03/v05용 새 버전(v02 driver)으로 만들어야 한다. root도 새로 만든다(`B1_YOLO_BASELINE_FP32BOX_<날짜>_v01`). 예상 시간은 약 50분(HR / LR / CAD + 분석 + val 3×3)이다.
-- 남는 위험
-  - fp32에서도 iou 반올림이 아주 드물게 경계에 걸릴 수 있다. 단위 시험에서는 0건이었다.
-  - 다른 원인의 inf가 생길 수 있다.
-  - 이런 경우에는 FLAGGED나 FAILED로 기록되고 멈춘다.
+- train seg loss는 거의 0이 됐고 val seg loss는 2.7–2.8배 커졌다. val box loss는 계속 조금씩 줄었다(HR 0.386 → 0.320).
+- 즉 **mask head 과적합이 뚜렷하다.** 다만 val mAP는 큰 폭으로 떨어지지 않았다(최고 대비 −0.017 ~ −0.031).
+- **해석상 주의**
+  - 선정 epoch이 일찍(32–62) 나왔다. 200 run의 epoch 32–62는 lr이 아직 높은 구간이다(lr0의 86–73%).
+  - 학습 예산(epoch 수)은 연구자가 재검토할 사항이다. epoch k 시점 값은 k epoch으로 따로 학습한 결과가 아니다.
+
+## 4. Validation 3×3 교차 평가(대표 모델, val 200장면 × 593 GT)
+
+- 평가 코드: `analysis/eval_b1_yolo_20261108_v01.py`
+- GT: HR canonical ≥100px. 100px 미만 load는 ignore.
+- 예측 조건: conf 0.001, max_det 100, retina mask. 운영점은 conf 0.25 / IoU 0.5다.
+
+| 학습 → 평가 | mAP50-95 | mAP50 | mAP75 | P | R(=검출률) | instance pixel IoU | 전경 pixel IoU |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| **HR → HR** | **0.849** | 0.979 | 0.946 | 0.927 | 0.985 | 0.904 | 0.973 |
+| HR → LR | 0.615 | 0.931 | 0.693 | 0.925 | 0.919 | 0.775 | 0.937 |
+| HR → CAD | 0.627 | 0.922 | 0.693 | 0.896 | 0.901 | 0.767 | 0.921 |
+| LR → HR | 0.721 | 0.970 | 0.815 | 0.893 | 0.971 | 0.842 | 0.946 |
+| **LR → LR** | **0.838** | 0.979 | 0.934 | 0.920 | 0.983 | 0.896 | 0.969 |
+| LR → CAD | 0.450 | 0.748 | 0.453 | 0.733 | 0.754 | 0.641 | 0.857 |
+| CAD → HR | 0.527 | 0.891 | 0.569 | 0.946 | 0.791 | 0.657 | 0.885 |
+| CAD → LR | 0.259 | 0.570 | 0.206 | 0.883 | 0.445 | 0.384 | 0.766 |
+| **CAD → CAD** | **0.840** | 0.978 | 0.932 | 0.901 | 0.983 | 0.901 | 0.973 |
+
+- **QA FLAG 제외** 결과는 모든 칸에서 차이가 0.002 이하다. val의 FLAG GT가 평가 표현마다 3–4개뿐이기 때문이다. FLAG 행은 per-instance 표에 남아 있다.
+- 같은 표현 val 값(0.84–0.85)이 Ultralytics val(0.821–0.822)보다 높은 이유는 GT 정의(canonical full-res, <100px ignore), max_det, mask 해상도가 다르기 때문이다. 표현 간 비교는 같은 코드로만 한다.
+- **편향 주의:** 같은 표현 칸은 checkpoint를 그 val로 골랐기 때문에 낙관적으로 편향될 수 있다. 교차 칸은 선정에 쓰지 않은 val 표현이다. test는 쓰지 않았다.
+
+**같은 장면 대응 비교**(같은 평가 표현에서 학습 표현 A−B, mAP50-95 차이, 장면 bootstrap 95% CI, 1000회)
+
+| 평가 표현 | A − B | ΔmAP50-95 [95% CI] | 장면별 pixel IoU 차이 평균(sd) |
+|---|---|---|---|
+| HR | HR − LR | +0.128 [+0.113, +0.143] | +0.054 (0.051) |
+| HR | HR − CAD | +0.322 [+0.299, +0.345] | +0.206 (0.196) |
+| HR | LR − CAD | +0.194 [+0.168, +0.219] | +0.152 (0.187) |
+| LR | LR − HR | +0.224 [+0.200, +0.249] | +0.099 (0.097) |
+| LR | LR − CAD | +0.579 [+0.549, +0.607] | +0.431 (0.282) |
+| LR | HR − CAD | +0.356 [+0.326, +0.385] | +0.332 (0.256) |
+| CAD | CAD − HR | +0.213 [+0.194, +0.233] | +0.115 (0.099) |
+| CAD | CAD − LR | +0.390 [+0.357, +0.424] | +0.232 (0.180) |
+| CAD | HR − LR | +0.177 [+0.152, +0.204] | +0.118 (0.136) |
+
+- seed 1개 기준이다. CI는 장면 표본 변동만 반영하고 seed 변동은 반영하지 않는다. 동등성이나 비열등성을 주장하지 않는다(미리 정한 margin 없음).
+- 비대칭
+  - HR 모델은 LR과 CAD에서 0.62–0.63을 유지했다.
+  - CAD 모델은 LR에서 0.26으로 크게 떨어졌다. 검출률 0.45, precision 0.88이다. 즉 오검출보다 **미검출**이 주원인이다.
+  - LR 모델도 CAD에서는 0.45였다.
+
+**층별(일부, mAP50-95 / 검출률, 칸 순서는 HR→HR, HR→LR, HR→CAD, LR→HR, LR→LR, LR→CAD, CAD→HR, CAD→LR, CAD→CAD)**
+
+- 크기 ≥2000px(n 503): 0.90/1.00, 0.66/0.97, 0.69/0.96, 0.77/1.00, 0.89/1.00, 0.49/0.82, 0.58/0.88, 0.30/0.51, 0.89/1.00
+- 크기 500–2000px(n 76): 같은 표현 0.53–0.59, 교차 0.00–0.36
+- 크기 <500px(n 14): 모든 칸에서 ≈0
+- 적재 층 L4(벽돌 300개 = C100, n 149): 같은 표현 0.75–0.76, 교차 0.15–0.56. L1–L3보다 교차 하락이 크다. C60/C20은 B1에 없다.
+- primary(n 200): 같은 표현 0.94–0.96. 보조 load(n 393)는 같은 표현 0.76–0.78이다.
+- NuRec 가림 > 10%(FLAG, n 4)와 LOW_SUPPORT(n 19)는 표본이 너무 작아 해석하지 않는다.
+- 전체: `b1_baseline_seed42_fp32box_20261108_v01/metrics.csv`. per-instance(장면 ID 단위)는 root의 `eval_val_3x3_seed42_v01/per_instance.csv`(sha 7b9b049c…)에 있다.
+
+## 5. 남은 문제
+
+1. **사람 QA 최종 검토 미완료.** FLAG / LOW_SUPPORT와 라벨 판정은 사람 승인 전이다.
+2. **seed 1개.** seed별 평균과 표준편차, 표현 간 차이의 seed 변동은 seed 43/44 이후에 나온다(연구자 승인 필요).
+3. **학습 예산:** 세 표현 모두 epoch 32–62에서 최고였고 그 뒤로 mask 과적합이 보였다. 200 epoch 유지 여부와 공통 예산 재검토는 연구자가 결정한다. 바꾼다면 recipe 개정이고, seed 43/44 전에 정하는 것이 일관적이다.
+4. 같은 표현 val 칸에는 선정 편향이 있다. 최종 비교는 test에서, 평가 절차를 잠그고 승인받은 뒤에 한다.
+5. GPU peak 메모리가 epoch에 따라 10.4 → 14.8GB로 꾸준히 늘었다. 원인은 확인하지 않았다(OOM은 없었다).
+6. v02 FP16 실패 run은 별도 진단 자료다(`reports/b1_fp32_boxloss_verification_20261108.md`).
 
 ## 파일
 
-- 신규 코드
-  - `scripts/b1_fp32_boxloss_20261108_v01.py`
-  - `scripts/train_b1_yolo_20261108_v05.py`
-  - `analysis/b1_ciou_fp16_unit_20261108_v01.py`
-  - `analysis/b1_late_state_boxloss_probe_20261108_v01.py`
-- 신규 문서: `docs/b1_yolo_baseline_recipe_LOCKED_v03_20261108.{md,json}`
-- 보고서 첨부: `reports/b1_fp32_boxloss_20261108_v01/`(단위 시험, probe 요약, inf 이벤트, 과적합 분석)
+- 신규: `scripts/run_b1_baseline_seed42_20261108_v02.sh`
+- 보고서 첨부: `reports/b1_baseline_seed42_fp32box_20261108_v01/`
+  - 곡선 그림, epoch 표, checkpoints/last30/convergence
+  - 3×3 metrics, paired, seed_aggregate, late-state probe 요약
+- root: `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_BASELINE_FP32BOX_20261108_v01`
+  - run 3개(audit, epochs, weights), learning_curves, eval, diag probe, driver/wrapper 로그, input_hashes
