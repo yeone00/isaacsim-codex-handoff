@@ -1208,3 +1208,35 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 시작 시 400장 모두 NOT_STARTED, state 0개. 헤드리스로 화면 확인(쓰기 없음).
 - Tier A 80장 순서와 AI 힌트(우선 높음 18 / 보통 62)를 정리했다. 힌트는 판정이 아니다.
 - 사람 검토 0건, 승인 0건. 학습·test 0.
+
+## 2026-11-08 — 외부 AI 시각검토용 ZIP 생성 (연구자 업로드용, 승인 0) (Claude Code)
+
+- `scripts/build_chatgpt_review_zip_20261108_v01.py` → `/home/user/hh/isaac_cosmos/real_benchmark/cvut_real_labels_v02_20261108/chatgpt_review_package_v01.zip`(188.9 MB, sha 5b5bfe83…, Git 밖, 사람 얼굴 포함)
+- 내용(1240 파일)
+  - 원해상도 패널(100px 격자, GT O# / 초안 D#): Tier A 80 + Tier B 320
+  - 원본 이미지 사본 400, 이미지별 polygon JSON 400(원본 픽셀 좌표)
+  - contact sheet 34, 체크리스트 400행 / 102행 + image_id map
+  - 검토 지침, 응답 템플릿
+- 원본 데이터, labels_v02_draft, review_pack_v01, review_work_v01의 hash가 전후 같다.
+- AI 검토 결과는 제안이며 사람 검토가 아니다(labels_v02 PENDING 유지). 학습·HPO·test 0.
+
+## 2026-11-08 — 연구 대상 자재 정의 재검증: B1 적벽돌 ≠ Roboflow 포장 중공블록, Tier A 재분류, labels_v02 중단 (Claude Code)
+
+[보고서](../reports/real_material_definition_and_tierA_reassessment_20261108.md)
+
+- 연구자 확인: Tier A의 AI "누락" 대부분이 연구 대상 벽돌이 아니다 → R1 보완 중단.
+  - labels_v02_draft는 DRAFT로 보존하고 사용하지 않는다(`SUSPENDED_20261108.md`).
+  - 원본 라벨과 review_work_v01(IN_PROGRESS 1건)은 보존한다.
+- **자재 정의**
+  - B1 `brick_load` = 포장 없는 소형 천공 적벽돌을 낮게 쌓은 것
+  - Roboflow GT 주 대상 = 비닐 포장 대형 수직 천공 점토블록 팔레트(Porotherm 계열로 추정)
+  - 원본 클래스 이름은 `bricks`다. **동일 자재가 아니며, GT 주 대상과 연구 대상의 일치 여부는 연구자 결정이 필요하다.**
+- **Tier A 재분류(AI 의견, 적벽돌 기준)**: (a) 누락 0, (b) 경계 오류 0(제품 기준으로는 0715 1장), (c) 대상 아닌 자재 51(같은 제품 이웃 19 + 다른 자재 가능성 32), (d) 구별 불가 28
+  - 초안 102개 중 마스크가 온전한 것은 19개다.
+- 기존 "최소 58장 충돌" 수치는 철회한다(AI 선별 수치였음).
+- 권고
+  - 원본 라벨을 유지한다.
+  - Tier B는 GT 정체성 확인 + 10% 표본 + 자동 이상치로 확인한다.
+  - **39 run 혼합 실험은 보류하고 연구 대상 정의부터 정한다.** 실제 적벽돌 데이터를 확보하거나 클래스 정의를 확장한다.
+  - E1(증강, 합성만)과 B1 test는 이 문제의 영향을 받지 않는다.
+- 학습·HPO·test·승인 0.
