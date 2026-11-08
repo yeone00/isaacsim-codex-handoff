@@ -1123,3 +1123,36 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 기존 혼합 근거 재확인: 실제 성능은 R50 0.925, R67 0.927, R100 0.937(seed 42)로 비슷했고, 3 seed에서 R50 0.912±0.023, R67 0.909±0.017이었다. "50%"는 실제 성능 단독 최고가 아니라 합성 성능을 유지하는 균형점이었다.
 - **추천: 안 A(1000)** — 100:0이 baseline과 같은 데이터·step 수다. 39 run, 약 9시간.
 - 다음: 연구자 결정(안, 증강 초안, 라벨 충돌 처리) → recipe v04와 혼합 프로토콜 LOCK → trainer v06 구현과 smoke.
+
+## 2026-11-08 — 혼합 실험 사전 검증: 실제 라벨 충돌, checkpoint 규칙, 증강 v04 / trainer v06, 50:50 smoke PASS (Claude Code)
+
+[보고서](../reports/b1_augmentation_mixing_checkpoint_smoke_20261108.md)
+
+- 결정(연구자): 안 A(train 1000), 비율 5개, moderate 증강은 원칙 승인. 39개 본 학습은 아직 금지.
+- **실제 라벨 충돌**(AI 선별, 사람 QA 아님, 하한값)
+  - real train 352 중 58(16.5%)
+    - 음성 65 중 39(60%)에서 벽돌 팔레트가 보인다.
+    - 양성 287 중 19(6.6%)는 보조 적재물이 미라벨이거나 옆 팔레트가 합쳐져 있다.
+  - val 48 중 21(44%)
+  - 같은 종류의 먼 팔레트가 양성에서는 라벨, 음성에서는 미라벨인 내부 모순이 있다.
+  - 혼합 1000장 중 충돌 항목 비중: 4.0% / 8.0% / 12.2% / 16.5%(25 / 50 / 75 / 100% 실제)
+  - 권고: R1(사람이 누락 load를 보충한 별도 라벨 세트, 원본 보존) 또는 R2(충돌 음성 39장 제외).
+  - 표: `reports/real_label_conflict_audit_20261108_v01/`. 그림은 Git 밖 `REAL_LABEL_CONFLICT_AUDIT_20261108_v01`.
+- **checkpoint 규칙**
+  - 주 규칙: best_combined = 0.5 × (B1 자기 표현 val + real val) mask mAP50-95 최대 epoch. 모든 비율에 같게 적용한다.
+  - Q1(증강 vs 기존 baseline)은 양쪽 모두 B1 val best로 비교한다.
+  - last / B1 val best / real val best는 보조로 저장한다. 사후 변경은 금지한다.
+- **구현**
+  - recipe 후보 `docs/b1_yolo_recipe_LOCK_CANDIDATE_v04_20261108.{json,md}`(v03은 보존)
+  - `scripts/b1_mixing_data_20261108_v01.py`, `scripts/train_b1_yolo_20261108_v06.py`
+  - 프로토콜 후보 `docs/b1_mixing_experiment_protocol_LOCK_CANDIDATE_v01_20261108.{json,md}`(39 run)
+- **증강 검증 v03 PASS**
+  - 기하 정렬: 큰 instance IoU 중앙값 0.976–0.984, 최소 0.906 이상. 작은 instance의 낮은 IoU는 무증강 대조군도 같으므로 해상도 효과다.
+  - 광도 변형은 라벨에 영향 없음. 평가 세트에는 증강 없음. 실제 반복이 막 목록과 일치하고 반복본마다 증강이 다름. HR / LR / CAD 설정 동일.
+  - 검증 코드 결함 2건은 v01(거짓 FAIL), v02(공허한 PASS)로 보존했다.
+- **smoke** HR seed 42, A1000_S050_R050, 3 epoch: **PASS**(check 15개)
+  - 갱신 47/48, NONFINITE 0, 음수 box 0, fp32 box, 실제 비율 50.0%
+  - real val 0.45초/epoch, checkpoint 4종, 원본 hash 불변, peak 10.2 GB
+  - 출력: `B1_MIX_SMOKE_RECIPEv04_20261108_v01`
+- 39개 본 학습은 기술적으로 준비됐다(약 10시간). 시작 전에 라벨 충돌 처리 결정과 v04 / 프로토콜 LOCK 승인이 필요하다.
+- test 0, HPO 0, 원본 라벨·split·baseline 변경 0.
