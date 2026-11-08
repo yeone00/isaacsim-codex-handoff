@@ -1078,3 +1078,30 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 합성 B1 val 결과에 한정된다. 실제 로봇·현장으로 일반화하지 않는다. 사람 QA 최종 승인 PENDING.
 - test 0, HPO 0, 새 데이터 0, 재시도 0. 새 6 run의 late-state probe는 수행하지 않았다.
 - 다음 결정(연구자): 사람 QA 승인, test 평가 절차 LOCK과 test 승인, 학습 예산 재검토, v45 불일치 검증 여부.
+
+## 2026-11-08 — Test 평가 준비: B1 Synthetic Test + Real Test189 프로토콜 LOCK CANDIDATE (추론 0) (Claude Code)
+
+[보고서](../reports/test_eval_protocol_prep_b1_real189_20261108.md)
+
+- 학습 결과 확정: 9개 모델(HR / LR / CAD × seed 42/43/44)의 best_val_maskmAP5095.pt. 집합 sha 2e9a02ec…, 모두 run_status PASS이고 기록된 sha와 일치한다.
+- **B1 Synthetic Test**: test 200 장면 × 3 표현, GT 605개, capture/pairing PASS, QA v02 1815행. inventory sha 3911b8e2…. 지금까지 사용한 적 없다.
+- **Real Test189**: `real_benchmark/cvut_pallets_bricks_original_v01/yolo_real_v01/images/test`
+  - 189장, 972×1296. 파일 목록 sha f51a9b39…는 기존 lock(58dda07b…, 2026-10-05 개봉)과 같다.
+  - 라벨은 이미지당 polygon 1개, class 0 brick_load, 팔레트 제외. 출처는 Roboflow bbox를 prompt로 쓴 SAM2.1 자동 mask이고, **수동 QA 기록이 없다.**
+  - 내용은 빨강 점토 블록 팔레트 1개, 현장 1곳(source group A, visual block 2개). 시멘트 없음. 라벨 없는 배경 더미와 얼굴이 보이는 사람이 있다.
+  - train B+D / val C와 group 중복 0, 정확 중복 0.
+- 호환성: 형식은 호환된다(변환 불필요). 정의 차이(대상 1개만 라벨, 외형 차이)는 IGNORE 없이 FP로 세고 fp_far를 따로 보고하도록 고정했다.
+- 신규 파일
+  - `docs/b1_synthetic_test_eval_protocol_LOCK_CANDIDATE_v01_20261108.{json,md}`
+  - `docs/real_test189_b1_eval_protocol_LOCK_CANDIDATE_v01_20261108.{json,md}`
+  - `analysis/eval_real_test189_b1_20261108_v01.py`, `analysis/real_test189_b1_summary_20261108_v01.py`
+  - `scripts/preflight_test_eval_20261108_v01.py`, `scripts/run_test_evals_20261108_v01.sh`
+  - `reports/test_eval_protocols_20261108_v01/`(inventory)
+- 검증
+  - 후보 preflight PASS. require-locked는 FAIL(의도한 동작).
+  - driver는 LOCKED 파일이 없어 거부했다(exit 3).
+  - 실제 평가 코드는 lock이 없거나 후보 lock이면 test를 거부한다.
+  - 실제 val 48장에 SMOKE 모델로 엔지니어링 smoke를 했다(v01은 그림 글자 문제로 보존, v02 PASS).
+- **test 이미지 추론 0**, 학습·HPO·데이터 수정 0, 사람 QA PENDING.
+- 판단: A는 승인 즉시 실행 가능. B는 SAM GT(QA 미기록), FP 처리, 그림 Git 제외를 연구자가 받아들이면 실행 가능.
+- 다음: 연구자가 두 프로토콜을 승인하면 LOCKED JSON 생성 → preflight --require-locked → `scripts/run_test_evals_20261108_v01.sh` 1회 실행.
