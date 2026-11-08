@@ -7,7 +7,8 @@
 | 항목 | 판정 |
 |---|---|
 | 실험 B — Ray checkpoint 복원 후 optimizer 진행(batch 64, accumulate 1) | **PASS** |
-| 실험 A — gradient accumulation 조건(batch 6, accumulate 11)에서 실제 AdamW step | **FAIL**: 실험 설계 결함(AMP scaler 초기값), 재시도 안 함 |
+| 실험 A v01 — gradient accumulation 조건(batch 6, accumulate 11)에서 실제 AdamW step | **FAIL**: 실험 설계 결함(AMP scaler 초기값). 기록 보존 |
+| 실험 A **v02** — 같은 실험을 v42c scaler(init 128)로 1회 다시 실행(연구자 승인) | **PASS** |
 | 사람 검토 자료 | 준비 완료. **검토는 미실행**이고 판정 칸은 비어 있다 |
 | 공통 recipe | DRAFT v01 작성. 결정 항목 6개가 비어 있다 |
 | 학습 가능 상태 | **조건부 가능.** 데이터와 batch 64 경로는 준비됐다. recipe 결정과 실행 승인이 남았다 |
@@ -67,7 +68,26 @@
   - 이것은 **내 실험 설계의 실수**다. Ultralytics나 v42 코드의 결함이 아니다.
 - 지시에 따라 설정을 바꾼 재실행은 하지 않았다.
   - 제안: v02 스크립트에서 v42c `StrictTrainer`(init_scale 128)를 그대로 상속해 A1과 A2를 다시 1회 돌린다. 약 15초 걸린다. 승인이 필요하다.
-- 영향: baseline recipe는 batch 64(accumulate 1)를 쓰므로 이 실패가 baseline을 막지 않는다. 다만 batch < 64(accumulate > 1)에서 실제 갱신이 되는지는 **미입증**으로 남는다.
+- 영향: baseline recipe는 batch 64(accumulate 1)를 쓰므로 이 실패가 baseline을 막지 않는다. accumulate > 1의 실제 갱신 여부는 아래 v02에서 확인했다.
+
+### 실험 A v02 — 같은 조건, v42c scaler: **PASS**(연구자 승인 후 1회 실행)
+
+- 스크립트: `scripts/bitmap_accum_repro_20261108_v02.py`(33da0820…)
+  - v01 대비 바꾼 것은 한 가지다. trainer가 v42c `StrictTrainer`(init_scale 128)를 상속한다.
+  - 기록을 늘렸다. 모든 `optimizer_step()` 호출에서 scale과 AdamW counter를 남긴다.
+  - 데이터, batch 6, seed, lr, epoch은 v01과 같다.
+- 결과 파일: `exp_A_accum_v02/exp_A_result.json`(1177f133…). command json과 stdout/stderr를 보존했다.
+
+| run | 예측 step ni | 관측 step ni | AdamW counter(epoch 1 / 2 끝) | EMA | scale | 가중치(epoch 1→2) |
+|---|---|---|---|---|---|---|
+| A1 대조군(train 9) | ep1 [0], ep2 [] | ep1 [0], ep2 [] | 1 / 1 | 1 / 1 | 128, skip 0 | 불변(예측대로 ep2 step 0) |
+| A2(train 64) | ep1 [0, 5], ep2 [15] | ep1 [0, 5], ep2 [15] | 2 / 3 | 2 / 3 | 128, skip 0 | **변경** |
+
+- **확인된 것**
+  1. accumulate > 1 조건에서 optimizer step이 Ultralytics 스케줄 예측대로 정확히 증가하고, 그때마다 실제로 갱신된다(A2).
+  2. v42 tiny 구성은 **복원 없이 연속으로 학습해도 epoch 2에서 step이 0**이다(A1). 따라서 v42의 "복원 후 step 1→1"은 Ray 문제가 아니라 데이터 9장, batch 6, accumulate 구조 때문이었다. 이제 GPU 실측으로 확정됐다.
+- v01의 실패 원인 추정(scale 65536에서 overflow로 skip)은 v02로 간접 확인했다. scale만 128로 바꾸자 모든 호출이 실제 step이 됐다.
+- **남는 주의:** accumulate > 1이면 `last_opt_step`과 누적 중인 gradient가 checkpoint에 저장되지 않는다. 그래서 중간에 복원하면 연속 학습과 궤적이 같지 않다. 이는 batch 64(accumulate 1)를 쓰는 이유이기도 하다.
 - 부수 사항: Ultralytics AMP 사전 검사가 `yolo26n.pt`를 내려받아 `scripts/weights/yolo26n.pt`(5.5MB)를 만들었다. 학습에는 쓰이지 않는다. v42 때도 같은 동작이 있었다(`weights/yolo26n.pt`). 이 파일은 지우지 않고 그대로 두었다.
 
 ## 2. 사람 QA 검토 자료 — 준비 완료(검토 미실행)
@@ -120,7 +140,7 @@
 
 - 데이터: **READY.** 패키지 COMPLETE, data.yaml 3개, QA 열 준비.
 - 학습 경로(batch 64, accumulate 1): **READY**(실험 B). 복원 후에도 optimizer, EMA, 가중치가 갱신된다.
-- accumulate > 1 경로: **미입증**(실험 A 설계 결함). baseline에는 해당하지 않는다.
+- accumulate > 1 경로: **확인**(실험 A v02 PASS). 다만 이 경로에서는 복원했을 때 궤적이 연속 학습과 같지 않다.
 - recipe: **DRAFT.** 결정 항목 확정, 잠금, 실행 승인이 필요하다.
 - B1용 학습 스크립트: **미작성.** 잠근 recipe로 만들고 1 epoch smoke를 따로 돌려야 한다.
 - 사람 QA 검토: **미실행.** 라벨에 영향이 없어 학습을 막지는 않는다. 다만 "FLAG 제외" 분석 해석에는 필요하다.
@@ -128,7 +148,7 @@
 
 ## 5. 남은 문제
 
-1. 실험 A v02(init_scale 128) 재실행 승인 여부
+1. ~~실험 A v02~~ 완료(PASS)
 2. recipe 결정 항목 6개
 3. B1 학습 스크립트, FLAG 제외 load 단위 평가 스크립트 작성(미작성)
 4. HPO용 B1 Stage-1 entrypoint(미작성)
@@ -138,6 +158,7 @@
 ## 파일
 
 - 신규 코드
+  - `scripts/bitmap_accum_repro_20261108_v02.py`(A v02)
   - `scripts/bitmap_accum_repro_20261108_v01.py`
   - `scripts/bitmap_ray_resume_v42r_20261108.py`
   - `scripts/run_v42_gpu_repro_20261108_v01.sh`

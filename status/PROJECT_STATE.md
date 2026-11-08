@@ -925,3 +925,14 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - 패널 30장, 체크리스트 md/csv(판정 칸 비움). **사람 검토 미실행.**
 - recipe `docs/b1_yolo_baseline_recipe_DRAFT_20261108_v01.md`(5e4a6f21…): DRAFT, 결정 항목 6개 빈칸
 - 판정: 학습은 조건부 가능(데이터와 batch 64 경로 READY). recipe 잠금, B1 학습 스크립트와 smoke, 실행 승인이 남았다. STAGE1(HPO) 준비는 여전히 NO다(B1용 entrypoint 없음).
+
+## 2026-11-08 — v42 GPU 재현 실험 A v02 PASS (Claude Code)
+
+[보고서](../reports/v42_gpu_repro_review_pack_recipe_20261108.md)
+
+- 연구자 승인으로 1회 실행했다. 스크립트는 `scripts/bitmap_accum_repro_20261108_v02.py`(33da0820…)다. v01과 다른 점은 v42c StrictTrainer(GradScaler init 128) 상속뿐이다.
+- 결과 `…/THREE_REP_BITMAP_REPRO_20261108_v01/exp_A_accum_v02/exp_A_result.json`(1177f133…): **PASS**
+  - A1(train 9, batch 6): step ni ep1 [0], ep2 []. 예측과 일치했고, 연속 학습에서도 epoch 2 step은 0이다.
+  - A2(train 64, batch 6): step ni ep1 [0, 5], ep2 [15]. 예측과 일치했다. AdamW counter는 3, scale은 128이며 skip 0, 가중치가 바뀌었다.
+- 결론: v42의 "복원 후 step 1→1"의 원인은 accumulation 구조다(GPU로 확정). Ray 복원은 정상이다(실험 B PASS).
+- v01의 FAIL 기록은 보존했다.
