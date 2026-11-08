@@ -1052,3 +1052,29 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 제한: 사람 QA 최종 검토 미완료, seed 1개, 같은 표현 val 칸에 선정 편향
 - v02 FP16 실패 run은 별도 진단 자료로 남기고 결과에 합치지 않았다.
 - seed 43/44, HPO, test는 0. 다음은 연구자가 학습 예산 재검토와 seed 43/44 승인을 결정하는 것이다.
+
+## 2026-11-08 — B1 seed 43/44 본 학습(6 run) PASS + 9개 모델 3-seed 통합 val 3×3 분석 (Claude Code)
+
+[보고서](../reports/b1_baseline_3seeds_integrated_20261108.md)
+
+- driver `scripts/run_b1_baseline_seeds4344_20261108_v01.sh`(sha 00c9bb03…)
+  - recipe LOCKED v03, trainer v05, FP32 box 모듈. 입력 sha는 seed 42와 같다.
+  - 같은 root `/home/user/hh/isaac_cosmos/sdg_final/B1_YOLO_BASELINE_FP32BOX_20261108_v01`에 새 run 디렉터리를 만들었다. 18:34–19:52 KST.
+- **6/6 PASS**(run_status 기준). 9 run 전체에서:
+  - NONFINITE_FORWARD 0, 음수 box loss batch 0
+  - GRAD_OVERFLOW_SKIP은 첫 batch에서만 났다(3 run에서 1회씩)
+  - torch peak 14.84 GB로 run마다 같았고, run 사이 누적 없음. 메모리 가드 발동 0, OOM 0
+- best(val mask mAP50-95): HR 0.826±0.005, LR 0.819±0.002, CAD 0.826±0.004
+  - best epoch 26–75. 이후 평탄하거나 감소했고, val seg loss가 2.0–2.4로 늘었다(mask 과적합, 9 run 일관).
+- **val 3×3**(9개 모델, 평가 코드 v01 `0de45618…`, 3 seed 평균±SD)
+  - 대각: HR 0.849±0.002, LR 0.840±0.005, CAD 0.842±0.003
+  - HR→LR 0.598, HR→CAD 0.617, LR→HR 0.726, LR→CAD 0.455, CAD→HR 0.531, CAD→LR 0.242
+- Q1–Q5
+  - 대각 간 차이는 ≤ 0.009이고, 이는 이미지가 다른 비쌍대 비교다. 교차 하락은 0.12(LR→HR)부터 0.60(CAD→LR)까지로 비대칭이다.
+  - 비대각 평균은 HR 0.608 ≈ LR 0.591 > CAD 0.387이다.
+  - 쌍대 차이 9개 × 부분집합 2개 모두 3 seed 부호가 같았고, seed t 구간과 장면 bootstrap CI 모두 0을 포함하지 않았다.
+  - L4(C100)와 작은 load·부 load에서 교차 하락이 컸다. 가림 층은 표본이 부족하다. FLAG 제외 영향은 ≤ 0.002. seed 42 경향이 유지됐다.
+- v45(CAD 모델 선택 mask IoU 최고)와는 데이터·모델·지표·과제가 달라 직접 비교할 수 없다. 별도 검증이 필요하다.
+- 합성 B1 val 결과에 한정된다. 실제 로봇·현장으로 일반화하지 않는다. 사람 QA 최종 승인 PENDING.
+- test 0, HPO 0, 새 데이터 0, 재시도 0. 새 6 run의 late-state probe는 수행하지 않았다.
+- 다음 결정(연구자): 사람 QA 승인, test 평가 절차 LOCK과 test 승인, 학습 예산 재검토, v45 불일치 검증 여부.
