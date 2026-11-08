@@ -1198,3 +1198,13 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - API 거부 규칙과 SAM 확인, export 확인, finalize 거부(504행)
 - 원본 라벨 hash 불변. 실제 검토 폴더 `review_work_v01`은 아직 비어 있다(첫 실행 때 생성).
 - 다음: 사람 검토 → export → finalize → 프로토콜 v02와 v04 LOCK → v07 smoke → 39 run.
+
+## 2026-11-08 — labels_v02 실제 검토 서버 실행 (사람 검토 시작 대기) (Claude Code)
+
+[안내](../reports/real_labels_v02_review_start_20261108.md) · [Tier A 순서](../reports/real_labels_v02_review_20261108_v01/TIER_A_REVIEW_ORDER.md)
+
+- `label_review_server_20261108_v01.py`를 실제 작업 폴더 `review_work_v01`로 실행했다.
+  - http://127.0.0.1:8765/, 세션과 분리(setsid / nohup), 로그 `review_server_v01.log`
+- 시작 시 400장 모두 NOT_STARTED, state 0개. 헤드리스로 화면 확인(쓰기 없음).
+- Tier A 80장 순서와 AI 힌트(우선 높음 18 / 보통 62)를 정리했다. 힌트는 판정이 아니다.
+- 사람 검토 0건, 승인 0건. 학습·test 0.

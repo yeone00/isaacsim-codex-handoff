@@ -1,43 +1,47 @@
-# Real labels_v02 사람 검토용 로컬 인터페이스 (2026-11-08)
+# labels_v02 실제 검토 시작 안내 (2026-11-08)
 
-성격: 도구 구현과 시험이다.
-- **실제 사람 검토 0건. 승인 0건.** 시험 저장은 별도 폴더 `review_work_SYSTEM_TEST_NOT_HUMAN_20261108_v01`에만 했다(검토자 이름 SYSTEM_TEST_NOT_HUMAN). 이 이름은 실제 작업 폴더와 확정 도구에서 거부된다.
-- 39개 학습, HPO, B1 test, Real Test189 추론은 하지 않았다.
-- 원본 yolo_real_v01 라벨 전체 hash가 전후 같다.
+## 서버 상태
+- 실행 중: `scripts/label_review_server_20261108_v01.py`
+  - 작업 폴더: **`/home/user/hh/isaac_cosmos/real_benchmark/cvut_real_labels_v02_20261108/review_work_v01`**(실제 작업 폴더, 시험 폴더 아님)
+  - 포트 8765, 127.0.0.1 전용, SAM 켜짐
+- 시작 시점 상태: 400장 모두 NOT_STARTED, `state/` 비어 있음. 시험 폴더(`review_work_SYSTEM_TEST_NOT_HUMAN_20261108_v01`)와는 별개다.
+- 터미널 세션과 분리(setsid / nohup)해 띄웠다. Claude Code에 지시를 입력하는 동안에도 유지된다.
+- 로그: `/home/user/hh/isaac_cosmos/real_benchmark/cvut_real_labels_v02_20261108/review_server_v01.log`
+- 접속: **http://127.0.0.1:8765/**
+- 종료(작업 내용은 저장된 상태로 남는다):
+  `kill $(ps -C python -o pid=,args= | grep 'label_review_server_20261108_v01.py --work-dir .*review_work_v01' | awk '{print $1}')`
+- 다시 실행: `reports/real_labels_v02_review_20261108_v01/REVIEW_TOOL_USAGE.md`의 명령. 저장된 지점부터 이어진다.
 
-## 구현
-- `scripts/label_review_server_20261108_v01.py`
-  - 표준 라이브러리 HTTP 서버, 127.0.0.1 전용
-  - 원본은 읽기만 하고, 이미지별 상태 JSON과 추가 전용 `history.jsonl`을 쓴다.
-  - "검토 완료" 저장은 서버 검증을 통과해야 한다: 검토자 이름, 모든 초안과 원본의 결정, R2–R4, 결정과 R2의 일관성, 시험용 검토자 이름 금지.
-  - 원본·초안 polygon은 클라이언트 값을 받지 않는다.
-  - SAM2.1 box→mask 제안(train/val만). test 이미지 요청은 404를 돌려준다.
-- `scripts/label_review_ui_20261108_v01.html`(외부 라이브러리 없음)
-  - Tier A / B / 전체 탭, 상태 필터, 진행 현황
-  - 원본 / 초안 / 작업본 겹침 토글과 채움 조절
-  - 휠 확대, 드래그 이동, 맞춤, 이전 / 다음(←/→)
-  - 꼭짓점 이동·추가·삭제, polygon 그리기, box→SAM, 분리(SPLIT), GROUP 표시
-  - 진행 중 저장, 이동 시 자동 저장, 재개
-- `scripts/export_label_review_20261108_v01.py`: 상태를 기존 400행·102행 체크리스트 형식 + polygon 파일로 내보낸다.
-- `scripts/finalize_real_labels_v02_20261108_v02.py`: export 폴더를 입력으로 받는다. 음성 이미지(R2=NO_ORIGINAL)를 처리하고 시험 검토자를 거부한다. v01은 보존했다.
-- 사용법: `reports/real_labels_v02_review_20261108_v01/REVIEW_TOOL_USAGE.md`
+## 순서
+1. **Tier A 80장**: 왼쪽 목록의 Tier A 탭. `TIER_A_REVIEW_ORDER.md`가 같은 순서로 AI 힌트를 정리해 두었다(우선순위 높음 18장, 보통 62장).
+2. 그다음 **Tier B 320장**: 목록이 비슷한 장면 순서이므로 → 키로 넘기며 놓친 적재물만 확인한다.
 
-## 시험(시험 폴더만 사용)
-| 시험 | 결과 |
-|---|---|
-| 헤드리스 Chrome self-test 1차 | 목록 400 / Tier A 80, 이미지 972×1296 로딩, 초기 초안·원본 미결, 꼭짓점 수정 → EDIT, NEW 추가, 미완료 상태에서 "검토 완료" 거부, 진행 중 저장, 다시 불러온 상태가 같음(재개), 원본 polygon 불변, 다음 이미지 이동, 다시 열어도 수정 유지: **14/14 true** |
-| 2차(서버 규칙 추가 후) | 같은 항목 13/14 true. `all_undecided_initially`만 false인데, 1차 저장 상태가 재개되었기 때문이다(재개 기능 확인). |
-| API | SAM box → 128점 polygon, 분리(원본 REPLACED + SPLIT 부분) 후 검토 완료 저장 성공. 거부 확인: 검토자 없음, 초안 미결, 음성에 R2=OK, R2=OK와 분리 모순. 클라이언트가 원본 polygon을 바꾸려는 시도 무시, test 이미지 404, `--no-sam` 시 SAM 거부 |
-| export | 400행 / 102행 형식 유지. 상태가 저장된 2장만 IN_PROGRESS, 나머지는 PENDING. additions / replacements / edited 파일 생성 |
-| finalize v02 | 미완료 504행(시험 검토자 포함)으로 거부, 아무것도 쓰지 않음 |
-| 화면 | 헤드리스 스크린샷으로 배치 확인(목록 / 이미지 / 패널) |
+## 결정 고르기
+| 대상 | 선택 | 언제 |
+|---|---|---|
+| 원본(초록) | KEEP | 대상 팔레트 하나를 정확히 덮음 → R2 = OK |
+| | EDIT | 경계가 틀려 꼭짓점을 고침 → R2 = BOUNDARY_ERROR |
+| | REPLACED(`분리`) | 옆 팔레트와 합쳐져 나눔 → R2 = MERGED_WITH_NEIGHBOUR |
+| | REJECT | 적재물이 아님 → R2 = NOT_A_LOAD |
+| 초안(자홍 D#) | ACCEPT | 팔레트 1개분 적재물을 그대로 잘 덮음 |
+| | EDIT | 대체로 맞지만 경계를 고쳐야 함(꼭짓점을 드래그하면 자동으로 EDIT) |
+| | SPLIT | 초안 하나가 팔레트 여러 개를 덮음 → `분리` 후 부분마다 추가 |
+| | REJECT | 적재물이 아님, 410px 미만, 또는 다른 인스턴스와 중복 |
 
-- 시험 중 발견해 고친 것
-  - 서버에 결정과 R2의 일관성 규칙, 시험 검토자 금지를 추가했다.
-  - 시험 서버를 `pkill -f`로 끄다가 자기 셸이 함께 종료됐다(exit 144). 이후 PID로 종료했다. 데이터에는 영향이 없다.
+- **누락 적재물 추가**
+  - `polygon 그리기`(D): 클릭으로 점을 찍고 Enter로 닫는다.
+  - `box→SAM2.1`(B): 적재물을 감싸도록 박스를 드래그하면 SAM 마스크가 NEW로 추가된다. 필요하면 꼭짓점을 고친다. 마음에 들지 않으면 삭제하고 박스를 다시 그린다(= 마스크 재생성).
+  - 초안이 더미 일부만 덮으면 초안을 REJECT하고, 팔레트마다 box→SAM으로 새로 만드는 것이 빠를 때가 많다.
+- **검토자가 반드시 직접 정하는 것**
+  - 모든 초안과 원본의 결정. 처음에는 모두 "— 미결 —"이고, 그림에는 `?`가 붙는다.
+  - R2, R3(약 410px 미만 적재물이 보였는지), R4(가림)
+- **문제가 없는 이미지**: 원본 KEEP(음성이면 R2 = NO_ORIGINAL), R3 / R4 → `검토 완료로 저장`
+- **저장**
+  - `S` 또는 `저장(진행 중)`. 다른 이미지로 넘어갈 때 자동 저장된다.
+  - `검토 완료로 저장`은 조건을 다 채워야 통과하고, 빠진 항목은 빨간 글씨로 보여 준다.
+  - 같은 브라우저에서는 검토자 이름이 기억된다.
 
-## 남은 일
-1. **[사람]** 검토 도구로 400장 검토(Tier A 80장 편집, Tier B 320장 확인)
-2. export → finalize v02 → `labels_v02` + `APPROVAL.json`
-3. 프로토콜 v02 label sha 채움 → LOCKED. recipe v04 LOCKED
-4. trainer v07 smoke → 39 run
+## 주의
+- 도구는 아무것도 자동 승인하지 않는다. AI 힌트와 SAM 결과는 제안일 뿐이다.
+- 검토 화면과 이미지에는 사람 얼굴이 있다. 스크린샷이나 작업 폴더를 GitHub에 올리지 않는다.
+- 검토가 끝나면 export → finalize v02 → `labels_v02`를 만든다(별도 지시 후 실행).
