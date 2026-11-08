@@ -1,240 +1,210 @@
-# Test 평가 준비: B1 Synthetic Test + Roboflow Real Test189 (2026-11-08)
+# B1 augmentation · synthetic:real 혼합 비율 실험 설계 (2026-11-08)
 
-성격: 준비와 프로토콜 잠금 후보 작성 단계다.
-- **test 이미지 추론 0회**(B1 test, Real Test189 모두). 학습 0, HPO 0, checkpoint 변경 0, threshold 조정 0.
-- 데이터, 라벨, manifest, 기존 결과는 변경하지 않았다.
-- 사람 QA 최종 검토는 **PENDING**이다.
+성격: 설계와 준비 단계다.
+- **학습 0, HPO 0, test 추론 0.** 기존 9개 baseline 결과와 data split은 변경하지 않았다.
+- 새로 만든 것은 문서, 막(membership) 목록(이미지 복사 없음), 생성 스크립트뿐이다.
 
-평가 A(B1 합성 Test)와 평가 B(Real Test189)는 목적이 다르다.
-- A: 합성 B1 안에서 val 결과(같은 표현 우세, CAD→LR 저하)가 독립 test에서 재현되는지 본다.
-- B: 합성 데이터로만 학습한 모델이 실제 사진 한 세트에서 어떻게 동작하는지 보는 외부 점검이다.
+## 요약
 
-두 평가는 GT 정의도 다르다(§3). 그래서 결과를 하나의 표로 합치지 않는다.
+- **augmentation:** baseline(LOCKED v03)은 모든 증강이 꺼져 있다. 여기에 **train에만 적용하는 moderate 증강**을 제안한다.
+  - 좌우반전 0.5, 회전 ±3°, 이동 10%, 크기 ±25%, HSV(h 0.01 / s 0.4 / v 0.3)
+  - 약한 blur / noise / JPEG
+  - 상하반전, mosaic, mixup, copy-paste, 큰 색상 변화는 뺀다.
+  - 나머지 학습 설정(200 epoch, AdamW, lr, FP32 box loss, batch 64, imgsz 640)은 v03 그대로다.
+- **혼합 비율:** 안 A(총 1000)와 안 B(총 704) × 5개 비율의 막 목록을 결정적으로 생성했다.
+  - 합성과 실제 모두 **중첩(nested)** 부분집합이다. 합성은 세 표현이 같은 장면을 쓰고(paired), 층과 거리로 층화했다.
+  - 실제가 352장보다 많이 필요하면 **같은 이미지를 반복 등장시키고, 변화는 공통 온라인 증강으로만** 준다.
+- **평가:** B1 val / test, real val 48 / Test189(고정). **주 checkpoint는 epoch 200의 last.pt**(선택 없음)로 정해 val을 선택에 쓰지 않는다.
+- **추천: 안 A(총 1000 고정).** 이유는 §7.
+  - 100:0 칸이 baseline과 같은 데이터·step 수다. 그래서 Q1(증강 효과)과 Q2(혼합 효과)가 한 기준점을 공유한다.
+  - 대가로 실제 비중이 큰 칸은 실제 이미지가 최대 2.84회 반복된다. 이는 보고에서 고유 이미지 수와 함께 표기한다.
 
-## 요약 — 6개 보고 항목
+## 1. 현재 데이터와 클래스·라벨 호환성
 
-| # | 항목 | 결과 |
+| | B1 합성(표현별) | Roboflow 실제(CVUT) |
 |---|---|---|
-| 1 | B1 Synthetic Test 준비 | **준비 완료.** 200 장면 × 3 표현 = 600장, GT 605개, capture와 pairing 검증 PASS, QA v02 test 1815행. 평가 코드는 val과 같은 v01이고 test는 LOCKED 문서 없이는 거부된다. |
-| 2 | Real Test189 데이터·GT | 189장, 972×1296. 파일 목록 sha가 기존 lock과 일치한다. 빨강 점토 블록 팔레트 **1개**만 있고 시멘트는 없다. 분할 누출 0. 라벨은 **SAM2.1 자동 mask**(Roboflow bbox를 prompt로 사용)이고 **수동 QA 기록이 없다.** |
-| 3 | B1 모델과 클래스·라벨 호환 | **형식은 호환된다**(YOLO-seg polygon, class 0 `brick_load`, 팔레트 제외). 변환이 필요 없다. **정의 차이가 있다.** 실제 라벨은 이미지당 대상 load 1개만 표시하고 배경 벽돌 더미는 표시하지 않는다. 벽돌 형태(비닐 포장 중공 블록 vs 낱장 벽돌)도 다르다. |
-| 4 | LOCKED 프로토콜·명령 | 두 개의 **LOCK CANDIDATE**(json + md)를 작성했고 preflight PASS. 승인하면 LOCKED JSON을 만들고 `scripts/run_test_evals_20261108_v01.sh` 한 번으로 A → B를 실행한다. |
-| 5 | 실행 전 해결할 문제 | (a) Test189 GT 수동 QA 기록 없음, (b) 라벨 정의 차이(FP 처리), (c) 얼굴이 있는 실제 사진의 그림 취급, (d) 후보를 LOCKED로 확정하는 연구자 승인. 자세한 내용은 §5. |
-| 6 | 최종 판단 | **A는 승인 즉시 실행 가능하다.** **B는 기술적으로 실행 가능하다.** 단, (a)·(b) 제한을 받아들인다는 연구자 결정이 필요하다. 이 제한이 결과 해석에 큰 영향을 주므로 승인 시 명시해 주기를 권한다. |
-
-## 1. 평가 A: B1 Synthetic Test 준비 상태
-
-**데이터(추론 없이 파일만 확인)**
-- root: `/home/user/hh/isaac_cosmos/sdg_final/B1_RED_PRODUCTION_VALTEST_20261108_v01`(val과 함께 생성됨)
-- manifest `red_only_manifest_1400_v03.csv`(sha `56c8acbb…`)에서 test 200 장면을 고정했다.
-  - L1 45 / L2 50 / L3 54 / L4 51
-  - D1 57 / D2 46 / D3 48 / D4 49
-- 표현별 RGB test 200장씩, 누락 0. `verify_{rep}_v01.json`은 passed=True(val+test 400 장면, load 1198개)다. `crossrep_pairing_v01.json`도 passed=True.
-- GT: HR canonical mask 605개(모두 ≥100px). QA v02 test 1815행 = 605 × 3.
-  - FLAG: HR 3, LR 4, CAD 3
-  - LOW_SUPPORT: 25 / 23 / 26
-  - WATCH: 5 / 4 / 5
-- 파일 목록 inventory(1405줄, sha `3911b8e2…`): `reports/test_eval_protocols_20261108_v01/b1_test_inventory.tsv`
-- B1 test는 지금까지 어디에도 쓰지 않았다.
-  - 학습 data.yaml에는 train/val만 있다.
-  - 평가 코드는 LOCKED 문서 없이 test를 거부한다.
-  - test 평가 출력도 없다.
-
-**평가 방식**
-- val과 같은 코드(`eval_b1_yolo_20261108_v01.py`, sha `0de45618…`)와 같은 설정을 쓴다.
-  - GT ≥100px, <100px IGNORE, imgsz 640, conf 0.001, NMS 0.7, max_det 100, retina mask
-  - 작동점 conf 0.25 / IoU 0.5, FLAG 포함과 제외
-  - 층: L1–L4, 주/부, 크기, 실제 가림, QA, ROI, 거리
-  - 장면 bootstrap 1000회
-- 3-seed 요약은 val 때 쓴 `b1_three_seed_summary_20261108_v01.py`로 한다(seed t 구간 포함).
-- **재현 기준을 미리 고정했다**(후보 문서 §4)
-  - R1: 같은 표현 우세. 6개 비교 모두 3 seed 같은 부호이고 CI가 0을 포함하지 않아야 한다.
-  - R2: CAD→LR이 최저 칸이고 LR 이미지에서 CAD − LR < 0이 재현되어야 한다.
-  - R3: 일반화 순서는 기술만 한다.
-
-## 2. 평가 B: Roboflow Real Test189 확인 결과
-
-**위치와 기존 기록**
-- 데이터: `/home/user/hh/isaac_cosmos/real_benchmark/cvut_pallets_bricks_original_v01/yolo_real_v01/`
-  - data.yaml의 class는 `0: brick_load`
-  - train 352(양성 287 + 음성 65) / val 48 / test 189
-- 기존 평가: `/home/user/hh/isaac_cosmos/sdg_final/real_test189_eight_model_common_eval_v01/`
-  - lock sha `58dda07b…`, 2026-10-05 개봉
-  - 모델 8개: Combined 합성 전용 4개 + M50 실제 적응 4개
-
-**검증 1 — 경로, 개수, 해상도, 라벨 형식**
-- 이미지 189장. 라벨 txt 189개이고 각 파일에 polygon이 정확히 1줄이다.
-- 해상도는 모두 972×1296(세로)이다. EXIF 회전 정보는 없다. annotation 사본에 회전이 이미 적용돼 있다.
-- 정렬한 파일명 목록의 sha `f51a9b39…`가 기존 lock의 `test_filename_list_sha256`와 **일치**한다. 같은 189장이다.
-- 이미지와 라벨 내용 sha inventory는 `c5d9fb3c…`(`real_test189_inventory.tsv`)다.
-
-**검증 2 — 내용(189장 전부 GT 겹침 contact sheet로 육안 확인)**
-- 모든 프레임이 **같은 현장에 있는 같은 빨강 점토 중공 블록 팔레트 1개**다. 비닐로 감겨 있고 제조사 인쇄가 있다. 지게차 포크 높이에서 찍었고 포크 끝이 보인다.
-- **시멘트 벽돌은 보이지 않았다.** 다른 객체는 사람(얼굴이 식별되는 프레임 포함), 건물, 나무, 그리고 **라벨 없는 배경 벽돌·팔레트 더미**(visual block A1)다.
-- metadata
-  - macro scene은 모두 A
-  - visual block A1 98 / A2 91
-  - near-visual group은 21개(그룹 없음 29장)
-  - real_tier는 모두 R_STRICT
-- 따라서 189장은 사실상 대상 1개를 여러 거리와 각도에서 찍은 연속 프레임에 가깝다. **유효 표본 크기는 189보다 훨씬 작다.**
-
-**검증 3 — 분할 보존, 중복, 누출**
-- source group: test는 A만, train은 B 261 + D 26, val은 C 48이다.
-- final source group, source_group_v03, near-visual group, visual block, macro scene 모두 **test와 train/val에 걸친 그룹이 0개**다.
-- yolo 파일 간 정확 중복 hash는 0이다.
-- Roboflow 원래 split과는 다르다. 이 test 189장은 원래 train 129 / valid 40 / test 20에서 왔다. 프로젝트에서 group 기준으로 다시 나눈 것이다(`split_v03`).
-- **B1 모델은 실제 데이터를 학습이나 선택에 전혀 쓰지 않았다.** 따라서 B1 모델 기준으로는 누출 경로가 없다.
-
-**검증 4·5 — 클래스, 인스턴스 정의, 라벨 종류**
-
-| 항목 | B1(학습 라벨) | Real Test189 |
-|---|---|---|
-| 클래스 | 0 `brick_load` | 0 `brick_load`(이름과 id 같음) |
-| 라벨 종류 | instance segmentation(canonical mask → polygon) | instance segmentation polygon(YOLO-seg). 원본 Roboflow는 bbox였고 SAM2.1로 mask를 만들었다 |
-| 인스턴스 단위 | 팔레트 위 벽돌 적재 1더미 = 1 instance, 화면의 **모든** load(≥100px) | 이미지의 **대상 팔레트 1개만**. 배경 더미는 라벨 없음 |
-| mask 범위 | 보이는 벽돌, 팔레트 제외 | 보이는 적재물(비닐 포함), 팔레트·사람·배경 제외 |
-| 외형 | 낱장 벽돌(190×90×57mm) 75–300개, 포장 없음, 합성 렌더 | 대형 중공 블록, 비닐 포장과 인쇄, 실제 카메라 |
+| train | 1000(HR / LR / CAD 같은 장면, paired) | 352 = 양성 287(group B 261, D 26) + **음성 65**(빈 팔레트, group D) |
+| val | 200 | 48(group C) |
+| test | 200 | 189(group A, Test189) |
 | 해상도 | 640×480 가로 | 972×1296 세로 |
-| 장면 | B1 합성 현장, 여러 load, L1–L4 적재율 | 실제 현장 1곳, 가득 찬 팔레트 1개 |
+| 클래스 | 0 `brick_load` | 0 `brick_load` |
+| 라벨 종류 | instance seg polygon(HR canonical, 공유) | instance seg polygon(Roboflow bbox → SAM2.1 mask) |
+| 인스턴스 | 화면의 **모든** load(≥100px) | 이미지당 **대상 1개**만, 배경 더미는 라벨 없음 |
+| 팔레트 | 라벨 없음 | 라벨 없음(음성 이미지는 빈 팔레트) |
+| 외형 | 낱장 벽돌 75–300개, 포장 없음 | 비닐 포장 대형 중공 블록, 인쇄 |
 
-- **형식은 그대로 호환된다.** polygon을 원해상도로 래스터화하는 것 말고는 변환이 없고, 임의 라벨 변환도 하지 않는다.
-- **정의상 차이 두 가지가 결과에 영향을 준다.**
-  - (i) 배경 더미를 맞게 찾아도 FP가 된다. 그래서 precision과 AP가 낮아질 수 있다. 이를 `fp_far`로 따로 보고하도록 했다. IGNORE 영역을 만들면 라벨 변경이 되므로 만들지 않는다.
-  - (ii) 대상 외형이 B1과 크게 다르다.
+**호환성 판단**
+- 클래스 이름과 id, polygon 형식, 팔레트 제외 정책이 같다. **변환 없이 한 data.yaml로 함께 학습할 수 있다.**
+- letterbox 640 정사각으로 두 해상도를 함께 처리할 수 있다.
+- **충돌 1 — 인스턴스 정의.** 실제 train은 대상 1개만 라벨이 있다. 예를 들어 group D의 먼 소형 더미, 배경 더미, 그리고 일부 음성 프레임 가장자리의 벽돌 더미가 라벨 없이 남아 있다(육안 표본 확인). 혼합 학습 시 모델은 "보조 / 배경 load는 배경"이라는 신호를 받는다. B1 라벨은 그 반대다.
+  - 이 단계에서는 라벨을 바꾸지 않는다. 제한으로 기록한다.
+  - 실행 전 선택지: 실제 train에 대해 "라벨 없는 추가 load가 보이는 프레임" 목록을 사람이 검토한다(라벨 수정은 별도 승인).
+- **충돌 2 — GT 품질.** 실제 mask는 SAM 자동 생성이고 수동 QA 기록이 없다(train도 같음).
+- **충돌 3 — 대상 다양성.** 실제 train / val / test는 같은 제품(포장 중공 블록)과 같은 캠퍼스 현장이다. group은 서로 분리돼 있다. 따라서 실제 데이터를 섞은 모델의 Test189 성능은 "**같은 현장·제품에 대한 적응**"으로 해석해야 한다. 다른 현장이나 벽돌 종류로 일반화하면 안 된다.
+- 기존 오프라인 증강 세트 `yolo_real_aug_v01`(991장 = 원본 + 광도 변형 + 약한 기하 변형)은 **쓰지 않는다.** 실제 쪽에만 별도 증강 정책이 들어가 증강 효과와 혼합 효과가 섞이기 때문이다.
 
-**검증 6 — 기존 사용 이력과 이번 평가의 한계**
-- Test189는 2026-10-05에 기존 8개 모델 평가로 이미 개봉됐다. "미개봉 test"가 아니다(AGENTS.md).
-- 기존 M50 모델은 Test189로 선택되지 않았다(lock: selection/threshold/retraining from test 모두 false).
-- 이번 B1 모델은 Test189와 무관하게 이미 고정돼 있다(checkpoint sha 고정, 실제 데이터 미사용). 따라서 이번 평가는 B1 모델에 대해 새로운 외부 점검이다.
-- 다만 데이터는 연구자가 이미 본 적이 있다. GT는 SAM2.1 자동 생성이고 수동 QA 기록이 없다. 대상도 하나뿐이다.
-- 기존 Combined 합성 전용 모델(YOLO11m, imgsz 1280)은 Test189에서 mask mAP50-95가 HR 0, LR 0, Proxy 0.0026, GeoCAD 0이었다. 예측이 아예 없는 이미지가 많았다(prediction_count_sanity_audit). **이번 합성 전용 B1 모델도 바닥 수준일 가능성이 있다.** 그래서 바닥 규칙을 미리 고정했다(§4).
+## 2. augmentation recipe 초안(moderate, train 전용)
 
-## 3. 두 평가의 차이(결과 비교 시 반영)
+파일: `docs/b1_yolo_recipe_aug_moderate_DRAFT_v01_20261108.json`(DRAFT, 미잠금). v03에서 바뀌는 것은 증강 항목뿐이다.
 
-| | A: B1 Synthetic Test | B: Real Test189 |
+| 구분 | 항목 | v03(baseline) | 초안 | 근거 |
+|---|---|---|---|---|
+| 기하 | 좌우반전 `fliplr` | 0 | **0.5** | 적재물과 장면은 좌우 대칭이고 좌우 의미가 없다. 실제 포장 인쇄 글자가 뒤집히는 것은 허용한다. |
+| 기하 | 상하반전 `flipud` | 0 | 0 | 중력: 팔레트는 항상 아래에 있다. |
+| 기하 | 회전 `degrees` | 0 | **3** | 카메라 roll의 작은 흔들림 수준. 기존 실제 증강도 ±3°였다. |
+| 기하 | shear / perspective | 0 | 0 | 벽돌 형상과 팔레트 투영이 왜곡된다. |
+| scale/crop | 이동 `translate` | 0 | **0.10** | 화면 가장자리 잘림을 약하게 만든다. |
+| scale/crop | 크기 `scale` | 0 | **0.25** | 0.75–1.25배. 작은 B1 load(100px)가 과도하게 작아지지 않는 선. |
+| 광도 | HSV h / s / v | 0 / 0 / 0 | **0.010 / 0.40 / 0.30** | 색조는 작게(빨강 정체성과 시멘트 구분 보존), 채도와 명도는 중간. |
+| blur/noise | Gaussian blur | — | p 0.10, σ 0.3–1.2 | 초점과 해상도 차이 |
+| blur/noise | motion blur | — | p 0.05, 커널 3–7 | 이동 카메라 |
+| blur/noise | Gaussian noise | — | p 0.10, σ 2–8(8bit) | 센서 잡음 |
+| blur/noise | JPEG 재압축 | — | p 0.15, 품질 50–90 | 실제 사진 압축 |
+| 제외 | mosaic / mixup / cutmix / copy_paste | 0 | 0 | 타일 경계에서 load가 잘리고 반투명 합성 mask가 무효가 된다. 받침 없이 떠 있는 load가 생긴다. 실제의 단일 대상 라벨과 충돌한다. |
+| 제외 | 큰 색조 변화, 흑백, 90° 회전, random erasing | — | 0 | 색은 핵심 단서다. 비현실적인 방향이다. erasing은 seg에 적용되지 않는다. |
+
+- **test / val은 증강하지 않는다.** Ultralytics의 증강은 train dataset에만 걸린다. 평가 코드는 `predict`를 augment 없이 쓴다. 평가 데이터 폴더도 그대로다.
+- blur / noise / JPEG는 albumentations가 설치돼 있지 않아 Ultralytics 기본 경로로는 불가능하다. 그래서 **trainer v06**에 cv2/numpy 이미지 전용 변환으로 넣는 계획이다(라벨 불변, train만, 재현용 seed). 패키지 설치는 하지 않는다.
+- baseline과 비교하기 위해 **증강 말고는 모두 v03과 같게 둔다.** 200 epoch, 같은 lr schedule, FP32 box, v05 audit 항목을 그대로 쓴다.
+
+## 3. 혼합 비율 실험표
+
+- 막 목록: `reports/mixing_design_20261108_v01/manifests/`(10개 CSV + 요약 + 순서 JSON)
+- 생성: `scripts/build_mixing_manifests_20261108_v01.py`(seed 20261108)
+- 중첩 구조: 합성 176 ⊂ 250 ⊂ 352 ⊂ 500 ⊂ 528 ⊂ 704 ⊂ 750 ⊂ 1000, 실제 176 ⊂ 250 ⊂ 352
+- 합성 부분집합은 L1–L4와 D1–D4를 고르게 유지한다(예: 250장 = L1 64 / L2 60 / L3 64 / L4 62).
+- 실제 부분집합은 양성 / 음성과 group B / D 비율을 유지한다.
+
+**안 A — 총 1000 고정**(epoch당 16 batch, baseline과 같다)
+
+| 비율 S:R | 합성 | 실제 항목 | 실제 고유 | 실제 반복(최대 / 평균) | 실제 양성 / 음성 |
+|---|---|---|---|---|---|
+| 100:0 | 1000 | 0 | 0 | — | — |
+| 75:25 | 750 | 250 | 250 | 1 / 1.00 | 203 / 47 |
+| 50:50 | 500 | 500 | 352 | 2 / 1.42 | 407 / 93 |
+| 25:75 | 250 | 750 | 352 | 3 / 2.13 | 611 / 139 |
+| 0:100 | 0 | 1000 | 352 | 3 / 2.84 | 815 / 185 |
+
+**안 B — 총 704 고정**(= 2 × 352, epoch당 11 batch)
+
+| 비율 S:R | 합성 | 실제 항목 | 실제 고유 | 실제 반복(최대 / 평균) | 실제 양성 / 음성 |
+|---|---|---|---|---|---|
+| 100:0 | 704 | 0 | 0 | — | — |
+| 75:25 | 528 | 176 | 176 | 1 / 1.00 | 143 / 33 |
+| 50:50 | 352 | 352 | 352 | **1 / 1.00** | 287 / 65 |
+| 25:75 | 176 | 528 | 352 | 2 / 1.50 | 430 / 98 |
+| 0:100 | 0 | 704 | 352 | 2 / 2.00 | 574 / 130 |
+
+**부족한 실제 이미지를 채우는 방식(두 안 공통)**
+- 필요한 실제 수 N이 352를 넘으면 모든 이미지를 ⌊N/352⌋회 넣는다.
+- 나머지 N mod 352장은 고정 순서의 앞부분 이미지에 1회씩 더 넣는다. 이 앞부분은 중첩 부분집합과 같은 이미지다.
+- 반복 항목은 같은 파일이다. 매 epoch마다 달라지는 것은 **공통 온라인 증강**(합성과 같은 recipe)뿐이다. 실제 전용 오프라인 증강은 쓰지 않는다.
+- 데이터셋 구성(실행 시 생성)
+  - run마다 새 폴더를 만들고 원본을 **symlink**한다. 반복은 `name__c1`처럼 이름이 다른 링크로 만든다.
+  - Ultralytics label cache는 run 폴더에만 생긴다. 원본 B1 패키지와 실제 폴더에는 아무것도 쓰지 않는다.
+  - 원본 폴더 hash를 실행 전후로 비교한다.
+
+**run 구성(표현 × seed)**
+- 합성이 들어가는 칸은 HR / LR / CAD × seed 42/43/44로 9 run씩이다. 실제 부분은 세 표현이 같다.
+- 0:100(실제만)은 표현과 무관하므로 seed 3 run만 둔다.
+- 학습 시작점은 baseline과 같은 COCO 사전학습 yolo11n-seg다. 합성과 실제를 **처음부터 함께 학습**한다. 기존 M50(합성 checkpoint에서 미세조정)과 다르다.
+
+| 실험 | 안 A run 수 | 안 B run 수 |
 |---|---|---|
-| 목적 | val 결과의 독립 재현(표현 효과) | 합성 전용 모델의 실제 사진 일반화 점검 |
-| 이미지 | 합성 600장(200 장면 × 3 표현), 표현마다 다른 렌더 | 실제 189장, 한 세트를 9개 모델이 공유 |
-| GT | HR canonical, 모든 load ≥100px, <100px IGNORE, FLAG 부분집합 | 대상 load 1개, IGNORE 없음 |
-| 쌍대 단위 | 같은 장면 구성(표현별 렌더), base-scene bootstrap | 같은 실제 이미지, near-visual cluster bootstrap |
-| 표현 효과의 의미 | 학습 표현 × 평가 표현 3×3 | 학습 표현만(평가 이미지는 실제) |
-| 층 | L1–L4, 주/부, 크기, 가림, 거리 | visual block, GT 면적(거리 대용)만 |
+| E1 증강 효과: 합성 1000 + moderate 증강(= 안 A의 100:0) | 9 | 9(별도 1000장) |
+| E2 혼합 75:25 / 50:50 / 25:75 | 27 | 27 |
+| E2 100:0(704) | (E1과 같음) | 9 |
+| E2 0:100 | 3 | 3 |
+| **합계** | **39** | **48** |
+| 예상 GPU 시간(직렬) | 약 9시간(run당 약 14분) | 약 8.5시간(704: 약 10분, 1000: 약 14분) |
 
-## 4. 잠금 후보 프로토콜과 실행 명령
+기존 baseline 9개(증강 없음)는 E1의 비교 기준으로 쓰고 변경하지 않는다.
 
-**파일(신규)**
-- `docs/b1_synthetic_test_eval_protocol_LOCK_CANDIDATE_v01_20261108.{json,md}`
-- `docs/real_test189_b1_eval_protocol_LOCK_CANDIDATE_v01_20261108.{json,md}`
-- inventory: `reports/test_eval_protocols_20261108_v01/`
-  - `b1_test_inventory.tsv`(sha `e3b37204…`)
-  - `real_test189_inventory.tsv`(`1abd8746…`)
-  - `checkpoints.tsv`(`177d696a…`)
-- 코드
-  - `analysis/eval_real_test189_b1_20261108_v01.py`(`f8271995…`)
-  - `analysis/real_test189_b1_summary_20261108_v01.py`(`6832d7ca…`)
-  - `scripts/preflight_test_eval_20261108_v01.py`(`1fd374d1…`)
-  - `scripts/run_test_evals_20261108_v01.sh`(`6f5f6854…`)
+## 4. 평가 계획(평가 데이터는 고정, 증강 없음)
 
-**고정한 내용(두 평가 공통)**
-- checkpoint 9개의 sha(집합 sha `2e9a02ec…`)
-  - HR `27ba2931…` / `415b80d6…` / `f7394559…`
-  - LR `0f6222d2…` / `151a6401…` / `66d44137…`
-  - CAD `bdf634af…` / `a74c307b…` / `2c9739bf…`
-- 추론: imgsz 640, conf 0.001, NMS 0.7, max_det 100, retina mask
-- 작동점 conf 0.25 / IoU 0.5(조정 없음)
-- 주 지표 mask mAP50-95(COCO 101점), 보조 지표 mAP50/75, P, R, pixel IoU, 전경 IoU
-- seed별 결과, 3 seed 평균과 SD, 쌍대 bootstrap 1000회(seed 20261108), seed t 구간
-- 금지: 결과로 재선정, 학습, HPO, 데이터 수정, 반복 실행
+| 평가 세트 | 용도 | 상태 |
+|---|---|---|
+| B1 합성 val(3 표현, 3×3) | 합성 성능, 표현 교차 | 실행 가능(val) |
+| real val 48(group C) | 실제 성능(**평가 전용, 선택에 쓰지 않음**) | 실행 가능. 실제 평가 코드 v02 필요(현재 v01은 real val을 SMOKE 모델만 허용) |
+| B1 합성 test | 독립 재현 | LOCK 필요. 현재 후보는 baseline 9개만 포함하므로 v02 후보에 새 checkpoint를 추가 |
+| Real Test189 | 실제 외부 점검 | LOCK 필요(위와 같음) |
 
-**평가별로 고정한 내용**
-- A: 데이터 inventory sha `3911b8e2…`, manifest와 QA csv sha, FLAG 포함/제외, 층 7종, **재현 기준 R1–R3**
-- B
-  - 파일 목록 sha `f51a9b39…`(기존 lock과 같음), inventory sha `c5d9fb3c…`
-  - GT 래스터화 규칙, IGNORE 없음, fp_far 별도 보고
-  - 층: visual block, GT 면적 3구간(GT만 보고 정함, n 152 / 20 / 17)
-  - 주 CI는 near-visual **cluster bootstrap**
-  - **바닥 규칙:** 모든 표현의 seed 평균 mAP50 < 0.05이면 표현 비교는 기술만 한다.
-  - 그림 선택 규칙(최저 3, 최고 3, 무작위 3)
+- 지표: mask mAP50-95 / 50 / 75, precision, recall, detection rate(실제는 recall과 같음), instance pixel IoU, 전경 pixel IoU. 모델별로 seed 평균과 SD를 낸다.
+- 작동점: conf 0.25 / IoU 0.5, 조정 없음.
+- **checkpoint 규칙(사전 고정)**
+  - **주: last.pt(epoch 200, EMA).** val을 checkpoint 선택에 쓰지 않으므로 real val도 편향 없는 평가 세트가 된다. 비율 비교가 선택 규칙에 흔들리지 않는다.
+  - 보조: v05의 best_val_maskmAP5095.pt(B1 자기 표현 val 기준). 기존 baseline과의 연속성을 위해 함께 보고한다.
+  - E1 비교의 baseline 쪽도 같은 규칙으로 한다. 주 비교는 baseline last.pt(9개 모두 있음)이고, 보조로 baseline best를 쓴다.
+- 통계
+  - seed t 구간(n=3)
+  - 같은 이미지 쌍대 bootstrap: B1은 base-scene, 실제는 near-visual cluster
+  - 동등성 margin은 없다.
 
-**승인 절차와 강제 장치**
-1. 연구자가 두 후보를 승인한다.
-2. 후보 JSON에 `status: LOCKED`와 `approval{approved_by, approved_at, candidate_path, candidate_sha256}`만 더한 `..._LOCKED_v01_20261108.json`을 만든다.
-3. `scripts/preflight_test_eval_20261108_v01.py --check <LOCKED 2개> --require-locked`가 다음을 확인한다.
-   - 데이터와 checkpoint의 현재 sha
-   - 후보와 LOCKED가 status/approval 말고는 같은지
-4. 실행: `scripts/run_test_evals_20261108_v01.sh`(1회, 약 25–35분 예상)
-   - 출력 root `/home/user/hh/isaac_cosmos/sdg_final/B1_TEST_EVAL_20261108_v01`가 이미 있으면 거부한다.
-   - 코드 sha가 lock과 다르면 거부한다.
-   - A 평가 → A 요약 → B 평가 → B 요약 순서이고, 결과 파일이 있는지로 완료를 판정한다.
+## 5. 연구 질문별 분석(사전 고정 안)
 
-**확인한 거부 동작(실행 없이 확인)**
-- 지금 driver를 실행하면 `REFUSE: LOCKED protocol files missing`(exit 3)이 난다. 출력 폴더는 생기지 않는다.
-- 실제 평가 코드
-  - test에 lock이 없으면 거부한다.
-  - 후보 lock으로 전체 실행하면 거부한다.
-  - 후보 lock으로 `--preflight-only`를 하면 9개 sha와 데이터 sha가 일치한다(추론 없음).
-- preflight `--require-locked`는 후보 상태에서 FAIL이다. 의도한 동작이다.
+| 질문 | 비교 | 판정 방식 |
+|---|---|---|
+| Q1 증강이 baseline보다 나은가 | E1(증강) − baseline(무증강), 같은 표현과 seed 번호, last.pt 기준. B1 val의 자기 표현 / 교차, real val, Test189 | 표현별로 seed 평균 차이와 t 구간을 본다. 구간이 0을 포함하지 않으면 "개선" 또는 "악화"로 판정한다. 교차 칸은 기술만 한다. |
+| Q2 혼합이 real 성능을 올리는가 | 각 혼합 비율 − 100:0(증강), Test189과 real val | 위와 같다. 합성 val 손실(retention)도 함께 보고한다. |
+| Q3 real 25/50/75/100 중 최고 | 표현별 Test189 mAP50-95의 seed 평균 순위 | 1위와 2위의 차이 구간이 0을 포함하지 않을 때만 "최고"라고 한다. 아니면 "구분 불가"다. 합성 val과의 trade-off(Pareto)를 함께 본다. |
+| Q4 "50% real이 최고"가 유지되는가 | Q3 결과 + Pareto | 아래 기존 근거와 대비한다. |
+| Q5 가장 안정적인 표현 | 표현별 seed SD, 비율에 따른 변화 폭, 표현 × 비율 표 | 기술만 한다(상호작용 검정 없음). |
 
-**엔지니어링 smoke(test 아님)**
-- 실제 평가 코드를 **실제 val 48장**(source group C, test와 분리)에 SMOKE 모델(B1 HR 3 epoch 짧은 시험 checkpoint)로 실행했다. 본 모델 9개는 실제 데이터에 한 번도 적용하지 않았다.
-  - `/home/user/hh/isaac_cosmos/sdg_final/REAL_EVAL_SMOKE_REALVAL_20261108_v01`: 그림 글자가 밝은 하늘에 묻혀 보이지 않아 v02에서 검은 머리띠로 고쳤다. 보존했다.
-  - `/home/user/hh/isaac_cosmos/sdg_final/REAL_EVAL_SMOKE_REALVAL_20261108_v02`: 파이프라인 동작, 출력 파일 전체, 그림 9장, 요약 스크립트까지 확인했다.
-- smoke 수치(3 epoch 모델, 의미 없음): mAP50-95 0.01, 작동점 검출 0.
+**Q4 관련 기존 근거(재확인)**
+- `real_adaptation_pilot_v01/controlled_mixing_stage2_v01`(HR 합성 앵커에서 미세조정, imgsz 1280, 40 epoch, 노출 3000, 증강 없음, 실제 991 pool, real val 기준으로 epoch 선택)
+- seed 42의 real val mask mAP50-95: R0 0.043 / R15 0.888 / R33 0.908 / **R50 0.925** / R67 0.927 / R75 0.911 / **R100 0.937**
+- 3 seed 확인: R50 0.912 ± 0.023, R67 0.909 ± 0.017(차이 없음)
+- 합성 val 유지: R50 0.867, R100 0.0004
+- 즉 기존 근거는 "**R50이 실제 성능에서 단독 최고**"가 아니었다. 실제 성능은 R50·R67·R100이 비슷했고, R50은 **합성 성능을 유지하면서 실제 성능이 높은 균형점**으로 선택된 것이다.
+- 이번 Q4는 "실제 성능 최고"와 "균형점(Pareto)" 두 가지로 나눠 답한다.
+- 설정(구조, 해상도, 미세조정 vs 공동학습, 증강)이 다르므로 수치를 직접 비교하지 않는다.
 
-## 5. 실행 전에 해결하거나 결정할 문제
+## 6. 실행 순서 제안(모두 별도 승인 후)
 
-1. **Test189 GT 품질(가장 중요).**
-   - test mask는 Roboflow bbox → SAM2.1 자동 생성이고 수동 경계 QA 기록이 없다. polygon fidelity(0.99)는 SAM raster와의 일치일 뿐 사람 판정이 아니다.
-   - 선택지
-     - (a) 그대로 사용하고 "SAM 기반 GT, 수동 QA 미확인"으로 표기한다. 기존 결과와 같은 GT이므로 연결성이 유지된다. **권장.**
-     - (b) 실행 전에 사람이 GT를 표본 검토한다. 단, 라벨을 수정하면 새 GT 버전이 되고 기존 결과와의 비교가 끊긴다.
-2. **라벨 정의 차이.** 이미지당 대상 1개만 라벨이 있고 배경 더미는 없다. 사전 고정한 대로 IGNORE 없이 FP로 세고 `fp_far`를 따로 보고한다. 연구자가 이 방식에 동의해야 한다.
-3. **외형과 domain 차이, 바닥 효과.** 비닐 포장 중공 블록은 B1 낱장 벽돌과 다르다. 기존 합성 전용 모델도 약 0이었다. 바닥이면 표현 비교는 결론을 내지 못하고, 이는 미리 고정한 규칙대로 보고한다.
-4. **대상 1개, 현장 1곳.** 189장은 독립 표본이 아니다. 실제 일반화나 로봇 배치에 대한 주장으로 넓히지 않는다.
-5. **개인정보.** 일부 프레임에 얼굴이 식별되는 사람이 있다. RGB 그림은 출력 root(Git 밖)에만 저장하고 GitHub에 올리지 않는다. 보고서에는 수치와 경로만 적는다. CVUT/Roboflow 데이터의 재배포 권한도 확인되지 않았다.
-6. **B1 test의 사람 QA PENDING.** FLAG / LOW_SUPPORT 판정은 사람 승인 전이다. 결과에 제한으로 표기한다.
-7. **기존 label cache.** `yolo_real_v01/labels/test.cache`(2026-10-05, 기존 Ultralytics 평가가 만든 파일)가 있다. 이번 코드는 Ultralytics val과 cache를 쓰지 않으며 데이터 폴더에 아무것도 쓰지 않는다. 기존 파일도 건드리지 않았다.
-8. **후보를 LOCKED로 확정하는 연구자 승인.**
+1. **결정:** 안 A / B 선택, 증강 초안 승인, 실제 train 인스턴스 정의 충돌(§1)의 처리 방식.
+2. **잠금(학습 전):**
+   - 증강 recipe를 LOCKED v04로 확정한다(v03 + 증강, 나머지 동일).
+   - 혼합 실험 프로토콜을 LOCKED로 확정한다(막 목록 sha, run 목록, checkpoint 규칙, 평가 세트, Q1–Q5 판정).
+   - baseline test 실행 여부와 무관하게, **혼합 설계는 어떤 test 결과도 보기 전에 잠근다.**
+3. **구현(학습 0):**
+   - trainer v06: v05 + blur / noise / JPEG 변환, 막 목록 기반 symlink 데이터셋, 원본 hash 가드
+   - real 평가 코드 v02: real val 허용
+   - 점검: 증강 미리보기 contact sheet(train만), 증강 후 mask-이미지 정렬 검사(기존 라벨 파이프라인 검사 재사용), val/test 미증강 확인
+4. **smoke:** 50:50 HR seed 42를 짧게(3 epoch) 돌려 audit PASS를 확인한다. 결과 파일로 판정한다.
+5. **E1**(9 run) → **E2**(안 A 30 run). PASS인 경우에만 진행하고, 실패하면 중단해 원인을 보존한다. 재시도와 설정 변경은 하지 않는다.
+6. **val 평가:** 새 39개와 baseline last.pt 9개에 대해 B1 val 3×3과 real val을 평가한다.
+7. **test LOCK v02**(새 checkpoint 포함) 승인 → B1 test와 Test189을 1회 평가한다.
+8. Q1–Q5 통합 보고서를 쓴다.
 
-## 6. 기존 연구 결과와의 연결
+## 7. 추천: 안 A(1000 고정)
 
-| 구분 | 모델 | 실제 데이터 사용 | Test189 결과 |
-|---|---|---|---|
-| 합성 전용(기존) | Combined YOLO11m, imgsz 1280, HPO R5, 4 표현 | 없음 | mAP50-95 ≈ 0(HR 0, LR 0, Proxy 0.0026, CAD 0) |
-| 실제 적응(기존) | M50: Combined 초기값 + 실제 train(B+D, 증강 991 pool) 50% 혼합, 실제 val C로 epoch 선택 | 있음 | 0.985–0.988(표현 차이 0.003 이내) |
-| 합성 전용(이번 B1) | YOLO11n-seg, imgsz 640, recipe v03, 3 표현 × 3 seed | 없음 | 미실행(승인 대기) |
+| 기준 | 안 A(1000) | 안 B(704) |
+|---|---|---|
+| baseline과 연결 | **100:0이 baseline과 같은 데이터·step 수.** E1이 E2의 기준점을 겸한다. | 100:0(704)이 baseline과 데이터량이 달라 E1을 따로 돌려야 한다(+9 run). |
+| 합성 정보량 | 합성 1000장을 모두 쓴다. | 최대 704장만 쓴다. |
+| 실제 반복 | 50:50에서 1.42회, 0:100에서 2.84회 | 50:50에서 **반복 없음**, 최대 2회 |
+| step 수 | 3200 = baseline | 2200 |
+| run 수와 시간 | 39 run, 약 9시간 | 48 run, 약 8.5시간 |
 
-- **합성 전용 모델의 실제 일반화**는 기존 Combined와 이번 B1이 같은 질문에 답한다. 다만 구조(11m vs 11n), 해상도(1280 vs 640), 합성 데이터(Combined vs B1), 평가 코드(Ultralytics val, max_det 300 vs COCO 101점, max_det 100)가 달라서 수치를 그대로 비교하면 안 된다.
-- **실제 적응 모델의 성능**(0.985 이상)은 실제 train / val을 쓴 결과다. B1 합성 전용 결과와 비교하면 "실제 데이터 적응의 효과"가 섞인다. 표현 효과로 읽으면 안 된다.
-- **에셋 표현의 영향**은 같은 branch 안에서만 읽는다. B1 9개 모델끼리, 같은 189장의 쌍대 비교로만 본다.
-- **모델, 해상도, 데이터, 프로토콜 차이**는 이번 설계로 분리되지 않는다. 기존 결과와의 비교는 기술 통계로만 한다(lock에 명시).
-- **v43–v47(위치추정, 경로계획)과의 연결**
-  - v43–v47은 M50 실제 적응 모델과 합성 건설현장 장면을 쓴 인식 → pose → planner 분석이다. B1 모델은 그 파이프라인에 들어간 적이 없다. 그러므로 Test189 결과를 v43–v47의 pose나 경로 성능으로 옮길 수 없다.
-  - 연결 가능한 부분은 두 가지다.
-    - (i) B1 합성 전용 모델이 Test189에서 바닥이면, 실제 배치 전에 실제 데이터 적응(M50 같은 단계)이 필요하다는 기존 결론을 다시 확인하게 된다.
-    - (ii) v45의 "CAD 모델 우세"는 M50 계열에서 선택 mask IoU로 얻은 결과다. B1 합성과 실제 결과로는 이를 직접 검증할 수 없다(통합 보고서 §8).
-  - 이번 단계에서 로봇 주행이나 위치추정 실험은 하지 않았다.
+- 추천 이유
+  - 연구 질문 Q1·Q2가 같은 데이터량과 step 수에서 비교된다.
+  - 기존 baseline 9개와 바로 연결된다.
+- 안 A의 약점은 실제 비중이 큰 칸의 이미지 반복이다. 그런데 step 수가 고정된 설계에서 반복은 "실제 이미지를 더 여러 번 본다"는 뜻이다. 안 B도 0:100에서는 2회 반복이고, 200 epoch 동안 실제 이미지 1장을 400번 본다(안 A는 568번). 정도의 차이일 뿐이다.
+- 그래서 보고서에 **고유 실제 이미지 수와 평균 반복 수를 비율과 함께 표기**하고, 반복 효과와 비율 효과를 분리하지 못한다는 점을 제한으로 적는다.
+- 반복 없는 50:50이 중요하다고 판단되면, 안 B의 50:50(704)만 민감도 분석으로 추가할 수 있다(+9 run, 선택).
 
-## 7. 최종 판단
+## 8. 남은 문제
 
-- **평가 A(B1 Synthetic Test): 실행 가능.** 데이터, GT, 코드, checkpoint, 통계, 재현 기준이 모두 고정됐고 preflight PASS다. 남은 것은 LOCKED 승인뿐이다.
-- **평가 B(Real Test189): 조건부 실행 가능.**
-  - 형식은 호환되고 데이터 무결성(기존 lock과 같은 189장, 누출 0)도 확인했다. 코드 smoke도 PASS다.
-  - 실행 전에 연구자가 세 가지를 명시적으로 받아들여야 한다.
-    - §5-1: SAM 기반 GT, 수동 QA 기록 없음
-    - §5-2: 배경 더미를 FP로 처리
-    - §5-5: 그림은 Git 밖에 저장
-  - 결과는 "물체 1개, 현장 1곳의 외부 점검"으로 해석을 제한한다.
-- 승인 메시지에 두 프로토콜 승인과 §5-1·2 처리 방식(권장: 그대로 사용)을 함께 적어 주면, LOCKED JSON 생성 → preflight → 1회 실행으로 진행한다.
+1. 실제 라벨의 인스턴스 정의 충돌과 SAM GT 수동 QA 미기록(§1). 혼합 결과 해석에 직접 영향이 있다.
+2. 실제 train / val / test가 같은 제품과 현장이다. 혼합 모델의 Test189 결과는 같은 현장 적응으로만 해석한다.
+3. 200 epoch는 baseline에서 과적합 구간이 길었다. 공정한 비교를 위해 유지하지만, 0:100(실제 352장을 568회씩)의 last.pt는 과적합될 수 있다. 보조 checkpoint와 학습곡선으로 함께 보고한다.
+4. Real Test189 / B1 test LOCK 후보는 아직 승인 전이다. 혼합 모델을 넣으려면 v02 후보가 필요하다.
+5. 사람 QA 최종 승인 PENDING(B1).
 
 ## 파일
 
 - 신규
-  - `docs/*_LOCK_CANDIDATE_v01_20261108.{json,md}` 4개
-  - `analysis/eval_real_test189_b1_20261108_v01.py`
-  - `analysis/real_test189_b1_summary_20261108_v01.py`
-  - `scripts/preflight_test_eval_20261108_v01.py`
-  - `scripts/run_test_evals_20261108_v01.sh`
-  - `reports/test_eval_protocols_20261108_v01/`(inventory 3개)
-- 외부 root(Git 밖): `REAL_EVAL_SMOKE_REALVAL_20261108_v01`, `REAL_EVAL_SMOKE_REALVAL_20261108_v02`(실제 val smoke 출력과 그림)
-- 변경 없음: 기존 데이터, 라벨, 모델, val 결과, 기존 Test189 평가 폴더
+  - `docs/b1_yolo_recipe_aug_moderate_DRAFT_v01_20261108.json`
+  - `scripts/build_mixing_manifests_20261108_v01.py`
+  - `reports/mixing_design_20261108_v01/manifests/`(CSV 10개, `mixing_manifest_summary.csv`, `orders.json`)
+- 변경 없음: baseline 9개 run과 결과, B1 패키지와 split, 실제 데이터 폴더, Test LOCK 후보

@@ -1105,3 +1105,21 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - **test 이미지 추론 0**, 학습·HPO·데이터 수정 0, 사람 QA PENDING.
 - 판단: A는 승인 즉시 실행 가능. B는 SAM GT(QA 미기록), FP 처리, 그림 Git 제외를 연구자가 받아들이면 실행 가능.
 - 다음: 연구자가 두 프로토콜을 승인하면 LOCKED JSON 생성 → preflight --require-locked → `scripts/run_test_evals_20261108_v01.sh` 1회 실행.
+
+## 2026-11-08 — B1 augmentation · synthetic:real 혼합 비율 실험 설계 (학습 0) (Claude Code)
+
+[보고서](../reports/b1_augmentation_mixing_design_20261108.md)
+
+- 기존 baseline 9개, split, 실제 데이터, Test LOCK 후보는 변경하지 않았다. 학습 0, HPO 0, test 추론 0.
+- **증강 초안**: `docs/b1_yolo_recipe_aug_moderate_DRAFT_v01_20261108.json`(DRAFT)
+  - v03에 train 전용 증강만 추가한다: fliplr 0.5, degrees 3, translate 0.1, scale 0.25, HSV 0.01/0.4/0.3, blur / noise / JPEG(trainer v06에서 cv2로 구현 예정)
+  - 상하반전, mosaic, mixup, copy_paste, 큰 색조 변화는 제외한다. val/test는 증강하지 않는다.
+- **혼합 막 목록**: `scripts/build_mixing_manifests_20261108_v01.py` → `reports/mixing_design_20261108_v01/manifests/`(요약 sha a5e856ce…)
+  - 안 A(1000)와 안 B(704) × 100:0 / 75:25 / 50:50 / 25:75 / 0:100
+  - 중첩, 층화, 합성은 세 표현이 같은 장면을 쓴다. 실제가 부족하면 같은 이미지를 반복하고 변화는 공통 온라인 증강으로만 준다. 오프라인 실제 증강은 쓰지 않는다.
+  - 실제 반복 수: 안 A 최대 2.84, 안 B 최대 2.0
+- 호환성: 클래스, polygon 형식, 팔레트 제외가 같아 함께 학습할 수 있다. 다만 실제 라벨은 대상 1개만 표시하고(배경 더미는 라벨 없음) SAM GT의 수동 QA 기록이 없다. 실제 train/val/test는 같은 제품과 현장이다.
+- 평가: B1 val/test, real val 48 / Test189. 주 checkpoint는 last.pt(epoch 200)로 선택이 없고, 보조는 v05 best. test는 새 checkpoint를 포함한 LOCK v02가 필요하다.
+- 기존 혼합 근거 재확인: 실제 성능은 R50 0.925, R67 0.927, R100 0.937(seed 42)로 비슷했고, 3 seed에서 R50 0.912±0.023, R67 0.909±0.017이었다. "50%"는 실제 성능 단독 최고가 아니라 합성 성능을 유지하는 균형점이었다.
+- **추천: 안 A(1000)** — 100:0이 baseline과 같은 데이터·step 수다. 39 run, 약 9시간.
+- 다음: 연구자 결정(안, 증강 초안, 라벨 충돌 처리) → recipe v04와 혼합 프로토콜 LOCK → trainer v06 구현과 smoke.
