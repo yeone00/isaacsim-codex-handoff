@@ -851,3 +851,33 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - 보조 load 18개 scene-load가 0.95 미만이다(최소 0.354). 주로 R1_NORTH_2의 반투명 NuRec floater가 원인이며 세 표현 일치.
 - 제안(승인 대기, **잠금 안 함**): T_flag 0.90, T_watch 0.95, N_min 100(대안 200). 이때 FLAG는 29행 / 10 scene-load, primary base-scene FLAG 0, 경계 걸침 1.
 - val/test 생성 0, 학습 0, val/test 분포 미열람.
+
+## 2026-11-08 — B1 QA v02 잠금, train 적용, val/test 생성 시작 (Claude Code)
+
+- 연구자 지시(2026-11-08): "진행 상황 보고하고, 다음단계 바로 진행해". 2026-11-06 제안값을 그대로 채택한 승인으로 처리했다.
+- **QA v02 LOCKED**
+  - `docs/b1_visibility_qa_rule_LOCKED_v02_20261108.md` sha256 `985d8696c6b4b37e5f66f1272ec8955df609c558cf113b479957446dbafb4407`
+  - `docs/b1_visibility_qa_thresholds_LOCKED_v02_20261108.json` sha256 `021c66e9810ec35f08eaa31c6e292729f973993dbb630f03fd43f7f3741bd3e7`
+  - 값: N_min 100, T_flag 0.90, T_watch 0.95
+  - 틀(TEMPLATE)과 DRAFT v01은 수정하지 않았다.
+  - 사람 육안 검토는 미실행이다.
+- **train 적용**: `analysis/b1_apply_visibility_qa_v02_20261108_v01.py`(b1c30ccd…)
+  - 출력: `…/B1_RED_PRODUCTION_TRAIN_20261106_v01/qa_v02_train_v01/b1_visibility_qa_v02.csv`(86e30fa7…, 8907행)
+  - FLAG HR 9 / LR 10 / CAD 10, scene-load 10개, scene_flag=FLAG base scene 0
+  - LOW_SUPPORT 행: HR 117 / LR 113 / CAD 120(primary 0)
+  - 11-06 보고서의 LOW_SUPPORT 254는 값 없는(px_e2=0) 행을 뺀 수이고, 규칙상 행 수는 350이다.
+- **val/test 200+200 × 3표현 생성 시작**(13:35 KST)
+  - driver: `scripts/run_b1_valtest_production_20261108_v01.sh`(0d8762fa…)
+    - train driver와 차이는 root, N=400, `--splits val test`뿐이다.
+    - v03, settle 8, 같은 검증기를 쓴다.
+  - root: `/home/user/hh/isaac_cosmos/sdg_final/B1_RED_PRODUCTION_VALTEST_20261108_v01`
+  - 이 항목 작성 시점: **진행 중**. 완료 판정은 별도 항목에 기록한다.
+- 신규 도구(아직 val/test에 적용 전)
+  - `analysis/b1_visibility_qa_metrics_20261108_v02.py`(b7a85dec…)
+    - 잠금 JSON의 sha를 확인한 뒤에만 val/test를 허용한다.
+    - 지표 코드는 v01과 같다.
+  - `scripts/export_b1_yolo_20261108_v03.py`(f579b2e1…)
+    - 표현별로 여러 capture root를 병합한다. 중복 scene은 거부한다.
+    - 라벨 정책은 v02와 같다.
+    - train smoke: PARTIAL(data.yaml 없음), 2969 instance, min polygon IoU 0.966, 중복 root 음성 대조군 거부 확인
+- 학습 0, v42 GPU 재현 0.
