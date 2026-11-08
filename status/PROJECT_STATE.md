@@ -1183,3 +1183,18 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - recipe v04 후보는 그대로 유효하고, 승인 즉시 finalize_lock으로 LOCKED를 만들 수 있다.
 - 39개 학습: 준비는 끝났고 사람 라벨 검토 대기다. 남은 순서는 검토 → 확정 → 프로토콜 v02와 v04 LOCK → v07 smoke → 39 run.
 - 학습 0, HPO 0, B1 test / Test189 추론 0. 사람 QA(B1 FLAG, labels_v02, Test189-A)는 모두 PENDING.
+
+## 2026-11-08 — labels_v02 사람 검토용 로컬 인터페이스 구현·시험 (사람 검토 0, 학습·test 0) (Claude Code)
+
+[보고서](../reports/real_labels_v02_review_tool_20261108.md) · [사용법](../reports/real_labels_v02_review_20261108_v01/REVIEW_TOOL_USAGE.md)
+
+- 서버 `scripts/label_review_server_20261108_v01.py`(127.0.0.1, 표준 라이브러리, 원본 읽기만, 이미지별 상태 + 추가 전용 history)
+- UI `scripts/label_review_ui_20261108_v01.html`
+  - Tier A / B, 겹침, 확대, 이동, 꼭짓점 편집, 그리기, box→SAM2.1, 분리, GROUP, 저장·재개
+  - "검토 완료"는 서버 검증을 통과해야 저장된다. AI 결과는 자동으로 승인되지 않는다.
+- export(기존 400행 / 102행 체크리스트 형식)와 finalize v02(export 폴더 입력, 미완료 거부)
+- 시험은 `review_work_SYSTEM_TEST_NOT_HUMAN_20261108_v01`에서만 했다.
+  - 헤드리스 Chrome self-test 14/14
+  - API 거부 규칙과 SAM 확인, export 확인, finalize 거부(504행)
+- 원본 라벨 hash 불변. 실제 검토 폴더 `review_work_v01`은 아직 비어 있다(첫 실행 때 생성).
+- 다음: 사람 검토 → export → finalize → 프로토콜 v02와 v04 LOCK → v07 smoke → 39 run.
