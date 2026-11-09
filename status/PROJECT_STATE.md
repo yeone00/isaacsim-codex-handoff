@@ -1274,3 +1274,25 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - n=3이다.
 - 실행하지 않은 것: HPO, B1 Test, Real Test189 (0회)
 - 다음 단계(연구자 결정): 독립 test 실행 여부, 자재 정의 문제.
+
+## 2026-11-09 (저녁) — B1 혼합비 실험 B1 Synthetic Test + Real Test189 (LOCKED, 1회 실행)
+- 보고서: `reports/b1_mixing_test_results_20261109.md`, 결과 폴더 `reports/b1_mixing_test_results_20261109/`
+- 프로토콜 `docs/b1_mixing_test_protocol_LOCKED_v01_20261109.json` (sha 8134a1ae…); driver `scripts/run_mixing_test_eval_20261109_v01.py`
+  - 7개 그룹, checkpoint 57개(baseline 9 + 혼합 39 모델; real-only 3은 공유로 한 번만 집계)
+  - 출력 `/home/user/hh/isaac_cosmos/sdg_final/B1_MIX_TEST_EVAL_20261109_v01/` (19:03–20:42)
+  - 14개 평가와 분석이 모두 exit 0, `test_done` 생성. preflight PASS, 재실행 없음
+  - 결과 파일 검증: realtest per_image가 모델×189행, eval_meta에 LOCKED 경로와 group이 기록됨
+- 결과 (3 seed; Q1은 B1-val-best, 비율은 best_combined로 표를 분리)
+  - Q1 증강: B1 Test 자기 표현 +0.020 / +0.052* / +0.048, 교차 표현 +0.095* / +0.047 / +0.048 (HR/LR/CAD, *는 t 구간이 0 제외). Real Test189는 양쪽 모두 바닥(T-AP50 < 0.16)이라 기술적으로만 본다.
+  - 실제를 25%만 넣어도 Real T-AP가 0.36–0.47에서 0.95–0.98로 오른다. 25 / 50 / 75 / 100% 차이는 ≤ 0.03이고 구분되지 않는다.
+  - 50:50은 B1 자기 표현과 balanced에서 세 표현 모두 평균 1위지만 2위와 구분되지 않는다. 최적이라고 선언하지 않는다.
+  - real-only 모델: B1 Test ≈ 0(합성 성능 상실), Real T-AP 0.985(2위와 구분 안 됨)
+  - 교차 표현 순서 HR > LR >> CAD. 표현 × 비율 상호작용은 보이지 않았다(p 0.78–0.99).
+  - Val과 Test의 1위는 9/9 조합에서 일치했다(Spearman 0.9–1.0).
+- 한계
+  - Real Test189는 포장 점토블록 팔레트 1개, 현장 1곳의 데이터다(target-only GT). 작은 빨간 벽돌의 실세계 일반화가 아니다. all-load / ignore AP는 없다.
+  - n=3, 다중비교 보정 없음
+- 새 코드: `analysis/b1_mixing_test_strata_table_20261109_v01.py` (기존 metrics만 집계)
+- 상태
+  - Real Test189는 이번 실험의 모든 모델에 사용이 끝났다. 이 결과로 모델, 비율, checkpoint를 다시 선택하는 것은 금지다.
+  - 하지 않은 것: HPO, 추가 학습, 재실행
