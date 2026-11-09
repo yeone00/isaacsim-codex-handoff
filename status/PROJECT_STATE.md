@@ -1341,3 +1341,25 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - 판이 카메라와 목표 중간에 있어 물리적으로 작다. 깊이 비율 변경도 선택지다.
 - 이미지는 NuRec 배경의 사람 형상 때문에 Git에 올리지 않는다.
 - 하지 않은 것: 본 렌더 1,200건, 추론, 학습, 위치 추정, 주행
+
+## 2026-11-09 (밤) — 1단계 가림 12장면 파일럿 v02 PASS → 본 렌더 시작
+- 보고서: `reports/b1_occlusion_pilot12_v02_20261109.md`
+- 연구자 결정 반영
+  - 주 실측: 공통 GT 목표 영역 중 판에 가려진 비율. instance 기준 값은 진단용이다.
+  - 적재물 간 가림은 이번 주 분석에서 제외했다.
+  - O0는 기존 B1 Test 영상을 재사용하고 추가 렌더하지 않는다.
+  - 판 깊이는 목표 앞면 깊이 × 0.85다.
+- 코드: `scripts/b1_occlusion_capture_20261109_v02.py` (sha e3f9f156…). 판정 스크립트(`analysis/b1_occlusion_pilot_gate_20261109_v01.py`)는 파일럿 결과를 보기 전에 작성했다.
+- 파일럿 결과(`SDG/B1_OCCL_PILOT12_20261109_v02_run04`, val 12장면 × 3표현)
+  - 36/36 PASS
+  - 달성 72/72, 최대 오차 0.30 pp, 표현 간 차이 0
+  - 판이 카메라 쪽에 있음 36/36, 바닥 아래로 내려간 경우 0
+  - 한계: 판이 바닥에서 0.2–0.3 m 떠 있다.
+- 판정: PROCEED. 본 렌더 `SDG/B1_OCCL_MAIN_TEST_20261109_v02_run05`(test 200장면 × O25/O50 × 3표현 = 1,200건)를 시작했다.
+- 평가와 분석 코드는 추론 결과를 보기 전에 작성했다.
+  - `analysis/b1_occlusion_eval_20261109_v01.py`
+  - `analysis/b1_occlusion_analysis_20261109_v01.py`
+- 모델
+  - 주 분석: baseline 9개 + aug 9개, B1-val-best checkpoint
+  - 보조 분석: S050_R050 best_combined 9개
+- 하지 않은 것: 학습, HPO, Test189, 2·3단계
