@@ -1363,3 +1363,22 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - 주 분석: baseline 9개 + aug 9개, B1-val-best checkpoint
   - 보조 분석: S050_R050 best_combined 9개
 - 하지 않은 것: 학습, HPO, Test189, 2·3단계
+
+## 2026-11-10 — 1단계 가림 강건성 후속 실험 완료 (B1 Test 200 × L1–L4 × O0/O25/O50 × HR/LR/CAD)
+- 보고서: `reports/stage1_occlusion_robustness_results_20261110.md`, 결과 사본 `reports/stage1_occlusion_results_20261110_v01/`
+- 실험 성격: 새 블라인드 Test가 아니라 가림 강건성 후속 실험이다.
+- 렌더: O25/O50 1,200/1,200 PASS, 가림률 달성 1,200/1,200, 최대 오차 0.36 pp. O0는 기존 B1 Test 영상 600장을 재사용했다.
+- 평가: 48,600행. O0 회귀 검증에서 기존 LOCKED B1 Test와 27쌍이 정확히 일치했다. 분석 검증 PASS.
+- 실행 관리: 자동 실행기 `scripts/stage_pipeline_orchestrator_20261109_v01.sh` (setsid로 실행, 결과 파일로 판정). 현재 2단계 계획 대기 중이다.
+- 결과
+  - O25에서는 목표 검출률이 0.99–1.00을 유지했다.
+  - O50 목표 검출률: 무증강 HR .693 / LR .762 / CAD .698, 증강 .825 / .758 / .780.
+  - 표현 간 저하량 차이는 seed 기준으로 확정되지 않았고, 장면 부트스트랩의 방향은 그룹에 따라 바뀌었다.
+  - 증강은 HR의 O50 검출률을 +0.132 높였고 seed 흔들림을 줄였다.
+  - O50에서는 적재량이 많을수록(L4), 가까울수록(D1–D2) 저하가 컸다.
+  - top-1은 여러 적재물 장면에서 지정 목표를 보장하지 못했다(O50 OTHER_LOAD .68–.71).
+  - 보조 분석(50:50 혼합)의 O50 검출률은 .93–.98이었다.
+- 3단계 준비: 과거 주행 실패 원인을 감사했고 TC-S 개선 planner를 오프라인으로 검증했다(테스트 11/11, 10/10).
+  - 설계 초안: `SDG/STAGE_PIPELINE_20261109_v01/stage3_design_DRAFT.md`
+  - 아직 실제 주행은 없다.
+- 2단계: depth 보조 렌더와 B5 적용 코드를 준비 중이다(아직 실행 전).
