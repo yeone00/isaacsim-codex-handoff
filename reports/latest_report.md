@@ -93,3 +93,56 @@
   - OOM, NaN
   - OpenCV 스레드(Ultralytics가 `cv2.setNumThreads(0)`을 설정함)
 - Python 스택은 여전히 확보하지 못했습니다(ptrace_scope=1). 확보하려면 trainer 수정(faulthandler) 또는 py-spy 설치가 필요합니다. trainer는 LOCKED 프로토콜에 sha가 고정돼 있어 연구자 결정이 필요합니다.
+
+## 7. 27번 재실행과 감시 강화 (13:26–14:12)
+- 연구자 지시에 따라 27번을 같은 설정으로 1회만 재실행했습니다(`…GeoCAD__seed44__rerun01`).
+  - epoch 148→149를 정상 통과했고 **PASS**로 끝났습니다. 15.0분 소요, best_combined epoch 93.
+- **driver v03** (`scripts/run_mixing_39_20261109_v03.py`):
+  - 멈춤 기준을 5분으로 줄였습니다.
+  - 기준을 정한 근거는 PASS run 26개의 실측값입니다.
+    - epoch 사이 기록 간격: 최대 약 16초
+    - 시작부터 첫 기록까지: 30초 이내
+    - 마지막 epoch부터 최종 저장까지: 1–2초
+  - 종료 전에 남기는 진단 기록:
+    - 프로세스 status 전체
+    - 스레드별 wchan, 상태, CPU 시간
+    - fd 요약
+    - 커널 스택(권한이 있을 때)
+    - 위 내용을 10초 간격으로 두 번 스냅샷
+  - 가짜 멈춤 프로세스로 시험해 PASS를 확인했습니다.
+- 28번 `A1000_S025_R075__HR_Scan__seed42`: PASS.
+- **29번 `A1000_S025_R075__LR_Scan__seed42`에서 세 번째 HANG이 발생했습니다.** epoch 126 직후였고, v03 watchdog이 5.3분 만에 감지·진단·종료했습니다(exit 14).
+
+## 8. 원인 조사 (데이터 로더 다중 프로세스)
+- 세 번 모두 **매 epoch 실행하는 real-val 검증 직후**에 멈췄습니다. stdout 마지막 줄은 real-val 지표였고, `last.pt`는 저장됐으며, 다음 epoch는 시작되지 않았습니다.
+- 세 번째 진단 기록에서 확인한 것:
+  - real-val 검증용 DataLoader 워커 2개가 **`<defunct>` 좀비** 상태였습니다.
+  - 메인 스레드는 `futex_wait` 상태였습니다.
+  - 학습 DataLoader 워커 8개는 정상적으로 `do_poll` 대기 중이었습니다.
+  - `pt_data_pin` 스레드가 2개 살아 있었습니다.
+- 판단:
+  - **학습 로더가 아니라, epoch마다 새로 만들고 버리는 real-val 검증 로더(workers=2)가 종료되는 과정에서 교착이 일어난 것**으로 추정합니다.
+  - Python 스택은 보안 설정 때문에 확보하지 못해 추정으로 남깁니다.
+  - 매 epoch 생성·종료가 반복되는 구조라 확률적으로 드물게 걸립니다. 약 5,700 epoch 중 3회였습니다.
+- 재현성 확인: v06 재실행 run 2개는 멈춘 원본과 **완료된 147/148 epoch 전부에서 train loss와 가중치 지문이 비트 단위로 동일**했습니다. 학습은 결정적이라는 뜻입니다.
+
+## 9. 최소 변경 복구: trainer v07 (실행환경 변경으로 별도 기록)
+- `scripts/train_b1_yolo_20261109_v07.py` (sha `ce3abbad…`)
+  - v06에서 **real-val 검증기 `workers=2 → 0` 한 줄만 바꿨습니다**(docstring 추가 외 변경 없음).
+  - 학습 DataLoader(recipe workers=8), 증강, seed, epoch, batch, optimizer, checkpoint 규칙은 그대로입니다.
+  - 학습 로더를 workers=0으로 바꾸는 방안도 검토했습니다. 하지만 교착은 학습 로더에서 일어나지 않았고, 바꾸면 증강 난수 흐름이 달라집니다. 그래서 적용하지 않았습니다.
+- 실행환경 변경 기록: `docs/b1_mixing_execution_amendment_v01_20261109.json` (sha `bc487027…`)
+  - LOCKED v03 프로토콜 파일은 수정하지 않았습니다. 이 기록이 v03의 sha를 참조합니다.
+  - 기록 내용: 변경 내용, v06/v07 sha, HANG 3건의 근거, 검증 결과, 적용 범위(29번 rerun01과 30–39번), 실패 시 처리(전체 중단).
+- 짧은 검증 SMOKE `B1_MIX_SMOKE_TRAINERv07_REALVALW0_20261109_v01`
+  - 조건: v07, 29번과 같은 조건, 6 epoch.
+  - 결과: **PASS.** epoch 1–6의 train loss, 가중치 지문, B1 val 지표, real-val 지표가 **기존 v06 run과 비트 단위로 동일**했습니다. real-val 평가 시간도 같았습니다(약 0.43초).
+- 해석상 주의:
+  - 29번 rerun01과 30–39번은 **v07로 학습한 run**으로 기록합니다.
+  - 6 epoch 비트 일치가 확인됐으므로 수치적으로 같을 것으로 기대합니다. 그래도 "v06과 완전히 동일한 실행"이라고 주장하지는 않습니다.
+  - 1–28번(26·27번 rerun01 포함)은 v06으로 학습했습니다.
+- **driver v04** (`scripts/run_mixing_39_20261109_v04.py`):
+  - v03에 amendment 검증을 더하고, 새로 시작하는 run은 trainer v07로 학습합니다.
+  - v07 run이 멈추면 전체를 중단합니다(재시도 없음).
+- 후속 체인 v04: driver v04가 끝나고 39개가 모두 PASS면 평가 v02와 분석 v02를 실행합니다.
+- 2026-11-09 14:15:03에 재개했습니다. 1–28번은 SKIP했고, 29번은 `…LR_Scan__seed42__rerun01`로 v07 학습을 시작했습니다.
