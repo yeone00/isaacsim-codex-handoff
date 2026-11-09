@@ -1240,3 +1240,37 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - **39 run 혼합 실험은 보류하고 연구 대상 정의부터 정한다.** 실제 적벽돌 데이터를 확보하거나 클래스 정의를 확장한다.
   - E1(증강, 합성만)과 B1 test는 이 문제의 영향을 받지 않는다.
 - 학습·HPO·test·승인 0.
+
+## 2026-11-09 — B1 혼합 39-run 학습 완료(HANG 3건 복구), Validation 분석 (Claude Code)
+
+[결과 보고서](../reports/b1_mixing_39_validation_results_20261109.md) · [HANG 복구 기록](../reports/b1_mixing_39_hang_recovery_20261109.md)
+
+- 실행 조건
+  - 프로토콜 LOCKED v03(수정 없음), recipe v04, A1000 manifest v01, seed 42/43/44
+  - 출력: `/home/user/hh/isaac_cosmos/sdg_final/B1_MIX_AUG_RECIPEv04_20261108_v01/`
+- **학습 39/39 PASS**
+  - non-finite 0, 최대 할당 10.43 GB
+- **HANG 3건**
+  - 대상: S050_R050 LR seed44 / S050_R050 GeoCAD seed44 / S025_R075 LR seed42
+  - 시점: 매 epoch real-val 검증 직후
+  - 진단: 검증 로더 워커가 defunct 상태였고 메인 스레드는 futex 대기였다. Python 스택은 확보하지 못했다.
+  - 처리: 원본과 진단 기록을 보존했고, run별로 rerun01 1회씩 재실행해 모두 PASS했다.
+  - v06 재실행 run은 원본과 비트 단위로 동일했다.
+- watchdog
+  - driver v02(15분) → v03(5분, 진단 강화) → v04(trainer v07)
+  - 실행환경 변경 기록: `docs/b1_mixing_execution_amendment_v01_20261109.json` (sha bc487027…)
+  - trainer v07(sha ce3abbad…)은 real-val 검증 workers 2→0으로 바꾼 것이다. 6 epoch SMOKE에서 v06과 비트 단위로 동일했다.
+  - v07로 학습한 run은 11개다. v06과 동일 실행이라고 주장하지 않는다.
+- **Validation 결과** (best_combined 기준, 3 seed)
+  - 실제를 25% 넣으면 실제 val이 0.24–0.36에서 0.96–0.97로 오른다. 25–100%는 0.96–0.99로 **최적 실제 비율은 구분할 수 없다.**
+  - real-only 모델의 B1 합성 val은 0.000이다.
+  - balanced 1위는 세 표현 모두 **50:50**(0.932–0.934)이고 Pareto에도 포함된다. 기존 R50 균형점 경향은 재현됐지만, 2위와의 t 구간이 0을 포함한다.
+  - 표현 × 비율 상호작용은 보이지 않았다(F p 0.45–0.90). 교차 표현 일반화는 HR > LR >> CAD다.
+  - Q1 증강: B1 val이 자기 표현 +0.02–0.04, 교차 표현 +0.04–0.08 올랐다. 합성만 학습한 모델의 실제 val은 0.05 이하로 개선이 없었다.
+- 해석 제한
+  - 실제 데이터는 다른 자재(포장 점토블록)다.
+  - 실제 val은 선택에 쓰였으므로 결과가 낙관적이다.
+  - 실제 val 48장은 천장 효과가 있다.
+  - n=3이다.
+- 실행하지 않은 것: HPO, B1 Test, Real Test189 (0회)
+- 다음 단계(연구자 결정): 독립 test 실행 여부, 자재 정의 문제.
