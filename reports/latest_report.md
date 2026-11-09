@@ -69,3 +69,27 @@
 ## 5. 재개 시점
 - driver v02는 2026-11-09 11:49:46에 시작했습니다. 1–25번 SKIP 후 26번 rerun01 학습을 시작했습니다.
 - 예상: 남은 14개 × 약 14.8분이면 15:20 전후에 학습이 끝납니다. 이어지는 Validation 평가와 분석은 약 1.5–2시간 걸립니다.
+
+## 6. 진행 경과 (12:05–12:32)
+- 26번 재실행 `…LR_Scan__seed44__rerun01`: **PASS**. 15.0분 소요, best_combined epoch 140, 최대 할당 10.34 GB.
+- **27번 `A1000_S050_R050__GeoCAD__seed44`에서 같은 증상이 재발했습니다.**
+  - 12:16:29에 `last.pt`를 저장한 뒤 epoch 149로 넘어가지 못했습니다(epoch 148까지만 기록).
+  - 같은 순간 GPU 메모리가 12.8 GB에서 2.4 GB로 떨어졌습니다.
+  - 메인 스레드는 futex 대기였고, 스레드는 96개였습니다.
+- driver v02 watchdog이 15.3분 무진행을 감지했습니다(12:31:46).
+  - 진단을 `_HANG_DIAG__A1000_S050_R050__GeoCAD__seed44__20261109T123146/`에 저장했습니다.
+  - `HANG_RECORD.json`을 작성했습니다.
+  - 프로세스 그룹 13개를 SIGTERM으로 정상 종료했고, SIGKILL은 필요 없었습니다.
+  - **driver를 중단했습니다(exit 14).** 후속 체인 v02도 `mixing39_done`이 없어서 exit 10으로 멈췄습니다. 의도한 동작입니다.
+- 지시("재발 시 무한 재시도 없이 중단·보고")에 따라 **27번은 재실행하지 않았습니다.** 현재 26/39 PASS입니다.
+- 공통 패턴:
+  - 두 HANG 모두 **같은 manifest(S050_R050), 같은 seed 44, epoch 148 → 149 경계**에서 발생했습니다.
+  - 같은 조건의 HR_Scan seed44와 LR_Scan seed44 rerun01은 epoch 149를 정상 통과했습니다(4.3–4.5 s/epoch).
+  - 따라서 완전히 결정적인 오류는 아니고, 특정 데이터·증강 순서에서 확률적으로 일어나는 교착으로 추정합니다.
+- 배제한 것:
+  - fd 한도 1,048,576
+  - /dev/shm 사용 1%
+  - 호스트 RAM
+  - OOM, NaN
+  - OpenCV 스레드(Ultralytics가 `cv2.setNumThreads(0)`을 설정함)
+- Python 스택은 여전히 확보하지 못했습니다(ptrace_scope=1). 확보하려면 trainer 수정(faulthandler) 또는 py-spy 설치가 필요합니다. trainer는 LOCKED 프로토콜에 sha가 고정돼 있어 연구자 결정이 필요합니다.
