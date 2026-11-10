@@ -1382,3 +1382,15 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - 설계 초안: `SDG/STAGE_PIPELINE_20261109_v01/stage3_design_DRAFT.md`
   - 아직 실제 주행은 없다.
 - 2단계: depth 보조 렌더와 B5 적용 코드를 준비 중이다(아직 실행 전).
+- 2026-11-10 3단계(물리 주행) 구현·smoke 완료, 본 실행 계획 등록.
+  - 새 코드: `scripts/stage3_drive_20261110_v02.py`(runner), `scripts/stage3_drive_session_20261110_v02.py`(v30 세션 기반 Kit 세션), `scripts/stage3_perception_20261110_v01.py`(own-rep M50 + 변경 없는 v44 센서 자동 ROI B5), `evaluation/stage3_outcome_20261110_v01.py`, `analysis/stage3_verify_20261110_v01.py`, `analysis/stage3_analysis_20261110_v01.py`, `configs/stage3_matrix_20261110_v01.json`(72 run 선언: pilot 18 + main 54). v01 세션/runner는 smoke 실패 증거와 함께 보존.
+  - smoke: `SDG/STAGE3_SMOKE_20261110_v01_run01..run05`. run01–04 실패 보존(카메라 비균일 scale, semantic annotator의 render graph 노드, ROS domain 191 고정, runner .tmp race, 정지 인증 per-tick 재계산으로 20 s 정지 wall bound 초과). run05(v02): 7 run 중 SUCCESS 6(HR/LR/CAD L4·O0, HR L1·O0, Baseline·Improved 모두 실제 물리 이동, FINAL 오차 2.9–5.8 cm, main band 이내), FAIL_A 1(HR L4·O50 M50 미검출). VERIFY PASS.
+  - 위험: 속도 jitter 꼬리(0.027–0.030 m/s)가 기존 0.03 m/s 비상 가드에 근접 → 일부 run이 D로 중단될 수 있음(가드 완화 안 함). run03에서 1회 발생.
+  - `SDG/STAGE_PIPELINE_20261109_v01/stage3_plan.sh` + `stage3_ready.json` 작성(plan sha 1f229a46…8e35). 본 실행 결과는 아직 없음.
+
+## 2026-11-10 — Stage 2 (B1 static RGB-D pose + approach-path feasibility) COMPLETE, verified
+- Orchestrator `SDG/STAGE_PIPELINE_20261109_v01`: stage2_VERIFIED_PASS 2026-11-10T11:27 (VERIFY_capture PASS 200x3 reps x O0/O25/O50; VERIFY_eval PASS 0 errors; 7,200 rows/variant, 5,400 selection rows).
+- Smoke run01 FAIL preserved (yaw tol 1e-6 deg vs float32 1.2e-5; CAPTURE_MISSING outcome KeyError) -> v02 capture/eval (two-line fixes), smoke run02 PASS. Stage-2 prep agent had ended without smoke; pipeline idle ~9.5 h before 10:07.
+- Findings: ORIG_v44 unusable on B1 (floor depth valid 0/1800, NuRec); B1ADAPT_v01 SENSEDTOP O0 XY median 2.7-2.9 cm all reps; O25 p90 ~20 cm (lateral); O50 ~70% WRONG_TARGET with top-1 selection; ORACLE O50 p90 >40 cm. Planning feasibility from B1 camera poses not interpretable (design oracle old 1/200, smooth 0/200). Rep differences descriptive only.
+- Report: reports/stage2_pose_planning_results_20261110.md
+- Stage 3 started under orchestrator 11:37 (72-run matrix, plan sha 1f229a46...; smoke STAGE3_SMOKE_20261110_v01_run05 6/7 SUCCESS + 1 FAIL_A at HR L4 O50; runs 01-04 failures preserved).
