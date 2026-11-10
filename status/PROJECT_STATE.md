@@ -1394,3 +1394,9 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - Findings: ORIG_v44 unusable on B1 (floor depth valid 0/1800, NuRec); B1ADAPT_v01 SENSEDTOP O0 XY median 2.7-2.9 cm all reps; O25 p90 ~20 cm (lateral); O50 ~70% WRONG_TARGET with top-1 selection; ORACLE O50 p90 >40 cm. Planning feasibility from B1 camera poses not interpretable (design oracle old 1/200, smooth 0/200). Rep differences descriptive only.
 - Report: reports/stage2_pose_planning_results_20261110.md
 - Stage 3 started under orchestrator 11:37 (72-run matrix, plan sha 1f229a46...; smoke STAGE3_SMOKE_20261110_v01_run05 6/7 SUCCESS + 1 FAIL_A at HR L4 O50; runs 01-04 failures preserved).
+
+## 2026-11-10 — Stage 3 (physical driving, 72 runs) COMPLETE + integrated stages 0-3 report
+- Orchestrator ALL_STAGES_FINISHED 16:35; stage3_VERIFIED_PASS (72/72 runs with recorded terminal outcome + evidence; VERIFY_stage3.json, VERIFY_analysis.json PASS).
+- Outcomes: SUCCESS 36 (HR 14/24, LR 14/24, CAD 8/24), FAIL_A 8 (HR O50 no detection), FAIL_B 16 (LR/CAD O50 no pallet surface), FAIL_C 5 (CAD baseline curvature), FAIL_D 6 (existing 0.03 m/s speed guard tripped at 0.0303-0.0312 m/s; not relaxed), FAIL_E 1 (TF stale), HOLD 0, collisions 0. Main O0: HR 11/12, LR 11/12, CAD 6/12. O50 0 for all reps. Improved TC-S removed C failures (5 -> 0).
+- Post-hoc: LR's smaller pose error is not an asset effect — unchanged v44 B5 lateral centre flips between ~0 and ~-5 cm with 1-2 px mask perturbations (offline rerun on saved inputs reproduces HR -4.7 / LR -0.1 / CAD -4.7 cm); stage-2 200-scene O0 medians equal across reps.
+- Reports: reports/stage3_driving_results_20261110.md, reports/integrated_results_stages0to3_20261110.md
