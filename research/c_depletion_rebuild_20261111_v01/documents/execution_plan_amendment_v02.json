@@ -1,0 +1,110 @@
+{
+  "version": "execution_plan_amendment_v02",
+  "created": "2026-11-11T19:37:50.197978+09:00",
+  "status": "DRAFT_PLANNING_ONLY",
+  "change": "O50 separate robustness physical driving150; all previous instructions and mandatory C-HPO retained",
+  "parent_plan_sha256": "dd0138d2d9a6a3f301d2918bdbdf83883aefee0f5a812ce8b6670cd3fccc8b04",
+  "parent_protocol_sha256": "8f66cbe3433fd2b57267cd0de0668fbc263c0bcb60288f67eefcaea91621b635",
+  "execution_scope": "PREPARATION_ONLY",
+  "HOLD_released": false,
+  "new_GPU_authorized": false,
+  "main": {
+    "runs": 300,
+    "C": [
+      100,
+      80,
+      60,
+      40,
+      20
+    ],
+    "occlusion": [
+      "O0",
+      "O25"
+    ],
+    "reps": [
+      "HR_Scan",
+      "LR_Scan",
+      "GeoCAD"
+    ],
+    "base_scenarios": 10,
+    "role": "PRIMARY",
+    "changed": false
+  },
+  "O50": {
+    "runs": 150,
+    "C": [
+      100,
+      80,
+      60,
+      40,
+      20
+    ],
+    "occlusion": [
+      "O50"
+    ],
+    "reps": [
+      "HR_Scan",
+      "LR_Scan",
+      "GeoCAD"
+    ],
+    "base_scenarios": 10,
+    "per_rep_runs": 50,
+    "per_C_rep_runs": 10,
+    "role": "SEPARATE_SEVERE_OCCLUSION_ROBUSTNESS",
+    "scenario_manifest": "NOT_GENERATED",
+    "paired_base_conditions": "same depletion path/start/camera/light/environment/checkpoint where feasible; deviations reported",
+    "independent_actual_occlusion_and_GT_validation_required": true,
+    "technical_pilot": "REQUIRED_SEPARATE_NOT_RUN",
+    "denominator": "all150 declared; every failure/interruption preserved; pending not completed",
+    "safety_limits_changed": false,
+    "ROBUST_A_changed": false
+  },
+  "planned_physical_runs_total": 450,
+  "pooled_450_success_primary": false,
+  "separate_output_roots_and_statistics": true,
+  "ordered_stages": [
+    "C_dataset_generation",
+    "C_dataset_QA_and_family_split_lock",
+    "C_COMMON_HPO",
+    "C_FINAL_MODEL_TRAINING_AND_LOCK",
+    "C_PERCEPTION_EVALUATION",
+    "C_POSE_ROBUST_A_VALIDATION",
+    "technical_pilot",
+    "main_G1_300",
+    "O50_TECHNICAL_PILOT",
+    "O50_SEPARATE_G1_150"
+  ],
+  "O50_entry_gates": [
+    "all_existing_gates",
+    "C_perception_pose_including_O50_evaluation",
+    "O50_GT_depth_occlusion_QA_PASS",
+    "O50_technical_pilot_safety_feasibility_PASS",
+    "O50_manifest150_and_model_code_lock",
+    "separate_new_execution_authorization"
+  ],
+  "failure_stages": [
+    "no_detection",
+    "wrong_target",
+    "pose_failure",
+    "plan_failure",
+    "safety_stop",
+    "final_task_failure",
+    "capture_TF_memory_infrastructure"
+  ],
+  "documentation": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/docs/c_depletion_O50_drive_plan_AMENDMENT_20261111_v01.md": "b9f6826ec58f29b4590d32e940950e12eba5910d93ff294128df61006a1f6b29",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/c_depletion_O50_drive_plan_amendment_20261111_v01.md": "c682548bdba72804bdf25b1e6ca79d6950b1fa6f816e902b36342a4c7a530df0"
+  },
+  "time_estimate": {
+    "additional_drive_hours": [
+      19.96,
+      22.5
+    ],
+    "all450_drive_hours": [
+      59.88,
+      67.5
+    ],
+    "includes_data_training_QA_pilots": false,
+    "hard_deadline": false
+  }
+}

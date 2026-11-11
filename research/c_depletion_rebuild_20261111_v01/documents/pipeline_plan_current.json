@@ -1,7 +1,8 @@
 {
   "state": "HOLD",
-  "plan_amendment": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_plan_amendment_v01.json",
-  "plan_amendment_sha256": "dd0138d2d9a6a3f301d2918bdbdf83883aefee0f5a812ce8b6670cd3fccc8b04",
+  "plan_amendment": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_plan_amendment_v02.json",
+  "plan_amendment_sha256": "97813c9a0eb4517233d69f773357b21f02f3f064e311def05a4cc2130573505b",
+  "previous_C_HPO_plan": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_plan_amendment_v01.json",
   "expanded_stages": [
     "C_dataset_generation",
     "C_dataset_QA_and_family_split_lock",
@@ -10,9 +11,15 @@
     "C_PERCEPTION_EVALUATION",
     "C_POSE_ROBUST_A_VALIDATION",
     "technical_pilot",
-    "main_G1_300"
+    "main_G1_300",
+    "O50_TECHNICAL_PILOT",
+    "O50_SEPARATE_G1_150"
   ],
-  "runtime_parent_stage": "C_training_evaluation",
+  "main_runs": 300,
+  "separate_O50_runs": 150,
+  "total_planned_drives": 450,
+  "pooled_primary_success": false,
   "runtime_code_changed": false,
-  "all_other_gates_unchanged": true
+  "all_existing_gates_unchanged": true,
+  "new_GPU_authorized": false
 }
