@@ -1,0 +1,48 @@
+{
+  "version": "execution_plan_amendment_v01",
+  "created": "2026-11-11T19:16:37.531172+09:00",
+  "status": "DRAFT_PLANNING_ONLY",
+  "parent_protocol_sha256": "8f66cbe3433fd2b57267cd0de0668fbc263c0bcb60288f67eefcaea91621b635",
+  "supersedes": "optional C transfer-only training plan; all other instructions retained",
+  "execution_scope": "PREPARATION_ONLY",
+  "HOLD_released": false,
+  "new_GPU_authorized": false,
+  "legacy_HPO": "finish untouched; preserve as L1-L4 preliminary search",
+  "expanded_parent_stage": "C_training_evaluation",
+  "ordered_stages": [
+    "C_dataset_generation",
+    "C_dataset_QA_and_family_split_lock",
+    "C_COMMON_HPO",
+    "C_FINAL_MODEL_TRAINING_AND_LOCK",
+    "C_PERCEPTION_EVALUATION",
+    "C_POSE_ROBUST_A_VALIDATION",
+    "technical_pilot",
+    "main_G1_300"
+  ],
+  "C_HPO": {
+    "status": "PLANNED_NOT_IMPLEMENTED_OR_RUN",
+    "objective": "mean of HR/LR/CAD own-C-Val mask mAP50-95",
+    "candidate_budget": 12,
+    "initialization": "base1 + up to3 unique nonbaseline L-HPO full200 Val-ranked settings + at least8 new RandomSampler candidates; fill missing L settings with random to12",
+    "sampler_seed_proposed": 20261112,
+    "training_seeds": [
+      42,
+      43,
+      44
+    ],
+    "screen_epochs": 60,
+    "schedule_epochs": 200,
+    "promote": "top3 nonbaseline + baseline",
+    "max_training_jobs_including_smoke_and_final_repeats": 57,
+    "max_model_epochs_including_smoke_and_final_repeats": 5766,
+    "seed42_final": "verified selected full200 checkpoints reused; no redundant training",
+    "initial_weights": "same pretrained, never L-HPO trained weights",
+    "test_for_selection": false,
+    "freeze_before_training": true,
+    "budget_status": "DRAFT; not a running protocol"
+  },
+  "documents": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/docs/c_depletion_common_hpo_plan_AMENDMENT_20261111_v01.md": "c553f1622bc6d542ad0a962fc1dff398947ad8a6e4f138a507ea934b71859cef",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/c_depletion_common_hpo_plan_amendment_20261111_v01.md": "a25567c3c35149856f6673753bcd5fe05808a5ffa549cd49ba2880dfb1ffb847"
+  }
+}
