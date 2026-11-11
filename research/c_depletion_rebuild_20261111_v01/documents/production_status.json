@@ -1,20 +1,20 @@
 {
   "state": "RUNNING",
-  "stage": "capture_CDEP_B1R_TST_000058_HR_Scan",
+  "stage": "capture_CDEP_B1R_TST_000058_GeoCAD",
   "controller_pid": 3774906,
   "current": {
-    "job": "capture_CDEP_B1R_TST_000058_HR_Scan",
-    "pid": 4191425,
-    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/production/capture_CDEP_B1R_TST_000058_HR_Scan",
-    "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/capture_CDEP_B1R_TST_000058_HR_Scan.log"
+    "job": "capture_CDEP_B1R_TST_000058_GeoCAD",
+    "pid": 1843,
+    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/production/capture_CDEP_B1R_TST_000058_GeoCAD",
+    "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/capture_CDEP_B1R_TST_000058_GeoCAD.log"
   },
   "reason": null,
-  "updated": 1794435615.0039423,
-  "generated_RGBD": 3717,
+  "updated": 1794435915.5190842,
+  "generated_RGBD": 3759,
   "declared_RGBD": 4410,
-  "completed_jobs": 177,
+  "completed_jobs": 179,
   "failed_jobs": 0,
   "physical_motion_authorized": false,
   "physical_runs_started": 0,
-  "elapsed_seconds": 27082.3564286232
+  "elapsed_seconds": 27382.87157344818
 }
