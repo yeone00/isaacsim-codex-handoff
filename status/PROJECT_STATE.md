@@ -1434,3 +1434,15 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - FAIL문서정합성: LOCKEDv04 RNG설명은(run seed,epoch,index)per-samplegenerator지만SHA일치PhotoDegrade구현은전역Python random·getrandbits기반noisegenerator. expectedhash/lock/코드수정0; 전체재현성무조건PASS아님. 관련새실험실행0.
 - 집계검증18822개/학습설정감사336개 PASS, RNG정책불일치는별도FAIL. 최초T1표현명KeyError·supersedes note경로오류exit1및수정patch실패보존후각새v02증거폴더에서성공. 최종입력242개SHA재확인불변. 증거: `reports/stages12_full_tables_20261111_v02/`, `reports/b1_training_hyperparameter_evidence_20261111_v02/`. 새분석코드2개,과거원본/과거보고서불변. 원격게시없음/반영UNKNOWN.
 - 다음: 연구자는세표의분모와원고용표기확인, RNG설명불일치는향후별도문서개정전에검토. 이번표로모델선택·튜닝을하지않고현재주행큐는기존실행기에맡긴다.
+
+
+## 2026-11-11 — G0–G3 본120셀 종료 검증·버전 분리 분석·메모리 후보·영상 패키징
+
+- 보고서: `reports/stage4_original120_and_gc_revision_results_20261111_v01.md`, 최종 evidence `reports/stage4_completion_evidence_20261111_v01/snapshot_20261111T113224`. main PHASE_END 11:31:50 KST 확인. 기존 shell이 o50로 자동 전환했으며 중지·재시작·새 Kit/ROS/주행 없음. O50는120분모와별도이며현재미완료.
+- 최초시도120셀: G0 0/30(28B+2A),G1 25/30(1E+3A+1D),G2 0/30(28B+2A),G3 18/30(6E+4D+2A). 운영선택120셀의 G3는 별도run02 24/30이며 원본6실패보존. 실제main139시도+pilot12=151기록 검증,저장outcome재계산/trace정합/코드사본 불일치0. 혼합120이력은회계표이며효과검정은run02동일버전availablepairs별도.
+- run02 짝: G1-G0 pooled20셀/7조건 차+.800, G2-G0 0, G3-G1 21셀/7조건 차−.0952(탐색boot95 −.3333~+.0952). 편의부분집합·표현군집·다중비교미보정·독립환경아님 명시. 비유의≠동등성. 성공G1/G3paired14셀 추가wall중앙60.119s/추가drive15.417sim s. 재관측24개중21개XY감소/3증가,paired중앙−1.314mm.
+- G1 D1건은LEGS_INCOMPLETE표면사유와별도로rawpeak.03056994m/s speedguard보존. G3 D4건은W최근접3.06–3.70mm>3mm정상감속반경→요청0회→along<−5mm GOAL_OVERSHOOT. 재인식전실패이며threshold/control변경0.
+- CPU센서대조전체조건G1계획30중29재현(미검출3포함)+원본촬영실패1;ORIG mask있는26개전부erosion후100점미만거부,ROBUST26계산;기존좌표/status/reason exact. 입력SHA불변/GT0/재추론0.
+- 기존GC6실패는+768MiB guard(peak6.827–6.995GiB)이며8GiB절대초과아님. run02의대응6개는모두SUCCESS로별도검증. 새로운compact-history候補 helper/sessionv04/runnerv05작성,실행중코드미변경. rawJSONL전체보존,history14필드만보관. 13run/33정지인증·quiet/outcomes exact/33손상거부same,AST범위검증 PASS_OFFLINE. 5000JSONrowCPU보유73.23→30.20MiB(58.76%감소);Kit/CUDA절감아님,live객체공유차이명시. 실제후보Kit검증·6개재실행NOT_RUN. preflightHOLD/exit2는기존큐·GPU점유로의도된보류.
+- 저장JPG만MP4 5개로패키징/전체재디코드frame수일치. 실제RGB/mask/주행frame26패널(contact누락안내1),로그top-view/속도3PNG,추가실패진단3자료. `SDG/STAGE4_PAPER_MEDIA_20261111_v02`비공개전용,실제외부카메라영상아님/실제topdown렌더없음/새렌더0. v01시간간격가정FAILED보존.
+- 10130입력fingerprint불변·새코드12개AST PASS·활성4코드SHA첫audit와동일. 보고서첫NameError/import누락실패+부분CSV및patch검증실패/미설치ffmpeg탐색오류보존. 원본/실패/USD/weights/locks불변. Gitpush/remote변경0/marker텍스트sync요청/원격완료UNKNOWN. 다음: 기존O50완료확인후자원비점유점검,그뒤에만별도후보smoke및별도6cell평가.
