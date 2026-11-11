@@ -40,3 +40,23 @@ GitHub는기존`/home/user/hh/isaacsim-codex-handoff`의인증/origin을재사�
 기존G1성공25회의평균479.04s(약8분)→300회39.92h,보수적9분이면45h.빠른인식실패까지섞은전체평균으로전체성공주행시간을낮추지않는다.새RGB-D/QA8–12h·P0–P2학습2–3h·평가/pilot2–6h·현재HPO잔여를더하면향후실제작업은대략55–70h범위이며,이는새capture throughput없음/재시도/HOLD대기제외의거친추정이다.실제작업허가후단계실측으로갱신해야한다.현재HOLD종료시간은확정할수없다.48h에도분모축소/결과성공처리/자동강제종료하지않는다.
 
 현재핵심BLOCKER는새실행별도승인없음,성공기준미확정,새Cdataset/GT/모델/pose/physics QA없음이다. 원래알고리즘근거부족은해소됐지만MNIDB_0006 C20중복과C100공통템플릿을데이터독립성정책에반영해야한다.
+
+## 최종 실제 실행 확인 — 2026-11-11T18:36:10.022011+09:00
+
+- systemd user controller `c-depletion-controller-20261111-v01.service`, PID3509437; watchdog `c-depletion-watchdog-20261111-v01.service`, PID3514993 (runtime v03). 두 서비스 active,CPUQuota각10%of1core,MemoryMax각256MiB,Nice15. 사용자service manager가부모이며Codex subprocess가아니다.
+- CPU Stage0 고정입력검증→문서/허가gate검증2개가별도worker PID로자동전환해COMPLETED. result SHA재검증PASS. 현재HOLD는연구/실행허가gate에따른정상대기다. 새GPU작업0.
+- 기존HPO PID3130638 및 tmux `b1_common_hpo_20261111_v01` 유지, 조회시 `full_C05_GeoCAD_s42` epoch120, RUNNING. 원래HPO코드5개SHA불변. GPU경합없음.
+- ntfy기존설정/스크립트재사용HTTP200,연구자가실제휴대폰「수신했음」확인. 알림설정새로할필요없음. root의watchdog_memory.json/outbox에전송·retry기록,phone_receipt_confirmation.json에수신확인보존.
+- GitHub자동push 및원격SHA일치확인: `f9cae69380e01be4f7de7d572e5b4bf8e23909a4` (이최종문구동기화전실제검증commit). 이후최신은github_sync_status.json과원격으로확인. 기존remote/인증/turnhook미수정.
+- 최초publisher v01은secret scanner자신의PEM규칙문자열을잘못검출해PENDING_RETRY. 원본/실패기록을보존하고v02의실제PEM행anchoring으로수정,실제PEM거절회귀PASS. v03은HPO가계속진행하는개별FAILED/INTERRUPTED worker도30초관측후즉시알림대상에추가. 원래protocol/code hash는갱신하지않고runtime_amendment_v02/v03과새소스SHA로추가버전을기록했다. 수정후원격VERIFIED.
+- systemd두unit enable 및Linger=yes확인: logout/boot시사용자manager의준비감시서비스재기동구성. 실제logout/reboot는HPO보호를위해실행하지않았으므로boot실증PASS가아님. 기존tmux HPO는reboot자동복구대상에추가하지않았고프로세스가없어지면알림/HOLD다.
+
+상태/재개명령:
+```bash
+CROOT=/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01
+"$CROOT/status.sh"
+"$CROOT/resume.sh"
+```
+resume는동일systemd서비스를start하므로살아있는controller중복생성없음. 완료CPUjob은artifact검증후SKIPPED_VERIFIED,미완료는INTERRUPTED/HOLD. 기존HPO를재시작하는명령이아니다.
+
+검증: AST/실행범위상향거절/protocol변조거절/실제PEM거절/고정입력·결과SHA/systemd단위검사/독립PID·자동CPU전환/휴대폰수신/원격commit확인PASS. 후속C GPU실험·재부팅실험NOT_RUN. 다음은미확정성공기준·split/중복정책·센서기반datum계약을확정하고새Cadapter/QA를별도version으로준비하는작업이다.

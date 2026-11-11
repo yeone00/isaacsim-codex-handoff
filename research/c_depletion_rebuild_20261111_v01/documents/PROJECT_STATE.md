@@ -1474,3 +1474,14 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - HPO기존tmux/PID3130638정상RUNNING보호.12후보초기탐색완료,17:59에3365/최대6966epoch=48.31%,오류0. L전용HPO이며C최적성/전이는UNKNOWN. 원래protocol/code/params미수정,외부root에scope notice만신규추가.
 - 최소복귀DRAFT:50/10/10환경×(FULL1+5T×4부분)=1050/210/210scene/표현,4410RGB안;환경별전체T/C동일split,oldtest재학습누출금지. base-vsL-HPO선정값C-Val전이대조최대6seed42모델→양설정seed43/44포함최대18안. 확정/실행아님.
 -300회DRAFT=5C×2O×10pairedbase×3표현;독립환경300아님,O50별도,최종모델/안전/조건선행잠금. 신규scenario/data/render/inference/train/drive0. 선행5논문서지·내용확인범위를분리,BRIX/JENGA원문확인;나머지3전체PDF접근미완료명시. 다음은새C프로토콜구체화이며임의생성금지.
+
+
+## 2026-11-11T18:36:10.022011+09:00 — C 복구 준비·독립 systemd 감시/ntfy/GitHub 통합
+
+- 최신범위PREPARATION_ONLY. 신규렌더·학습·Isaac주행0,기존L-HPO절대수정·중단0. 48h는soft예산이며시간초과자동성공/축소/종료없음. root SDG/C_DEPLETION_REBUILD_20261111_v01. 보고서 `reports/c_depletion_preparation_automation_handoff_20261111_v01.md`.
+- 신규DRAFT3장방법론/데이터·모델계획/300회프로토콜3개와ROBUST_A구조감사작성. 실제기존결과·원래미사용C알고리즘·신규미구현부분구분. .144는pallet설계두께,적재물top아님. ROBUST_A layer_count의존/CLI1,4만허용 및nominal4의C60/40/20 datum수식반례−.09/−.18/−.27m확인;센서검증아님/새C정답층수입력금지.
+- .11m/7.341774°는현행MAIN출처확인,.10m/5°의잠금출처UNKNOWN. C단일기준미확정본주행HOLD,비열등성10%p미확정. 10base×5C×2O×3표현300·G1single-only·O50별도·paired/repeated/Wilson/비열등성분리.
+- 독립CPUcontroller PID3509437,watchdog PID3514993,systemd user 2서비스 active/enable/Linger=yes. CPUQuota각10%1core·256MiB·Nice15. CPU2단계자동실행COMPLETED/결과SHA검증후HOLD. 새C dataset/training/pose/pilot/main 미구현·미실행/허가없음,전GPU파이프라인완성으로표시하지않음.
+- ntfy기존hook/privateconfig재사용HTTP200+연구자휴대폰수신확인. independent watchdog30s/15minsnapshot·오류dedupe/retry·기존HPO완료/개별실패감시. 기존GPU와경합0/HPO PID3130638/codeSHA5개불변.
+- 기존GitHub checkout/auth/remote재사용,새namespace research/c_depletion_rebuild_20261111_v01 텍스트allowlist만자동commit/push/remote SHA확인. 최초secret규칙self-match로sync실패보존,별도publisherv02회귀PASS/v03개별실패알림추가,원래protocol/hash수정0. 원격실검증commit f9cae69380e01be4f7de7d572e5b4bf8e23909a4;최신은root/github_sync_status.json. push실패시local계속/PENDING_RETRY.
+- status.sh/resume.sh는새준비서비스용이며HPO재시작안함. boot자동기동구성/실제reboot미시험;기존HPO는bootresume부착안함. 잔여C실제작업은HOLD해결후대략55–70h거친안(300drive만관측39.92h/보수45h),HOLD대기제외. 정확성우선/48h강제시한없음.
