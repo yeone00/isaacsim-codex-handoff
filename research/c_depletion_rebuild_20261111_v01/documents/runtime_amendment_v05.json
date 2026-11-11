@@ -1,0 +1,10 @@
+{
+  "version": "v05",
+  "parent_amendment_v04_sha256": "e5a649463b18e8d9654a4c5ce37c3bcd2e00379d59ede6491678c0b7fb681d06",
+  "reason": "C-HPO phase/failure/epoch monitoring, static report publication, batch notification throttling; no data/learning parameters or physical gates changed",
+  "code_sha256": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_integrations_20261111_v05.py": "1b0da78daf0c8ffa05825137896fcf4feed6f94564c3f4e204abf93ddeb2d595",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_watchdog_20261111_v05.py": "c80989589df7a91f89a2e52d7df0d611ac31db7e0512688e3d87eb033fa851f7"
+  },
+  "physical_motion_authorized": false
+}

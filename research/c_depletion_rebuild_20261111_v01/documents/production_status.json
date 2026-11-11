@@ -9,12 +9,12 @@
     "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/capture_CDEP_B1R_TRN_000138_GeoCAD.log"
   },
   "reason": null,
-  "updated": 1794409613.8586679,
+  "updated": 1794409633.8913395,
   "generated_RGBD": 168,
   "declared_RGBD": 4410,
   "completed_jobs": 8,
   "failed_jobs": 0,
   "physical_motion_authorized": false,
   "physical_runs_started": 0,
-  "elapsed_seconds": 1081.2111008167267
+  "elapsed_seconds": 1101.2437756061554
 }
