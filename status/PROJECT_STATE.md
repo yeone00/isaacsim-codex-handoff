@@ -1446,3 +1446,12 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 기존GC6실패는+768MiB guard(peak6.827–6.995GiB)이며8GiB절대초과아님. run02의대응6개는모두SUCCESS로별도검증. 새로운compact-history候補 helper/sessionv04/runnerv05작성,실행중코드미변경. rawJSONL전체보존,history14필드만보관. 13run/33정지인증·quiet/outcomes exact/33손상거부same,AST범위검증 PASS_OFFLINE. 5000JSONrowCPU보유73.23→30.20MiB(58.76%감소);Kit/CUDA절감아님,live객체공유차이명시. 실제후보Kit검증·6개재실행NOT_RUN. preflightHOLD/exit2는기존큐·GPU점유로의도된보류.
 - 저장JPG만MP4 5개로패키징/전체재디코드frame수일치. 실제RGB/mask/주행frame26패널(contact누락안내1),로그top-view/속도3PNG,추가실패진단3자료. `SDG/STAGE4_PAPER_MEDIA_20261111_v02`비공개전용,실제외부카메라영상아님/실제topdown렌더없음/새렌더0. v01시간간격가정FAILED보존.
 - 10130입력fingerprint불변·새코드12개AST PASS·활성4코드SHA첫audit와동일. 보고서첫NameError/import누락실패+부분CSV및patch검증실패/미설치ffmpeg탐색오류보존. 원본/실패/USD/weights/locks불변. Gitpush/remote변경0/marker텍스트sync요청/원격완료UNKNOWN. 다음: 기존O50완료확인후자원비점유점검,그뒤에만별도후보smoke및별도6cell평가.
+
+
+## 2026-11-11 — G1 표현별 차이 원인 감사 완료
+
+- 보고서: `reports/g1_representation_success_gap_causal_audit_20261111_v01.md`; 증거: `reports/g1_representation_audit_evidence_20261111_v01/`. 기존 G1 HR7/10·LR10/10·CAD8/10 유지. HR 실패는 S2/S4 O25 인식2건, S3 O25 속도guard1건(.03056994>.03m/s); 안전 기준 변경0. CAD는 촬영1건·인식1건으로 분리.
+- O25 전체 동일 run02/runner v04/session v03: HR1/4·LR4/4·CAD3/4. run02 공통7조건도 HR4/7·LR7/7·CAD6/7이며 버전 혼재만으로 차이가 사라지지 않음. 에셋 단독 인과효과/일반 순위는 UNKNOWN.
+- M50 3 checkpoint 원본·선정lock·배포·실제 manifest SHA 일치 PASS. B1 증강 모델과 혼동 없음. 저장12입력 자기 모델 재추론 원래 설정 완전 재현, 총42회 별도 진단(동일입력 모델교체36+낮은confidence6), 원본 집계와 분리. HR 실패 영상에서 LR 검출; HR 저문턱 진단 confidence .015696/.120312<원래.25. 모델·학습도메인·선정checkpoint와 외관 효과가 혼재.
+- fresh 주행 semantic GT 없음. fixture canonical HR target과 screen rectangle으로 재구성한 판을 reference로 명시; 4fixture 면적/가림률 exact,12camera transform exact. 가림률은 fixture 측정의 복사이며 주행별 독립 실측 아님. HR 실패2개와 동일장면4개 PNG 패널은 외부 SDG/G1_REPRESENTATION_AUDIT_20261111_v01/panels/ 비공개 보관.
+- 입력SHA 재검증 불변,30셀 원본 분모 보존, 조건부 pose/경로 집계 CSV 완료. 새 주행·렌더·학습0. 최소 추가9회(S3×3표현×3반복)는 설계만 작성, 실행 안 함. 기존 main 및 별도O50 큐 모두 정상 종료(각11:31:50/12:20:25 KST); HPO 학습은 아직 시작 전이며 이전 HPO 지시의 실행기 준비 작업은 별도 미완료. 이번 진단은 B1 HPO 선정에 사용하지 않음.
