@@ -1485,3 +1485,10 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - ntfy기존hook/privateconfig재사용HTTP200+연구자휴대폰수신확인. independent watchdog30s/15minsnapshot·오류dedupe/retry·기존HPO완료/개별실패감시. 기존GPU와경합0/HPO PID3130638/codeSHA5개불변.
 - 기존GitHub checkout/auth/remote재사용,새namespace research/c_depletion_rebuild_20261111_v01 텍스트allowlist만자동commit/push/remote SHA확인. 최초secret규칙self-match로sync실패보존,별도publisherv02회귀PASS/v03개별실패알림추가,원래protocol/hash수정0. 원격실검증commit f9cae69380e01be4f7de7d572e5b4bf8e23909a4;최신은root/github_sync_status.json. push실패시local계속/PENDING_RETRY.
 - status.sh/resume.sh는새준비서비스용이며HPO재시작안함. boot자동기동구성/실제reboot미시험;기존HPO는bootresume부착안함. 잔여C실제작업은HOLD해결후대략55–70h거친안(300drive만관측39.92h/보수45h),HOLD대기제외. 정확성우선/48h강제시한없음.
+
+
+## 2026-11-11T19:16:37.531172+09:00 — C 전용 공통 HPO 필수 단계 계획 개정
+
+- 개정분만작성: `docs/c_depletion_common_hpo_plan_AMENDMENT_20261111_v01.md`, `reports/c_depletion_common_hpo_plan_amendment_20261111_v01.md`; root execution_plan_amendment_v01.json/pipeline_plan_current.json. 기존전체지시유지,선택적L-HPO전이대조만의안을C전용공통HPO필수로대체.
+- C생성/QA/family split lock→C-HPO→최종9모델/seed반복→인식→pose/ROBUST_A→기술pilot→G1 300. C-HPO안12후보(base1+L-HPO 상위비기본최대3+새random최소8),3표현동일설정·ownC-Val mask mAP평균;60screen/200full/seed43,44,qualification포함최대57run/5766epochs DRAFT. 실제예산·후보는C QA후학습전잠금. Test선정사용금지.
+- 현재L-HPO PID3130638 RUNNING,controller3509437/watchdog3514993 유지. 기존코드·부모protocol·QA gate/문서잠금불변. 신규GPU/주행0,HOLD해제0. 실제C-HPO실행기연결은미구현/미승인이고계획개정을자동실행완료로표시하지않음.

@@ -60,3 +60,7 @@ CROOT=/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01
 resume는동일systemd서비스를start하므로살아있는controller중복생성없음. 완료CPUjob은artifact검증후SKIPPED_VERIFIED,미완료는INTERRUPTED/HOLD. 기존HPO를재시작하는명령이아니다.
 
 검증: AST/실행범위상향거절/protocol변조거절/실제PEM거절/고정입력·결과SHA/systemd단위검사/독립PID·자동CPU전환/휴대폰수신/원격commit확인PASS. 후속C GPU실험·재부팅실험NOT_RUN. 다음은미확정성공기준·split/중복정책·센서기반datum계약을확정하고새Cadapter/QA를별도version으로준비하는작업이다.
+
+## HPO 계획 개정분 — 2026-11-11T19:16:37.531172+09:00
+
+신규 C QA/split/manifest 잠금 후 **C 전용 공통 HPO 필수** 단계를 추가한다. 현재 L-HPO는 그대로 완료 후 예비 탐색으로 보존한다. 기존 전이 보조 대조만의 안은 `docs/c_depletion_common_hpo_plan_AMENDMENT_20261111_v01.md`로 대체하며 다른 지시는 유지한다. 순서: C dataset/QA/split → C-HPO → 최종모델/seed반복 → 인식 → pose/ROBUST_A → 기술pilot → G1 300. 계획JSON은root/execution_plan_amendment_v01.json 및pipeline_plan_current.json. 실제C-HPO adapter/새GPU는미구현·미실행/비승인,HOLD유지. 기존runtime코드/부모protocol/QA gate SHA변경0.
