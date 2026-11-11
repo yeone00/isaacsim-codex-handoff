@@ -1,0 +1,11 @@
+{
+  "version": "v03",
+  "reason": "immediate per-worker FAILED/INTERRUPTED notifications even when HPO controller continues after nonbaseline candidate failures",
+  "parent_amendment_v02_sha256": "9182406455ca8eb77471bc77218cc9ee6185a92cee210246919a7eca5ed5b1e4",
+  "code_sha256": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_integrations_20261111_v03.py": "6800ff35b5cf599fda00a143224c2ac622f9d3d3caae8fa331d225765deaf27c",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_watchdog_20261111_v03.py": "7ae301af2649dad42018036ec80dbbc11494afa0bc67ec74d168b90cd4a33705"
+  },
+  "execution_scope": "PREPARATION_ONLY",
+  "GPU_authorization_changed": false
+}
