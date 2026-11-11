@@ -1455,3 +1455,11 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - M50 3 checkpoint 원본·선정lock·배포·실제 manifest SHA 일치 PASS. B1 증강 모델과 혼동 없음. 저장12입력 자기 모델 재추론 원래 설정 완전 재현, 총42회 별도 진단(동일입력 모델교체36+낮은confidence6), 원본 집계와 분리. HR 실패 영상에서 LR 검출; HR 저문턱 진단 confidence .015696/.120312<원래.25. 모델·학습도메인·선정checkpoint와 외관 효과가 혼재.
 - fresh 주행 semantic GT 없음. fixture canonical HR target과 screen rectangle으로 재구성한 판을 reference로 명시; 4fixture 면적/가림률 exact,12camera transform exact. 가림률은 fixture 측정의 복사이며 주행별 독립 실측 아님. HR 실패2개와 동일장면4개 PNG 패널은 외부 SDG/G1_REPRESENTATION_AUDIT_20261111_v01/panels/ 비공개 보관.
 - 입력SHA 재검증 불변,30셀 원본 분모 보존, 조건부 pose/경로 집계 CSV 완료. 새 주행·렌더·학습0. 최소 추가9회(S3×3표현×3반복)는 설계만 작성, 실행 안 함. 기존 main 및 별도O50 큐 모두 정상 종료(각11:31:50/12:20:25 KST); HPO 학습은 아직 시작 전이며 이전 HPO 지시의 실행기 준비 작업은 별도 미완료. 이번 진단은 B1 HPO 선정에 사용하지 않음.
+
+
+## 2026-11-11 14:01 KST — B1 공통 HPO 실제 독립 실행 시작
+
+- RUNNING: controller PID3130638, tmux b1_common_hpo_20261111_v01, 외부root SDG/B1_COMMON_HPO_20261111_v01. 상세 인수인계 `reports/b1_common_hpo_launch_handoff_20261111_v01.md`; 이후 상태는 hpo_status.json 먼저 확인.
+- 이번 지시에 맞춰12후보(기본+11 random, sampler20261111), train seed42,3표현60epoch(200schedule);top3+base200,선정+base43/44,최대63run/6966epoch고정. 초기조건pretrained·4개탐색외kwargs·PhotoDegrade 원본 유지; RNG문서불일치공개. Test/RealTest189미사용.
+- CPUpreflightPASS,실제smoke HR/LR PASS후CAD로자동전환확인. 명령반환후다음PID자동생성·tmux조상확인; AI없어도진행. 기존main/O50정상종료·GPU충돌없음·패키지변경0·새주행0. 최초CPU정확등호테스트실패는tolerance로수정후실행전PASS.
+- 상태10초/스냅샷15분 자동기록,lock/25GiB디스크guard/완료artifact검증/실패보존. resume.sh는기존세션중복방지·검증완료skip·중단attempt보존후새초기학습;FAILED자동retry없음. 최종결과아직미확정.

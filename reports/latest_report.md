@@ -1,138 +1,75 @@
-# G1 HR/LR/CAD 주행 성능 차이 원인 감사 (2026-11-11)
+# B1 HR/LR/CAD 공통 HPO 독립 실행 인수인계 — 2026-11-11
 
-## 결론과 범위
+## 실행 상태
 
-HR7/10·LR10/10·CAD8/10은 기존 결과 그대로다. **현재 자료만으로 에셋 표현 자체의 우열을 뜻하지 않는다.** HR의3실패는 O25에서 인식2건과 속도 안전장치1건으로 나뉜다. CAD의2실패는 O25 인식1건과 O0 촬영1건이다. LR은 이10조건에서 모두 성공했지만10개 독립 현장이나 충분한 반복 표본이 아니다.
+실제 GPU 학습 RUNNING. Controller PID **3130638**, tmux session **b1_common_hpo_20261111_v01**. 최초 시작 14:01:48 KST. 상태는 외부 root의 hpo_status.json이 최신 권위 자료다. 보고서 작성 시점 스냅샷과 현재 상태가 다를 수 있다.
 
-본 주행·O50가 종료되고 GPU가 비었음을 확인한 뒤 저장 이미지에서만 별도 추론 진단을 했다. 새 주행/렌더/학습은0이다. HPO는 이 진단 중 실행하지 않았으며, 진단 결과를 B1 HPO의 후보 선정에 사용하지 않는다. M50와 B1 증강 모델을 구분한다.
+외부 root: `/home/user/hh/isaac_cosmos/sdg_final/B1_COMMON_HPO_20261111_v01`.
 
-## HR 실패3건과 동일 조건 비교
+기존 main120과 별도 O50 12셀 종료를 파일과 프로세스로 확인했다. 신규 Isaac/ROS/주행0, 기존 프로세스 종료0. 시작 시 GPU compute는 기존 RustDesk535MiB뿐, 디스크124GB 여유. 패키지 설치/업그레이드0. Ultralytics8.4.129, PyTorch2.7.1+cu128, Optuna5.0.0 유지. pretrained SHA55ed65c56c91713d23e8402371c6c49a6fd84f257f7dce452e8d70e41dcbe152 검증.
 
-| Scene | 표현 | 버전 | 시작 x,y,yaw | 원본 결과 | 원인 | conf | pose XY m | 초기계획 | 속도 최대 m/s |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| S2_L4_O25 | HR_Scan | run02 | [-25.888, 26.705254968739226, 90.0] | FAIL_A | PERCEPTION_NO_DETECTION: | None | None | False | 0.0 |
-| S2_L4_O25 | LR_Scan | run02 | [-25.888, 26.705254968739226, 90.0] | SUCCESS | None | 0.958561360836029 | 0.026505820037655208 | True | 0.02886310098792765 |
-| S2_L4_O25 | GeoCAD | run02 | [-25.888, 26.705254968739226, 90.0] | FAIL_A | PERCEPTION_NO_DETECTION: | None | None | False | 0.0 |
-| S3_L4_O25 | HR_Scan | run02 | [-25.888, 26.805254968739227, 92.0] | FAIL_D | SPEED_GUARD_0.03 | 0.8176527619361877 | 0.028188241358170246 | True | 0.03056994283817932 |
-| S3_L4_O25 | LR_Scan | run02 | [-25.888, 26.805254968739227, 92.0] | SUCCESS | None | 0.9620092511177063 | 0.024284636908571612 | True | 0.029733931918961436 |
-| S3_L4_O25 | GeoCAD | run02 | [-25.888, 26.805254968739227, 92.0] | SUCCESS | None | 0.8491916656494141 | 0.025572606190564107 | True | 0.027322661899013962 |
-| S4_L4_O25 | HR_Scan | run02 | [-25.888, 26.805254968739227, 88.0] | FAIL_A | PERCEPTION_NO_DETECTION: | None | None | False | 0.0 |
-| S4_L4_O25 | LR_Scan | run02 | [-25.888, 26.805254968739227, 88.0] | SUCCESS | None | 0.9571762084960938 | 0.02342209869486026 | True | 0.029360676784503808 |
-| S4_L4_O25 | GeoCAD | run02 | [-25.888, 26.805254968739227, 88.0] | SUCCESS | None | 0.8082336783409119 | 0.026336669040562668 | True | 0.025198475592793958 |
+## 잠근 탐색과 예산
 
-HR 실패 원본 RGB/depth、detections、모델 manifest、session 실패 로그의 전체 경로와 SHA는 evidence의 HR_failures_3.json 및 inputs_sha256.json에 있다. actual inference의 후보가 없는 경우 confidence는0이 아니라 N/A이고, 예측 mask도 존재하지 않는다.
+기존 더 큰 설계는 이번 지시의12후보 예산으로 대체했다. 기본C00+Optuna RandomSampler11개, sampler seed20261111. 작은 예산에서 TPE 우월성을 가정하지 않고 독립 random 탐색을 선택했다. 후보는 성능을 보기 전에 생성·잠금. 실제 설정은 candidates.json, 결과는 hpo_results.csv. 모든 학습은 동일 pretrained에서 새로 시작한다.
 
-## 촬영·GT·가림률·전처리 감사
+- 3표현×2epoch qualification smoke, 결과 선정에 사용하지 않음.
+- 12후보×3표현×seed42×60epoch. 학습률 일정은epochs200 그대로 두고60에서정지. 단축 순위의 late-improver 누락 가능성 명시.
+- 상위 새후보3개+기본설정×3표현×200epoch, 모두 pretrained부터 새 학습. 단축 checkpoint 이어학습 안 함.
+- 선정 설정과 기본설정 seed43/44×3표현×200epoch. seed42는 full 결과 재사용하며 탐색 선택 편향을 명시. 선정설정이 기본이면 중복 학습 생략.
+- 최대63학습run/6966 model-epochs. 실패 자동 재시도/추가후보0. 별도 명시적 중단 복구 시 새 attempt 수·비용 추가 기록.
+- 최종 checkpoint는 각 모델 자기표현 Val200의 unrounded Mask mAP50–95 strict-greater, 동점 최초epoch. 공통 점수는 세 표현 완전한 성능의 산술평균; 하나라도 실패하면 후보 불완전/선정 제외. 후보 동점은 낮은ID(기본우선).
+- Test/가림Test/RealTest189 선정·조기종료 사용0. Train1000/Val200만 symlink한 전용view. 기존v04 Q1의 own-Val checkpoint 기준 유지; 과거 combined/realval checkpoint 기준을 HPO에 쓰지 않으며 추가 realval inference는 하지 않는다. 선정lock 이후 cross-rep Val만 보조 평가.
 
-모든 O25 대응 HR/LR/CAD에서 카메라 optical world transform은 같은 시작점의 fixture와 원소별 **차이0**이었다. 해상도640×480, depth와RGB shape 일치, 저장 PNG의 BGR 값은 numpy RGB의채널역순과pixel exact였다. 전처리는原코드처럼 RGB numpy를BGR로바꿔 imgsize1280의YOLO에전달한다. mask는>.5 후nearest로640×480에복원한다. conf≥.25, NMS IoU.70, device0을유지했다. 촬영 wall/sim 시각과 카메라 XYZ·checks는 camera_occlusion_preprocessing.csv에 있다.
+기존48모델/데이터/분할/Stage4/모델 가중치/안전 기준 불변. 고정 AdamW·batch64·img640·maskratio4·200epochs·AMP·FP32box·workers8·v04 증강을 유지했다. 탐색 seed/학습 seed/고정 dataset scene membership을 protocol.json에서 분리 기록했다. Test를 새 독립 검증으로 주장하지 않는다.
 
-본주행에는fresh semantic GT mask를저장하지않았다. fixture의gt_target_mask_visible.npy는판을넣기전HR정규targetmask이며, 함께저장된gt_panel_mask.npy도판을넣기전이라0픽셀이다. 이를현재O25의GT로오인하지않았다. 대신동결fixture의panel_screen_rect를pixel-center규칙으로raster화했다. 4시작점모두render기록의panel면적및가림률과정확히일치하고카메라변환도exact라위치정합을확인했다. 시각화의초록색은**fixture canonical HR 기준GT−재구성판**이다. 새로운주행프레임의semantic정답이나표현별silhouette정확도인증은아니다.
+## RNG
 
-| 시작 | fixture 실측 가림률 | 판 pixel수 | fresh 주행 GT mask |
-| --- | --- | --- | --- |
-| S1 | 25.202001% | 2108 | 없음, reference로 명시 |
-| S2 | 24.988904% | 1888 | 없음, reference로 명시 |
-| S3 | 24.597027% | 1980 | 없음, reference로 명시 |
-| S4 | 24.730290% | 1980 | 없음, reference로 명시 |
+기존 PhotoDegrade 원본 SHA 검증 후 그대로 import한다. 실제 Python 전역 random(UL worker seed), noise는 random.getrandbits(32)로 numpy.default_rng를 만든다. 문서의(run seed,epoch,index) per-sample generator 설명과 불일치는 유지·공개한다. RNG 수정0; 새 기본설정도 동일 실행기로 대조. bitwise 완전 재현성을 주장하지 않는다.
 
-주행 panel_removed의가림률은fixture실측값을복사한기록이며각주행에서독립실측한값으로부풀리지않는다. 조명은같은동결현장stage를사용하지만독립photometric센서측정은없다. 시작좌표·projection checks·물리공통게이트PASS가모든광학차이를제거한다는뜻은아니다.
-## M50 모델 계보와 연결
+## 자동 실행·안전·복구
 
-| 표현 | 선정epoch | 선정데이터/지표 | checkpoint SHA256 |
-| --- | --- | --- | --- |
-| HR_Scan | 25 | Real Val48 / Mask mAP50-95 | 257d69b3ca845aed41848f6edbf867e131057f48a77e88e1a9e92372aa6ff8ca |
-| LR_Scan | 22 | Real Val48 / Mask mAP50-95 | d58e18a87f4cafba6fd92d8bade6e2ff12ad2380db427311b072859fd2cca42f |
-| GeoCAD | 22 | Real Val48 / Mask mAP50-95 | bbfb9fc8d0c421154844f7e299b6d8162b9394eb07d36a31110f593c0813ce8f |
+Python controller가 각 GPU subprocess를 순차 실행한다. 전역flock 및root lock으로중복 controller 방지, 각job전 기존Isaac/train/GPU owner 및25GiB디스크reserve검사. 완료는exit0뿐아니라PASS audit·전체epoch·로그·checkpoint SHA·Val·FP32/photo검사를 통과해야 한다. 실패/중단 로그와 attempt 보존. 중단을 성공으로 처리하지 않는다.
 
-실제frozen_model_manifest·설정파일·선정lock·원래epoch checkpoint·배포복사본의SHA가모두일치했다. M50는40epoch학습의Real Val48 Mask mAP 최고선정, imgsz1280계열이다. B1 증강모델의recipev04/200epoch/imgsz640계열로바꿔쓴증거는없다. lock당시real_test_used=false는역사기록이며Real Test189가현재도미개봉이라는뜻은아니다. Test189는잠금후이미평가됐고이번감사나HPO선정에사용하지않는다.
+상태 hpo_status.json/hpo_progress.md/hpo_results.csv/jobs.json: 실행 중 약10초 간격, status_snapshots.jsonl: controller가15분 간격 기록. AI 호출이나 cron 의존 없음. hpo_errors.log와각run log/status/traceback에 오류 보존. baseline/qualification 실패·자원충돌은BLOCKED; 다른후보 실패는분모를남기고계속. 정상완료된후보는검증후skip한다.
 
-## 저장 입력 재추론 및 모델 교체 진단
+상태 확인:
+```bash
+/home/user/hh/isaac_cosmos/sdg_final/B1_COMMON_HPO_20261111_v01/status.sh
+tmux attach -t b1_common_hpo_20261111_v01
+```
+attach는 세션 존재만 확인하는 용도이며 실제 로그는 root/logs/에 저장된다. Ctrl-b,d로 detach. Ctrl-c로 학습을 중단하지 않는다.
 
-O25의12개원본RGB-D에서자기표현모델을원래설정으로재추론했다. 12/12에서후보수·class·confidence(최대차1e−6이내)·mask면적·선택mask pixel XOR가일치했다. 재현되지않는차이는0이다. 결과를원본에덮어쓰지않았다.
+안전한 재개:
+```bash
+/home/user/hh/isaac_cosmos/sdg_final/B1_COMMON_HPO_20261111_v01/resume.sh
+```
+기존 세션이 살아 있으면 중복 시작 안 함. 죽은 세션에서는 동일 protocol SHA로 재시작하고 verified 완료는skip; interrupted attempt는기록보존후동일pretrained부터새attempt로재실행한다. checkpoint resume 호환성을 검증하지 않았으므로 epoch 이어학습으로 주장하지 않는다. FAILED는자동retry안함; 원인검토가필요하다. 살아있는이전worker는PID검사로BLOCKED하고종료하지않는다. 머신재부팅 후 자동boot서비스는설치하지않았으며위명령으로재개한다.
 
-동일12이미지×3모델=36회교체진단과HR실패2이미지×3모델의conf.001별도진단6회, 총42회다. 교체모델·낮춘confidence는진단용이며운영성공으로집계하지않는다. 이조건에서LR모델은HR실패이미지에서도목표를검출했다. 따라서HR이미지에검출가능한정보가전혀없다는설명은맞지않는다. 모델가중치·훈련도메인·체크포인트선정의영향이섞여있고순수에셋효과로분리되지않았다.
+## 독립 실행 검증과 한계
 
-| HR 원본장면 | 모델 | 진단설정 | 후보수 | 최대confidence | reference IoU 최고 |
-| --- | --- | --- | --- | --- | --- |
-| S2_L4_O25 | HR_Scan | ORIGINAL_SETTINGS | 0 | None | 0 |
-| S2_L4_O25 | HR_Scan | LOW_CONF_DIAGNOSTIC_NOT_OPERATIONAL | 1 | 0.015696251764893532 | 0.9481503058549374 |
-| S4_L4_O25 | HR_Scan | ORIGINAL_SETTINGS | 0 | None | 0 |
-| S4_L4_O25 | HR_Scan | LOW_CONF_DIAGNOSTIC_NOT_OPERATIONAL | 1 | 0.1203119307756424 | 0.8687760608290409 |
-| S2_L4_O25 | LR_Scan | ORIGINAL_SETTINGS | 1 | 0.9598067998886108 | 0.9531802120141343 |
-| S2_L4_O25 | LR_Scan | LOW_CONF_DIAGNOSTIC_NOT_OPERATIONAL | 2 | 0.9598067998886108 | 0.9531802120141343 |
-| S4_L4_O25 | LR_Scan | ORIGINAL_SETTINGS | 1 | 0.9049816727638245 | 0.9586980306345733 |
-| S4_L4_O25 | LR_Scan | LOW_CONF_DIAGNOSTIC_NOT_OPERATIONAL | 2 | 0.9049816727638245 | 0.9586980306345733 |
-| S2_L4_O25 | GeoCAD | ORIGINAL_SETTINGS | 0 | None | 0 |
-| S2_L4_O25 | GeoCAD | LOW_CONF_DIAGNOSTIC_NOT_OPERATIONAL | 1 | 0.01265182625502348 | 0.95774231678487 |
-| S4_L4_O25 | GeoCAD | ORIGINAL_SETTINGS | 1 | 0.879223108291626 | 0.7042310821806347 |
-| S4_L4_O25 | GeoCAD | LOW_CONF_DIAGNOSTIC_NOT_OPERATIONAL | 1 | 0.879223108291626 | 0.7042310821806347 |
+실행 시작 tool이 반환된 뒤에도 HR→LR→CAD smoke가각각다른PID로자동전환됐다. controller3130638의조상은tmux세션의bash3130636/서버3130635이며Codex tool프로세스가아니다. 따라서Codex사용량소진/대화종료와무관하게OS/tmux가살아있으면계속실행된다. 전원off/재부팅/수동kill까지견디는것으로주장하지않는다. 세부증거 launch_verification.json.
 
-HR의conf.001진단에서는S2에약.0157, S4에약.1203의낮은confidence로목표형상mask가나왔다. 둘다원래.25문턱미만이다. reference IoU는각약.948/.869로마스크형상을전혀못만든경우와다르다. **이는문턱을낮추면주행이성공한다는실험이아니며문턱을변경할근거로자동사용하지않는다.** 모델confidence의분포/도메인반응이확인된기전이고그훈련상원인은아직가설이다.
+CPU 정책/범위/소스AST/동결SHA/TrainVal회원/패키지버전 사전 검사 PASS. 최초CPU테스트는부동소수점정확등호(.4)때문에실패하여tolerance1e-12로고친뒤PASS; 데이터나기대SHA변경0. root잠금·GPU실행전오류였고본학습실패로숨기지않는다. GPU smoke 증거는각run run_status.json/audit.json. 기존원본과과거실패불변.
 
-## 단계별 성능과 버전 혼재
+완료 시 controller가 final_summary.json, reports/b1_common_hpo_final_20261111_v01.md와 PROJECT_STATE 종료기록을 자동작성한다. 학습곡선원본은각run epochs.jsonl/results.csv/audit.json; 논문용최종그래프·기존48모델과전체비교는종료후별도분석으로남는다. 신규blindTest 및50:50보조학습은이번실행에포함하지않는다.
 
-| 범위 | 표현 | N | 검출 | pose | 계획 | 실제이동 | 작업성공 | 실패원인 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| all10 | HR_Scan | 10 | 8 | 8 | 8 | 8 | 7 | {'SPEED_GUARD_0.03': 1, 'PERCEPTION_NO_DETECTION:': 2} |
-| all10 | LR_Scan | 10 | 10 | 10 | 10 | 10 | 10 | {} |
-| all10 | GeoCAD | 10 | 8 | 8 | 8 | 8 | 8 | {'CAPTURE_BUFFERS_INVALID': 1, 'PERCEPTION_NO_DETECTION:': 1} |
-| run01_only | HR_Scan | 3 | 3 | 3 | 3 | 3 | 3 | {} |
-| run01_only | LR_Scan | 3 | 3 | 3 | 3 | 3 | 3 | {} |
-| run01_only | GeoCAD | 3 | 2 | 2 | 2 | 2 | 2 | {'CAPTURE_BUFFERS_INVALID': 1} |
-| run02_only | HR_Scan | 7 | 5 | 5 | 5 | 5 | 4 | {'SPEED_GUARD_0.03': 1, 'PERCEPTION_NO_DETECTION:': 2} |
-| run02_only | LR_Scan | 7 | 7 | 7 | 7 | 7 | 7 | {} |
-| run02_only | GeoCAD | 7 | 6 | 6 | 6 | 6 | 6 | {'PERCEPTION_NO_DETECTION:': 1} |
-| run02_O25 | HR_Scan | 4 | 2 | 2 | 2 | 2 | 1 | {'SPEED_GUARD_0.03': 1, 'PERCEPTION_NO_DETECTION:': 2} |
-| run02_O25 | LR_Scan | 4 | 4 | 4 | 4 | 4 | 4 | {} |
-| run02_O25 | GeoCAD | 4 | 3 | 3 | 3 | 3 | 3 | {'PERCEPTION_NO_DETECTION:': 1} |
+## 잠근 실제 후보
 
-O25는12개모두run02/runner v04/session v03다. 따라서HR1/4·LR4/4·CAD3/4라는O25차이는run01/run02혼재만으로설명되지않는다. run02만의공통7조건에서도HR4/7·LR7/7·CAD6/7로순서는유지된다. 다만표본이적고반복이없어순위의일반화나유의한에셋효과를주장하지않는다. run01의CAD O0실패는CAPTURE_BUFFERS_INVALID였고이를인식모델의성능저하로분류하지않는다.
+| ID | lr0 | weight_decay | lrf | warmup_epochs |
+| --- | --- | --- | --- | --- |
+| C00 | 0.001 | 0.0005 | 0.1 | 3 |
+| C01 | 0.000455751421 | 1.499813774e-05 | 0.1182994657 | 2.553403233 |
+| C02 | 0.0004912784866 | 0.0006696140875 | 0.2366322628 | 2.260882014 |
+| C03 | 0.001564485305 | 0.0001352098476 | 0.09991252986 | 1.220917643 |
+| C04 | 0.0002251911145 | 2.436431971e-05 | 0.1015164748 | 4.120894824 |
+| C05 | 0.0004324018443 | 0.0007619289253 | 0.2077884398 | 2.325817028 |
+| C06 | 0.0006176898401 | 0.000187005529 | 0.2234789956 | 4.478797275 |
+| C07 | 0.0004379838322 | 3.086660291e-05 | 0.1847739766 | 3.012606517 |
+| C08 | 0.0002820926121 | 2.645665896e-05 | 0.1118812108 | 2.354255127 |
+| C09 | 0.0004673722712 | 3.249469199e-05 | 0.1692400831 | 1.794858586 |
+| C10 | 0.001051947519 | 0.0001094527152 | 0.1587492623 | 2.328941628 |
+| C11 | 0.0009263038569 | 1.379048132e-05 | 0.1736845619 | 2.35293425 |
 
-보정A의위치/횡종오차와경로곡률은matched_O25_case_details.csv에기록했다. 검출된G1입력은전부pose와초기계획을통과했다. HR S3의위치오차는약28.19mm였으나계획은승인됐다. 성공한subset의위치오차만비교해표현의정밀도순위를단정하면선택편향이생긴다.
+## 실제 탐색 진입 확인
 
-## HR S3 속도 안전장치1건
-
-원문종료reason은LEGS_INCOMPLETE이지만, step6230/sim103.88333875에서raw root planar speed=.03056994284m/s로고정.03guard가작동했다. PRE인증은있고FINAL인증은없다. 같은시각FD속도는약.02346m/s로원시PhysX순간속도와차이가있다. 기존guard를유지하고FAIL_D/SPEED_GUARD_0.03을보존했다. 후속driver의SUPERVISOR_ABORT는감독종료후증상이지최초원인을바꾸는근거가아니다. 반복실험없이이속도spike를HR에셋의물성효과로단정할수없다. 초기추정에따른경로/조향·물리비결정성·실행부하가가능한원인이다.
-
-## 사실·가능한 원인·미검증 가설
-
-| 구분 | 내용 |
-| --- | --- |
-| 확인 사실 | HR인식실패2건은원래.25설정에서완전재현. LR모델은동일HR픽셀에서높은confidence로검출. SHA·전처리·같은시작점의카메라변환일치. |
-| 확인 사실 | O25는전부같은버전. HR의나머지실패는인식이아니라기존속도guard. CAD촬영실패1건은별도infra. |
-| 가능한 원인 | M50모델별가림도메인반응·confidence분포차이가HR2실패의직접경로. 표현별데이터/가중치/선정epoch와에셋외관이함께변한설계. |
-| 미검증 가설 | 특정훈련분포나재질색/texture/형상차이가HRconfidence를낮춘원인. M50epoch선정차이의효과. 속도spike의에셋고유물성효과. |
-| 검증 한계 | freshsemanticGT없음,같은현장10조건·반복1회,독립photometric측정없음. cross-model결과는진단이지새블라인드성능검증이아님. |
-
-## 필요한 최소 추가 주행 설계 — DRAFT, 실행 안 함
-
-우선추가주행없이동일입력모델교체진단42회로인식기전을확인했다. 속도실패의재현성을확인할최소물리묶음은**S3/L4/O25×HR/LR/CAD×3반복=9회**를권고한다. 기존runner v04/session v03·M50 SHA·A·TC-S·속도.03·조향/충돌/정지기준을그대로고정하고새namespace에서실행한다. 매회freshRGB-D로전체E2E를수행하며GT/frozen pose로대체하지않는다. 표현순서는사전에회전시키고로그·frame·실패·분모9를보존한다. 9회는3개의에셋조건을반복한것이지9개독립현장이아니다. HPO와GPU동시실행은금지한다.
-
-이묶음은추가설계일뿐아직수행하지않았다. 기존3실패를지우거나HR이성공하도록설정을바꾸지않는다. B1 HPO결과로M50주행모델을자동교체하지않는다.
-
-## 시각자료와 보존
-
-모든이미지는외부root `SDG/G1_REPRESENTATION_AUDIT_20261111_v01/panels/`의로컬전용이다. HR실패2개각각RGB/기준GT/원래모든후보(0개)/저신뢰도진단을한화면에제공했고, S1–S4의HR/LR/CAD같은장면패널4개도생성했다. 원본사진에사람형상이있을수있어공개GitHub에이미지를올리지않는다. 텍스트보고서와원인별CSV만동기화대상이다.
-
-PASS: 입력전후SHA불변,3M50 source/locked/model-manifest SHA,12원래설정재현,4fixture raster면적/coverage exact,12cameraT exact,30cell분모/원본결과보존. UNKNOWN: 표현단독인과효과·새freshsemanticGT·추가9회주행. 새주행/렌더/학습0.
-
-## 보정 A의 조건부 오차와 계획 수치 보충
-
-실패 입력은 오차 평균에 넣지 않았다. 아래 종·횡 오차는 부호 있는 평균이며, XY는 거리 오차 평균이다. 표현마다 계산 성공 장면이 다르므로 첫 세 범위의 평균만으로 정밀도 순위를 비교하면 안 된다. 마지막 범위는 세 표현 모두 계산에 성공한 O25의 S1/S3 두 조건만 대응시킨 것이다. 전체 계획 승인 수에는 촬영·인식 실패도 원래 분모로 남겼다.
-
-| 범위 | 표현 | 전체 시도 | 계산 성공 | 계획 승인 | XY 평균 mm | 횡 오차 평균 mm | 종 오차 평균 mm | 계획 최대 곡률 평균 1/m |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| all10 | HR_Scan | 10 | 8 | 8 | 9.846 | -9.631 | 1.705 | 0.033390 |
-| all10 | LR_Scan | 10 | 10 | 10 | 12.414 | -12.209 | 1.865 | 0.041121 |
-| all10 | GeoCAD | 10 | 8 | 8 | 12.354 | -12.183 | 1.394 | 0.046393 |
-| run02 | HR_Scan | 7 | 5 | 5 | 12.589 | -12.362 | 1.879 | 0.038993 |
-| run02 | LR_Scan | 7 | 7 | 7 | 15.464 | -15.254 | 2.057 | 0.048419 |
-| run02 | GeoCAD | 7 | 6 | 6 | 14.915 | -14.755 | 1.401 | 0.051720 |
-| O25 | HR_Scan | 4 | 2 | 2 | 24.991 | -24.855 | 2.468 | 0.054713 |
-| O25 | LR_Scan | 4 | 4 | 4 | 24.105 | -23.964 | 2.490 | 0.063890 |
-| O25 | GeoCAD | 4 | 3 | 3 | 25.840 | -25.805 | 1.335 | 0.075495 |
-| O25_common_pose_S1_S3 | HR_Scan | 2 | 2 | 2 | 24.991 | -24.855 | 2.468 | 0.054713 |
-| O25_common_pose_S1_S3 | LR_Scan | 2 | 2 | 2 | 23.246 | -23.092 | 2.467 | 0.051326 |
-| O25_common_pose_S1_S3 | GeoCAD | 2 | 2 | 2 | 25.592 | -25.561 | 1.252 | 0.056687 |
-
-원자료와 추가 집계: `reports/g1_representation_audit_evidence_20261111_v01/pose_planning_conditional_summary.csv`. 이 수치는 원래 주행의 저장 결과를 요약한 것이며 재추론 결과로 대체하지 않았다.
+14:03 KST 기준 HR/LR/CAD smoke3개 모두 PASS, 자동으로 C00 기본설정 HR seed42의 실제60epoch 탐색으로 진입했다. Controller PID3130638, 학습PID3133146. epoch10 완료 및 Mask mAP50–95 .78878587 기록, last.pt와 best_val_maskmAP5095.pt 생성. 이는 초기 중간값이며 최종 성능이 아니다. 실제 후보의 고정train_args 차이0, pretrained동일, 코드SHA불변검증. 살아있는세션에서 resume.sh는 NO_OP라중복없음. GPU학습은1개(약11.6GiB)이고기존RustDesk만함께있다.
