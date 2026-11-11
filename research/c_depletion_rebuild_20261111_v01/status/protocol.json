@@ -1,0 +1,75 @@
+{
+  "status": "LOCKED_PREPARATION_ONLY",
+  "created": "2026-11-11T18:30:39.970872+09:00",
+  "execution_scope": "PREPARATION_ONLY",
+  "new_gpu_execution_authorized": false,
+  "soft_budget_hours": 48,
+  "stop_at_budget": false,
+  "main_runs": 300,
+  "main_group": "G1_ROBUST_A_single_observation",
+  "reps": [
+    "HR_Scan",
+    "LR_Scan",
+    "GeoCAD"
+  ],
+  "C": [
+    100,
+    80,
+    60,
+    40,
+    20
+  ],
+  "main_occlusion": [
+    "O0",
+    "O25"
+  ],
+  "robustness_separate": "O50",
+  "hpo_root": "/home/user/hh/isaac_cosmos/sdg_final/B1_COMMON_HPO_20261111_v01",
+  "observed_training_epoch_seconds": 3.96,
+  "code_sha256": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_controller_20261111_v01.py": "48a67e5c3e23c6550e858fe15078049570ab41f053345a5e4cf7fa4273da9dd8",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_integrations_20261111_v01.py": "57a668f46b54920589e3a23330f62bc39e366f01b046e7a4fdd6e089cdf2d7de",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_runtime_20261111_v01.py": "322e3204a743da671c0c5a3647d438e4016bc77ad30d0d8da2577e8df3935755",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_stage_runner_20261111_v01.py": "a971963129365d046c419315940f5695ec2e1a5e1857e21f628006f0a837a000",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_status_20261111_v01.py": "b38a9aecc4dac6ce7f791a63339ca064337170d8223f40507e6a45b6b30d2c46",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_watchdog_20261111_v01.py": "91170e3984cb609b3ebb58b2455ee5a69f451bdbd5795d35a31f4e968410815f"
+  },
+  "preparation_documents": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/docs/c_depletion_chapter3_methodology_DRAFT_20261111_v01.md": "34376833c9be895abae1f154c1c99b5cb25336e62a1247a1e8ad98f0464a0701",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/docs/c_depletion_dataset_and_model_plan_DRAFT_20261111_v01.md": "b2085bee5d4c878555b3f4cd70e4ed0dc28f9f8f4b47b2ef1dcbdf4c9e21eb00",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/docs/c_depletion_300drive_protocol_DRAFT_20261111_v01.md": "83cb1bbdc763633844269a83df634708e3d0f899b2c677bcefc1d0e3035854bc",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/c_depletion_ROBUST_A_structural_audit_20261111_v01.md": "57f0af187f1bbd3641d4f2c78b1ad7bc7fd3ae098436efe777a2ac1fa1479931"
+  },
+  "evidence_sha256": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/progressive_depletion_design_audit_evidence_20261111_v01/audit_result.json": "77f643989b9907ce80a8aba7ac22824996672eed7b7af05aa86d70b467057732",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/progressive_depletion_design_audit_evidence_20261111_v01/inputs_sha256.json": "5bad43d498016ca91b389b5dd72b9f19b5fb4b76b866e2185644f22f89136302",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/progressive_depletion_design_audit_evidence_20261111_v01/manifest_to_trajectory_pairing.json": "ccb9fa91b08929bb6d244332c8f51ae1a0dfd86453498d90441edd0e8f07d027"
+  },
+  "research_gates_sha256": "5bdca76ee29e4e6c9da616f0ac5b0a26a6ebf39cc8d4b304128c3e6459a3c0df",
+  "public_allowlist": [
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_controller_20261111_v01.py",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_integrations_20261111_v01.py",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_runtime_20261111_v01.py",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_stage_runner_20261111_v01.py",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_status_20261111_v01.py",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_watchdog_20261111_v01.py",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/docs/c_depletion_chapter3_methodology_DRAFT_20261111_v01.md",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/docs/c_depletion_dataset_and_model_plan_DRAFT_20261111_v01.md",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/docs/c_depletion_300drive_protocol_DRAFT_20261111_v01.md",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/c_depletion_ROBUST_A_structural_audit_20261111_v01.md",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/docs/PROJECT_STATE.md",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/c_depletion_preparation_automation_handoff_20261111_v01.md",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/progressive_depletion_original_design_recovery_audit_20261111_v01.md",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/docs/b1_yolo_recipe_LOCKED_v04_20261108.json",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/evaluation/b5_robust_20261110_v01.py",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/evaluation/full_e2e_targets_v01.py"
+  ],
+  "future_GPU_stages": "NOT_IMPLEMENTED_AND_NOT_AUTHORIZED; approval must use a new explicitly authorized protocol/runtime version",
+  "runtime_units": [
+    "c-depletion-controller-20261111-v01.service",
+    "c-depletion-watchdog-20261111-v01.service"
+  ],
+  "notifications": "existing private ntfy config/hook reused; never published",
+  "git_namespace": "research/c_depletion_rebuild_20261111_v01",
+  "timing": "stage means in reports/c_depletion_preparation_evidence_20261111_v01/throughput.json"
+}

@@ -1,0 +1,244 @@
+{
+  "status": "LOCKED",
+  "version": "v04",
+  "created": "2026-11-08",
+  "parent": {
+    "path": "docs/b1_yolo_baseline_recipe_LOCKED_v03_20261108.json",
+    "sha256": "76654f9ba2f320147c0d64c205abfe9f11b96c7915cc810c486792c5d89cd3da"
+  },
+  "draft": {
+    "docs/b1_yolo_recipe_aug_moderate_DRAFT_v01_20261108.json": "b99af897330ae68312277ae77c6939f64f9a3a0275dcafa3a0fa163cb46f80bd"
+  },
+  "approved_in_principle": "researcher 2026-11-08: plan A (train 1000), ratios 100:0/75:25/50:50/25:75/0:100, moderate augmentation approved in principle; full training NOT authorised",
+  "representations": [
+    "HR_Scan",
+    "LR_Scan",
+    "GeoCAD"
+  ],
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "data": {
+    "package": "/home/user/hh/isaac_cosmos/sdg_final/B1_RED_YOLO_PACKAGE_20261108_v01",
+    "package_checks_sha256": "3ff0a45e9b742cd57eee20b00b8e9ef93baedbd54c6d5c235d85112bbaa71f8e",
+    "data_yaml_sha256": {
+      "HR_Scan": "6e5d2484b1b4738ff2eeeb861ec2f09d92bc2a2a2b1939e42bef4ff1042f11d7",
+      "LR_Scan": "9779cf1af171568698b5b7320ecd1a244199d9d6f774a302d0f108ea963a16b6",
+      "GeoCAD": "aeb24e491cf9e02da696bb27317ffc12dc1e385fb0404b916f9334d4406e1736"
+    },
+    "records_csv_sha256": "56d3f499a7de6336b7968369d8f6853e8d5df93fe0707c23d0b2ce15a7689271",
+    "label_set_sha256_concat_sorted": {
+      "train": "3428ad0ae758804cd02a265090957152a7509afc14a1208b7a5db5e2566d28af",
+      "val": "5e0d518d7a5327618f962461ec21c1bf301e7f806a0344f5300363204c0c5ddf",
+      "test": "8ab6e986d5f4051e55f2f33fbfc0e187807674d60e71f3fa120f3807f0b01598"
+    },
+    "split_counts": {
+      "train": 1000,
+      "val": 200,
+      "test": 200
+    },
+    "qa": {
+      "rule": "docs/b1_visibility_qa_rule_LOCKED_v02_20261108.md",
+      "thresholds_sha256": "021c66e9810ec35f08eaa31c6e292729f973993dbb630f03fd43f7f3741bd3e7",
+      "train_csv_sha256": "86e30fa70aa9506096bc251e7d29f1770759bfbc22f65857d10dbcfdfbccadff",
+      "valtest_csv_sha256": "b2c0600de2d473f0bdf4bc6896e8b9bcf74a5a245b317e3a44ac2c42d34b3eb9",
+      "role": "analysis only (H1); never a training input"
+    }
+  },
+  "model": {
+    "weights": "/home/user/yolo11n-seg.pt",
+    "sha256": "55ed65c56c91713d23e8402371c6c49a6fd84f257f7dce452e8d70e41dcbe152",
+    "pretrained": true
+  },
+  "software": {
+    "env": "/home/user/anaconda3/envs/sdg_tools",
+    "ultralytics": "8.4.129",
+    "torch": "2.7.1+cu128",
+    "ultralytics_source_sha256": {
+      "engine/trainer.py": "2f60a3dc82b5d9317f8e129c226ef0a8a361730647f475b4313ae2b86ce7f871",
+      "models/yolo/segment/train.py": "7e36dd8f80702daf041b0187731f61125031413a87acdc378786f3ea9d5fbf3f",
+      "models/yolo/segment/val.py": "994a12568911a315110242257c8a789f6e06b906705b7b24ead4f38f90c81aa4",
+      "data/dataset.py": "6d86f9118fa8f54e857bf038a0b6adedd3049211de29c332ecc9d175c1db1825",
+      "data/augment.py": "83e653664fa459beb66b9f245d90ca50ea25bc3c83caabfa9fab541d4abcb4b3",
+      "utils/metrics.py": "974116d855398c48cd4cb30919b5ee424f8eaf555198086d7d5dc3068bc71ce2"
+    },
+    "albumentations_installed": false
+  },
+  "amp_grad_scaler_init_scale": 128.0,
+  "oom_batch_reduction": "prohibited (_oom_retries pinned; OOM = failed run)",
+  "amendment": {
+    "changed": {
+      "box_loss_precision": [
+        "AMP fp16/fp32 mixed (Ultralytics default)",
+        "fp32: bbox_decode + BboxLoss (CIoU, DFL) with autocast disabled on float32 inputs"
+      ]
+    },
+    "module": {
+      "scripts/b1_fp32_boxloss_20261108_v01.py": "79b3d2f569b789ee0d51e09ad3ff3bd322dd99e0815d3f78e9442693e4c369e1"
+    },
+    "unchanged": "network forward AMP, cls BCE, mask/seg loss, GradScaler init_scale 128, all train_args (epochs 200, batch 64, lr0 0.001, ...), seeds, data, labels, QA",
+    "side_effects": [
+      "decoded pred boxes fed to the TaskAlignedAssigner are fp32 instead of fp16 (assignment may differ marginally)",
+      "validation loss (EMA model, Ultralytics validator) still uses the default criterion; val metrics unaffected"
+    ],
+    "reason": "v02 HR seed-42 FAILED at epoch 182 with intermittent inf box loss (9 batches, epochs 107-182). Unit test shows the fp16-pred/fp32-target CIoU path yields iou>1, alpha denominator<=0, CIoU=-inf and negative losses for near-perfect boxes; fp32 path yields none. Not proven to be the only cause in training.",
+    "audit_policy": "trainer v05: every batch audited; non-finite forward loss vs AMP gradient-overflow skip distinguished; any non-finite forward loss -> run state FLAGGED_NONFINITE_FORWARD (not PASS); abort on non-finite weights, 3 consecutive non-finite forward batches, scale < 2^-8, or non-finite val metric"
+  },
+  "real_data": {
+    "root": "/home/user/hh/isaac_cosmos/real_benchmark/cvut_pallets_bricks_original_v01/yolo_real_v01",
+    "train": 352,
+    "val": 48,
+    "test_never_linked": true
+  },
+  "train_args": {
+    "epochs": 200,
+    "patience": 1000,
+    "imgsz": 640,
+    "batch": 64,
+    "nbs": 64,
+    "workers": 8,
+    "optimizer": "AdamW",
+    "lr0": 0.001,
+    "lrf": 0.1,
+    "momentum": 0.9,
+    "weight_decay": 0.0005,
+    "warmup_epochs": 3.0,
+    "box": 7.5,
+    "cls": 0.5,
+    "dfl": 1.5,
+    "amp": true,
+    "deterministic": true,
+    "overlap_mask": false,
+    "mask_ratio": 4,
+    "mosaic": 0,
+    "mixup": 0,
+    "cutmix": 0,
+    "copy_paste": 0,
+    "fliplr": 0.5,
+    "flipud": 0.0,
+    "degrees": 3.0,
+    "translate": 0.1,
+    "scale": 0.25,
+    "shear": 0.0,
+    "perspective": 0.0,
+    "hsv_h": 0.01,
+    "hsv_s": 0.4,
+    "hsv_v": 0.3,
+    "close_mosaic": 0,
+    "multi_scale": 0,
+    "rect": false,
+    "cache": false,
+    "plots": false,
+    "save": true,
+    "val": true,
+    "device": 0
+  },
+  "changed_vs_v03": {
+    "fliplr": {
+      "v03": 0,
+      "draft": 0.5
+    },
+    "degrees": {
+      "v03": 0,
+      "draft": 3.0
+    },
+    "translate": {
+      "v03": 0,
+      "draft": 0.1
+    },
+    "scale": {
+      "v03": 0,
+      "draft": 0.25
+    },
+    "hsv_h": {
+      "v03": 0,
+      "draft": 0.01
+    },
+    "hsv_s": {
+      "v03": 0,
+      "draft": 0.4
+    },
+    "hsv_v": {
+      "v03": 0,
+      "draft": 0.3
+    }
+  },
+  "custom_photometric": {
+    "implementation": "trainer v06 (planned): image-only cv2/numpy transform inserted after RandomPerspective/flip and before Format, train dataset only; labels/masks untouched; albumentations not installed and will not be installed",
+    "ops": [
+      {
+        "op": "gaussian_blur",
+        "p": 0.1,
+        "sigma": [
+          0.3,
+          1.2
+        ]
+      },
+      {
+        "op": "motion_blur",
+        "p": 0.05,
+        "kernel": [
+          3,
+          7
+        ],
+        "angle_deg": [
+          0,
+          180
+        ]
+      },
+      {
+        "op": "gaussian_noise",
+        "p": 0.1,
+        "sigma_8bit": [
+          2,
+          8
+        ]
+      },
+      {
+        "op": "jpeg_recompress",
+        "p": 0.15,
+        "quality": [
+          50,
+          90
+        ]
+      }
+    ],
+    "rng": "per-sample numpy Generator seeded from (run seed, epoch, index) for reproducibility",
+    "module": {
+      "scripts/b1_mixing_data_20261108_v01.py": "ae98e73823649f8f280701e1ff230453d59f77c101ca4956b2d8114ca22974c2"
+    }
+  },
+  "excluded_augmentations": {
+    "flipud": "gravity: pallet always below the load",
+    "rotation_gt_5deg_and_90deg": "unrealistic camera roll",
+    "shear_perspective": "distorts brick geometry and pallet footprint",
+    "mosaic": "cuts loads at tile borders, changes instance layout; real labels mark one target per image so tiles with unlabeled loads would add label noise",
+    "mixup_cutmix": "blended/semi-transparent objects -> invalid masks",
+    "copy_paste": "floating loads without pallets; inconsistent with real single-target labelling",
+    "large_hue_grayscale": "colour is a key cue for red clay vs cement",
+    "random_erasing": "not applied to segmentation in Ultralytics; occlusion would need mask-consistent handling"
+  },
+  "same_settings_for_all_representations": true,
+  "validation_each_epoch": [
+    "B1 own-representation val (Ultralytics, as v03)",
+    "real val 48 (second Ultralytics SegmentationValidator on a deep copy of the EMA model; same metric code)"
+  ],
+  "checkpoints_saved": [
+    "last.pt (epoch 200)",
+    "best_val_maskmAP5095.pt (B1 own-rep val, v05 rule)",
+    "best_realval_maskmAP5095.pt",
+    "best_combined.pt (PRIMARY: max of 0.5*(B1 val mask mAP50-95 + real val mask mAP50-95), ties earliest)"
+  ],
+  "model_selection": "PRIMARY best_combined.pt for all mixing cells (100:0 ... 0:100). Q1 (augmentation vs the existing no-aug baseline, which has no per-epoch real val) uses best_val_maskmAP5095.pt on both sides. All other checkpoints reported as secondary; none may be re-chosen after any test result.",
+  "test_policy": "test split is never read during training, model selection or recipe decisions; test evaluation requires a separately LOCKED evaluation procedure and the final selected checkpoints",
+  "smoke_policy": "smoke runs may (a) override epochs or (b) keep epochs=200 and stop after N epochs (to validate the 200-epoch LR schedule); written under a SMOKE root; never used as results",
+  "trainer": "scripts/train_b1_yolo_20261108_v06.py",
+  "approval": {
+    "approved_by": "researcher 2026-11-08: plan A approved, moderate augmentation, 200 epochs/batch 64/FP32 box unchanged; original Roboflow labels; 39 runs authorised",
+    "approved_at": "2026-11-08T23:36:39.525152",
+    "candidate_path": "docs/b1_yolo_recipe_LOCK_CANDIDATE_v04_20261108.json",
+    "candidate_sha256": "3f00ab20bb9a0c91a7fb47e4968062cc8963d9e96d07e009242c77a1fe3c5058"
+  }
+}

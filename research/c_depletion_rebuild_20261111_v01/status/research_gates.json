@@ -1,0 +1,40 @@
+{
+  "new_gpu_authorization": {
+    "status": "NOT_AUTHORIZED",
+    "reason": "latest user instruction: preparation only, separate execution approval needed"
+  },
+  "success_threshold": {
+    "status": "UNRESOLVED",
+    "historical_m": 0.11,
+    "historical_deg": 7.34177432289679,
+    "other_proposal_m": 0.1,
+    "other_proposal_deg": 5.0,
+    "source_of_other": "UNKNOWN"
+  },
+  "shape_uniqueness_policy": {
+    "status": "UNRESOLVED",
+    "known_duplicate": "MNIDB_0006 C20 T02/T05",
+    "full_template_across_split": "intentional common nominal, policy must distinguish source-family leakage"
+  },
+  "split_family_definition": {
+    "status": "DRAFT_NOT_LOCKED"
+  },
+  "C_dataset_QA": {
+    "status": "NOT_RUN"
+  },
+  "C_models": {
+    "status": "NOT_RUN"
+  },
+  "C_ROBUST_A_GT_free_compatibility": {
+    "status": "NOT_VALIDATED"
+  },
+  "physics_safety_QA": {
+    "status": "NOT_RUN"
+  },
+  "technical_pilot": {
+    "status": "NOT_RUN"
+  },
+  "main_100_scenarios": {
+    "status": "NOT_GENERATED"
+  }
+}

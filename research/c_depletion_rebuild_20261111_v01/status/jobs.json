@@ -1,0 +1,40 @@
+{
+  "stage0_existing_evidence": {
+    "state": "COMPLETED",
+    "pid": 3509453,
+    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/jobs/stage0_existing_evidence_a01",
+    "command": [
+      "/usr/bin/python3",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_stage_runner_20261111_v01.py",
+      "--root",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01",
+      "--job",
+      "stage0_existing_evidence",
+      "--output",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/jobs/stage0_existing_evidence_a01"
+    ],
+    "started": 1794389455.9055047,
+    "attempt": 1,
+    "result_sha256": "6e64a524f1e1c146e284536b5682d85389f2cec6ccc9f865ff404b70f1c919c2",
+    "ended": 1794389460.0244672
+  },
+  "preparation_document_gates": {
+    "state": "COMPLETED",
+    "pid": 3509552,
+    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/jobs/preparation_document_gates_a01",
+    "command": [
+      "/usr/bin/python3",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_stage_runner_20261111_v01.py",
+      "--root",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01",
+      "--job",
+      "preparation_document_gates",
+      "--output",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/jobs/preparation_document_gates_a01"
+    ],
+    "started": 1794389460.0262923,
+    "attempt": 1,
+    "result_sha256": "897d2b0e222675085a0da5badd889c0aaa4b13cb0f6e196960f10ff1c68edf53",
+    "ended": 1794389462.0472639
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "version": "v02",
+  "reason": "v01 secret scanner self-matched its PEM regex string; anchor actual PEM line syntax, preserve all secret categories and actual-secret rejection",
+  "parent_protocol_sha256": "8f66cbe3433fd2b57267cd0de0668fbc263c0bcb60288f67eefcaea91621b635",
+  "code_sha256": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_integrations_20261111_v02.py": "7ecf8482ca4b2201890b7e2dd1c52d13b83160758e36db7882de6a8d0935578f",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_watchdog_20261111_v02.py": "2ba47e98067f5773ba8851d7afad713953d1d21612d463bf677a2e80cf73bebb"
+  },
+  "execution_scope": "PREPARATION_ONLY",
+  "GPU_authorization_changed": false,
+  "old_failed_sync_records_preserved": true
+}

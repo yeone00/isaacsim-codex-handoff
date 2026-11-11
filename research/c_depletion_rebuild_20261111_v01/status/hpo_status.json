@@ -1,0 +1,42 @@
+{
+  "state": "RUNNING",
+  "reason": null,
+  "updated": "2026-11-11T18:32:30.235857+09:00",
+  "controller_pid": 3130638,
+  "session": "b1_common_hpo_20261111_v01",
+  "total_candidates": 12,
+  "candidate_counts": {
+    "COMPLETED": 12,
+    "RUNNING": 0,
+    "PENDING": 0,
+    "FAILED": 0
+  },
+  "current": {
+    "key": "full_C05_GeoCAD_s42",
+    "pid": 3504831,
+    "output": "/home/user/hh/isaac_cosmos/sdg_final/B1_COMMON_HPO_20261111_v01/runs/full_C05_GeoCAD_s42_a01",
+    "phase": "full",
+    "candidate_id": 5,
+    "rep": "GeoCAD",
+    "seed": 42,
+    "epoch": 69,
+    "latest_validation_mask_map5095": 0.8469056445246881
+  },
+  "best_candidate": [
+    0.8650162689053599,
+    0
+  ],
+  "best_score_phase": "full",
+  "completed_training_jobs": 47,
+  "job_counts": {
+    "COMPLETED": 47,
+    "RUNNING": 1,
+    "FAILED": 0,
+    "INTERRUPTED": 0
+  },
+  "max_training_jobs": 63,
+  "max_model_epochs": 6966,
+  "wall_seconds_this_controller": 16241.814722061157,
+  "test_used": false,
+  "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
+}
