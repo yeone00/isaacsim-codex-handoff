@@ -1,20 +1,20 @@
 {
   "state": "RUNNING",
-  "stage": "capture_CDEP_B1R_TRN_000249_LR_Scan",
+  "stage": "capture_CDEP_B1R_TRN_000299_HR_Scan",
   "controller_pid": 3774906,
   "current": {
-    "job": "capture_CDEP_B1R_TRN_000249_LR_Scan",
-    "pid": 3835650,
-    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/production/capture_CDEP_B1R_TRN_000249_LR_Scan",
-    "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/capture_CDEP_B1R_TRN_000249_LR_Scan.log"
+    "job": "capture_CDEP_B1R_TRN_000299_HR_Scan",
+    "pid": 3842330,
+    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/production/capture_CDEP_B1R_TRN_000299_HR_Scan",
+    "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/capture_CDEP_B1R_TRN_000299_HR_Scan.log"
   },
   "reason": null,
-  "updated": 1794410855.2521334,
-  "generated_RGBD": 336,
+  "updated": 1794411165.677049,
+  "generated_RGBD": 378,
   "declared_RGBD": 4410,
-  "completed_jobs": 16,
+  "completed_jobs": 18,
   "failed_jobs": 0,
   "physical_motion_authorized": false,
   "physical_runs_started": 0,
-  "elapsed_seconds": 2322.604572534561
+  "elapsed_seconds": 2633.029488325119
 }
