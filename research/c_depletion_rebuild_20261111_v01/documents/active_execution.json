@@ -1,0 +1,8 @@
+{
+  "root": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02",
+  "authorization_file": "production_authorization_v01.json",
+  "authorization_sha256": "0b009ba7f6af029d597efd2e7aa7f1e48ef1f9e017d7e5271ba08974126b9985",
+  "status_file": "production_status.json",
+  "new_GPU_scope": "DATA_CAPTURE_C_HPO_AND_STATIC_EVALUATION",
+  "physical_motion_authorized": false
+}

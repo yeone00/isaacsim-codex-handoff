@@ -1,0 +1,10 @@
+{
+  "version": "v04",
+  "parent_amendment_v03_sha256": "7bcaf2417c90a8b39673f777f0ca7cff53b780db56ff0786b77c8f3f8deee83d",
+  "reason": "observe newly authorized C static execution and publish its approved code/status; preserve original HPO and prep controller",
+  "code_sha256": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_integrations_20261111_v04.py": "f1912e7527da42411077b31cab9991b7b1874f0cebe541422661d880918a12d0",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_watchdog_20261111_v04.py": "6cfcbdd60b57443ef8b73f7f7fff6309e97eb831f2e5ba42875fc52f15e6e968"
+  },
+  "physical_motion_authorized": false
+}

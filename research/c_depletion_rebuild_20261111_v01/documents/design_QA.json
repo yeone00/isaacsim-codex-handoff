@@ -1,0 +1,20 @@
+{
+  "state": "GEOMETRY_PASS_DATASET_ACCEPTANCE_PENDING",
+  "scenes": 1470,
+  "families": 70,
+  "history_rows": 16800,
+  "family_cross_split": 0,
+  "partial_geometry_cross_split_groups": 0,
+  "partial_geometry_duplicate_groups": 89,
+  "full_template_groups": 2,
+  "phase_counts": {
+    "('test', 'ABAB')": 8,
+    "('test', 'BABA')": 2,
+    "('val', 'ABAB')": 5,
+    "('val', 'BABA')": 5,
+    "('train', 'BABA')": 29,
+    "('train', 'ABAB')": 21
+  },
+  "pilot_scenes": 5,
+  "all_original_histories_preserved": true
+}

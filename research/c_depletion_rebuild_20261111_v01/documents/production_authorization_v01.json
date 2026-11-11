@@ -1,0 +1,39 @@
+{
+  "status": "AUTHORIZED_STATIC_C_PIPELINE",
+  "created": "2026-11-11T23:48:52.128105+09:00",
+  "user_authorization": "latest instruction: C data production/QA; C-only HPO then static perception and pose evaluation; physical pilot/main300/O50150 HOLD",
+  "data_training_static_authorized": true,
+  "physical_motion_authorized": false,
+  "code_sha256": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/evaluation/c_depletion_geometry_20261111_v01.py": "1f5b39e4623ccf491f0720a8dca7e4497d7255f8026067115128ee56777d9941",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/evaluation/c_common_hpo_policy_20261111_v01.py": "55a10f28e00e2868cc06456dae732a14f0e130ee873e8f64d1648e9b53921ba2",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_rgbd_capture_20261111_v02.py": "541ec5732622e940e0aba9c4057a13c0521a6bf8116a64e7f335ee6bed880df5",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_dataset_QA_package_20261111_v01.py": "0e17c9bfeecef907940e207d90deef0fa749c34b7d5c9365b55ceab408e06b56",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_production_controller_20261111_v01.py": "addac71f7694336c7194d325eff018e7a9c03ea14c5c4367b311ea342bfe2ed6",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_common_hpo_prepare_20261111_v01.py": "80967c4f9697412c07d97ec34f5e449b9dd00dc580e6d3f4a2499f94f51bc4a0",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_common_hpo_controller_20261111_v01.py": "2fe680dbfe25c1aab8111f511565cce44d3f0da9a7e7fe8b8540099249ed08e2",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_common_hpo_train_20261111_v01.py": "b94a817dc532957d31ca00c00ac3f967d8db46ec79be9aea368d8b00a687bc2c",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_common_hpo_crossval_20261111_v01.py": "3bdb7224bc02f6de5504f20d4bc26826650473b118575659970ef059e2421252"
+  },
+  "dataset_manifest_sha256": "cd90277777767209384495a3e2c0df7da910d6dc9f4a344e7a29c60c4bf784d8",
+  "design_QA_sha256": "64881921f15697964b105c5564fe9c9f16120e8360d4f6ae8e7a6313a6ac9b13",
+  "pilot_QA_sha256": "fca59638ba141e49bb194f1b87aa4ddac1848192f85b79a14a7cbcad92d1e21f",
+  "capture_version": "center-compensated v02; old v01 failure preserved",
+  "data_counts": {
+    "train": 1050,
+    "val": 210,
+    "test": 210,
+    "reps": 3,
+    "total_RGBD": 4410
+  },
+  "HPO_budget": {
+    "candidates": 12,
+    "mandatory_base": true,
+    "mandatory_L_C05": true,
+    "max_training_jobs": 57,
+    "max_model_epochs": 5766
+  },
+  "GPU_lock": "/tmp/b1_common_hpo_gpu_0.lock",
+  "dataset_QA_failure_policy": "HOLD, preserve output; never drop failed examples or alter parameters",
+  "post_HPO_static_capability_lock": "static_evaluation_capabilities_v01.json; holds if absent, no physical commands"
+}
