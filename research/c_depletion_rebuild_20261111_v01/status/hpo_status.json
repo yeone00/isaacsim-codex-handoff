@@ -1,7 +1,7 @@
 {
   "state": "RUNNING",
   "reason": null,
-  "updated": "2026-11-11T20:02:56.807998+09:00",
+  "updated": "2026-11-11T20:33:19.213068+09:00",
   "controller_pid": 3130638,
   "session": "b1_common_hpo_20261111_v01",
   "total_candidates": 12,
@@ -12,30 +12,31 @@
     "FAILED": 0
   },
   "current": {
-    "key": "baseline_control_C00_HR_Scan_s44",
-    "pid": 3603941,
-    "output": "/home/user/hh/isaac_cosmos/sdg_final/B1_COMMON_HPO_20261111_v01/runs/baseline_control_C00_HR_Scan_s44_a01",
+    "key": "baseline_control_C00_GeoCAD_s44",
+    "pid": 3620894,
+    "output": "/home/user/hh/isaac_cosmos/sdg_final/B1_COMMON_HPO_20261111_v01/runs/baseline_control_C00_GeoCAD_s44_a01",
     "phase": "baseline_control",
     "candidate_id": 0,
-    "rep": "HR_Scan",
+    "rep": "GeoCAD",
     "seed": 44,
-    "epoch": 0
+    "epoch": 55,
+    "latest_validation_mask_map5095": 0.8419821306368185
   },
   "best_candidate": [
     0.8651642698816163,
     5
   ],
   "best_score_phase": "full",
-  "completed_training_jobs": 54,
+  "completed_training_jobs": 56,
   "job_counts": {
-    "COMPLETED": 54,
+    "COMPLETED": 56,
     "RUNNING": 1,
     "FAILED": 0,
     "INTERRUPTED": 0
   },
   "max_training_jobs": 63,
   "max_model_epochs": 6966,
-  "wall_seconds_this_controller": 21668.386880874634,
+  "wall_seconds_this_controller": 23490.791939735413,
   "test_used": false,
   "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
 }
