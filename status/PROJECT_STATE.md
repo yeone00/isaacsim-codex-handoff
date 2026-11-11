@@ -1463,3 +1463,14 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 이번 지시에 맞춰12후보(기본+11 random, sampler20261111), train seed42,3표현60epoch(200schedule);top3+base200,선정+base43/44,최대63run/6966epoch고정. 초기조건pretrained·4개탐색외kwargs·PhotoDegrade 원본 유지; RNG문서불일치공개. Test/RealTest189미사용.
 - CPUpreflightPASS,실제smoke HR/LR PASS후CAD로자동전환확인. 명령반환후다음PID자동생성·tmux조상확인; AI없어도진행. 기존main/O50정상종료·GPU충돌없음·패키지변경0·새주행0. 최초CPU정확등호테스트실패는tolerance로수정후실행전PASS.
 - 상태10초/스냅샷15분 자동기록,lock/25GiB디스크guard/완료artifact검증/실패보존. resume.sh는기존세션중복방지·검증완료skip·중단attempt보존후새초기학습;FAILED자동retry없음. 최종결과아직미확정.
+
+
+## 2026-11-11 — Progressive Depletion 원래 설계 복원 감사 완료/신규생성 HOLD
+
+- 보고서 `reports/progressive_depletion_original_design_recovery_audit_20261111_v01.md`; 증거 `reports/progressive_depletion_design_audit_evidence_20261111_v01/`. 기존C원본잠금SHA·manifest1680·state840·history9600 보존/검증.4층×15Bundle5×5벽돌=300;C100/80/60/40/20=60/48/36/24/12묶음.20층설명을사용하지않음.
+- 기존200seed경로×48제거의최고층/외부노출floodfill/정렬rng선택exact,800strictnesting PASS. 1680manifest↔840state↔2재료 및 실제3표현metadata5040개 공통mask/생성수/source SHA PASS. 동적CoG/지지안정성은구현·검증없음/UNKNOWN.
+- 실제잔여slot+명목x/y/z+방향exact-set으로고유성검증: 전체40환경 C100/80/60/40/20 고유2/184/197/198/174. MNIDB_0006 C20 T02(seed3281395651)와T05(seed2131428289) 동일형상(5경로4고유);수정·삭제0. CSV26400묶음좌표·5seed SVG 도식저장/새시뮬레이션아님.
+- 현재B1실제capturev03→step21 nominal source는full-layer생성. package4200행과complete4200개일치;L1–L4=75/150/225/300,부분최상층0,각L phase2종. ProgressiveDepletion과설계동일성FAIL;기존L자료·모델·보고서·주행은별도실험으로유지하고C재라벨링금지.
+- HPO기존tmux/PID3130638정상RUNNING보호.12후보초기탐색완료,17:59에3365/최대6966epoch=48.31%,오류0. L전용HPO이며C최적성/전이는UNKNOWN. 원래protocol/code/params미수정,외부root에scope notice만신규추가.
+- 최소복귀DRAFT:50/10/10환경×(FULL1+5T×4부분)=1050/210/210scene/표현,4410RGB안;환경별전체T/C동일split,oldtest재학습누출금지. base-vsL-HPO선정값C-Val전이대조최대6seed42모델→양설정seed43/44포함최대18안. 확정/실행아님.
+-300회DRAFT=5C×2O×10pairedbase×3표현;독립환경300아님,O50별도,최종모델/안전/조건선행잠금. 신규scenario/data/render/inference/train/drive0. 선행5논문서지·내용확인범위를분리,BRIX/JENGA원문확인;나머지3전체PDF접근미완료명시. 다음은새C프로토콜구체화이며임의생성금지.
