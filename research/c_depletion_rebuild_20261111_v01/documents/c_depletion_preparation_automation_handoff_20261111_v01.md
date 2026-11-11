@@ -64,3 +64,7 @@ resume는동일systemd서비스를start하므로살아있는controller중복생�
 ## HPO 계획 개정분 — 2026-11-11T19:16:37.531172+09:00
 
 신규 C QA/split/manifest 잠금 후 **C 전용 공통 HPO 필수** 단계를 추가한다. 현재 L-HPO는 그대로 완료 후 예비 탐색으로 보존한다. 기존 전이 보조 대조만의 안은 `docs/c_depletion_common_hpo_plan_AMENDMENT_20261111_v01.md`로 대체하며 다른 지시는 유지한다. 순서: C dataset/QA/split → C-HPO → 최종모델/seed반복 → 인식 → pose/ROBUST_A → 기술pilot → G1 300. 계획JSON은root/execution_plan_amendment_v01.json 및pipeline_plan_current.json. 실제C-HPO adapter/새GPU는미구현·미실행/비승인,HOLD유지. 기존runtime코드/부모protocol/QA gate SHA변경0.
+
+## O50 별도150회 추가 계획 — 2026-11-11T19:37:50.197978+09:00
+
+본실험300회유지,5C×O50×3표현×10base=150별도강건성주행추가. 총예정450은작업량합계이며주성공률분모로합산하지않는다. C인식/pose O50평가·독립가림/GT QA·별도O50기술pilot·manifest150/모델/코드잠금·신규승인이진입조건이다. 상세 `docs/c_depletion_O50_drive_plan_AMENDMENT_20261111_v01.md`;root execution_plan_amendment_v02.json/current plan. 기존C-HPO개정유지,기존코드/안전/gate변경0,HOLD유지,신규GPU/주행0. 실제O50adapter/시나리오는아직없다.
