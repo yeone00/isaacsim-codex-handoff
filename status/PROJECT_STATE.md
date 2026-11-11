@@ -1423,3 +1423,14 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - CPU 동일 RGB-D11개: ORIG11/11 datum거부 재현, ROBUST_A11/11 기존좌표 exact. 후보 면 erosion후49–84점<100이 첫 거부. 원본 촬영실패1개 NOT_REPLAYABLE로 별도 기록. 고정값·분모·GT 입력 변경 없음.
 - PASS: known9/hash/count108/432, Stage4matrix120/pairing, design+모델4hash, 코드사본해시, coreAST, robust7/B로직13 검사. 최초 filename/입력부재/pytest부재 감사명령실패 보존. 기존 실패·USD·weights·lock 불변.
 - 실제 저장RGB/주행JPG contact sheet8패널 LOCAL_ONLY 생성; 조사폴더MP4없음. top-down·대표영상·최종분석 미완료. 로컬.git없음; GitHub read만 수행, 텍스트 marker sync요청/원격완료UNKNOWN. 다음은 기존큐 종료 확인 후 버전별 시도·실패 보존 분석이며 SKIP_EXISTS를 안전한 resume으로 간주하지 않음.
+
+
+## 2026-11-11 — 기존 Stage1·Stage2 논문용 전체 집계 및 B1 학습 설정 감사 완료
+
+- 새 보고서: `reports/stage1_full_factorial_tables_20261111.md`, `reports/stage2_complete_pose_metrics_20261111.md`, `reports/b1_training_hyperparameter_audit_20261111.md`. 기존 G0–G3 batch2157667/watchdog1427871 생존을 작업 전후 확인했고 중지·재시작·설정변경 없음. 새 렌더·추론·학습·HPO·주행0; 단일 stdlib process, nice15/ionice idle로 저장자료만 분석.
+- Stage1: 원본48600행 중 주 분석 자기표현10800행, HR/LR/CAD×L1–L4×O0/O25/O50×base/aug=72셀·216seed셀 완료. 각 실제장면45/50/54/51, 3seed평균/표본SD·AP GT분모·IoU-best/Top1·실패건수 포함. T1–T8 원본/사본SHA일치, T1 주요수치일치 PASS.
+- Stage2: 변형별7200행, MODEL_TOP1과GT-oracle분리54셀. 계산자체(C_any)와지정목표선택후계산(C_target)분리, 조건부XY/종횡/yaw180·90 평균/중앙/p90·실패원문전부기록. O25 C_target/600 HR/LR/CAD: ORIG65/69/70, SENSEDTOP332/326/320, PRIORTOP515/509/502. C_any는별도열이며실패를0오차로넣지않음. 원래summary와270항목일치.
+- 학습: v03baseline9+v04혼합39=최종48run의실제kwargs/args.yaml/200epoch검증, stage1모델27개checkpointSHA·epoch계보PASS. 해당B1 HPO미실행; recipe변경·seed반복·고정증강/혼합비·checkpoint선정과구분. 원본v02FAILED·혼합HANG3개(상태RUNNING잔존)와별도rerun경로보존.
+- FAIL문서정합성: LOCKEDv04 RNG설명은(run seed,epoch,index)per-samplegenerator지만SHA일치PhotoDegrade구현은전역Python random·getrandbits기반noisegenerator. expectedhash/lock/코드수정0; 전체재현성무조건PASS아님. 관련새실험실행0.
+- 집계검증18822개/학습설정감사336개 PASS, RNG정책불일치는별도FAIL. 최초T1표현명KeyError·supersedes note경로오류exit1및수정patch실패보존후각새v02증거폴더에서성공. 최종입력242개SHA재확인불변. 증거: `reports/stages12_full_tables_20261111_v02/`, `reports/b1_training_hyperparameter_evidence_20261111_v02/`. 새분석코드2개,과거원본/과거보고서불변. 원격게시없음/반영UNKNOWN.
+- 다음: 연구자는세표의분모와원고용표기확인, RNG설명불일치는향후별도문서개정전에검토. 이번표로모델선택·튜닝을하지않고현재주행큐는기존실행기에맡긴다.
