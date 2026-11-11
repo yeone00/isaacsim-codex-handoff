@@ -1,8 +1,8 @@
 {
   "state": "HOLD",
-  "updated": 1794408667.3146389,
+  "updated": 1794408997.395515,
   "controller_pid": 3509437,
-  "watchdog_pid": 3514993,
+  "watchdog_pid": 3779727,
   "current": null,
   "reason": "Preparation verified; new render/training/drive forbidden by latest instruction; success threshold and C geometry/GT/pose gates unresolved.",
   "completed": [
@@ -20,5 +20,5 @@
   "new_gpu_jobs_started": 0,
   "soft_budget_hours": 48,
   "stop_at_budget": false,
-  "elapsed_seconds": 19211.41206884384
+  "elapsed_seconds": 19541.49304485321
 }
