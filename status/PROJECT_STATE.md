@@ -1492,3 +1492,10 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 개정분만작성: `docs/c_depletion_common_hpo_plan_AMENDMENT_20261111_v01.md`, `reports/c_depletion_common_hpo_plan_amendment_20261111_v01.md`; root execution_plan_amendment_v01.json/pipeline_plan_current.json. 기존전체지시유지,선택적L-HPO전이대조만의안을C전용공통HPO필수로대체.
 - C생성/QA/family split lock→C-HPO→최종9모델/seed반복→인식→pose/ROBUST_A→기술pilot→G1 300. C-HPO안12후보(base1+L-HPO 상위비기본최대3+새random최소8),3표현동일설정·ownC-Val mask mAP평균;60screen/200full/seed43,44,qualification포함최대57run/5766epochs DRAFT. 실제예산·후보는C QA후학습전잠금. Test선정사용금지.
 - 현재L-HPO PID3130638 RUNNING,controller3509437/watchdog3514993 유지. 기존코드·부모protocol·QA gate/문서잠금불변. 신규GPU/주행0,HOLD해제0. 실제C-HPO실행기연결은미구현/미승인이고계획개정을자동실행완료로표시하지않음.
+
+
+## 2026-11-11T19:37:50.197978+09:00 — O50 별도150회 주행 계획 추가만 반영
+
+- 개정분 `docs/c_depletion_O50_drive_plan_AMENDMENT_20261111_v01.md`, `reports/c_depletion_O50_drive_plan_amendment_20261111_v01.md`;root execution_plan_amendment_v02.json 및pipeline_plan_current.json. 기존HPO개정/본300회유지+5C×O50×3rep×10base150=계획450. 300/150namespace·결과·분모·통계별도,450합산성공률주결과금지.
+- 가능하면동일10base·제거·시작·환경·모델대응;현재frame실제가림/GT별도검증. C인식/pose O50평가·GT/가림QA·O50기술pilot·150manifest/version/model lock·별도실행승인필수. 인식/오선택/pose/plan/안전/최종실패·중단보존,기존A/제어/안전완화0.
+- 계획순서main300→O50technicalpilot→O50separate150,파일럿은150분모와별도. 실제150ID/새데이터/adapter생성안함. 현재HPO PID3130638 RUNNING,Controller3509437/Watchdog3514993 유지/HOLD. 기존코드·부모잠금·C-HPO계획v01불변,신규렌더/학습/주행0. 추가물리작업만약20–22.5h,450물리합약59.88–67.5h잠정/기타단계시간별도/48h강제시한없음.

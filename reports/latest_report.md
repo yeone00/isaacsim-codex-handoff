@@ -1,11 +1,11 @@
-# C 전용 공통 HPO 단계 추가 — 계획 개정 기록
+# O50 별도150회 추가 — 변경분 기록
 
-기존 C_DEPLETION_REBUILD 지시문 전체는 유지한다. 현재 L1–L4 HPO는 중단/수정 없이 완료 후 예비 탐색으로 보존한다. 기존 「L-HPO 설정의 C 전이 보조 대조」 대신 **C 데이터 QA·Train/Val/Test 잠금 이후 C 전용 공통 HPO를 필수 단계로 추가**했다.
+기존 본실험300회와 C 전용 공통 HPO 계획은 유지한다. **5C×O50×3표현×10공통시나리오=150회**를 별도 강건성 실험으로 추가했다. 전체 작업량은450회지만300/150의 manifest·결과·분모·통계는 분리하고 합산 성공률을 주 결과로 사용하지 않는다.
 
-변경 순서: C dataset/QA/split lock → C-HPO → 최종 공통 설정/9모델 고정 및 seed 반복 → 인식 평가 → 위치추정/ROBUST_A → 기술 파일럿 → G1 300회.
+가능하면 같은10base의 제거 이력·시작·환경·카메라·조명·모델을 공유하고 가림만 바꾼다. 현재프레임의 실제 가림률과 GT/panel mask는 독립 검증한다. 과거 fixture측정값을 복사한 것을 새 실측으로 취급하지 않는다. 인식 실패/오선택/pose/plan/안전/최종작업 실패와 인프라 오류를 단계별로 기록하고 실패·중단을 분모에서 제외하지 않는다.
 
-계획 상세는 `docs/c_depletion_common_hpo_plan_AMENDMENT_20261111_v01.md`다. 별도 DRAFT 예산은12후보(기본1+L-HPO 상위 비기본 최대3+새random 최소8),3표현공통seed42·60epoch screening,상위3+base200epoch,선정설정seed43/44다. qualification 포함최대57run/5766 model-epochs. 최종seed42는선정된완료200epoch checkpoint를검증해재사용하고,최종3seed9모델을확보한다. 모든실제학습은공통pretrained에서시작하며 L 모델 가중치는이식하지않는다.
+추가 진입조건은 C 기반 인식·pose 평가, O50 GT/가림 QA, 별도 O50 기술 파일럿의 안전/실행 gate,150회 manifest와 버전/모델 SHA 잠금,신규실행승인이다. 계획상 기존 본300회 후 O50 파일럿→150회를 수행한다. 기존 ROBUST_A·제어·충돌/속도/조향/정지/성공 기준은 완화하지 않는다.
 
-목적함수는세표현자기표현C-Val Mask mAP50–95의동등가중평균이다. L상위설정은초기후보일뿐최적가정없음. Test/O50/RealTest189를선정·후보추가·조기종료에사용하지않는다. 샘플분할·모든seed역할·실제v04 RNG/FP32/AMP·고정kwargs·동점규칙을잠근다. 예산/실제후보는C QA후학습전에고정하며이번에는생성하지않았다.
+상세 개정분: `docs/c_depletion_O50_drive_plan_AMENDMENT_20261111_v01.md`. 부모 계획JSON을 보존하고 `execution_plan_amendment_v02.json`으로 O50 단계·별도 분모/gate를 추가한다. 신규150개 실행 ID나 시나리오를 생성한 것이 아니다. 현재 HOLD·신규GPU비승인·기존HPO 및 독립 감시/ntfy/GitHub 기능은 그대로다.
 
-실행범위는 PREPARATION_ONLY/HOLD 그대로다. 신규 GPU·물리주행0. Controller/Watchdog·ntfy·GitHub연동과현재HPO의코드/프로토콜/결과를수정하지않는다. 현재runtime의 `C_training_evaluation`은상위단계명이고추가한내부단계는계획JSON에기록한다. 아직실제C-HPO adapter가구현/연결됐다고주장하지않는다. 실제후속GPU실행은별도승인과새버전이필요하다.
+신규 렌더·학습·물리 주행0. 추가 물리 작업량은 기존 throughput 기준 약20–22.5시간으로 추정하며,실제O50처리속도확보전 잠정값이다. 48시간 초과를 이유로 분모나 실패를 줄이지 않는다.
