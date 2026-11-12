@@ -1,7 +1,7 @@
 {
   "state": "RUNNING",
   "reason": null,
-  "updated": "2026-11-12T10:07:00.355736+09:00",
+  "updated": "2026-11-12T10:12:00.547751+09:00",
   "controller_pid": 106572,
   "session": "c_common_hpo_20261111_v01",
   "total_candidates": 12,
@@ -12,31 +12,31 @@
     "FAILED": 0
   },
   "current": {
-    "key": "screen_C02_HR_Scan_s42",
-    "pid": 134085,
-    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/screen_C02_HR_Scan_s42_a01",
+    "key": "screen_C02_LR_Scan_s42",
+    "pid": 136983,
+    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/screen_C02_LR_Scan_s42_a01",
     "phase": "screen",
     "candidate_id": 2,
-    "rep": "HR_Scan",
+    "rep": "LR_Scan",
     "seed": 42,
-    "epoch": 50,
-    "latest_validation_mask_map5095": 0.913174202642306
+    "epoch": 57,
+    "latest_validation_mask_map5095": 0.8909494897137697
   },
   "best_candidate": [
     0.9393577593351282,
     0
   ],
   "best_score_phase": "screen",
-  "completed_training_jobs": 9,
+  "completed_training_jobs": 10,
   "job_counts": {
-    "COMPLETED": 9,
+    "COMPLETED": 10,
     "RUNNING": 1,
     "FAILED": 0,
     "INTERRUPTED": 0
   },
   "max_training_jobs": 57,
   "max_model_epochs": 5766,
-  "wall_seconds_this_controller": 1931.9285035133362,
+  "wall_seconds_this_controller": 2232.120495080948,
   "test_used": false,
   "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
 }
