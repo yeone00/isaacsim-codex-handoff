@@ -9,7 +9,7 @@
     "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/C_COMMON_HPO_BITMAP_attempt_v01.log"
   },
   "reason": null,
-  "updated": 1794446831.3473754,
+  "updated": 1794447141.6087606,
   "generated_RGBD": 4410,
   "declared_RGBD": 4410,
   "completed_jobs": 210,
@@ -17,46 +17,46 @@
   "prior_failure_preserved": "C_DATASET_QA_PACKAGE",
   "physical_motion_authorized": false,
   "physical_runs_started": 0,
-  "elapsed_seconds": 3142.9462764263153,
+  "elapsed_seconds": 3453.207661628723,
   "C_HPO": {
     "state": "RUNNING",
     "reason": null,
-    "updated": "2026-11-12T10:27:01.368625+09:00",
+    "updated": "2026-11-12T10:32:11.609830+09:00",
     "controller_pid": 106572,
     "session": "c_common_hpo_20261111_v01",
     "total_candidates": 12,
     "candidate_counts": {
-      "COMPLETED": 3,
+      "COMPLETED": 4,
       "RUNNING": 1,
-      "PENDING": 8,
+      "PENDING": 7,
       "FAILED": 0
     },
     "current": {
-      "key": "screen_C03_GeoCAD_s42",
-      "pid": 161077,
-      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/screen_C03_GeoCAD_s42_a01",
+      "key": "screen_C04_HR_Scan_s42",
+      "pid": 167346,
+      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/screen_C04_HR_Scan_s42_a01",
       "phase": "screen",
-      "candidate_id": 3,
-      "rep": "GeoCAD",
+      "candidate_id": 4,
+      "rep": "HR_Scan",
       "seed": 42,
-      "epoch": 3,
-      "latest_validation_mask_map5095": 0.6046443015957127
+      "epoch": 13,
+      "latest_validation_mask_map5095": 0.9034865680830858
     },
     "best_candidate": [
       0.9393577593351282,
       0
     ],
     "best_score_phase": "screen",
-    "completed_training_jobs": 14,
+    "completed_training_jobs": 15,
     "job_counts": {
-      "COMPLETED": 14,
+      "COMPLETED": 15,
       "RUNNING": 1,
       "FAILED": 0,
       "INTERRUPTED": 0
     },
     "max_training_jobs": 57,
     "max_model_epochs": 5766,
-    "wall_seconds_this_controller": 3132.9413945674896,
+    "wall_seconds_this_controller": 3443.1825757026672,
     "test_used": false,
     "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
   }
