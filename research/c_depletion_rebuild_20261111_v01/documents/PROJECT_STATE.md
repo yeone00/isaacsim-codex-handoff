@@ -1550,3 +1550,5 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 보고서 `reports/c_hpo_validation_pipeline_recovery_handoff_20261112_v01.md`. 57train PASS/sha보존,실제cross실패24/24(14는중간집계). 별도val가training kwargs를상속하지않아overlapTrue/mosaic1default로bitmap계약충돌. maskratio4는같았음. 새eval-onlyworker/독립controller로small own/cross9건반복exact/3full own검증후24건복구중. 재학습/가중치/GT/분할/선정변경0.
 - savedEMAfp16 rounding으로학습FP32EMA와지표차이HR+.017421/LR+.001834/CAD−.117268%p보존;원epoch비트재현주장없음. 같은checkpointrepeat exact. C06원래seed42score94.329830%/base94.287328% 및선정lock불변. 복구24건후에만새HPO_recovered_status COMPLETED,원본failed상태는보존. 물리HOLD.
 - ntfy16:43경serverHTTP200이력있으나handsetUNKNOWN/이전로그경로결함확인,정확경로고우선재알림HTTP200확인. 기존watchdog/동기화중단0,복구에러는즉시notify+HOLD기존queue.
+
+- 평가복구최종:24/24 crossVal,5040model-images/16632 GT instances 검증PASS. 36개검증실행artifact/inputSHA/Val계보확인/57checkpoint불변/원본24실패보존. 새HPO_recovered_status COMPLETED,기존C06선정유지. 후속static HR가림qualification 실제진입(PID707461),controller699911/static707458. 물리HOLD.
