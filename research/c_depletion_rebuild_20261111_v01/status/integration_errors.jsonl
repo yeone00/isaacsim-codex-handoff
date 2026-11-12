@@ -1,3 +1,5 @@
 {"time": 1794389459.2797382, "kind": "GITHUB", "error": "AssertionError", "summary": "PUBLIC_SECRET_SCAN_REJECTED"}
 {"time": 1794486424.3051863, "kind": "NTFY", "error": "RuntimeError", "summary": "RuntimeError"}
 {"time": 1794486424.9106863, "kind": "NTFY", "error": "RuntimeError", "summary": "RuntimeError"}
+{"time": 1794486489.8962686, "kind": "NTFY", "error": "RuntimeError", "summary": "RuntimeError"}
+{"time": 1794486490.495987, "kind": "NTFY", "error": "RuntimeError", "summary": "RuntimeError"}
