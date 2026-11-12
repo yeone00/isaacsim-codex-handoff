@@ -1,0 +1,286 @@
+{
+  "updated": 1794480170.1820252,
+  "current_version": "C-V02",
+  "physical_motion_authorized": false,
+  "files": {
+    "pipeline_status.json": {
+      "sha256": "a39eb95295f7310a97c429df5689355887108217a91c69cf9bf363675dfabd90",
+      "content": {
+        "state": "HOLD",
+        "stage": "V02",
+        "current": {},
+        "controller_pid": 910996,
+        "updated": 1794480046.3351896,
+        "total_RGBD": 5250,
+        "verified_RGBD": 4590,
+        "new_C100_RGBD": 180,
+        "physical_motion_authorized": false,
+        "reason": "[Errno 11] Resource temporarily unavailable"
+      }
+    },
+    "watchdog_status.json": {
+      "sha256": "825ff645075ccdfb98e07a986f81f53765e962b5b9abcbc6f6b4e3186f46a5de",
+      "content": {
+        "pid": 938963,
+        "updated": 1794480165.6920393,
+        "pipeline": {
+          "state": "HOLD",
+          "stage": "V02",
+          "current": {},
+          "controller_pid": 910996,
+          "updated": 1794480046.3351896,
+          "total_RGBD": 5250,
+          "verified_RGBD": 4590,
+          "new_C100_RGBD": 180,
+          "physical_motion_authorized": false,
+          "reason": "[Errno 11] Resource temporarily unavailable"
+        },
+        "current_mixing": {},
+        "current_epoch": null,
+        "current_static": {},
+        "GPU": "3, 931, 32607",
+        "free_disk_bytes": 115034411008,
+        "ntfy_pending": 0,
+        "physical_motion": false,
+        "warnings": []
+      }
+    },
+    "boundary_guard_status.json": {
+      "sha256": "b754955778c9318b259b7083c552deb7d7271d82db7f87e4c0a69623aca5adee",
+      "content": {
+        "state": "RELEASED_TO_V02_CONTROLLER",
+        "pid": 903108,
+        "updated": 1794478518.133658
+      }
+    },
+    "generation_execution_authorization_v01.json": {
+      "sha256": "28b74e22bde459113f54ef057bd3c7c2e9c9dae1875123168fe97cc48230faa7",
+      "content": {
+        "created": 1794479075.7072623,
+        "physical_motion_authorized": false,
+        "source_sha256": {
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_prepare_20261112_v01.py": "4a614d90c65c57a3a8628e6bed38f6887ef5cfd4e670e9a86af8487376b61a5d",
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_C100_capture_20261112_v01.py": "ba692ad730609d93d6abaad29917f09bcc5d6b3d01d4df60b1faa47c9172f415",
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_QA_package_20261112_v01.py": "70ca6440c54e39b2b66c8e75758c25aa49ba1a7334beaed8c5159411c233ace7",
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_generation_controller_20261112_v01.py": "c311f15e47b5312bd52076f6a47dd33971c96e92599554714e1e034fa83cffd1",
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_evaluation_boundary_guard_20261112_v01.py": "eb2a9b93c03f332faa224cf4f506aba3ef5ca3d819e5200587c281da29d10bf3"
+        },
+        "current_stage": "C100 generation verified first20observations",
+        "source_C_V01_untouched": true,
+        "old_HPO_repeated": false
+      }
+    },
+    "approved_training_capabilities_v01.json": {
+      "sha256": "cc2708ffbb9655ea0bcb1314c475570896979591c502e850140fb80e05369230",
+      "content": {
+        "status": "LOCKED_SEQUENCE",
+        "created": 1794479075.7001839,
+        "physical_motion_authorized": false,
+        "code_sha256": {
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_post_QA_contract_20261112_v01.py": "85941ad5833815b32516cac2fbeaf78286f19e73eba4fba893a448354394fdc5",
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_mixing_prepare_20261112_v01.py": "ef79a2b201c2b3d0d052a981f396e04b8e242c059056ef0307ab96f95b72c405",
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_mixing_controller_20261112_v01.py": "7ff38bb09734eb4874e9aea8294724591b87b13719ec3e0dd881025a6e020eb0",
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_mixed_train_20261112_v01.py": "a5d42b46a1644cdb90ae03757d305fde60b843c47a8de979fcb55813b75f6ad7",
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_bitmap_adapter_20261112_v01.py": "274565886c812fc0c6ba5c8b0c5a7a6a32e7bb4536cebebec767efb82ab9f9d1"
+        },
+        "jobs": [
+          {
+            "id": "V02_contract",
+            "command": [
+              "/home/user/anaconda3/envs/sdg_tools/bin/python",
+              "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_post_QA_contract_20261112_v01.py"
+            ],
+            "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/V02_contract_QA_v01"
+          },
+          {
+            "id": "V02_mixing_prepare",
+            "command": [
+              "/home/user/anaconda3/envs/sdg_tools/bin/python",
+              "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_mixing_prepare_20261112_v01.py"
+            ],
+            "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/MIX_C06_20261112_v01"
+          },
+          {
+            "id": "V02_mixing_execute",
+            "command": [
+              "/home/user/anaconda3/envs/sdg_tools/bin/python",
+              "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_mixing_controller_20261112_v01.py"
+            ],
+            "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01"
+          }
+        ]
+      }
+    },
+    "approved_final_static_capabilities_v01.json": {
+      "sha256": "b3d1fe93c5a90bf6d54e904493ca18e7d08c35d3e04fe916492a7596a259a65b",
+      "content": {
+        "status": "LOCKED_FINAL_STATIC",
+        "physical_motion_authorized": false,
+        "code_sha256": {
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_final_static_controller_20261112_v01.py": "d40bcef437559c7b1543af01207ffc835b7ec268bb1f0af35dba9b3a04334b03",
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_C100_occlusion_capture_20261112_v01.py": "5e392aa67f029126281ec66adf2faf95ccb3fe9cbef631423999873cc41e439a",
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_v02_perception_eval_20261112_v01.py": "d90eba6873ef57ffa2ae2d16bdd7f0dfae6f7b088e55040261ff31d4287f8733",
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_v02_pose_eval_20261112_v01.py": "5b85dcad8e33b7cbc963485015e5633fef2ac1130e8d5705b8f554c7241ad127",
+          "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_v02_integrated_report_20261112_v01.py": "d51a78b812e205fab3ac7ee6cf8e5cc42867ee03207cf1b416ac7d98def5a58c"
+        },
+        "jobs": [
+          {
+            "id": "V02_final_static",
+            "command": [
+              "/home/user/anaconda3/envs/sdg_tools/bin/python",
+              "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_final_static_controller_20261112_v01.py"
+            ],
+            "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/final_static_pipeline_v01"
+          }
+        ]
+      }
+    },
+    "real_compatibility_audit_v01/result.json": {
+      "sha256": "a8b9e06db32c61776c5342eafbae9030cddc96c4515ff92c047770e75b8ba5a4",
+      "content": {
+        "state": "PASS_WITH_DISCLOSED_ANNOTATION_DOMAIN_LIMITATIONS",
+        "counts": {
+          "train": 352,
+          "val": 48,
+          "test": 189
+        },
+        "class_id": 0,
+        "class_name": "brick_load",
+        "original_target_only_annotation_preserved": true,
+        "known_unlabelled_other_loads_and_merged_instances": true,
+        "supplementary_unapproved_labels_not_used": true,
+        "annotation_policy_authority": "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/docs/b1_mixing_experiment_protocol_LOCKED_v03_20261108.json",
+        "authority_sha256": "fef034bbeec029e98842d411a3af7632fc17e5b4a02bb7f90fbe4390e8cae2b1",
+        "material_limit": "B1 brick_load = small unwrapped cored red bricks; Roboflow brick_load = shrink-wrapped large perforated clay block pallets (Porotherm-like, inferred). Different material and label definition (real = one target per image). Results must NOT be read as same-material real generalisation of red bricks; real metrics describe transfer/adaptation to the Roboflow product and site.",
+        "real_Test_previously_evaluated": true,
+        "real_Test_not_fresh_blind": true,
+        "Test_labels_only_hashed_not_used_for_model_selection": true,
+        "errors": []
+      }
+    },
+    "bitmap_CPU_qualification_v01.json": {
+      "sha256": "c2a9d5ecedda5a961618b22a06f957b1cd0c801dbb801182e2a102943588290f",
+      "content": {
+        "state": "PASS",
+        "cases": [
+          {
+            "instances": 0,
+            "shape": [
+              480,
+              640
+            ],
+            "result": "PASS"
+          },
+          {
+            "instances": 0,
+            "shape": [
+              1296,
+              972
+            ],
+            "result": "PASS"
+          },
+          {
+            "instances": 1,
+            "shape": [
+              480,
+              640
+            ],
+            "result": "PASS"
+          },
+          {
+            "instances": 1,
+            "shape": [
+              1296,
+              972
+            ],
+            "result": "PASS"
+          },
+          {
+            "instances": 2,
+            "shape": [
+              480,
+              640
+            ],
+            "result": "PASS"
+          },
+          {
+            "instances": 2,
+            "shape": [
+              1296,
+              972
+            ],
+            "result": "PASS"
+          }
+        ],
+        "GPU_used": false
+      }
+    },
+    "data_design_v01/V02_design_lock.json": {
+      "sha256": "b39126f2a84f6bf1f34dd50a73b553a0c91171ed4ff6779fdfed1633e1ccab1c",
+      "content": {
+        "status": "LOCKED_OBSERVATION_DESIGN",
+        "created": 1794478372.264363,
+        "source_C_V01_manifest_sha256": "cd90277777767209384495a3e2c0df7da910d6dc9f4a344e7a29c60c4bf784d8",
+        "new_manifest_sha256": "2be5f1abda7f42a8f7087cf44088fc598e8393820fe8ddacf3b14de14f1c1dbb",
+        "additional_manifest_sha256": "6f04d11ac1983575cd246474424c0c3d654c3852b20251133361a5f87dc3e27a",
+        "source_families": 70,
+        "split_families": {
+          "train": 50,
+          "val": 10,
+          "test": 10
+        },
+        "additional_per_rep": 280,
+        "additional_all_reps": 840,
+        "target_all_reps": 5250,
+        "counts": {
+          "('test', 'C100')": 50,
+          "('test', 'C80')": 50,
+          "('test', 'C60')": 50,
+          "('test', 'C40')": 50,
+          "('test', 'C20')": 50,
+          "('val', 'C100')": 50,
+          "('val', 'C80')": 50,
+          "('val', 'C60')": 50,
+          "('val', 'C40')": 50,
+          "('val', 'C20')": 50,
+          "('train', 'C100')": 250,
+          "('train', 'C80')": 250,
+          "('train', 'C60')": 250,
+          "('train', 'C40')": 250,
+          "('train', 'C20')": 250
+        },
+        "camera_condition_values_source": "Train full-family distances only, within each existing distance_bin; fixed pre-inference",
+        "C100_only_observation_distribution_change_disclosed": true,
+        "existing_C_HPO_repeated": false,
+        "physical_motion_authorized": false
+      }
+    },
+    "original_preservation_and_transition_verification_v01.json": {
+      "sha256": "a952b3839895e0bf0529293d722d709890cf9a2abc023395f3f3c94380124e2e",
+      "content": {
+        "time": 1794480088.213055,
+        "original_57_primary_checkpoints_SHA_unchanged": true,
+        "old_30captures_PASS": true,
+        "old_Testframe1890_QA": true,
+        "old_perception_not_started": true,
+        "transition_to_new_C100_verified": true,
+        "current": {
+          "state": "HOLD",
+          "stage": "V02",
+          "current": {},
+          "controller_pid": 910996,
+          "updated": 1794480046.3351896,
+          "total_RGBD": 5250,
+          "verified_RGBD": 4590,
+          "new_C100_RGBD": 180,
+          "physical_motion_authorized": false,
+          "reason": "[Errno 11] Resource temporarily unavailable"
+        },
+        "source_AST_pass": 22,
+        "bitmap_CPU_tests": 6,
+        "new_smoke_or_training_performed": false,
+        "physical_runs": 0
+      }
+    }
+  }
+}

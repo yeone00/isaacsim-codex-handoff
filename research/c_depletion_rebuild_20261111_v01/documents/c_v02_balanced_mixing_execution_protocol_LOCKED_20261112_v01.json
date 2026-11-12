@@ -1,0 +1,87 @@
+{
+  "status": "LOCKED_EXECUTION_SEQUENCE",
+  "created": 1794480088.212828,
+  "C_V01_preserved": true,
+  "C_HPO_repeated": false,
+  "C06_source_selection_sha256": "8b1df58783bb693ee2f3a4c36a186a6d05ddc74da246b532f091875e562f4fdf",
+  "C06_full_precision": {
+    "lr0": 0.000888131352250591,
+    "weight_decay": 0.0008730658008775225,
+    "lrf": 0.13119036537141066,
+    "warmup_epochs": 4.486041867303101
+  },
+  "V02_root": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01",
+  "target_O0_counts": {
+    "total": 5250,
+    "train": 3750,
+    "val": 750,
+    "test": 750
+  },
+  "additional_C100": 840,
+  "unique_final_train_jobs": 39,
+  "separate_GPU_smoke_jobs": 3,
+  "model_epochs": 7800,
+  "smoke_epochs": 6,
+  "seeds": [
+    42,
+    43,
+    44
+  ],
+  "sample_seed": 20261112,
+  "ratios": [
+    {
+      "name": "100:0",
+      "synthetic": 1250,
+      "real": 0
+    },
+    {
+      "name": "75:25",
+      "synthetic": 938,
+      "real": 312
+    },
+    {
+      "name": "50:50",
+      "synthetic": 625,
+      "real": 625
+    },
+    {
+      "name": "25:75",
+      "synthetic": 312,
+      "real": 938
+    },
+    {
+      "name": "0:100",
+      "synthetic": 0,
+      "real": 1250
+    }
+  ],
+  "checkpoint_policy": "maximum .5 own C-V02 Validation MaskAP + .5 real Validation MaskAP; ties earliest epoch",
+  "common_ratio_policy": "mean over3representations and3seeds; exact tie higher synthetic fraction",
+  "steps": [
+    "existing30occlusionQA",
+    "newC100capture",
+    "5250QA_split_lock",
+    "3smokes",
+    "9synthetic_models",
+    "27partial_mixture_models",
+    "3shared_real_training_trajectories",
+    "common_ratio_selection",
+    "9final_checkpoint_lock",
+    "selected_vs_synthetic_baseline_Test",
+    "RGBD_pose",
+    "ROBUST_A_compatibility",
+    "HOLD_physical_gates"
+  ],
+  "estimated_training_GPU_hours": [
+    12,
+    18
+  ],
+  "physical_motion_authorized": false,
+  "source_locks": {
+    "training": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/approved_training_capabilities_v01.json",
+    "static": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/approved_final_static_capabilities_v01.json"
+  },
+  "independent_data_families": 70,
+  "independent_Test_families": 10,
+  "shared_real_trajectory_checkpoints_can_differ_by_rep": true
+}
