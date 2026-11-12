@@ -1,10 +1,10 @@
 {
-  "updated": 1794488992.4556649,
+  "updated": 1794489296.8569505,
   "current_version": "C-V02",
   "physical_motion_authorized": false,
   "files": {
     "pipeline_status.json": {
-      "sha256": "78a28614015526a2e33bd3d8845fca2de0e693bfbf9f5a33818e818837a0b216",
+      "sha256": "21787cffea231776bd191424ad0d17f0bc1baf18ae5ab6875e28f492593f0f14",
       "content": {
         "state": "RUNNING",
         "stage": "V02_mixing_execute",
@@ -15,7 +15,7 @@
           "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01"
         },
         "controller_pid": 966660,
-        "updated": 1794488987.7618582,
+        "updated": 1794489293.2399697,
         "total_RGBD": 5250,
         "verified_RGBD": 5250,
         "new_C100_RGBD": 840,
@@ -24,10 +24,10 @@
       }
     },
     "watchdog_status.json": {
-      "sha256": "99f9636740615d861d1d9d4b16ddef43a5e9e3cf0d25d183a0ed644f85b196eb",
+      "sha256": "d0eb0fa0b4d71c752ed393d0b258e3a73328091c1188c70e89f107273512f6dd",
       "content": {
         "pid": 966658,
-        "updated": 1794488976.6858604,
+        "updated": 1794489280.4836109,
         "pipeline": {
           "state": "RUNNING",
           "stage": "V02_mixing_execute",
@@ -38,7 +38,7 @@
             "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01"
           },
           "controller_pid": 966660,
-          "updated": 1794488972.7298224,
+          "updated": 1794489278.185215,
           "total_RGBD": 5250,
           "verified_RGBD": 5250,
           "new_C100_RGBD": 840,
@@ -48,24 +48,24 @@
         "current_mixing": {
           "state": "RUNNING",
           "current": {
-            "job": "S100_R000_LR_Scan_s42",
-            "pid": 1156859,
-            "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/S100_R000_LR_Scan_s42.log",
-            "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S100_R000_LR_Scan_s42"
+            "job": "S100_R000_GeoCAD_s42",
+            "pid": 1187891,
+            "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/S100_R000_GeoCAD_s42.log",
+            "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S100_R000_GeoCAD_s42"
           },
           "controller_pid": 1121430,
-          "updated": 1794488971.1147068,
-          "elapsed_seconds": 2742.300318479538,
-          "training_complete": 1,
+          "updated": 1794489271.3388004,
+          "elapsed_seconds": 3042.5244121551514,
+          "training_complete": 2,
           "training_planned": 39,
           "physical_motion": false,
           "reason": null
         },
-        "current_epoch": 196,
+        "current_epoch": 38,
         "current_static": {},
-        "GPU": "64, 12695, 32607",
-        "free_disk_bytes": 113228554240,
-        "ntfy_pending": 2,
+        "GPU": "61, 12679, 32607",
+        "free_disk_bytes": 113161998336,
+        "ntfy_pending": 3,
         "physical_motion": false,
         "warnings": []
       }
@@ -421,17 +421,17 @@
       }
     },
     "mixing_execution_v01/status.json": {
-      "sha256": "3f37366c048f56860edd4a975a818a9c9c100618767074b37c36848d36fc491b",
+      "sha256": "55ceed48c241c1ad3dc1b4b5598333f909cd74c9ace32ef54a2322269d9e929e",
       "content": {
         "state": "RUNNING",
         "current": {
-          "job": "S100_R000_LR_Scan_s42",
-          "pid": 1156859,
-          "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/S100_R000_LR_Scan_s42.log",
-          "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S100_R000_LR_Scan_s42"
+          "job": "S100_R000_GeoCAD_s42",
+          "pid": 1187891,
+          "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/S100_R000_GeoCAD_s42.log",
+          "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S100_R000_GeoCAD_s42"
         },
         "controller_pid": 1121430,
-        "updated": 1794488991.1350813,
+        "updated": 1794489291.3480468,
         "jobs": {
           "SMOKE_S100_R000_HR_Scan_s42": {
             "state": "COMPLETED",
@@ -509,7 +509,7 @@
             "result_sha256": "499a1f93ebf2b4caca65e2ccf0526cf6cd8417b7962e41e9ba3b25efc2c5a35c"
           },
           "S100_R000_LR_Scan_s42": {
-            "state": "RUNNING",
+            "state": "COMPLETED",
             "smoke": false,
             "command": [
               "/home/user/anaconda3/envs/sdg_tools/bin/python",
@@ -523,11 +523,29 @@
               "--output",
               "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S100_R000_LR_Scan_s42"
             ],
-            "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S100_R000_LR_Scan_s42"
+            "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S100_R000_LR_Scan_s42",
+            "result_sha256": "00c030c65cd526d86c41627d8d7f48775cce70786b247113739b18a31eac64b8"
+          },
+          "S100_R000_GeoCAD_s42": {
+            "state": "RUNNING",
+            "smoke": false,
+            "command": [
+              "/home/user/anaconda3/envs/sdg_tools/bin/python",
+              "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_mixed_train_20261112_v01.py",
+              "--ratio",
+              "S100_R000",
+              "--rep",
+              "GeoCAD",
+              "--seed",
+              "42",
+              "--output",
+              "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S100_R000_GeoCAD_s42"
+            ],
+            "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S100_R000_GeoCAD_s42"
           }
         },
-        "elapsed_seconds": 2762.3206930160522,
-        "training_complete": 1,
+        "elapsed_seconds": 3062.533658027649,
+        "training_complete": 2,
         "training_planned": 39,
         "physical_motion": false,
         "reason": null
