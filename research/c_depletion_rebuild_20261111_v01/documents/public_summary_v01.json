@@ -1,5 +1,5 @@
 {
-  "updated": 1794505738.2059817,
+  "updated": 1794506042.6154597,
   "files": {
     "policy.json": {
       "sha256": "58194180bd7c8b315361c43ca4c39ee6b77e6dc51bf9e2ce085a9f9df5d59847",
@@ -750,11 +750,11 @@
       }
     },
     "observer_status.json": {
-      "sha256": "fafc8045ae83fd9900d941d78e7ffac1fbf1dc1b110d9eca325b1fee0ff42bec",
+      "sha256": "036146a3531f986f6653d7b9d2425993d8133c741470a748f028a45b3f5b3a94",
       "data": {
         "state": "WAITING_FINAL_FROZEN_MODEL_STATIC",
         "pid": 995698,
-        "updated": 1794505716.7958865,
+        "updated": 1794506016.8376088,
         "physical_motion": false
       }
     }
