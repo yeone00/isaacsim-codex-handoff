@@ -1,0 +1,11 @@
+{
+  "created": 1794469943.59066,
+  "scope": "evaluation only; no retraining; original failures preserved",
+  "code_sha256": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_hpo_validation_repair_worker_20261112_v01.py": "a622913f13d2385e50914928f186590da28278ec7730f70aa0baa134d07a59d0",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_hpo_validation_repair_controller_20261112_v01.py": "5da69374b21ad84ddb48b0d493917919329ef6b2011d91bd9d494d9de6dcf34f",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_post_hpo_static_20261112_v03.py": "9a6ac6c8023decf4d7e4cb6d00b1b6c97f7e95559dc5264c836a4f73c04cf935"
+  },
+  "original_selection_sha256": "8b1df58783bb693ee2f3a4c36a186a6d05ddc74da246b532f091875e562f4fdf",
+  "physical_motion_authorized": false
+}

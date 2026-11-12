@@ -1,0 +1,35 @@
+[
+  {
+    "rep": "HR_Scan",
+    "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_HR_Scan_s42_a01/train/weights/best_val_maskmAP5095.pt",
+    "EMA_parameter_dtypes": [
+      "torch.float16"
+    ],
+    "stored_epoch_EMA_abs_sum": 69768.26561162874,
+    "reloaded_saved_EMA_abs_sum": 69768.28083437681,
+    "abs_sum_difference": 0.01522274807211943,
+    "epoch_metric": 0.9428226306356432
+  },
+  {
+    "rep": "LR_Scan",
+    "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_LR_Scan_s42_a01/train/weights/best_val_maskmAP5095.pt",
+    "EMA_parameter_dtypes": [
+      "torch.float16"
+    ],
+    "stored_epoch_EMA_abs_sum": 71990.60880343997,
+    "reloaded_saved_EMA_abs_sum": 71990.65297323465,
+    "abs_sum_difference": 0.044169794680783525,
+    "epoch_metric": 0.9318487993017541
+  },
+  {
+    "rep": "GeoCAD",
+    "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_GeoCAD_s42_a01/train/weights/best_val_maskmAP5095.pt",
+    "EMA_parameter_dtypes": [
+      "torch.float16"
+    ],
+    "stored_epoch_EMA_abs_sum": 72723.18162415289,
+    "reloaded_saved_EMA_abs_sum": 72723.20034617186,
+    "abs_sum_difference": 0.01872201896912884,
+    "epoch_metric": 0.9552234838849172
+  }
+]

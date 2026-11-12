@@ -1,0 +1,243 @@
+{
+  "state": "PASS_CHECKPOINT_REPRODUCTION_AND_BITMAP_CONTRACT",
+  "cases": [
+    {
+      "rep": "HR_Scan",
+      "same_checkpoint_repeat_exact": true,
+      "own": {
+        "state": "COMPLETED",
+        "validation_rep": "HR_Scan",
+        "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_HR_Scan_s42_a01/train/weights/best_val_maskmAP5095.pt",
+        "checkpoint_sha256": "60a5535311d32d0389a48e119c7a6d10e8cb39dda0d1a446b0689c53336fe6f2",
+        "mask_map5095": 0.8875189758513052,
+        "mask_map50": 0.995,
+        "box_map5095": 0.9314926031838473,
+        "images": 12,
+        "instances": 48,
+        "Test_used": false,
+        "secondary_only": true,
+        "training_performed": false,
+        "settings": {
+          "mask_ratio": 4,
+          "overlap_mask": false,
+          "augment": false,
+          "rect": true,
+          "validation_batch": 128,
+          "training_batch_unchanged": 64,
+          "conf": 0.001,
+          "iou": 0.7,
+          "max_det": 300,
+          "inference_precision": "native training validation float32 EMA weights with CUDA autocast16; loaded checkpoint float16 EMA rounded when originally saved",
+          "fuse": false,
+          "bitmap_source": "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_bitmap_adapter_20261112_v01.py",
+          "transforms": [
+            "BitmapLetterBox",
+            "BitmapFormat"
+          ]
+        },
+        "elapsed_seconds": 0.8390326499938965
+      },
+      "cross": {
+        "state": "COMPLETED",
+        "validation_rep": "LR_Scan",
+        "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_HR_Scan_s42_a01/train/weights/best_val_maskmAP5095.pt",
+        "checkpoint_sha256": "60a5535311d32d0389a48e119c7a6d10e8cb39dda0d1a446b0689c53336fe6f2",
+        "mask_map5095": 0.6408496997266369,
+        "mask_map50": 0.9937755102040816,
+        "box_map5095": 0.7754488148122501,
+        "images": 12,
+        "instances": 48,
+        "Test_used": false,
+        "secondary_only": true,
+        "training_performed": false,
+        "settings": {
+          "mask_ratio": 4,
+          "overlap_mask": false,
+          "augment": false,
+          "rect": true,
+          "validation_batch": 128,
+          "training_batch_unchanged": 64,
+          "conf": 0.001,
+          "iou": 0.7,
+          "max_det": 300,
+          "inference_precision": "native training validation float32 EMA weights with CUDA autocast16; loaded checkpoint float16 EMA rounded when originally saved",
+          "fuse": false,
+          "bitmap_source": "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_bitmap_adapter_20261112_v01.py",
+          "transforms": [
+            "BitmapLetterBox",
+            "BitmapFormat"
+          ]
+        },
+        "elapsed_seconds": 0.8315238952636719
+      }
+    },
+    {
+      "rep": "LR_Scan",
+      "same_checkpoint_repeat_exact": true,
+      "own": {
+        "state": "COMPLETED",
+        "validation_rep": "LR_Scan",
+        "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_LR_Scan_s42_a01/train/weights/best_val_maskmAP5095.pt",
+        "checkpoint_sha256": "1e10488da667771104572a39f062e9823e656ab5da955d9647057fb6ff6cfefd",
+        "mask_map5095": 0.8625491935347644,
+        "mask_map50": 0.9907878787878786,
+        "box_map5095": 0.9230904603700951,
+        "images": 12,
+        "instances": 48,
+        "Test_used": false,
+        "secondary_only": true,
+        "training_performed": false,
+        "settings": {
+          "mask_ratio": 4,
+          "overlap_mask": false,
+          "augment": false,
+          "rect": true,
+          "validation_batch": 128,
+          "training_batch_unchanged": 64,
+          "conf": 0.001,
+          "iou": 0.7,
+          "max_det": 300,
+          "inference_precision": "native training validation float32 EMA weights with CUDA autocast16; loaded checkpoint float16 EMA rounded when originally saved",
+          "fuse": false,
+          "bitmap_source": "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_bitmap_adapter_20261112_v01.py",
+          "transforms": [
+            "BitmapLetterBox",
+            "BitmapFormat"
+          ]
+        },
+        "elapsed_seconds": 0.836881160736084
+      },
+      "cross": {
+        "state": "COMPLETED",
+        "validation_rep": "GeoCAD",
+        "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_LR_Scan_s42_a01/train/weights/best_val_maskmAP5095.pt",
+        "checkpoint_sha256": "1e10488da667771104572a39f062e9823e656ab5da955d9647057fb6ff6cfefd",
+        "mask_map5095": 0.4946281156997987,
+        "mask_map50": 0.8971375456694607,
+        "box_map5095": 0.7928422007630294,
+        "images": 12,
+        "instances": 48,
+        "Test_used": false,
+        "secondary_only": true,
+        "training_performed": false,
+        "settings": {
+          "mask_ratio": 4,
+          "overlap_mask": false,
+          "augment": false,
+          "rect": true,
+          "validation_batch": 128,
+          "training_batch_unchanged": 64,
+          "conf": 0.001,
+          "iou": 0.7,
+          "max_det": 300,
+          "inference_precision": "native training validation float32 EMA weights with CUDA autocast16; loaded checkpoint float16 EMA rounded when originally saved",
+          "fuse": false,
+          "bitmap_source": "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_bitmap_adapter_20261112_v01.py",
+          "transforms": [
+            "BitmapLetterBox",
+            "BitmapFormat"
+          ]
+        },
+        "elapsed_seconds": 0.8479459285736084
+      }
+    },
+    {
+      "rep": "GeoCAD",
+      "same_checkpoint_repeat_exact": true,
+      "own": {
+        "state": "COMPLETED",
+        "validation_rep": "GeoCAD",
+        "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_GeoCAD_s42_a01/train/weights/best_val_maskmAP5095.pt",
+        "checkpoint_sha256": "9703c4f9eda34a9ad8080eb852cfdd8bd4c2eb31ceb01a79a8001779894aaacb",
+        "mask_map5095": 0.8835244881817127,
+        "mask_map50": 0.995,
+        "box_map5095": 0.9526982125686262,
+        "images": 12,
+        "instances": 48,
+        "Test_used": false,
+        "secondary_only": true,
+        "training_performed": false,
+        "settings": {
+          "mask_ratio": 4,
+          "overlap_mask": false,
+          "augment": false,
+          "rect": true,
+          "validation_batch": 128,
+          "training_batch_unchanged": 64,
+          "conf": 0.001,
+          "iou": 0.7,
+          "max_det": 300,
+          "inference_precision": "native training validation float32 EMA weights with CUDA autocast16; loaded checkpoint float16 EMA rounded when originally saved",
+          "fuse": false,
+          "bitmap_source": "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_bitmap_adapter_20261112_v01.py",
+          "transforms": [
+            "BitmapLetterBox",
+            "BitmapFormat"
+          ]
+        },
+        "elapsed_seconds": 0.8332676887512207
+      },
+      "cross": {
+        "state": "COMPLETED",
+        "validation_rep": "HR_Scan",
+        "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_GeoCAD_s42_a01/train/weights/best_val_maskmAP5095.pt",
+        "checkpoint_sha256": "9703c4f9eda34a9ad8080eb852cfdd8bd4c2eb31ceb01a79a8001779894aaacb",
+        "mask_map5095": 0.7526049402792248,
+        "mask_map50": 0.9702797478329392,
+        "box_map5095": 0.875744771681408,
+        "images": 12,
+        "instances": 48,
+        "Test_used": false,
+        "secondary_only": true,
+        "training_performed": false,
+        "settings": {
+          "mask_ratio": 4,
+          "overlap_mask": false,
+          "augment": false,
+          "rect": true,
+          "validation_batch": 128,
+          "training_batch_unchanged": 64,
+          "conf": 0.001,
+          "iou": 0.7,
+          "max_det": 300,
+          "inference_precision": "native training validation float32 EMA weights with CUDA autocast16; loaded checkpoint float16 EMA rounded when originally saved",
+          "fuse": false,
+          "bitmap_source": "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_bitmap_adapter_20261112_v01.py",
+          "transforms": [
+            "BitmapLetterBox",
+            "BitmapFormat"
+          ]
+        },
+        "elapsed_seconds": 0.8335046768188477
+      }
+    }
+  ],
+  "own_full_comparison": [
+    {
+      "rep": "HR_Scan",
+      "training_epoch_metric": 0.9428226306356432,
+      "checkpoint_revalidation_metric": 0.9429968418202058,
+      "difference": 0.00017421118456262263,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_HR_Scan_s42_a01/train/weights/best_val_maskmAP5095.pt",
+      "checkpoint_sha256": "60a5535311d32d0389a48e119c7a6d10e8cb39dda0d1a446b0689c53336fe6f2"
+    },
+    {
+      "rep": "LR_Scan",
+      "training_epoch_metric": 0.9318487993017541,
+      "checkpoint_revalidation_metric": 0.9318671442018951,
+      "difference": 1.8344900140965237e-05,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_LR_Scan_s42_a01/train/weights/best_val_maskmAP5095.pt",
+      "checkpoint_sha256": "1e10488da667771104572a39f062e9823e656ab5da955d9647057fb6ff6cfefd"
+    },
+    {
+      "rep": "GeoCAD",
+      "training_epoch_metric": 0.9552234838849172,
+      "checkpoint_revalidation_metric": 0.9540508061507428,
+      "difference": -0.0011726777341743988,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_GeoCAD_s42_a01/train/weights/best_val_maskmAP5095.pt",
+      "checkpoint_sha256": "9703c4f9eda34a9ad8080eb852cfdd8bd4c2eb31ceb01a79a8001779894aaacb"
+    }
+  ],
+  "epoch_exact_reproduction": "Not claimed: saved EMA is FP16, training validation used FP32 EMA under autocast. Original precision provenance and metric differences preserved; no threshold/selection change.",
+  "test_access": false
+}

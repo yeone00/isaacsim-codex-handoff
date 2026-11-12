@@ -1,0 +1,22 @@
+{
+  "state": "COMPLETED",
+  "controller_pid": 699911,
+  "completed_training_jobs": 57,
+  "crossval_completed": 24,
+  "current": {},
+  "recovery_root": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01",
+  "original_failed_attempts_preserved": 24,
+  "selection": {
+    "candidate_id": 6,
+    "params": {
+      "lr0": 0.000888131352250591,
+      "weight_decay": 0.0008730658008775225,
+      "lrf": 0.13119036537141066,
+      "warmup_epochs": 4.486041867303101
+    },
+    "score": 0.9432983046074382,
+    "rule": "200epoch own-validation mask-only mean; ties lowest candidate id; no Test",
+    "protocol_sha256": "e29a63be4eb45d6acc7bee602270920cacfa8f0fa528f67026008633457efa08"
+  },
+  "updated": 1794470246.3051014
+}
