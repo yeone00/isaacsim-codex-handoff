@@ -9,7 +9,7 @@
     "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/C_COMMON_HPO_BITMAP_attempt_v01.log"
   },
   "reason": null,
-  "updated": 1794453216.590126,
+  "updated": 1794453526.8209534,
   "generated_RGBD": 4410,
   "declared_RGBD": 4410,
   "completed_jobs": 210,
@@ -17,11 +17,11 @@
   "prior_failure_preserved": "C_DATASET_QA_PACKAGE",
   "physical_motion_authorized": false,
   "physical_runs_started": 0,
-  "elapsed_seconds": 9528.18902683258,
+  "elapsed_seconds": 9838.419854402542,
   "C_HPO": {
     "state": "RUNNING",
     "reason": null,
-    "updated": "2026-11-12T12:13:26.632458+09:00",
+    "updated": "2026-11-12T12:18:36.819443+09:00",
     "controller_pid": 106572,
     "session": "c_common_hpo_20261111_v01",
     "total_candidates": 12,
@@ -32,30 +32,31 @@
       "FAILED": 0
     },
     "current": {
-      "key": "screen_C11_LR_Scan_s42",
-      "pid": 311288,
-      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/screen_C11_LR_Scan_s42_a01",
+      "key": "screen_C11_GeoCAD_s42",
+      "pid": 317840,
+      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/screen_C11_GeoCAD_s42_a01",
       "phase": "screen",
       "candidate_id": 11,
-      "rep": "LR_Scan",
+      "rep": "GeoCAD",
       "seed": 42,
-      "epoch": 0
+      "epoch": 5,
+      "latest_validation_mask_map5095": 0.44752825133549623
     },
     "best_candidate": [
       0.9393577593351282,
       0
     ],
     "best_score_phase": "screen",
-    "completed_training_jobs": 37,
+    "completed_training_jobs": 38,
     "job_counts": {
-      "COMPLETED": 37,
+      "COMPLETED": 38,
       "RUNNING": 1,
       "FAILED": 0,
       "INTERRUPTED": 0
     },
     "max_training_jobs": 57,
     "max_model_epochs": 5766,
-    "wall_seconds_this_controller": 9518.205236673355,
+    "wall_seconds_this_controller": 9828.392207622528,
     "test_used": false,
     "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
   }
