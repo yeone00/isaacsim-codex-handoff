@@ -9,7 +9,7 @@
     "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/C_COMMON_HPO_BITMAP_attempt_v01.log"
   },
   "reason": null,
-  "updated": 1794457169.611861,
+  "updated": 1794457409.7923791,
   "generated_RGBD": 4410,
   "declared_RGBD": 4410,
   "completed_jobs": 210,
@@ -17,11 +17,11 @@
   "prior_failure_preserved": "C_DATASET_QA_PACKAGE",
   "physical_motion_authorized": false,
   "physical_runs_started": 0,
-  "elapsed_seconds": 13481.210762262344,
+  "elapsed_seconds": 13721.391280412674,
   "C_HPO": {
     "state": "RUNNING",
     "reason": null,
-    "updated": "2026-11-12T13:19:19.598559+09:00",
+    "updated": "2026-11-12T13:23:19.794701+09:00",
     "controller_pid": 106572,
     "session": "c_common_hpo_20261111_v01",
     "total_candidates": 12,
@@ -32,31 +32,31 @@
       "FAILED": 0
     },
     "current": {
-      "key": "full_C06_HR_Scan_s42",
-      "pid": 384571,
-      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_HR_Scan_s42_a01",
+      "key": "full_C06_LR_Scan_s42",
+      "pid": 404563,
+      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_LR_Scan_s42_a01",
       "phase": "full",
       "candidate_id": 6,
-      "rep": "HR_Scan",
+      "rep": "LR_Scan",
       "seed": 42,
-      "epoch": 189,
-      "latest_validation_mask_map5095": 0.9350880723580619
+      "epoch": 42,
+      "latest_validation_mask_map5095": 0.8849503107887691
     },
     "best_candidate": [
       0.9428732787943074,
       0
     ],
     "best_score_phase": "full",
-    "completed_training_jobs": 42,
+    "completed_training_jobs": 43,
     "job_counts": {
-      "COMPLETED": 42,
+      "COMPLETED": 43,
       "RUNNING": 1,
       "FAILED": 0,
       "INTERRUPTED": 0
     },
     "max_training_jobs": 57,
     "max_model_epochs": 5766,
-    "wall_seconds_this_controller": 13471.171308994293,
+    "wall_seconds_this_controller": 13711.367481470108,
     "test_used": false,
     "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
   }
