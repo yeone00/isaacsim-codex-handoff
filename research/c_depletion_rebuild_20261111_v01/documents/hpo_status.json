@@ -1,7 +1,7 @@
 {
   "state": "RUNNING",
   "reason": null,
-  "updated": "2026-11-12T15:51:37.272658+09:00",
+  "updated": "2026-11-12T15:56:37.490313+09:00",
   "controller_pid": 106572,
   "session": "c_common_hpo_20261111_v01",
   "total_candidates": 12,
@@ -19,8 +19,8 @@
     "candidate_id": 6,
     "rep": "GeoCAD",
     "seed": 43,
-    "epoch": 91,
-    "latest_validation_mask_map5095": 0.9386959533321513
+    "epoch": 162,
+    "latest_validation_mask_map5095": 0.9457621888433915
   },
   "best_candidate": [
     0.9432983046074382,
@@ -36,7 +36,7 @@
   },
   "max_training_jobs": 57,
   "max_model_epochs": 5766,
-  "wall_seconds_this_controller": 22608.845417022705,
+  "wall_seconds_this_controller": 22909.063071250916,
   "test_used": false,
   "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
 }
