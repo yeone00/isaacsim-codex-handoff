@@ -1,45 +1,55 @@
 {
-  "updated": 1794480474.9708583,
+  "updated": 1794480779.2892694,
   "current_version": "C-V02",
   "physical_motion_authorized": false,
   "files": {
     "pipeline_status.json": {
-      "sha256": "a39eb95295f7310a97c429df5689355887108217a91c69cf9bf363675dfabd90",
+      "sha256": "4971e6484c8de59c3e89dfaaa705a9d67f70882801108d1058bdbe1eaf661266",
       "content": {
-        "state": "HOLD",
-        "stage": "V02",
-        "current": {},
-        "controller_pid": 910996,
-        "updated": 1794480046.3351896,
+        "state": "RUNNING",
+        "stage": "C100_HR_Scan_200",
+        "current": {
+          "job": "C100_HR_Scan_200",
+          "pid": 971457,
+          "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/execution_v01/logs/C100_HR_Scan_200.log",
+          "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/execution_v01/capture/C100_HR_Scan_200"
+        },
+        "controller_pid": 966660,
+        "updated": 1794480777.7509558,
         "total_RGBD": 5250,
-        "verified_RGBD": 4590,
-        "new_C100_RGBD": 180,
+        "verified_RGBD": 4610,
+        "new_C100_RGBD": 200,
         "physical_motion_authorized": false,
-        "reason": "[Errno 11] Resource temporarily unavailable"
+        "reason": null
       }
     },
     "watchdog_status.json": {
-      "sha256": "2239aa2935056876c5e1fecf824ee4ff30d57870f6d74bb91a3bbe9797f9d004",
+      "sha256": "f7176ea64024e5df566ae443bfc05e730ae5d8ba8fb54bb3ea4e570977419a8d",
       "content": {
-        "pid": 938963,
-        "updated": 1794480467.4054034,
+        "pid": 966658,
+        "updated": 1794480754.6966329,
         "pipeline": {
-          "state": "HOLD",
-          "stage": "V02",
-          "current": {},
-          "controller_pid": 910996,
-          "updated": 1794480046.3351896,
+          "state": "RUNNING",
+          "stage": "C100_HR_Scan_200",
+          "current": {
+            "job": "C100_HR_Scan_200",
+            "pid": 971457,
+            "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/execution_v01/logs/C100_HR_Scan_200.log",
+            "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/execution_v01/capture/C100_HR_Scan_200"
+          },
+          "controller_pid": 966660,
+          "updated": 1794480752.6859658,
           "total_RGBD": 5250,
-          "verified_RGBD": 4590,
-          "new_C100_RGBD": 180,
+          "verified_RGBD": 4610,
+          "new_C100_RGBD": 200,
           "physical_motion_authorized": false,
-          "reason": "[Errno 11] Resource temporarily unavailable"
+          "reason": null
         },
         "current_mixing": {},
         "current_epoch": null,
         "current_static": {},
-        "GPU": "5, 932, 32607",
-        "free_disk_bytes": 115032481792,
+        "GPU": "46, 4852, 32607",
+        "free_disk_bytes": 114989117440,
         "ntfy_pending": 0,
         "physical_motion": false,
         "warnings": []
