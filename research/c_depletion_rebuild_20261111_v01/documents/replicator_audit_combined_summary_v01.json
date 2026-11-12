@@ -1,0 +1,1414 @@
+{
+  "replicator_output_audit_v01": {
+    "state": "PASS_SAVED_ARTIFACT_CHECKS_ROOT_CAUSE_UNRESOLVED",
+    "counts": {
+      "captures_checked": 4410,
+      "instance_pairs_checked": 13986,
+      "sampled_depth_enclosure_outlier_instances": 585
+    },
+    "flagged_captures": 0,
+    "flag_types": {},
+    "exception_count": 26370,
+    "exception_phase_counts": {
+      "before_actual_mask_write": 19544,
+      "between_actual_and_canonical_write": 6373,
+      "after_canonical_write_or_boundary": 450,
+      "startup_or_scene_boundary": 3
+    },
+    "logger_precision_seconds": 1,
+    "exact_render_frame_or_buffer_generation_ids_saved": false,
+    "RGB_depth_gt_exact_same_frame_proof": "UNKNOWN: raw render frame counters and full uint32 ID buffers were not retained",
+    "independent_geometry_check": "Canonical masks must be within projected retained Bundle5 boxes, 2-pixel boundary allowance diagnostic. Actual depth sampled128points/instance enclosure +5mm diagnostic, not a changed training/success threshold.",
+    "renderer_exception_root_cause": "legacy instance annotator warp numpy conversion, precise incompatible buffer/shape condition unresolved; does not independently assert harmlessness",
+    "physical_motion": 0,
+    "GPU_used": false,
+    "elapsed_seconds": 159.89449787139893,
+    "source_sha256": "b12c85e1ceb87047f6b34168361e51d11a0f8d5d878f13a23c65255acb1982bf"
+  },
+  "replicator_exception_timing_v01": {
+    "state": "TIMING_RECONSTRUCTION_COMPLETED",
+    "exceptions": 26370,
+    "per_scene_exception_count_histogram": {
+      "6": 4395
+    },
+    "phase_by_file_writes": {
+      "before_actual_mask_file": 26370
+    },
+    "max_time_uncertainty_s": 0.03600001335144043,
+    "bounds": [
+      {
+        "log": "capture_CDEP_B1R_TRN_000027_GeoCAD.log",
+        "origin_low": 1794408743.157,
+        "origin_high": 1794408743.159,
+        "uncertainty_seconds": 0.0019998550415039062
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000027_HR_Scan.log",
+        "origin_low": 1794408532.918,
+        "origin_high": 1794408532.936,
+        "uncertainty_seconds": 0.018000125885009766
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000027_LR_Scan.log",
+        "origin_low": 1794408632.991,
+        "origin_high": 1794408632.998,
+        "uncertainty_seconds": 0.006999969482421875
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000040_GeoCAD.log",
+        "origin_low": 1794409163.597,
+        "origin_high": 1794409163.602,
+        "uncertainty_seconds": 0.005000114440917969
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000040_HR_Scan.log",
+        "origin_low": 1794408843.291,
+        "origin_high": 1794408843.292,
+        "uncertainty_seconds": 0.0010001659393310547
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000040_LR_Scan.log",
+        "origin_low": 1794409003.439,
+        "origin_high": 1794409003.443,
+        "uncertainty_seconds": 0.004000186920166016
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000138_GeoCAD.log",
+        "origin_low": 1794409604.149,
+        "origin_high": 1794409604.15,
+        "uncertainty_seconds": 0.0010001659393310547
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000138_HR_Scan.log",
+        "origin_low": 1794409323.805,
+        "origin_high": 1794409323.822,
+        "uncertainty_seconds": 0.01699995994567871
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000138_LR_Scan.log",
+        "origin_low": 1794409463.93,
+        "origin_high": 1794409463.94,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000208_GeoCAD.log",
+        "origin_low": 1794410004.534,
+        "origin_high": 1794410004.545,
+        "uncertainty_seconds": 0.01100015640258789
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000208_HR_Scan.log",
+        "origin_low": 1794409744.253,
+        "origin_high": 1794409744.264,
+        "uncertainty_seconds": 0.010999917984008789
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000208_LR_Scan.log",
+        "origin_low": 1794409874.449,
+        "origin_high": 1794409874.458,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000231_GeoCAD.log",
+        "origin_low": 1794410455.109,
+        "origin_high": 1794410455.112,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000231_HR_Scan.log",
+        "origin_low": 1794410134.706,
+        "origin_high": 1794410134.717,
+        "uncertainty_seconds": 0.010999917984008789
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000231_LR_Scan.log",
+        "origin_low": 1794410294.926,
+        "origin_high": 1794410294.947,
+        "uncertainty_seconds": 0.020999908447265625
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000249_GeoCAD.log",
+        "origin_low": 1794410895.613,
+        "origin_high": 1794410895.621,
+        "uncertainty_seconds": 0.00800013542175293
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000249_HR_Scan.log",
+        "origin_low": 1794410615.338,
+        "origin_high": 1794410615.343,
+        "uncertainty_seconds": 0.004999876022338867
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000249_LR_Scan.log",
+        "origin_low": 1794410755.48,
+        "origin_high": 1794410755.489,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000299_GeoCAD.log",
+        "origin_low": 1794411366.269,
+        "origin_high": 1794411366.272,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000299_HR_Scan.log",
+        "origin_low": 1794411045.807,
+        "origin_high": 1794411045.816,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000299_LR_Scan.log",
+        "origin_low": 1794411206.027,
+        "origin_high": 1794411206.029,
+        "uncertainty_seconds": 0.002000093460083008
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000309_GeoCAD.log",
+        "origin_low": 1794411826.888,
+        "origin_high": 1794411826.889,
+        "uncertainty_seconds": 0.0009999275207519531
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000309_HR_Scan.log",
+        "origin_low": 1794411536.48,
+        "origin_high": 1794411536.486,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000309_LR_Scan.log",
+        "origin_low": 1794411686.684,
+        "origin_high": 1794411686.689,
+        "uncertainty_seconds": 0.004999876022338867
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000337_GeoCAD.log",
+        "origin_low": 1794412257.558,
+        "origin_high": 1794412257.579,
+        "uncertainty_seconds": 0.020999908447265625
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000337_HR_Scan.log",
+        "origin_low": 1794411977.102,
+        "origin_high": 1794411977.108,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000337_LR_Scan.log",
+        "origin_low": 1794412117.32,
+        "origin_high": 1794412117.335,
+        "uncertainty_seconds": 0.015000104904174805
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000342_GeoCAD.log",
+        "origin_low": 1794412738.235,
+        "origin_high": 1794412738.237,
+        "uncertainty_seconds": 0.002000093460083008
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000342_HR_Scan.log",
+        "origin_low": 1794412397.736,
+        "origin_high": 1794412397.767,
+        "uncertainty_seconds": 0.03099989891052246
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000342_LR_Scan.log",
+        "origin_low": 1794412567.998,
+        "origin_high": 1794412567.999,
+        "uncertainty_seconds": 0.0010001659393310547
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000352_GeoCAD.log",
+        "origin_low": 1794413258.971,
+        "origin_high": 1794413258.972,
+        "uncertainty_seconds": 0.0009999275207519531
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000352_HR_Scan.log",
+        "origin_low": 1794412918.501,
+        "origin_high": 1794412918.506,
+        "uncertainty_seconds": 0.005000114440917969
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000352_LR_Scan.log",
+        "origin_low": 1794413088.765,
+        "origin_high": 1794413088.779,
+        "uncertainty_seconds": 0.01399993896484375
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000394_GeoCAD.log",
+        "origin_low": 1794413709.56,
+        "origin_high": 1794413709.569,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000394_HR_Scan.log",
+        "origin_low": 1794413429.19,
+        "origin_high": 1794413429.21,
+        "uncertainty_seconds": 0.019999980926513672
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000394_LR_Scan.log",
+        "origin_low": 1794413569.371,
+        "origin_high": 1794413569.377,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000425_GeoCAD.log",
+        "origin_low": 1794414190.206,
+        "origin_high": 1794414190.209,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000425_HR_Scan.log",
+        "origin_low": 1794413849.793,
+        "origin_high": 1794413849.793,
+        "uncertainty_seconds": 0.0
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000425_LR_Scan.log",
+        "origin_low": 1794414020.0,
+        "origin_high": 1794414020.01,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000480_GeoCAD.log",
+        "origin_low": 1794414620.812,
+        "origin_high": 1794414620.815,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000480_HR_Scan.log",
+        "origin_low": 1794414360.399,
+        "origin_high": 1794414360.403,
+        "uncertainty_seconds": 0.004000186920166016
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000480_LR_Scan.log",
+        "origin_low": 1794414490.63,
+        "origin_high": 1794414490.641,
+        "uncertainty_seconds": 0.010999917984008789
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000510_GeoCAD.log",
+        "origin_low": 1794415031.562,
+        "origin_high": 1794415031.572,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000510_HR_Scan.log",
+        "origin_low": 1794414751.059,
+        "origin_high": 1794414751.071,
+        "uncertainty_seconds": 0.012000083923339844
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000510_LR_Scan.log",
+        "origin_low": 1794414891.314,
+        "origin_high": 1794414891.326,
+        "uncertainty_seconds": 0.012000083923339844
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000698_GeoCAD.log",
+        "origin_low": 1794415512.315,
+        "origin_high": 1794415512.329,
+        "uncertainty_seconds": 0.01399993896484375
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000698_HR_Scan.log",
+        "origin_low": 1794415171.8,
+        "origin_high": 1794415171.812,
+        "uncertainty_seconds": 0.012000083923339844
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000698_LR_Scan.log",
+        "origin_low": 1794415342.038,
+        "origin_high": 1794415342.067,
+        "uncertainty_seconds": 0.028999805450439453
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000712_GeoCAD.log",
+        "origin_low": 1794415953.028,
+        "origin_high": 1794415953.034,
+        "uncertainty_seconds": 0.00599980354309082
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000712_HR_Scan.log",
+        "origin_low": 1794415692.637,
+        "origin_high": 1794415692.645,
+        "uncertainty_seconds": 0.007999897003173828
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000712_LR_Scan.log",
+        "origin_low": 1794415822.807,
+        "origin_high": 1794415822.814,
+        "uncertainty_seconds": 0.006999969482421875
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000752_GeoCAD.log",
+        "origin_low": 1794416423.816,
+        "origin_high": 1794416423.824,
+        "uncertainty_seconds": 0.007999897003173828
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000752_HR_Scan.log",
+        "origin_low": 1794416083.244,
+        "origin_high": 1794416083.253,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000752_LR_Scan.log",
+        "origin_low": 1794416253.522,
+        "origin_high": 1794416253.527,
+        "uncertainty_seconds": 0.004999876022338867
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000753_GeoCAD.log",
+        "origin_low": 1794416914.515,
+        "origin_high": 1794416914.525,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000753_HR_Scan.log",
+        "origin_low": 1794416604.115,
+        "origin_high": 1794416604.122,
+        "uncertainty_seconds": 0.006999969482421875
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000753_LR_Scan.log",
+        "origin_low": 1794416764.314,
+        "origin_high": 1794416764.321,
+        "uncertainty_seconds": 0.0070002079010009766
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000795_GeoCAD.log",
+        "origin_low": 1794417385.305,
+        "origin_high": 1794417385.328,
+        "uncertainty_seconds": 0.023000001907348633
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000795_HR_Scan.log",
+        "origin_low": 1794417064.739,
+        "origin_high": 1794417064.753,
+        "uncertainty_seconds": 0.01399993896484375
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000795_LR_Scan.log",
+        "origin_low": 1794417225.028,
+        "origin_high": 1794417225.037,
+        "uncertainty_seconds": 0.008999824523925781
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000815_GeoCAD.log",
+        "origin_low": 1794417846.048,
+        "origin_high": 1794417846.05,
+        "uncertainty_seconds": 0.0019998550415039062
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000815_HR_Scan.log",
+        "origin_low": 1794417545.575,
+        "origin_high": 1794417545.593,
+        "uncertainty_seconds": 0.017999887466430664
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000815_LR_Scan.log",
+        "origin_low": 1794417695.865,
+        "origin_high": 1794417695.877,
+        "uncertainty_seconds": 0.012000083923339844
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000845_GeoCAD.log",
+        "origin_low": 1794418276.678,
+        "origin_high": 1794418276.679,
+        "uncertainty_seconds": 0.0009999275207519531
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000845_HR_Scan.log",
+        "origin_low": 1794417996.305,
+        "origin_high": 1794417996.315,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000845_LR_Scan.log",
+        "origin_low": 1794418136.505,
+        "origin_high": 1794418136.517,
+        "uncertainty_seconds": 0.011999845504760742
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000889_GeoCAD.log",
+        "origin_low": 1794418687.381,
+        "origin_high": 1794418687.401,
+        "uncertainty_seconds": 0.019999980926513672
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000889_HR_Scan.log",
+        "origin_low": 1794418416.922,
+        "origin_high": 1794418416.924,
+        "uncertainty_seconds": 0.002000093460083008
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000889_LR_Scan.log",
+        "origin_low": 1794418557.113,
+        "origin_high": 1794418557.126,
+        "uncertainty_seconds": 0.013000011444091797
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000950_GeoCAD.log",
+        "origin_low": 1794419088.026,
+        "origin_high": 1794419088.043,
+        "uncertainty_seconds": 0.01699995994567871
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000950_HR_Scan.log",
+        "origin_low": 1794418827.635,
+        "origin_high": 1794418827.637,
+        "uncertainty_seconds": 0.002000093460083008
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000950_LR_Scan.log",
+        "origin_low": 1794418957.826,
+        "origin_high": 1794418957.832,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000953_GeoCAD.log",
+        "origin_low": 1794419558.841,
+        "origin_high": 1794419558.846,
+        "uncertainty_seconds": 0.004999876022338867
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000953_HR_Scan.log",
+        "origin_low": 1794419218.226,
+        "origin_high": 1794419218.234,
+        "uncertainty_seconds": 0.007999897003173828
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_000953_LR_Scan.log",
+        "origin_low": 1794419388.55,
+        "origin_high": 1794419388.56,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001050_GeoCAD.log",
+        "origin_low": 1794420039.688,
+        "origin_high": 1794420039.694,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001050_HR_Scan.log",
+        "origin_low": 1794419739.11,
+        "origin_high": 1794419739.113,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001050_LR_Scan.log",
+        "origin_low": 1794419889.346,
+        "origin_high": 1794419889.352,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001075_GeoCAD.log",
+        "origin_low": 1794420490.429,
+        "origin_high": 1794420490.441,
+        "uncertainty_seconds": 0.012000083923339844
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001075_HR_Scan.log",
+        "origin_low": 1794420189.909,
+        "origin_high": 1794420189.919,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001075_LR_Scan.log",
+        "origin_low": 1794420340.153,
+        "origin_high": 1794420340.163,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001121_GeoCAD.log",
+        "origin_low": 1794420971.16,
+        "origin_high": 1794420971.169,
+        "uncertainty_seconds": 0.008999824523925781
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001121_HR_Scan.log",
+        "origin_low": 1794420650.683,
+        "origin_high": 1794420650.693,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001121_LR_Scan.log",
+        "origin_low": 1794420810.861,
+        "origin_high": 1794420810.863,
+        "uncertainty_seconds": 0.0019998550415039062
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001141_GeoCAD.log",
+        "origin_low": 1794421451.859,
+        "origin_high": 1794421451.874,
+        "uncertainty_seconds": 0.015000104904174805
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001141_HR_Scan.log",
+        "origin_low": 1794421131.378,
+        "origin_high": 1794421131.384,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001141_LR_Scan.log",
+        "origin_low": 1794421291.622,
+        "origin_high": 1794421291.627,
+        "uncertainty_seconds": 0.005000114440917969
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001175_GeoCAD.log",
+        "origin_low": 1794421942.458,
+        "origin_high": 1794421942.459,
+        "uncertainty_seconds": 0.0010001659393310547
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001175_HR_Scan.log",
+        "origin_low": 1794421622.037,
+        "origin_high": 1794421622.041,
+        "uncertainty_seconds": 0.003999948501586914
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001175_LR_Scan.log",
+        "origin_low": 1794421782.226,
+        "origin_high": 1794421782.238,
+        "uncertainty_seconds": 0.011999845504760742
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001266_GeoCAD.log",
+        "origin_low": 1794422403.057,
+        "origin_high": 1794422403.06,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001266_HR_Scan.log",
+        "origin_low": 1794422102.633,
+        "origin_high": 1794422102.643,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001266_LR_Scan.log",
+        "origin_low": 1794422252.859,
+        "origin_high": 1794422252.868,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001320_GeoCAD.log",
+        "origin_low": 1794422873.931,
+        "origin_high": 1794422873.935,
+        "uncertainty_seconds": 0.003999948501586914
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001320_HR_Scan.log",
+        "origin_low": 1794422553.335,
+        "origin_high": 1794422553.357,
+        "uncertainty_seconds": 0.02200007438659668
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001320_LR_Scan.log",
+        "origin_low": 1794422713.648,
+        "origin_high": 1794422713.653,
+        "uncertainty_seconds": 0.005000114440917969
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001329_GeoCAD.log",
+        "origin_low": 1794423354.688,
+        "origin_high": 1794423354.705,
+        "uncertainty_seconds": 0.01699995994567871
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001329_HR_Scan.log",
+        "origin_low": 1794423034.236,
+        "origin_high": 1794423034.25,
+        "uncertainty_seconds": 0.01399993896484375
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001329_LR_Scan.log",
+        "origin_low": 1794423194.452,
+        "origin_high": 1794423194.464,
+        "uncertainty_seconds": 0.012000083923339844
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001359_GeoCAD.log",
+        "origin_low": 1794423835.441,
+        "origin_high": 1794423835.448,
+        "uncertainty_seconds": 0.006999969482421875
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001359_HR_Scan.log",
+        "origin_low": 1794423514.98,
+        "origin_high": 1794423514.995,
+        "uncertainty_seconds": 0.014999866485595703
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001359_LR_Scan.log",
+        "origin_low": 1794423675.23,
+        "origin_high": 1794423675.232,
+        "uncertainty_seconds": 0.002000093460083008
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001372_GeoCAD.log",
+        "origin_low": 1794424336.345,
+        "origin_high": 1794424336.37,
+        "uncertainty_seconds": 0.02499985694885254
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001372_HR_Scan.log",
+        "origin_low": 1794423995.717,
+        "origin_high": 1794423995.728,
+        "uncertainty_seconds": 0.010999917984008789
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001372_LR_Scan.log",
+        "origin_low": 1794424166.034,
+        "origin_high": 1794424166.061,
+        "uncertainty_seconds": 0.02700018882751465
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001451_GeoCAD.log",
+        "origin_low": 1794424817.159,
+        "origin_high": 1794424817.168,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001451_HR_Scan.log",
+        "origin_low": 1794424516.627,
+        "origin_high": 1794424516.635,
+        "uncertainty_seconds": 0.007999897003173828
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001451_LR_Scan.log",
+        "origin_low": 1794424666.866,
+        "origin_high": 1794424666.87,
+        "uncertainty_seconds": 0.003999948501586914
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001515_GeoCAD.log",
+        "origin_low": 1794425267.951,
+        "origin_high": 1794425267.96,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001515_HR_Scan.log",
+        "origin_low": 1794424967.378,
+        "origin_high": 1794424967.387,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001515_LR_Scan.log",
+        "origin_low": 1794425117.689,
+        "origin_high": 1794425117.697,
+        "uncertainty_seconds": 0.00800013542175293
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001562_GeoCAD.log",
+        "origin_low": 1794425678.636,
+        "origin_high": 1794425678.653,
+        "uncertainty_seconds": 0.017000198364257812
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001562_HR_Scan.log",
+        "origin_low": 1794425418.161,
+        "origin_high": 1794425418.168,
+        "uncertainty_seconds": 0.006999969482421875
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001562_LR_Scan.log",
+        "origin_low": 1794425548.433,
+        "origin_high": 1794425548.437,
+        "uncertainty_seconds": 0.003999948501586914
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001610_GeoCAD.log",
+        "origin_low": 1794426149.443,
+        "origin_high": 1794426149.466,
+        "uncertainty_seconds": 0.023000001907348633
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001610_HR_Scan.log",
+        "origin_low": 1794425808.857,
+        "origin_high": 1794425808.859,
+        "uncertainty_seconds": 0.0019998550415039062
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001610_LR_Scan.log",
+        "origin_low": 1794425979.137,
+        "origin_high": 1794425979.142,
+        "uncertainty_seconds": 0.004999876022338867
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001628_GeoCAD.log",
+        "origin_low": 1794426610.182,
+        "origin_high": 1794426610.189,
+        "uncertainty_seconds": 0.006999969482421875
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001628_HR_Scan.log",
+        "origin_low": 1794426319.701,
+        "origin_high": 1794426319.709,
+        "uncertainty_seconds": 0.00800013542175293
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001628_LR_Scan.log",
+        "origin_low": 1794426459.938,
+        "origin_high": 1794426459.944,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001647_GeoCAD.log",
+        "origin_low": 1794427060.929,
+        "origin_high": 1794427060.934,
+        "uncertainty_seconds": 0.005000114440917969
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001647_HR_Scan.log",
+        "origin_low": 1794426760.418,
+        "origin_high": 1794426760.428,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001647_LR_Scan.log",
+        "origin_low": 1794426910.679,
+        "origin_high": 1794426910.685,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001718_GeoCAD.log",
+        "origin_low": 1794427501.559,
+        "origin_high": 1794427501.562,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001718_HR_Scan.log",
+        "origin_low": 1794427221.118,
+        "origin_high": 1794427221.13,
+        "uncertainty_seconds": 0.012000083923339844
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001718_LR_Scan.log",
+        "origin_low": 1794427361.349,
+        "origin_high": 1794427361.35,
+        "uncertainty_seconds": 0.0009999275207519531
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001739_GeoCAD.log",
+        "origin_low": 1794427942.291,
+        "origin_high": 1794427942.303,
+        "uncertainty_seconds": 0.012000083923339844
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001739_HR_Scan.log",
+        "origin_low": 1794427641.766,
+        "origin_high": 1794427641.767,
+        "uncertainty_seconds": 0.0009999275207519531
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001739_LR_Scan.log",
+        "origin_low": 1794427792.046,
+        "origin_high": 1794427792.063,
+        "uncertainty_seconds": 0.01699995994567871
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001757_GeoCAD.log",
+        "origin_low": 1794428433.073,
+        "origin_high": 1794428433.079,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001757_HR_Scan.log",
+        "origin_low": 1794428092.539,
+        "origin_high": 1794428092.542,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001757_LR_Scan.log",
+        "origin_low": 1794428262.819,
+        "origin_high": 1794428262.819,
+        "uncertainty_seconds": 0.0
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001772_GeoCAD.log",
+        "origin_low": 1794428893.733,
+        "origin_high": 1794428893.737,
+        "uncertainty_seconds": 0.003999948501586914
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001772_HR_Scan.log",
+        "origin_low": 1794428613.325,
+        "origin_high": 1794428613.334,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001772_LR_Scan.log",
+        "origin_low": 1794428753.521,
+        "origin_high": 1794428753.527,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001792_GeoCAD.log",
+        "origin_low": 1794429334.478,
+        "origin_high": 1794429334.514,
+        "uncertainty_seconds": 0.03600001335144043
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001792_HR_Scan.log",
+        "origin_low": 1794429033.999,
+        "origin_high": 1794429034.0,
+        "uncertainty_seconds": 0.0009999275207519531
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001792_LR_Scan.log",
+        "origin_low": 1794429184.235,
+        "origin_high": 1794429184.24,
+        "uncertainty_seconds": 0.005000114440917969
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001800_GeoCAD.log",
+        "origin_low": 1794429825.068,
+        "origin_high": 1794429825.072,
+        "uncertainty_seconds": 0.003999948501586914
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001800_HR_Scan.log",
+        "origin_low": 1794429484.686,
+        "origin_high": 1794429484.692,
+        "uncertainty_seconds": 0.00599980354309082
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001800_LR_Scan.log",
+        "origin_low": 1794429654.894,
+        "origin_high": 1794429654.902,
+        "uncertainty_seconds": 0.007999897003173828
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001899_GeoCAD.log",
+        "origin_low": 1794430255.667,
+        "origin_high": 1794430255.674,
+        "uncertainty_seconds": 0.006999969482421875
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001899_HR_Scan.log",
+        "origin_low": 1794429995.246,
+        "origin_high": 1794429995.262,
+        "uncertainty_seconds": 0.016000032424926758
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001899_LR_Scan.log",
+        "origin_low": 1794430125.464,
+        "origin_high": 1794430125.472,
+        "uncertainty_seconds": 0.007999897003173828
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001962_GeoCAD.log",
+        "origin_low": 1794430646.305,
+        "origin_high": 1794430646.31,
+        "uncertainty_seconds": 0.004999876022338867
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001962_HR_Scan.log",
+        "origin_low": 1794430385.885,
+        "origin_high": 1794430385.891,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001962_LR_Scan.log",
+        "origin_low": 1794430516.06,
+        "origin_high": 1794430516.064,
+        "uncertainty_seconds": 0.003999948501586914
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001978_GeoCAD.log",
+        "origin_low": 1794431037.05,
+        "origin_high": 1794431037.065,
+        "uncertainty_seconds": 0.015000104904174805
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001978_HR_Scan.log",
+        "origin_low": 1794430776.533,
+        "origin_high": 1794430776.54,
+        "uncertainty_seconds": 0.006999969482421875
+      },
+      {
+        "log": "capture_CDEP_B1R_TRN_001978_LR_Scan.log",
+        "origin_low": 1794430906.812,
+        "origin_high": 1794430906.815,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000001_GeoCAD.log",
+        "origin_low": 1794431508.017,
+        "origin_high": 1794431508.031,
+        "uncertainty_seconds": 0.01399993896484375
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000001_HR_Scan.log",
+        "origin_low": 1794431167.33,
+        "origin_high": 1794431167.34,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000001_LR_Scan.log",
+        "origin_low": 1794431337.664,
+        "origin_high": 1794431337.671,
+        "uncertainty_seconds": 0.006999969482421875
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000005_GeoCAD.log",
+        "origin_low": 1794431998.909,
+        "origin_high": 1794431998.918,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000005_HR_Scan.log",
+        "origin_low": 1794431678.316,
+        "origin_high": 1794431678.321,
+        "uncertainty_seconds": 0.005000114440917969
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000005_LR_Scan.log",
+        "origin_low": 1794431838.562,
+        "origin_high": 1794431838.583,
+        "uncertainty_seconds": 0.020999908447265625
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000010_GeoCAD.log",
+        "origin_low": 1794432479.825,
+        "origin_high": 1794432479.83,
+        "uncertainty_seconds": 0.004999876022338867
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000010_HR_Scan.log",
+        "origin_low": 1794432159.254,
+        "origin_high": 1794432159.268,
+        "uncertainty_seconds": 0.01399993896484375
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000010_LR_Scan.log",
+        "origin_low": 1794432319.542,
+        "origin_high": 1794432319.545,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000013_GeoCAD.log",
+        "origin_low": 1794432960.604,
+        "origin_high": 1794432960.62,
+        "uncertainty_seconds": 0.015999794006347656
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000013_HR_Scan.log",
+        "origin_low": 1794432640.11,
+        "origin_high": 1794432640.128,
+        "uncertainty_seconds": 0.018000125885009766
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000013_LR_Scan.log",
+        "origin_low": 1794432800.4,
+        "origin_high": 1794432800.405,
+        "uncertainty_seconds": 0.004999876022338867
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000022_GeoCAD.log",
+        "origin_low": 1794433461.485,
+        "origin_high": 1794433461.496,
+        "uncertainty_seconds": 0.01100015640258789
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000022_HR_Scan.log",
+        "origin_low": 1794433120.91,
+        "origin_high": 1794433120.91,
+        "uncertainty_seconds": 0.0
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000022_LR_Scan.log",
+        "origin_low": 1794433291.219,
+        "origin_high": 1794433291.223,
+        "uncertainty_seconds": 0.003999948501586914
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000024_GeoCAD.log",
+        "origin_low": 1794433952.423,
+        "origin_high": 1794433952.434,
+        "uncertainty_seconds": 0.010999917984008789
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000024_HR_Scan.log",
+        "origin_low": 1794433631.815,
+        "origin_high": 1794433631.823,
+        "uncertainty_seconds": 0.007999897003173828
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000024_LR_Scan.log",
+        "origin_low": 1794433792.106,
+        "origin_high": 1794433792.118,
+        "uncertainty_seconds": 0.012000083923339844
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000026_GeoCAD.log",
+        "origin_low": 1794434443.313,
+        "origin_high": 1794434443.321,
+        "uncertainty_seconds": 0.00800013542175293
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000026_HR_Scan.log",
+        "origin_low": 1794434122.662,
+        "origin_high": 1794434122.674,
+        "uncertainty_seconds": 0.012000083923339844
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000026_LR_Scan.log",
+        "origin_low": 1794434283.004,
+        "origin_high": 1794434283.009,
+        "uncertainty_seconds": 0.005000114440917969
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000045_GeoCAD.log",
+        "origin_low": 1794434904.169,
+        "origin_high": 1794434904.169,
+        "uncertainty_seconds": 0.0
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000045_HR_Scan.log",
+        "origin_low": 1794434603.583,
+        "origin_high": 1794434603.593,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000045_LR_Scan.log",
+        "origin_low": 1794434753.897,
+        "origin_high": 1794434753.9,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000051_GeoCAD.log",
+        "origin_low": 1794435374.921,
+        "origin_high": 1794435374.922,
+        "uncertainty_seconds": 0.0009999275207519531
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000051_HR_Scan.log",
+        "origin_low": 1794435054.436,
+        "origin_high": 1794435054.45,
+        "uncertainty_seconds": 0.01399993896484375
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000051_LR_Scan.log",
+        "origin_low": 1794435214.678,
+        "origin_high": 1794435214.688,
+        "uncertainty_seconds": 0.009999990463256836
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000058_GeoCAD.log",
+        "origin_low": 1794435835.644,
+        "origin_high": 1794435835.651,
+        "uncertainty_seconds": 0.006999969482421875
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000058_HR_Scan.log",
+        "origin_low": 1794435535.139,
+        "origin_high": 1794435535.145,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_TST_000058_LR_Scan.log",
+        "origin_low": 1794435685.422,
+        "origin_high": 1794435685.425,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000009_GeoCAD.log",
+        "origin_low": 1794436306.5,
+        "origin_high": 1794436306.519,
+        "uncertainty_seconds": 0.01900005340576172
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000009_HR_Scan.log",
+        "origin_low": 1794435985.94,
+        "origin_high": 1794435985.941,
+        "uncertainty_seconds": 0.0009999275207519531
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000009_LR_Scan.log",
+        "origin_low": 1794436146.245,
+        "origin_high": 1794436146.26,
+        "uncertainty_seconds": 0.015000104904174805
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000018_GeoCAD.log",
+        "origin_low": 1794436757.329,
+        "origin_high": 1794436757.334,
+        "uncertainty_seconds": 0.005000114440917969
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000018_HR_Scan.log",
+        "origin_low": 1794436476.825,
+        "origin_high": 1794436476.827,
+        "uncertainty_seconds": 0.0019998550415039062
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000018_LR_Scan.log",
+        "origin_low": 1794436617.103,
+        "origin_high": 1794436617.112,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000022_GeoCAD.log",
+        "origin_low": 1794437198.074,
+        "origin_high": 1794437198.089,
+        "uncertainty_seconds": 0.015000104904174805
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000022_HR_Scan.log",
+        "origin_low": 1794436897.556,
+        "origin_high": 1794436897.56,
+        "uncertainty_seconds": 0.003999948501586914
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000022_LR_Scan.log",
+        "origin_low": 1794437047.831,
+        "origin_high": 1794437047.833,
+        "uncertainty_seconds": 0.0019998550415039062
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000023_GeoCAD.log",
+        "origin_low": 1794437669.011,
+        "origin_high": 1794437669.026,
+        "uncertainty_seconds": 0.015000104904174805
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000023_HR_Scan.log",
+        "origin_low": 1794437348.3,
+        "origin_high": 1794437348.304,
+        "uncertainty_seconds": 0.003999948501586914
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000023_LR_Scan.log",
+        "origin_low": 1794437508.664,
+        "origin_high": 1794437508.683,
+        "uncertainty_seconds": 0.01900005340576172
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000038_GeoCAD.log",
+        "origin_low": 1794438129.931,
+        "origin_high": 1794438129.938,
+        "uncertainty_seconds": 0.006999969482421875
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000038_HR_Scan.log",
+        "origin_low": 1794437829.26,
+        "origin_high": 1794437829.289,
+        "uncertainty_seconds": 0.029000043869018555
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000038_LR_Scan.log",
+        "origin_low": 1794437979.621,
+        "origin_high": 1794437979.624,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000039_GeoCAD.log",
+        "origin_low": 1794438580.811,
+        "origin_high": 1794438580.819,
+        "uncertainty_seconds": 0.007999897003173828
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000039_HR_Scan.log",
+        "origin_low": 1794438280.212,
+        "origin_high": 1794438280.218,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000039_LR_Scan.log",
+        "origin_low": 1794438430.538,
+        "origin_high": 1794438430.546,
+        "uncertainty_seconds": 0.007999897003173828
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000050_GeoCAD.log",
+        "origin_low": 1794439071.728,
+        "origin_high": 1794439071.732,
+        "uncertainty_seconds": 0.004000186920166016
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000050_HR_Scan.log",
+        "origin_low": 1794438731.056,
+        "origin_high": 1794438731.076,
+        "uncertainty_seconds": 0.019999980926513672
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000050_LR_Scan.log",
+        "origin_low": 1794438901.434,
+        "origin_high": 1794438901.438,
+        "uncertainty_seconds": 0.003999948501586914
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000054_GeoCAD.log",
+        "origin_low": 1794439592.726,
+        "origin_high": 1794439592.728,
+        "uncertainty_seconds": 0.0019998550415039062
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000054_HR_Scan.log",
+        "origin_low": 1794439252.069,
+        "origin_high": 1794439252.075,
+        "uncertainty_seconds": 0.006000041961669922
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000054_LR_Scan.log",
+        "origin_low": 1794439422.393,
+        "origin_high": 1794439422.406,
+        "uncertainty_seconds": 0.013000011444091797
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000072_GeoCAD.log",
+        "origin_low": 1794440043.622,
+        "origin_high": 1794440043.635,
+        "uncertainty_seconds": 0.013000011444091797
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000072_HR_Scan.log",
+        "origin_low": 1794439763.045,
+        "origin_high": 1794439763.057,
+        "uncertainty_seconds": 0.011999845504760742
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000072_LR_Scan.log",
+        "origin_low": 1794439903.319,
+        "origin_high": 1794439903.322,
+        "uncertainty_seconds": 0.003000020980834961
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000073_GeoCAD.log",
+        "origin_low": 1794440474.366,
+        "origin_high": 1794440474.375,
+        "uncertainty_seconds": 0.009000062942504883
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000073_HR_Scan.log",
+        "origin_low": 1794440173.844,
+        "origin_high": 1794440173.847,
+        "uncertainty_seconds": 0.0029997825622558594
+      },
+      {
+        "log": "capture_CDEP_B1R_VAL_000073_LR_Scan.log",
+        "origin_low": 1794440324.11,
+        "origin_high": 1794440324.111,
+        "uncertainty_seconds": 0.0010001659393310547
+      }
+    ],
+    "limitation": "Clock interval inferred from whole-second wall stamps and millisecond elapsed; no raw render frame IDs or output-buffer generation IDs. File write sequence does not establish exact render stage or buffer freshness."
+  },
+  "replicator_rgb_mask_audit_v01": {
+    "state": "PASS_STORED_RGB_MASK_STATISTICS",
+    "captures": 4410,
+    "instance_statistics_recomputed": 13986,
+    "errors": [],
+    "original_H1_categories_preserved": {
+      "OK": 13600,
+      "LOW_SUPPORT": 317,
+      "WATCH": 30,
+      "FLAG_NUREC_OCCLUSION": 39
+    },
+    "limitation": "Stored tau reused because original per-frame pallet ID mask was not retained; does not certify absolute visibility or eliminate all temporally stale frames. Original H1 flags remain analysis-only; no sample removal/threshold changes."
+  },
+  "replicator_depth_outlier_review_v01": {
+    "state": "DIAGNOSTIC_REVIEW",
+    "instances_reviewed": 585,
+    "counts": {
+      "integer_pixel_outlier_points": 8731,
+      "integer_pixel_interior_outlier_points": 1684,
+      "integer_pixel_instances_with_interior_outlier": 165,
+      "half_pixel_center_outlier_points": 0,
+      "half_pixel_center_interior_outlier_points": 0,
+      "half_pixel_center_instances_with_interior_outlier": 0
+    },
+    "interpretation": "Diagnostic tolerance5mm unchanged; boundary-vs-interior and integer-vs-half-pixel interpretations reported separately. No data filtering or model changes."
+  },
+  "replicator_depth_center_audit_v02": {
+    "state": "DIAGNOSTIC_REVIEW",
+    "instances_reviewed": 13986,
+    "counts": {
+      "integer_pixel_outlier_points": 8731,
+      "integer_pixel_interior_outlier_points": 1684,
+      "integer_pixel_instances_with_interior_outlier": 165,
+      "half_pixel_center_outlier_points": 0,
+      "half_pixel_center_interior_outlier_points": 0,
+      "half_pixel_center_instances_with_interior_outlier": 0
+    },
+    "interpretation": "Diagnostic tolerance5mm unchanged; boundary-vs-interior and integer-vs-half-pixel interpretations reported separately. No data filtering or model changes."
+  },
+  "precise_empty_phase": {
+    "counts": {
+      "strictly_before_empty_background_file": 26370
+    },
+    "empty_file_minus_exception_seconds_min": 0.05853009223937988,
+    "max": 0.9932453632354736,
+    "interpretation": "Empty background file is written before actual object creation in frozen capture source. Exceptions strictly before this write and within scene event interval precede object creation; GPU stage/frame freshness still not directly recorded."
+  },
+  "handoff": {
+    "created": 1794446705.484048,
+    "state": "SAVED_ARTIFACT_CHECKS_PASS_PRECISE_RENDERER_CAUSE_UNKNOWN",
+    "new_data_defect_found": false,
+    "additional_static_evaluation_HOLD": false,
+    "physical_stages_HOLD": true,
+    "public_text_files": [
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/c_depletion_replicator_numpy_data_integrity_audit_20261112_v01.md",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_replicator_output_audit_20261112_v01.py",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_exception_timing_20261112_v01.py",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_rgb_mask_consistency_20261112_v01.py",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_depth_outlier_review_20261112_v01.py",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_depth_center_audit_20261112_v02.py",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_integrations_20261112_v07.py",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_output_audit_v01/result.json",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/result.json",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/empty_background_phase.json",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/source_audit.json",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/HPO_preservation_check.json",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_rgb_mask_audit_v01/result.json",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_rgb_mask_audit_v01/H1_strata.csv",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_depth_outlier_review_v01/result.json",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_depth_center_audit_v02/result.json"
+    ],
+    "public_sha256": {
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/c_depletion_replicator_numpy_data_integrity_audit_20261112_v01.md": "baeb7421a2a87b8295143490f3976be7acbc91574c1177bf1d20a922a01bcfc5",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_replicator_output_audit_20261112_v01.py": "b12c85e1ceb87047f6b34168361e51d11a0f8d5d878f13a23c65255acb1982bf",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_exception_timing_20261112_v01.py": "329187a5e0402f7f1c4848fde96cd30f245fd7d055d02412d6484cff9aa474d1",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_rgb_mask_consistency_20261112_v01.py": "14eb1038cf81df9896f838ef94800665aa6de60ec26cd17ce89190e051aa4f26",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_depth_outlier_review_20261112_v01.py": "ffbee8619236c773111af4b06702efdf69ddde395845a5603e1d26cab869bccf",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_depth_center_audit_20261112_v02.py": "fb9086d0d4527b2a4c0b6bb2daec518594c1e6c22ef7067c78b745992643bcf6",
+      "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_integrations_20261112_v07.py": "554710cd8786211621b7fdd06f3ced55583b1fd83198d307fd03b4f19bc1df20",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_output_audit_v01/result.json": "625109e0e7ea9cfc319832aa812253f998638115ebdfd73afb22c817ccb9071a",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/result.json": "a3780f9f4a44c3f08521f477eafb4430c6dda295b8a2646bc8b1b59a46188e8e",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/empty_background_phase.json": "aa0c501f697b8db1eb0305c11aa5e7fc7c1433ab039af5b72a6b278aec52cf48",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/source_audit.json": "b031679d7d9bfd79eaab70c83090232aba2b69cc06749183dc92fe181c9000ea",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/HPO_preservation_check.json": "4a4879767aafb359b14107bc1c18ad4ca19e204f07153b390206f6576a0fc404",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_rgb_mask_audit_v01/result.json": "47c22d758fc71f909eea676d861a17b558d2d791a6d824d2eb302ba636cd32bf",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_rgb_mask_audit_v01/H1_strata.csv": "309f224edf01e71a427f32e5923ef61397bfe96c4dc8414d760518af0f6b6f95",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_depth_outlier_review_v01/result.json": "0d7b6331676b83684f033304160479728e70c4e0003687bd86ed34ff5f6e31cb",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_depth_center_audit_v02/result.json": "d2555db2479bb2613d04448829e1078e6197dc3e0d11987a99b3c5e9af80ba87"
+    },
+    "local_evidence_sha256": {
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_output_audit_v01/capture_checks.jsonl": "5df77134689965cd6e57dfd5568ba6f7f440dc7b242526c4840d2839523364c2",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_output_audit_v01/log_counts.json": "dbcb3938ee6badf1584cca75f4d24220c083fa3c9017d165e9f132857e2e84b5",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_output_audit_v01/exception_timeline.jsonl": "a5c590948b3c235a39cc05c952ba8b429a24c8afd4d8e2821aa1e4d584090295",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_output_audit_v01/flags.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_output_audit_v01/result.json": "625109e0e7ea9cfc319832aa812253f998638115ebdfd73afb22c817ccb9071a",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_output_audit_v01/status.json": "12dadfd2bc4876fc49c37175239b9e8c4f194dce5db9b3c1713c49a3a8f29c92",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/HPO_preservation_check.json": "4a4879767aafb359b14107bc1c18ad4ca19e204f07153b390206f6576a0fc404",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/timing.jsonl": "f8ba1860e60f6c27dd15ea858e0b7a273c4382ccbfe2c7578d3a2530f325b150",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/result.json": "a3780f9f4a44c3f08521f477eafb4430c6dda295b8a2646bc8b1b59a46188e8e",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/empty_background_phase.json": "aa0c501f697b8db1eb0305c11aa5e7fc7c1433ab039af5b72a6b278aec52cf48",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_exception_timing_v01/source_audit.json": "b031679d7d9bfd79eaab70c83090232aba2b69cc06749183dc92fe181c9000ea",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_rgb_mask_audit_v01/H1_strata.csv": "309f224edf01e71a427f32e5923ef61397bfe96c4dc8414d760518af0f6b6f95",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_rgb_mask_audit_v01/result.json": "47c22d758fc71f909eea676d861a17b558d2d791a6d824d2eb302ba636cd32bf",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_rgb_mask_audit_v01/rows.json": "365b4a0e6b5d2e6de4ade0ddfd9b795bf514a3231e0f7b97acd63417ebcedf61",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_depth_outlier_review_v01/instances.json": "abd674d5a26260dad64fed563cc387da2ac542d111608e0cdc281d80032ba015",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_depth_outlier_review_v01/result.json": "0d7b6331676b83684f033304160479728e70c4e0003687bd86ed34ff5f6e31cb",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_depth_center_audit_v02/instances.json": "eff1c5c86d08f35c1ee11eb98d1ac0b8fabad9b187ff01ad0e4966d60d2bc182",
+      "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/replicator_depth_center_audit_v02/result.json": "d2555db2479bb2613d04448829e1078e6197dc3e0d11987a99b3c5e9af80ba87"
+    },
+    "sampled_depth_points": 1790208,
+    "HPO_process_and_config_unchanged": true
+  }
+}
