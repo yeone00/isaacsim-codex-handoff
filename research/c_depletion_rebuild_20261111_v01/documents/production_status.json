@@ -9,7 +9,7 @@
     "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/C_COMMON_HPO_BITMAP_attempt_v01.log"
   },
   "reason": null,
-  "updated": 1794446230.7324607,
+  "updated": 1794446531.0650182,
   "generated_RGBD": 4410,
   "declared_RGBD": 4410,
   "completed_jobs": 210,
@@ -17,11 +17,11 @@
   "prior_failure_preserved": "C_DATASET_QA_PACKAGE",
   "physical_motion_authorized": false,
   "physical_runs_started": 0,
-  "elapsed_seconds": 2542.33136177063,
+  "elapsed_seconds": 2842.663919210434,
   "C_HPO": {
     "state": "RUNNING",
     "reason": null,
-    "updated": "2026-11-12T10:17:00.786312+09:00",
+    "updated": "2026-11-12T10:22:01.084881+09:00",
     "controller_pid": 106572,
     "session": "c_common_hpo_20261111_v01",
     "total_candidates": 12,
@@ -32,12 +32,12 @@
       "FAILED": 0
     },
     "current": {
-      "key": "screen_C03_HR_Scan_s42",
-      "pid": 147352,
-      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/screen_C03_HR_Scan_s42_a01",
+      "key": "screen_C03_LR_Scan_s42",
+      "pid": 154054,
+      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/screen_C03_LR_Scan_s42_a01",
       "phase": "screen",
       "candidate_id": 3,
-      "rep": "HR_Scan",
+      "rep": "LR_Scan",
       "seed": 42,
       "epoch": 0
     },
@@ -46,16 +46,16 @@
       0
     ],
     "best_score_phase": "screen",
-    "completed_training_jobs": 12,
+    "completed_training_jobs": 13,
     "job_counts": {
-      "COMPLETED": 12,
+      "COMPLETED": 13,
       "RUNNING": 1,
       "FAILED": 0,
       "INTERRUPTED": 0
     },
     "max_training_jobs": 57,
     "max_model_epochs": 5766,
-    "wall_seconds_this_controller": 2532.359052658081,
+    "wall_seconds_this_controller": 2832.657651424408,
     "test_used": false,
     "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
   }
