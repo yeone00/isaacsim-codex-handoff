@@ -1,55 +1,102 @@
-# C 생성 Replicator/NumPy 예외 — CPU 데이터 정합성 감사
+# C100 표본 보강·B1 L4 재사용 감사 및 변경 계획
 
-2026-11-12. 기존 C-HPO·Controller·Watchdog·GitHub 자동 동기화 프로세스와 학습 설정은 변경·중단하지 않았다. 신규 GPU 작업/렌더링/추론/물리 주행은 실행하지 않았다. 모든 검사와 그림 없는 텍스트 증거는 저장 파일을 읽는 CPU 감사다.
+2026-11-12. **감사·변경안만 작성했다.** 현재 C 데이터/HPO/모델/학습 설정/Controller/Watchdog/알림/동기화 및 단계 전환은 변경하거나 중단하지 않았다. 신규 렌더링·학습·물리 주행0. 기존 C-HPO는 4,410장 버전의 결과로 끝까지 보존한다. 아래 보강 및 HPO 예산은 DRAFT이며 현재 실행 명령이 아니다.
 
-## 범위와 발생 시점
+## 1. C100 불균형의 의미
 
-기존 본생성 210 로그의 `Replicator_instance_id_segmentation` 예외 **26,370회**를 전수 추출했다. 본생성 신규 관측 4,395건에서 각각 정확히 6회이며, 이전 파일럿 재사용 15건까지 포함한 전체 저장 관측은 4,410건이다. 26,370을 손상 이미지 수로 해석하면 안 된다.
+현재 O0는 표현당 1,470장, 세 표현 4,410장이다. C100 70장(Train50/Val10/Test10), C80/60/40/20 각350장(250/50/50). C100은 전체 이미지의4.76%, 각 부분 상태는23.81%다. 70 source families에서 FULL을 한 번만 저장하고5제거경로의4부분상태를 저장한 설계의 결과이며, GT 손상이나 잘못된 라벨은 아니다.
 
-UTC 초 단위 로그만으로 장면을 매칭하면 경계가 어긋났다. 별도 복원에서 각 로그의 UTC 초와 프로세스 경과 밀리초를 함께 사용해 시작시각의 가능한 구간을 교집합으로 계산했다. 최대 시각 불확실성 구간 폭 0.036초. 전체 예외가 불확실성까지 고려해 **각 장면의 empty 배경 RGB 파일 쓰기 이전**에 있었다. 예외 추정시각부터 empty 파일 쓰기까지 0.0585~0.9932초.
+학습 샘플 노출에서 C100이 적으므로 완전 적재 일반화가 불리해질 가능성이 있고, pooled Val AP가 부분 상태에서의 성능에 더 민감해질 수 있다. 그러나 AP는 단순한 상태별 AP 가중평균이 아니므로5:1의 표본 비를 성능 영향 계수로 해석하지 않는다. 현재 지표에서 실제 C100 저하나 표현 순위 왜곡을 입증한 것은 아니다. **기존 Test로 보강 수·촬영조건·HPO 후보를 고르지 않는다.**
 
-동결 capture v02의 순서는 장면 제거→reset(6 orchestrator steps 포함)→empty RGB 저장→실제 적재물 생성→reset→실제 RGB/Depth/ID mask 저장→canonical 대체→reset→canonical GT 저장이다. 따라서 확인된 예외는 적재물 생성 전 empty 구간에 위치한다. 적재물·canonical GT 저장 구간의 오류였다고 단정한 이전 초 단위 추정은 정밀 복원 결과로 대체한다. 원래 로그와 첫 추정 파일은 보존한다.
+같은 환경에서 파생된5부분형상도 독립적인5환경이 아니다. 각 상태의 Test 독립 기본 조건은 모두10개다. 추가 촬영으로 C100 관측 수를 늘려도 환경 표본수가50이 되지는 않는다. 상태별 지표와 분모, 기본 조건 단위의 대응/반복측정 불확실성을 함께 보고한다.
 
-## 원인과 출력 경로
+## 2. 기존 B1 L4 실제 보유량 및 SHA 감사
 
-설치된 NVIDIA 원본 `OgnInstanceIdSegmentationLegacy.py`의 `compute()`에서 ID 버퍼를 `wp.array(...).numpy()`로 복사/변환하다가 예외가 발생한다. Warp `types.py`의 `numpy()`는 CPU 복사 후 `np.asarray(a)`를 호출한다. 예외는 legacy node가 `db.outputs.data`와 `idToLabels`를 갱신하기 전 발생한다. RGB annotator 또는 depth annotator 함수의 예외와 구분한다.
+B1 red manifest와 실제 YOLO package records를 join하고 파일 SHA를 확인했다.
 
-빈 장면의 ID 버퍼/shape/stride 상태와 관련됐을 가능성은 **가설**이다. 실패 당시 pointer, shape, strides, dtype, 전체 uint32 ID buffer, render frame/generation ID가 저장되지 않아 정확한 내부 조건은 UNKNOWN이다. 실제 NumPy는 Isaac 환경 1.26.0이며 NumPy 2 호환성 문제로 임의 진단하지 않았다. CPU 검사만으로 누락된 live GPU 버퍼를 재현하지 않았다.
+| 분할 | B1 L4 조건 수/표현 | 3표현 관측 | 현재 C와 같은 기본 조건/표현 |
+|---|---:|---:|---:|
+| Train |244|732|50|
+| Validation |51|153|10|
+| Test |51|153|10|
+| 합계 |**346**|**1,038**|**70**|
 
-## 기존 QA와 독립된 재검사
+기존 L4가250/50/50이라고 가정하지 않았다. 나머지276기본 조건은 현재70 family와 다르다. 같은 구역·조명이라는 이유로 현재 family의 추가 관측으로 재라벨링하면 안 된다.
 
-| 검사 | 범위 | 결과 및 한계 |
-|---|---:|---|
-| 실제 파일 SHA 재계산 | 전체 4,410 capture의 기록된 모든 RGB·Depth·camera·empty·actual/canonical mask | 원래 capture SHA와 일치 |
-| 이미지·배열 재디코딩 | 4,410 | RGB/empty 640×480×3 uint8, depth 480×640 float32 및 카메라 rigid transform 검사 통과 |
-| mask 이진성·픽셀 수·load 간 중복 | actual/canonical 13,986 instance pairs | 저장 metadata와 일치, load 소유 마스크 중복 없음 |
-| 독립 형상 투영 | 13,986 canonical instances | 보존된 Bundle5 잔여 슬롯으로 구성한 3D box를 저장 camera로 투영. 2px 경계 여유를 둔 지지 범위 밖 GT 픽셀 0. 이 경계 여유는 감사용이며 기존 QA나 성공 기준을 바꾼 것이 아님 |
-| RGB·empty·actual mask 재계산 | 기존 H1 통계 13,986개 | erosion2 픽셀 수와 stored tau 기준 visibility 수치 전체 일치. 원래 pallet ID mask 미보존으로 tau 자체는 재계산 불가 |
+B1 생산에서는 canonical GT를 HR에서 렌더하고 LR/CAD에 공통 제공한다. 첫 감사 v01이 LR/CAD 자체 폴더에도 GT가 있다고 가정해 파일 검사 실패한 기록을 보존했다. v02에서 실제 HR공통 canonical 소유 경로를 따라 재검증했으며 원본/expected SHA 수정은 없었다.
 
-H1 원래 분류는 OK 13,600 / LOW_SUPPORT 317 / WATCH 30 / FLAG_NUREC_OCCLUSION 39다. 이들은 원래 H1 분석용 표시이며 모두 그대로 보존한다. 이번 감사에서 표본을 제거하거나 증강·QA threshold를 완화하지 않았다. 알려진 NuRec visibility 제한을 새롭게 해결했다고 주장하지 않는다.
+## 3. 같은70기본 조건의 실제 대응 비교
 
-첫 깊이 진단은 정수 pixel 좌표에서 광선을 복원해 585 instance에 5mm enclosure outlier를 기록했다. 이를 숨기지 않고 별도 재검토했다. 해당 585건에서 pixel center +0.5 convention을 사용하자 outlier 0이 되었고, 모든 instance 대상으로 같은 검사를 추가했다. 감사 광선 규약의 정정이며 현재 HPO·기존 위치추정 입력/알고리즘은 변경하지 않았다. 5mm는 감사용 enclosure 거리이고 운용 성공 판정 기준이 아니다.
+| 항목 | 실제 확인 |
+|---|---|
+| 소재·에셋 | red, HR/LR/CAD 동일 normalized asset SHA |
+| 배경·광학·노출 | B1_CLOSED_EV,640×480,렌즈18.14756mm,ISO25/shutter50/f5/tonemap6 동일 |
+| 배치·거리·yaw·조명·split | 대응210/210 관측의 manifest 조건 동일 |
+| camera transform |210/210, 최대차<1e-8 |
+| canonical GT mask |210/210 관측의 모든 load 마스크 픽셀 일치 |
+| RGB |**210/210 불일치**, 픽셀 동일0 |
+| actual geometry mask |**210/210 불일치**, 픽셀 동일0 |
+| Depth |B1 원래 생산은 저장 안 함. 후속 Stage2에Test L4 51×3=153개 O0 depth 존재. 이 중 C와 같은10Test family×3=30개 대조: camera exact, **Depth exact0/30** |
+| 목표 |모두 Load_01, load_count 및 source scene mapping 기록 |
 
-## 판정의 범위
+핵심 차이는 신규 C의 **벽돌 에셋 중심 배치 보정**이다. B1은 normalized asset 원점의 raw z중심 약.0285m를 빼지 않고 side-standing−90° 회전한다. 신규 C는 별도 wrapper로 asset reference에서 raw center를 차감한다. 원본 asset이나 B1 소스는 변경하지 않았다. C100도 이 보정을 공유하므로 “둘 다300개”만으로 같은 렌더링 형상이라고 볼 수 없다. Kit 재세션의 화상 변동도 있을 수 있으므로 RGB 불일치를 모두 이 보정 하나의 효과로 정량 귀속하지는 않는다.
 
-파일 손상·형상과 모순되는 GT·픽셀 수 불일치·RGB/mask 저장 통계 불일치는 확인되지 않았다. 시간상 예외는 empty 배경 구간에 국한됐다. 이 사실은 저장 데이터 손상으로 이어졌다는 근거를 지지하지 않지만, renderer 예외를 “완전히 무해한 경고”로 확정한 것은 아니다.
+**현재 centered-C 조건에 그대로 합칠 수 있는 추가 RGB-D 관측은0개다.** 이 결론은 현재70family와 배치보정/같은관측 요건을 만족하는 직접 재사용의 수다. 기존1,038 RGB가 다른 연구에 쓸 수 없다는 뜻이 아니다. 별도 B1 연구/보조 도메인 분석에는 보존하되 C100 신규 독립 관측으로 계산하지 않는다.
 
-원본 frame counter와 buffer generation ID가 없으므로 모든 RGB·Depth·GT가 정확히 동일 렌더 프레임에서 나온 사실을 사후 완전 증명할 수 없다. RGB와 canonical GT는 원래 설계상 actual→canonical 별도 렌더이며 동일 camera/점유 형상 대응이지 동일 raw frame이 아니다. RGB·actual depth·actual mask의 버퍼 신선도 역시 직접 frame-ID 증명은 UNKNOWN이다. 독립 투영·깊이·저장 통계는 공간 정합성 증거이며 이 UNKNOWN을 대체하지 않는다.
+210개 대응 관측의 canonical GT와 camera/환경 설정은 참조자료로 재사용 가능하다. 그러나 이미 존재하는 C100 70×3관측에 대한 동일 annotation이며 신규 이미지 수 증가0이다. 새 카메라 시점으로 촬영하면 기존 GT mask를 그대로 복사할 수 없다. 기존 B1 Depth는 후속 별도 세션이며 보정된 C 형상과도 다르므로 C RGB와 임의 결합하지 않는다.
 
-확인된 데이터 결함에 근거한 추가 후속 평가 HOLD 조건은 현재 관찰되지 않았다. 기존 C-HPO 및 승인된 정적 평가 계획은 유지하고, 물리 pilot/300/별도150 HOLD는 그대로다. 향후 실제 저장 데이터 모순이 발견되면 후속 평가를 HOLD해야 하며 이번 부분 검증을 무조건 통과 증명으로 사용하면 안 된다.
+## 4. 최소 C100 보강안 — 새 버전으로만
 
-## 증거와 재현
+가칭 `C_BALANCED_V02`는 현재 버전과 다른 새 root/manifest/recipe/model 계보를 갖는다. 현재70 C100 관측/표현과 원본SHA를 보존하고, 각 family에 **새 실제 촬영조건4개**를 추가해총5개를 만든다. 복사·색변환·학습 증강 이미지는 새 촬영 관측으로 계산하지 않는다. 카메라/거리/시점/조명 변동 값은 기존 허용범위·visibility QA·시야/지지 조건을 확인한 뒤 성능을 보기 전에 잠근다. 이번에는 숫자나 신규 시나리오를 임의 확정하지 않았다.
 
-외부 root: `/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02`.
+| 분할 | 기존 C100/표현 | 추가/표현 | 보강 C100/표현 | 모든 C 합계/표현 |
+|---|---:|---:|---:|---:|
+| Train |50|200|250|1,250|
+| Val |10|40|50|250|
+| Test |10|40|50|250|
+| 합계 |70|**280**|**350**|**1,750**|
 
-- `replicator_output_audit_v01/`: 전체 SHA/배열/GT projection 검사, capture_checks.jsonl, 최초 초 단위 exception timeline. source `analysis/c_depletion_replicator_output_audit_20261112_v01.py`.
-- `replicator_exception_timing_v01/`: monotonic+UTC timing.jsonl, empty_background_phase.json, source_audit.json, HPO_preservation_check.json. source `analysis/c_depletion_exception_timing_20261112_v01.py`.
-- `replicator_rgb_mask_audit_v01/`: RGB/H1 재계산, H1_strata.csv. source `analysis/c_depletion_rgb_mask_consistency_20261112_v01.py`.
-- `replicator_depth_outlier_review_v01/` 및 `replicator_depth_center_audit_v02/`: 첫 진단과 pixel-center 전수 재검사 모두 보존.
+따라서 최소 신규 O0 렌더 관측 **280/표현, 총840개**. 보강 후O0 **5,250개**, 현재4,410개와 구분한다. 기본 환경 수50/10/10,총70은 그대로이며 신규 환경840개가 아니다. 기존 시점·형상·source family·split을고정해계보누수검사하고새조건도3표현에동일적용한다. 기존과다른observation_id와SHA를등록한다.
 
-재현 시 이미 존재하는 출력 root에 실행하지 않는다. 새 버전/출력 경로를 사용하고 CPU affinity 1core, `nice -n 15`, `ionice -c 3`, `OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1`을 적용한다. 마지막 깊이 감사에서 BLAS thread 확장을 관찰해 해당 **감사 프로세스만** CPU47 한 코어로 제한했다. 기존 학습 프로세스·서비스 설정은 바꾸지 않았다.
+### 반드시 함께 보고할 교란
 
-GitHub에는 이 보고서·감사 코드·작은 요약·SHA만 동기화한다. RGB-D, 마스크 원본, 대용량 timeline/instance evidence 및 NuRec 시각자료는 로컬에 보존한다.
+C100에만 카메라·조명을 다양화하면 상태와 촬영 분포가 달라진다. 장수 균형만으로 상태 비교가 공정해졌다고 주장하면 안 된다. 최소안은 기존 paired anchor 관측(각family의원래시점)을별도유지해주요대응비교로보고하고, 추가C100 views를보강/일반화분석으로표시한다. 전체balanced metric과원래anchor-only metric을구분하되Test결과로주지표를사후선택하지않는다.
 
+더 엄격한 대안은5개 observation condition을 모든C에대응시키는새설계다. 예를들어T01기존view0유지,T02~05를view1~4로대응시키면부분4상태×4경로×70family×3표현=3,360개를추가렌더하고,C100840개와합쳐**4,200개 신규**가필요하다. 그경우기존모든부분관측을balanced manifest에동시에포함하면분모가달라지므로, 기존버전은그대로보존하고새manifest의membership을별도잠근다. 제거경로와view가대응되는설계도완전교차설계는아니다. **이대안은승인/실행하지않았다.**
 
-최종 깊이 검사: 전체 **13,986 instance, 1,790,208개 결정적 표본 depth points**의 +0.5 pixel-center 광선을 재투영했을 때 5mm Bundle5 envelope 밖 점 **0**. 전수 픽셀 깊이의 무결성을 증명하는 것이 아니라 모든 instance에 대한 표본 공간 정합성 검사다. 기존 HPO PID106572와 continuation106568, Watchdog3805776, sync109541 모두 유지됐다.
+## 5. HPO·최종 모델 선정 영향
+
+현재 실행 중인 C-HPO는 수정하지 않고 완료한다. 이후 결과는 **C-V01/4,410 O0**에 대한 탐색/최종모델 결과로 보존한다. 향후 C100 Train과Val이바뀌면선정목적의분포도바뀌므로현재선정설정을balanced-V02에서도최적이라주장할수없다. 기존Test/새Test에대한결과로모델이나촬영조건을고르지않는다.
+
+현재57건전체를기계적으로복제할필요는없다. 다음제한적재선정안을사전잠금하는방안을제안한다.
+
+1. 기본설정+현재C-HPO의Val기반우수비기본3개, 총4개의서로다른후보를새Train/Val에서비교. 현재winner가baseline이면중복을제거하고다음비기본후보포함. 후보선정은C-V01의Test이전잠금Val순위만사용.
+2. 각후보×HR/LR/CAD×seed42, fresh pretrained200epochs:12학습. 새로운12후보shortscreen은생략하는제한적확인HPO이며전역최적보장없음.
+3. 새Val기준공통선정후seed43/44×3표현:6학습. 선정seed42의3개는재사용하여최종9모델. **최대18학습/3,600epochs**, 실제값·동점·체크포인트규칙을새실행전고정.
+4. optimizer/증강/AMP/FP32 loss/batch/해상도는그대로. 기존완성checkpoint이어학습을동일조건fresh학습으로취급하지않는다. 새Train에서최종모델은다시학습해야한다.
+
+위18개는제안예산이며미실행이다. HPO자체를비교하지않고현재설정의전이만시험하는경우base-vsV01winner×3표현×seed42=최대6학습후평가하는더작은안도가능하지만,이를balanceddata의충분한공통최적화/3seed최종검증완료라고표시하지않는다. 새Test만확장하고Train/Val을동결했다면HPO재실행이필수는아니지만이번보강안은Train/Val도변경하므로해당예외가아니다.
+
+## 6. O0 학습·O0/O25/O50 평가 — 명시적 유지
+
+학습과HPO선정은C100~C20 **O0 Train/Val만**사용한다. O25/O50은훈련·증강·조기종료·후보선정에사용하지않는다. 각최종모델을세가림조건에그대로사용한다. 평가용가림관측은**Test family계보만**사용하며, O0원관측과같은잔여Bundle이력·배치·camera·조명을유지하고가림판조건만바꾼다. 실제가림률/GT는새프레임에서독립검증한다.
+
+| 버전 | O0 전체학습용원천(Train/Val/Test) | Test O0 | Test O25 | Test O50 | Test 합계 |
+|---|---:|---:|---:|---:|---:|
+| 현재V01 |**4,410**|630|630예정|630예정|1,890예정|
+| 최소balancedV02 |**5,250**|750|750예정|750예정|2,250예정|
+
+표의O0전체에는Test도포함되지만,모델이학습하는것은그중Train이며Val은선정용,Test는최종평가용이다. 현재O0 Train3,150/Val630/Test630, balanced안Train3,750/Val750/Test750. 논문에“4,410장모두학습했다”고쓰면안된다.
+
+V02 추가C100 Test40/표현에는O25/O50각40/표현을대응시키므로기존평가계획대비추가가림렌더**240개(120/O)**. 현재630TestO0원관측의가림출력이미생성돼있고조건·GT·SHA가그대로면그1,260개는중복렌더없이재사용가능하다. 전체V02평가용가림은**1,500개**. 새O0 840개+기존계획대비추가가림240개=보강으로늘어나는최소관측1,080개. 이장수는고유관측기준이며GT치환패스·동일장면재렌더비용을프레임수에더한것이아니다.
+
+현재후속구현의Train-family O25/O50 qualification은인식평가가아닌센서/가림판구현점검fixture45프레임이며모델학습/선정/논문Test분모에포함하지않는다. 평가데이터는Test계보만이라는규칙과구분해문서화한다. 현서비스의명령은변경하지않았다.
+
+기존10Test family와파생관측을재사용하므로V02Test를새현장/완전히새로운blind외부검증이라고주장하지않는다. HPO가끝난V01Test가자동평가되면그노출이력도V02에기록한다. 현재300+별도150물리주행계획/기준/모델입력을자동변경하지않고HOLD유지한다.
+
+## 7. 산출물·상태
+
+- 증거`reports/c100_balance_reuse_audit_evidence_20261112_v02/`: L4_inventory.csv(1,038행), matched_C100_comparison.csv(210행), matched_test_depth_comparison.csv(30행), source SHA 포함summary.
+- 첫감사실패와v01소스보존. v02는HR공통canonical소유방식으로수정한읽기전용감사이며legacy모듈을import하지않음.
+- 별도DRAFT수정안`docs/c100_balance_and_occlusion_plan_amendment_DRAFT_20261112_v01.md`와수량프로토콜JSON. 자동실행기입력으로연결하지않았다.
+- 신규C100렌더·재HPO·모델교체는이번감사에서시작하지않음. 현재실행코드/잠금/원본파일보존.
