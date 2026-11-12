@@ -1,20 +1,59 @@
 {
-  "state": "HOLD",
-  "stage": "C_DATASET_QA_PACKAGE",
-  "controller_pid": 3774906,
+  "state": "RUNNING",
+  "stage": "C_COMMON_HPO_BITMAP",
+  "controller_pid": 106568,
   "current": {
-    "job": "C_DATASET_QA_PACKAGE",
-    "pid": 70105,
-    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/dataset_QA_v01",
-    "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/C_DATASET_QA_PACKAGE.log"
+    "job": "C_COMMON_HPO_BITMAP",
+    "pid": 106572,
+    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02",
+    "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/C_COMMON_HPO_BITMAP_attempt_v01.log"
   },
-  "reason": "WORKER_FAILED:C_DATASET_QA_PACKAGE",
-  "updated": 1794440654.3990695,
+  "reason": null,
+  "updated": 1794443698.4040694,
   "generated_RGBD": 4410,
   "declared_RGBD": 4410,
   "completed_jobs": 210,
   "failed_jobs": 1,
+  "prior_failure_preserved": "C_DATASET_QA_PACKAGE",
   "physical_motion_authorized": false,
   "physical_runs_started": 0,
-  "elapsed_seconds": 32121.75150513649
+  "elapsed_seconds": 10.002970457077026,
+  "C_HPO": {
+    "state": "RUNNING",
+    "reason": null,
+    "updated": "2026-11-12T09:34:48.499253+09:00",
+    "controller_pid": 106572,
+    "session": "c_common_hpo_20261111_v01",
+    "total_candidates": 12,
+    "candidate_counts": {
+      "COMPLETED": 0,
+      "RUNNING": 0,
+      "PENDING": 12,
+      "FAILED": 0
+    },
+    "current": {
+      "key": "smoke_C00_HR_Scan_s42",
+      "pid": 106580,
+      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/smoke_C00_HR_Scan_s42_a01",
+      "phase": "smoke",
+      "candidate_id": 0,
+      "rep": "HR_Scan",
+      "seed": 42,
+      "epoch": 0
+    },
+    "best_candidate": null,
+    "best_score_phase": "screen",
+    "completed_training_jobs": 0,
+    "job_counts": {
+      "COMPLETED": 0,
+      "RUNNING": 1,
+      "FAILED": 0,
+      "INTERRUPTED": 0
+    },
+    "max_training_jobs": 57,
+    "max_model_epochs": 5766,
+    "wall_seconds_this_controller": 0.0719919204711914,
+    "test_used": false,
+    "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
+  }
 }
