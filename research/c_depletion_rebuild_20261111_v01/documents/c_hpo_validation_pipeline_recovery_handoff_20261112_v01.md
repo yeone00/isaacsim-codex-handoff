@@ -49,3 +49,11 @@ Ultralytics Model.load는 checkpoint training args 중imgsz/data/task/single_cls
 - 기존bitmap loader SHA256 `8dd6f00730f0de9634831929eb18fe38d2df57a66423101c4f7aec4d23e2090d`
 - 원래selection lock SHA256 `8b1df58783bb693ee2f3a4c36a186a6d05ddc74da246b532f091875e562f4fdf`
 - 57개 checkpoint 경로·SHA: `validation_repair_v01/training_inventory_before.json`;복구완료후모두재검증. 재사용모델C00 seed42×3및C06 seed42/43/44×3의자기표현외24평가. 모든GT원본·학습결과불변.
+
+
+## 16:58 최종 복구 확인
+
+- 학습57개checkpoint SHA 전부불변. 원본cross실패24건유지. 복구cross24/24 COMPLETED,총5040 model-image/16632 GT instances,각run Val210/GT693. small9+ownfull3+cross24=36평가artifact/resultSHA/inputRGB/bitmapSHA 및Val계보검사PASS/Test수치데이터접근0.
+- 새HPO_recovered_status COMPLETED/C06선정불변. standalone복구controller PID699911,후속static PID707458,첫HR가림구현qualification worker PID707461 실제시작. 기존statics source runner의완료조건검증후Test평가진행예정. 물리pilot/300/150HOLD.
+
+- 후속HR가림구현qualification 5/5 scene PASS_CAPTURE 확인(O25/O50포함). 이는Test성능결과가아니며다음표현으로자동진행중. 반복되는legacy empty-ID NumPy로그는기존CPU감사와구분해보존하며새오류를무해확정하지않음.

@@ -1,0 +1,15 @@
+{
+  "state": "PASS",
+  "time": 1794470323.2963774,
+  "unchanged_training_checkpoints": 57,
+  "original_failed_attempts_preserved": 24,
+  "crossval_completed": 24,
+  "crossval_attempted_model_images": 5040,
+  "crossval_GT_instances": 16632,
+  "small_own_repeat_cross_jobs": 9,
+  "own_full_validation_jobs": 3,
+  "all_36_eval_artifacts_verified": true,
+  "Test_numeric_data_access": false,
+  "selection_sha256_unchanged": "8b1df58783bb693ee2f3a4c36a186a6d05ddc74da246b532f091875e562f4fdf",
+  "physical_runs": 0
+}
