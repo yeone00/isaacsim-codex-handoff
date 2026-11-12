@@ -1,7 +1,7 @@
 {
   "state": "RUNNING",
   "reason": null,
-  "updated": "2026-11-12T15:00:54.665703+09:00",
+  "updated": "2026-11-12T15:06:04.933513+09:00",
   "controller_pid": 106572,
   "session": "c_common_hpo_20261111_v01",
   "total_candidates": 12,
@@ -12,31 +12,31 @@
     "FAILED": 0
   },
   "current": {
-    "key": "full_C02_LR_Scan_s42",
-    "pid": 524808,
-    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C02_LR_Scan_s42_a01",
+    "key": "full_C02_GeoCAD_s42",
+    "pid": 544772,
+    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C02_GeoCAD_s42_a01",
     "phase": "full",
     "candidate_id": 2,
-    "rep": "LR_Scan",
+    "rep": "GeoCAD",
     "seed": 42,
-    "epoch": 199,
-    "latest_validation_mask_map5095": 0.9217453469343655
+    "epoch": 66,
+    "latest_validation_mask_map5095": 0.9277517447402088
   },
   "best_candidate": [
     0.9432983046074382,
     6
   ],
   "best_score_phase": "full",
-  "completed_training_jobs": 49,
+  "completed_training_jobs": 50,
   "job_counts": {
-    "COMPLETED": 49,
+    "COMPLETED": 50,
     "RUNNING": 1,
     "FAILED": 0,
     "INTERRUPTED": 0
   },
   "max_training_jobs": 57,
   "max_model_epochs": 5766,
-  "wall_seconds_this_controller": 19566.23845887184,
+  "wall_seconds_this_controller": 19876.50626707077,
   "test_used": false,
   "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
 }
