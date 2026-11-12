@@ -9,7 +9,7 @@
     "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/C_COMMON_HPO_BITMAP_attempt_v01.log"
   },
   "reason": null,
-  "updated": 1794466597.4805884,
+  "updated": 1794466907.7667634,
   "generated_RGBD": 4410,
   "declared_RGBD": 4410,
   "completed_jobs": 210,
@@ -17,11 +17,11 @@
   "prior_failure_preserved": "C_DATASET_QA_PACKAGE",
   "physical_motion_authorized": false,
   "physical_runs_started": 0,
-  "elapsed_seconds": 22909.079489707947,
+  "elapsed_seconds": 23219.365664720535,
   "C_HPO": {
     "state": "RUNNING",
     "reason": null,
-    "updated": "2026-11-12T15:56:27.486777+09:00",
+    "updated": "2026-11-12T16:01:37.749881+09:00",
     "controller_pid": 106572,
     "session": "c_common_hpo_20261111_v01",
     "total_candidates": 12,
@@ -32,31 +32,31 @@
       "FAILED": 0
     },
     "current": {
-      "key": "final_C06_GeoCAD_s43",
-      "pid": 606334,
-      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/final_C06_GeoCAD_s43_a01",
+      "key": "final_C06_HR_Scan_s44",
+      "pid": 626299,
+      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/final_C06_HR_Scan_s44_a01",
       "phase": "final",
       "candidate_id": 6,
-      "rep": "GeoCAD",
-      "seed": 43,
-      "epoch": 159,
-      "latest_validation_mask_map5095": 0.9425593849045043
+      "rep": "HR_Scan",
+      "seed": 44,
+      "epoch": 26,
+      "latest_validation_mask_map5095": 0.907642660819269
     },
     "best_candidate": [
       0.9432983046074382,
       6
     ],
     "best_score_phase": "full",
-    "completed_training_jobs": 53,
+    "completed_training_jobs": 54,
     "job_counts": {
-      "COMPLETED": 53,
+      "COMPLETED": 54,
       "RUNNING": 1,
       "FAILED": 0,
       "INTERRUPTED": 0
     },
     "max_training_jobs": 57,
     "max_model_epochs": 5766,
-    "wall_seconds_this_controller": 22899.059532403946,
+    "wall_seconds_this_controller": 23209.32266306877,
     "test_used": false,
     "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
   }
