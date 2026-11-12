@@ -1,55 +1,55 @@
 {
-  "updated": 1794484429.652545,
+  "updated": 1794484733.67033,
   "current_version": "C-V02",
   "physical_motion_authorized": false,
   "files": {
     "pipeline_status.json": {
-      "sha256": "254f2d52499c5d5a5872cf38d9a5c76a95fe6f4313f58b4f3a13bc022e71ef67",
+      "sha256": "8b7395155eebb42a6a9b20205a024a7ddc670435961fd75ee3e8f85e3ca9f96b",
       "content": {
         "state": "RUNNING",
-        "stage": "C100_GeoCAD_060",
+        "stage": "C100_GeoCAD_100",
         "current": {
-          "job": "C100_GeoCAD_060",
-          "pid": 1069190,
-          "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/execution_v01/logs/C100_GeoCAD_060.log",
-          "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/execution_v01/capture/C100_GeoCAD_060"
+          "job": "C100_GeoCAD_100",
+          "pid": 1078406,
+          "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/execution_v01/logs/C100_GeoCAD_100.log",
+          "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/execution_v01/capture/C100_GeoCAD_100"
         },
         "controller_pid": 966660,
-        "updated": 1794484425.0280702,
+        "updated": 1794484730.6571546,
         "total_RGBD": 5250,
-        "verified_RGBD": 5030,
-        "new_C100_RGBD": 620,
+        "verified_RGBD": 5070,
+        "new_C100_RGBD": 660,
         "physical_motion_authorized": false,
         "reason": null
       }
     },
     "watchdog_status.json": {
-      "sha256": "2e22388e270b8cd6772654b0e51f6d5a90dc46ef7ac6eefbf44641ef263b3fb7",
+      "sha256": "50a9ba5777cd1edeb992f74aff10670cac015e830e68f45f2ad5ae2cfd42c235",
       "content": {
         "pid": 966658,
-        "updated": 1794484412.6966765,
+        "updated": 1794484714.9902408,
         "pipeline": {
           "state": "RUNNING",
-          "stage": "C100_GeoCAD_060",
+          "stage": "C100_GeoCAD_100",
           "current": {
-            "job": "C100_GeoCAD_060",
-            "pid": 1069190,
-            "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/execution_v01/logs/C100_GeoCAD_060.log",
-            "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/execution_v01/capture/C100_GeoCAD_060"
+            "job": "C100_GeoCAD_100",
+            "pid": 1078406,
+            "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/execution_v01/logs/C100_GeoCAD_100.log",
+            "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/execution_v01/capture/C100_GeoCAD_100"
           },
           "controller_pid": 966660,
-          "updated": 1794484409.996174,
+          "updated": 1794484710.647041,
           "total_RGBD": 5250,
-          "verified_RGBD": 5030,
-          "new_C100_RGBD": 620,
+          "verified_RGBD": 5070,
+          "new_C100_RGBD": 660,
           "physical_motion_authorized": false,
           "reason": null
         },
         "current_mixing": {},
         "current_epoch": null,
         "current_static": {},
-        "GPU": "28, 4866, 32607",
-        "free_disk_bytes": 114109370368,
+        "GPU": "0, 4740, 32607",
+        "free_disk_bytes": 114038398976,
         "ntfy_pending": 0,
         "physical_motion": false,
         "warnings": []
