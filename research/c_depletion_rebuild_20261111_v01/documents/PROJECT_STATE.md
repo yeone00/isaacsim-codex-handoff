@@ -1552,3 +1552,12 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - ntfy16:43경serverHTTP200이력있으나handsetUNKNOWN/이전로그경로결함확인,정확경로고우선재알림HTTP200확인. 기존watchdog/동기화중단0,복구에러는즉시notify+HOLD기존queue.
 
 - 평가복구최종:24/24 crossVal,5040model-images/16632 GT instances 검증PASS. 36개검증실행artifact/inputSHA/Val계보확인/57checkpoint불변/원본24실패보존. 새HPO_recovered_status COMPLETED,기존C06선정유지. 후속static HR가림qualification 실제진입(PID707461),controller699911/static707458. 물리HOLD.
+
+
+## 2026-11-12 — 최종 승인 C-V02 보강/혼합 선행 자동 실행 시작
+
+- 보고서 `reports/c_v02_c100_mixing_pipeline_launch_handoff_20261112_v01.md`; doc lock c_v02_balanced_mixing_execution_protocol_LOCKED_20261112_v01.json. 기존4410/57학습/24복구Val/C06 SHA 보존. 이전보강보류는최신명시승인으로대체하되기록보존.
+- 기존가림30/30 PASS 및1890frameQA후GPU경계예약→기존perception미진입HOLD→새C100generation전환실증. kill/중복GPU없음. V02root SDG/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01,controller910996. 신규840RGBD추가목표/전체5250. Train-derived동일distance_bin4새camera관측,70family/split/형상/조명원본보존. C100만view다양화교란/anchor분석명시.
+- Real352/48/189 class0/계보hash중복0,기존LOCKEDv03 target-only원본정책유지/제품도메인차이공개/미승인보완라벨안씀. bitmap양성·음성·다중해상도6CPU시험PASS. 전체V02QA전모델학습없음.
+- C06fullprecision고정39본학습(9synthetic+27partialmixed+3sharedreal trajectories)/7800epochs,별도3×2epoch smoke. 각비율1250slots(1250:0/938:312/625:625/312:938/0:1250). 동일pretrained새학습/HPOrerun0. dualVal동일가중checkpoint,공통비율9score평균/동점높은합성/epoch동점최초. zero-real훈련3공유하지만표현별bestepoch차이기록.
+- sourcecapSHA고정/QA→학습→모델잠금→기존Test재사용+신규C100Test가림240→selected/baseline정적→pose→통합보고까지독립연결. 이후물리300+별도150은성공/센서datum/안전/파일럿gate미확정HOLD. 학습GPU검증은QA후예정이며아직통과주장하지않음. 기존watch/ntfy/Git 유지+V02관찰자/상태명령추가.
