@@ -1,7 +1,7 @@
 {
   "state": "RUNNING",
   "reason": null,
-  "updated": "2026-11-12T14:10:12.299639+09:00",
+  "updated": "2026-11-12T14:15:22.516006+09:00",
   "controller_pid": 106572,
   "session": "c_common_hpo_20261111_v01",
   "total_candidates": 12,
@@ -19,8 +19,8 @@
     "candidate_id": 7,
     "rep": "LR_Scan",
     "seed": 42,
-    "epoch": 96,
-    "latest_validation_mask_map5095": 0.9151629084815097
+    "epoch": 170,
+    "latest_validation_mask_map5095": 0.9192092529246167
   },
   "best_candidate": [
     0.9432983046074382,
@@ -36,7 +36,7 @@
   },
   "max_training_jobs": 57,
   "max_model_epochs": 5766,
-  "wall_seconds_this_controller": 16523.87239575386,
+  "wall_seconds_this_controller": 16834.088758945465,
   "test_used": false,
   "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
 }
