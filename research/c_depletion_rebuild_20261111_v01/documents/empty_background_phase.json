@@ -1,0 +1,8 @@
+{
+  "counts": {
+    "strictly_before_empty_background_file": 26370
+  },
+  "empty_file_minus_exception_seconds_min": 0.05853009223937988,
+  "max": 0.9932453632354736,
+  "interpretation": "Empty background file is written before actual object creation in frozen capture source. Exceptions strictly before this write and within scene event interval precede object creation; GPU stage/frame freshness still not directly recorded."
+}

@@ -1,0 +1,48 @@
+{
+  "time": 1794446617.0221376,
+  "HPO": {
+    "state": "RUNNING",
+    "reason": null,
+    "updated": "2026-11-12T10:23:31.115239+09:00",
+    "controller_pid": 106572,
+    "session": "c_common_hpo_20261111_v01",
+    "total_candidates": 12,
+    "candidate_counts": {
+      "COMPLETED": 3,
+      "RUNNING": 1,
+      "PENDING": 8,
+      "FAILED": 0
+    },
+    "current": {
+      "key": "screen_C03_LR_Scan_s42",
+      "pid": 154054,
+      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/screen_C03_LR_Scan_s42_a01",
+      "phase": "screen",
+      "candidate_id": 3,
+      "rep": "LR_Scan",
+      "seed": 42,
+      "epoch": 20,
+      "latest_validation_mask_map5095": 0.8781145511590849
+    },
+    "best_candidate": [
+      0.9393577593351282,
+      0
+    ],
+    "best_score_phase": "screen",
+    "completed_training_jobs": 13,
+    "job_counts": {
+      "COMPLETED": 13,
+      "RUNNING": 1,
+      "FAILED": 0,
+      "INTERRUPTED": 0
+    },
+    "max_training_jobs": 57,
+    "max_model_epochs": 5766,
+    "wall_seconds_this_controller": 2922.6880078315735,
+    "test_used": false,
+    "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
+  },
+  "source_hash_lock_unchanged": true,
+  "physical_motion_authorized": false,
+  "services": "MainPID=106568\nId=c-depletion-bitmap-continuation-20261112-v01.service\nActiveState=active\n\nMainPID=3805776\nId=c-depletion-watchdog-20261111-v01.service\nActiveState=active\n\nMainPID=109541\nId=c-depletion-bitmap-sync-20261112-v01.service\nActiveState=active\n"
+}

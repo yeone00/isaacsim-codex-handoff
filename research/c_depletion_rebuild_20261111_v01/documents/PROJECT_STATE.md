@@ -1518,3 +1518,10 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - static 평가까지 독립자동연결, 원본 failed polygon controller/출력 보존. 실제 renderer legacy NumPy exception root cause 미해결; 새 mask topology 인코딩 문제와 구분. 물리pilot/main300/O50150은HOLD/실행0.
 
 - 09:37 후속: C 3표현 GPU smoke 각2epoch 모두 PASS, checkpoint SHA/FP32/AMP 감사 확인. screen 기본 HR 60epoch 탐색 자동진입, continuation106568/HPO106572. GitHub bitmap 원격 commit2776ce1e3fcc2e1e2620efb3dac090e37d2117e6 확인. 추가 publisher5분주기/기존watchdog 유지.
+
+
+## 2026-11-12 — Replicator/NumPy 예외 CPU 독립 감사 완료
+
+- 보고서 `reports/c_depletion_replicator_numpy_data_integrity_audit_20261112_v01.md`. production210로그/26370예외=4395scene×6. UTC+경과ms 복원불확실성최대.036초; 전부실제적재물생성전empty RGB파일저장이전. 내부원인은legacy ID annotator warp.numpy→np.asarray; 실패rawbuffer/shape/framecounter미저장으로정확원인UNKNOWN,무해확정아님.
+- 전체4410파일SHA/decode/actual-canonical13986마스크px·중복 검사/잔여Bundle5 독립투영 범위 PASS. RGB-empty-mask H1통계13986개exact;OK13600/LOW_SUPPORT317/WATCH30/FLAG_NUREC39원래대로유지. 최초정수pixel광선진단585outlier는별도보존; +.5pixel-center 전체13986instance 표본깊이투영5mm밖0. 기존pose/HPO입력규약수정0.
+- 새데이터손상근거미발견으로추가정적평가HOLD유발없음. rawframe단위동기/버퍼신선도완전증명UNKNOWN. HPO/Controller/Watchdog/동기화서비스중단·설정변경0,물리pilot300/별도150HOLD. 감사CPU만저우선순위/최종1core제한,새GPU/렌더/학습0.

@@ -1,0 +1,22 @@
+{
+  "source_sha256": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_rgbd_capture_20261111_v02.py": "541ec5732622e940e0aba9c4057a13c0521a6bf8116a64e7f335ee6bed880df5",
+    "/home/user/anaconda3/envs/hh_isaac51/lib/python3.11/site-packages/isaacsim/extscache/omni.replicator.core-1.12.27+107.3.3.lx64.r.cp311/omni/replicator/core/ogn/python/impl/nodes/OgnInstanceIdSegmentationLegacy.py": "c8d5add722b540eaca15f289f41d45c4cac4dbb8ffe5d1ad76f98d61a95d0325",
+    "/home/user/anaconda3/envs/hh_isaac51/lib/python3.11/site-packages/isaacsim/extscache/omni.warp.core-1.8.2+lx64/warp/types.py": "cccd466575f661c2851259fcd67d99e217585a4131efb0e545f37066d720b6f5"
+  },
+  "capture_sequence": [
+    "remove existing scene",
+    "reset:16 app.update+4 after accumulation reset+6 orchestrator step(rt_subframes8)",
+    "read/store empty RGB",
+    "create actual pallet/load geometry",
+    "reset and obtain actual RGB/depth/ID masks",
+    "disable actual and create canonical geometry",
+    "reset and obtain canonical masks"
+  ],
+  "node_failure_line": "instance_id_seg_data=wp.array(...).numpy(), before setting db.outputs.data and idToLabels",
+  "precise_cause": "UNKNOWN: no failed shape/stride/pointer/id-buffer dump retained; CPU-only audit cannot replay a missing live render buffer",
+  "numpy_version": "1.26.0",
+  "warp_extension_path": "/home/user/anaconda3/envs/hh_isaac51/lib/python3.11/site-packages/isaacsim/extscache/omni.warp.core-1.8.2+lx64/warp/types.py",
+  "possible_stale_output": "Possible in general because exception occurs before writing legacy outputs. This is an inference, not an observation of stale saved masks. Independent geometry and depth consistency are audited separately.",
+  "safety": "No GPU replay/package edit/renderer launch. Existing HPO and services unchanged."
+}
