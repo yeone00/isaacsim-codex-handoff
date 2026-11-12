@@ -1563,9 +1563,9 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - sourcecapSHA고정/QA→학습→모델잠금→기존Test재사용+신규C100Test가림240→selected/baseline정적→pose→통합보고까지독립연결. 이후물리300+별도150은성공/센서datum/안전/파일럿gate미확정HOLD. 학습GPU검증은QA후예정이며아직통과주장하지않음. 기존watch/ntfy/Git 유지+V02관찰자/상태명령추가.
 
 
-## 2026-11-12 — 任务층수prior 최신승인/C-V02 오탐수정 재개
+## 2026-11-12 — 작업 층수 prior 최신승인/C-V02 오탐수정 재개
 
 - C100 180/840후worker정상종료전환을추가watch가즉시missingPID로오판해GPUboundary HOLD된기록보존. watcher v03에120초동일PID전환유예추가,원래연구watch3805776/실험설정유지. 180개재생성없이gen v02 PID966660으로재개,이후200/220/240/260묶음연속완료.
 - task_layer_policy_v01: C100/80/60/40/20=4/4/3/2/1을운영자제공occupied layer task prior로명시허용. 기존layer금지는C-V02이최신예외로대체,GTpose/mask/slot/footprintcenter/FINAL금지유지. 원데이터nominal layer_count4(카메라생성용)수정0,별도task schema/2250static task+450physicalDRAFT/sha잠금.
 - ROBUSTA code0b1e5f46702d…/cfg35cf0a78…변경0. 새CCLI1..4+finalmixedseed42 modelsha/taskregistrysha검증/initial-only. unit1..4 forwarding/NoDetection·8datum prefix·GTschema/read차단PASS. q99상층점<1%/바닥없음이면correctlayer4여도datum−.09m가능한구조위험단위진단기록;실C/O 성능은최종mask고정후추가CPUworker로6750/role 평가예정/아직미검증.
-- CPUv30/원NuReccomposition감사:원NuRec collisionAPI0,과거v30 rover13+이름미분류29/PhysicsScene1. 이름만으로floor없음확정안함/rolebinding·실제loadedstage/contact는미확인. 신규Cdrive stage未생성,physicalHOLD유지. Main .11m/7.341774°를최신명시성공기준으로기록,PRE_FINAL5mm/2°cert·.03speedstop과구분;나머지안전·물리gate유지.
+- CPUv30/원NuReccomposition감사:원NuRec collisionAPI0,과거v30 rover13+이름미분류29/PhysicsScene1. 이름만으로floor없음확정안함/rolebinding·실제loadedstage/contact는미확인. 신규 C drive stage 미생성,physicalHOLD유지. Main .11m/7.341774°를최신명시성공기준으로기록,PRE_FINAL5mm/2°cert·.03speedstop과구분;나머지안전·물리gate유지.
