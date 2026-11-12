@@ -1,0 +1,134 @@
+{
+  "status": "LOCKED",
+  "models": [
+    {
+      "rep": "HR_Scan",
+      "seed": 42,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_HR_Scan_s42_a01/train/weights/best_val_maskmAP5095.pt",
+      "sha256": "60a5535311d32d0389a48e119c7a6d10e8cb39dda0d1a446b0689c53336fe6f2",
+      "candidate_id": 6,
+      "params": {
+        "lr0": 0.000888131352250591,
+        "weight_decay": 0.0008730658008775225,
+        "lrf": 0.13119036537141066,
+        "warmup_epochs": 4.486041867303101
+      },
+      "best_epoch": 120
+    },
+    {
+      "rep": "HR_Scan",
+      "seed": 43,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/final_C06_HR_Scan_s43_a01/train/weights/best_val_maskmAP5095.pt",
+      "sha256": "4b41c666e63f6253555c616ae4b36c1bab5ed35d0f02d54a1ff8866db70c3bd1",
+      "candidate_id": 6,
+      "params": {
+        "lr0": 0.000888131352250591,
+        "weight_decay": 0.0008730658008775225,
+        "lrf": 0.13119036537141066,
+        "warmup_epochs": 4.486041867303101
+      },
+      "best_epoch": 100
+    },
+    {
+      "rep": "HR_Scan",
+      "seed": 44,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/final_C06_HR_Scan_s44_a01/train/weights/best_val_maskmAP5095.pt",
+      "sha256": "c4105d50a4f3d59c5b10775842a18a3e7eeb8602387a7c30d8f7f6764e79bf41",
+      "candidate_id": 6,
+      "params": {
+        "lr0": 0.000888131352250591,
+        "weight_decay": 0.0008730658008775225,
+        "lrf": 0.13119036537141066,
+        "warmup_epochs": 4.486041867303101
+      },
+      "best_epoch": 62
+    },
+    {
+      "rep": "LR_Scan",
+      "seed": 42,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_LR_Scan_s42_a01/train/weights/best_val_maskmAP5095.pt",
+      "sha256": "1e10488da667771104572a39f062e9823e656ab5da955d9647057fb6ff6cfefd",
+      "candidate_id": 6,
+      "params": {
+        "lr0": 0.000888131352250591,
+        "weight_decay": 0.0008730658008775225,
+        "lrf": 0.13119036537141066,
+        "warmup_epochs": 4.486041867303101
+      },
+      "best_epoch": 154
+    },
+    {
+      "rep": "LR_Scan",
+      "seed": 43,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/final_C06_LR_Scan_s43_a01/train/weights/best_val_maskmAP5095.pt",
+      "sha256": "b2d16641f1ee92f0c5d51ea36a6b4d6bb9843985bf1b842ddf1989c0fbc32601",
+      "candidate_id": 6,
+      "params": {
+        "lr0": 0.000888131352250591,
+        "weight_decay": 0.0008730658008775225,
+        "lrf": 0.13119036537141066,
+        "warmup_epochs": 4.486041867303101
+      },
+      "best_epoch": 161
+    },
+    {
+      "rep": "LR_Scan",
+      "seed": 44,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/final_C06_LR_Scan_s44_a01/train/weights/best_val_maskmAP5095.pt",
+      "sha256": "c1ef180cb63c73b78eb016a11d4f149aa1b5bd468ac6fa75e0270bc9c768e000",
+      "candidate_id": 6,
+      "params": {
+        "lr0": 0.000888131352250591,
+        "weight_decay": 0.0008730658008775225,
+        "lrf": 0.13119036537141066,
+        "warmup_epochs": 4.486041867303101
+      },
+      "best_epoch": 156
+    },
+    {
+      "rep": "GeoCAD",
+      "seed": 42,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/full_C06_GeoCAD_s42_a01/train/weights/best_val_maskmAP5095.pt",
+      "sha256": "9703c4f9eda34a9ad8080eb852cfdd8bd4c2eb31ceb01a79a8001779894aaacb",
+      "candidate_id": 6,
+      "params": {
+        "lr0": 0.000888131352250591,
+        "weight_decay": 0.0008730658008775225,
+        "lrf": 0.13119036537141066,
+        "warmup_epochs": 4.486041867303101
+      },
+      "best_epoch": 197
+    },
+    {
+      "rep": "GeoCAD",
+      "seed": 43,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/final_C06_GeoCAD_s43_a01/train/weights/best_val_maskmAP5095.pt",
+      "sha256": "7f34a667faf7b594efc00dd3fb69a53c058d706f6234bdaf4ac88c54de41ae23",
+      "candidate_id": 6,
+      "params": {
+        "lr0": 0.000888131352250591,
+        "weight_decay": 0.0008730658008775225,
+        "lrf": 0.13119036537141066,
+        "warmup_epochs": 4.486041867303101
+      },
+      "best_epoch": 100
+    },
+    {
+      "rep": "GeoCAD",
+      "seed": 44,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/final_C06_GeoCAD_s44_a01/train/weights/best_val_maskmAP5095.pt",
+      "sha256": "3ea126801a2e1bbcfdbf2e71a2c181b206150c1acb432c700f33fe231d22bafa",
+      "candidate_id": 6,
+      "params": {
+        "lr0": 0.000888131352250591,
+        "weight_decay": 0.0008730658008775225,
+        "lrf": 0.13119036537141066,
+        "warmup_epochs": 4.486041867303101
+      },
+      "best_epoch": 67
+    }
+  ],
+  "selection_sha256": "8b1df58783bb693ee2f3a4c36a186a6d05ddc74da246b532f091875e562f4fdf",
+  "test_used_for_selection": false,
+  "source": "C dataset common HPO; not old B1/M50"
+}

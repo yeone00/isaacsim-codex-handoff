@@ -1543,3 +1543,10 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 ## 2026-11-12T16:47:01.334321+09:00 — C 공통 HPO 자동 실행 종료
 
 - 상태 COMPLETED_WITH_FAILURES; 보고서 `reports/c_common_hpo_final_20261111_v01.md`; 원본 /home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02; Test 미사용.
+
+
+## 2026-11-12 — C-HPO 별도Validation 복구 실행
+
+- 보고서 `reports/c_hpo_validation_pipeline_recovery_handoff_20261112_v01.md`. 57train PASS/sha보존,실제cross실패24/24(14는중간집계). 별도val가training kwargs를상속하지않아overlapTrue/mosaic1default로bitmap계약충돌. maskratio4는같았음. 새eval-onlyworker/독립controller로small own/cross9건반복exact/3full own검증후24건복구중. 재학습/가중치/GT/분할/선정변경0.
+- savedEMAfp16 rounding으로학습FP32EMA와지표차이HR+.017421/LR+.001834/CAD−.117268%p보존;원epoch비트재현주장없음. 같은checkpointrepeat exact. C06원래seed42score94.329830%/base94.287328% 및선정lock불변. 복구24건후에만새HPO_recovered_status COMPLETED,원본failed상태는보존. 물리HOLD.
+- ntfy16:43경serverHTTP200이력있으나handsetUNKNOWN/이전로그경로결함확인,정확경로고우선재알림HTTP200확인. 기존watchdog/동기화중단0,복구에러는즉시notify+HOLD기존queue.
