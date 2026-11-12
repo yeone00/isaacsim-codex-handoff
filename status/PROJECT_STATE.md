@@ -1499,3 +1499,22 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 개정분 `docs/c_depletion_O50_drive_plan_AMENDMENT_20261111_v01.md`, `reports/c_depletion_O50_drive_plan_amendment_20261111_v01.md`;root execution_plan_amendment_v02.json 및pipeline_plan_current.json. 기존HPO개정/본300회유지+5C×O50×3rep×10base150=계획450. 300/150namespace·결과·분모·통계별도,450합산성공률주결과금지.
 - 가능하면동일10base·제거·시작·환경·모델대응;현재frame실제가림/GT별도검증. C인식/pose O50평가·GT/가림QA·O50기술pilot·150manifest/version/model lock·별도실행승인필수. 인식/오선택/pose/plan/안전/최종실패·중단보존,기존A/제어/안전완화0.
 - 계획순서main300→O50technicalpilot→O50separate150,파일럿은150분모와별도. 실제150ID/새데이터/adapter생성안함. 현재HPO PID3130638 RUNNING,Controller3509437/Watchdog3514993 유지/HOLD. 기존코드·부모잠금·C-HPO계획v01불변,신규렌더/학습/주행0. 추가물리작업만약20–22.5h,450물리합약59.88–67.5h잠정/기타단계시간별도/48h강제시한없음.
+
+
+## 2026-11-11T22:08:57.944376+09:00 — B1 공통 HPO 자동 실행 종료
+
+- 상태 COMPLETED; 보고서 `reports/b1_common_hpo_final_20261111_v01.md`; 원본 /home/user/hh/isaac_cosmos/sdg_final/B1_COMMON_HPO_20261111_v01; Test 미사용.
+
+
+## C dataset automated QA stage 2026-11-12 08:44:22
+
+- HOLD_MASK_ENCODING; reports/c_depletion_dataset_stage_results_20261111_v01.md; original results preserved, physical stages HOLD.
+
+
+## 2026-11-12 09:35 KST — C bitmap QA 복구 및 실제 C-HPO 재개
+
+- 보고서 `reports/c_depletion_bitmap_recovery_handoff_20261112_v01.md`. 원본4410/4410 생성완료; 기존 polygon QA 1782/13986 encoding 실패 HOLD 보존. 원본형태를 유지하는 새 bitmap QA PASS, CPU32seed 변환 및 6개 train/val loader 점검 PASS. PhotoDegrade Format-name CPU 실패는 보존/새 worker v03로 호환.
+- C_COMMON_HPO_v02 실제 RUNNING: systemd c-depletion-bitmap-continuation-20261112-v01.service, HPO PID106572, HR smoke2epoch PASS→LR 자동진입. 후보12/최대57train/5766epoch 유지. 기존 B1 HPO 불변. 데이터/증강/조건 사후완화0, bitmap 라벨방식 변경은 C-only 계보로 구분.
+- static 평가까지 독립자동연결, 원본 failed polygon controller/출력 보존. 실제 renderer legacy NumPy exception root cause 미해결; 새 mask topology 인코딩 문제와 구분. 물리pilot/main300/O50150은HOLD/실행0.
+
+- 09:37 후속: C 3표현 GPU smoke 각2epoch 모두 PASS, checkpoint SHA/FP32/AMP 감사 확인. screen 기본 HR 60epoch 탐색 자동진입, continuation106568/HPO106572. GitHub bitmap 원격 commit2776ce1e3fcc2e1e2620efb3dac090e37d2117e6 확인. 추가 publisher5분주기/기존watchdog 유지.
