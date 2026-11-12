@@ -9,7 +9,7 @@
     "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/C_COMMON_HPO_BITMAP_attempt_v01.log"
   },
   "reason": null,
-  "updated": 1794459001.349659,
+  "updated": 1794459231.4550955,
   "generated_RGBD": 4410,
   "declared_RGBD": 4410,
   "completed_jobs": 210,
@@ -17,11 +17,11 @@
   "prior_failure_preserved": "C_DATASET_QA_PACKAGE",
   "physical_motion_authorized": false,
   "physical_runs_started": 0,
-  "elapsed_seconds": 15312.948559999466,
+  "elapsed_seconds": 15543.053996562958,
   "C_HPO": {
     "state": "RUNNING",
     "reason": null,
-    "updated": "2026-11-12T13:49:51.360090+09:00",
+    "updated": "2026-11-12T13:53:41.458202+09:00",
     "controller_pid": 106572,
     "session": "c_common_hpo_20261111_v01",
     "total_candidates": 12,
@@ -39,8 +39,8 @@
       "candidate_id": 7,
       "rep": "HR_Scan",
       "seed": 42,
-      "epoch": 12,
-      "latest_validation_mask_map5095": 0.8403001812892702
+      "epoch": 67,
+      "latest_validation_mask_map5095": 0.9336619855179867
     },
     "best_candidate": [
       0.9432983046074382,
@@ -56,7 +56,7 @@
     },
     "max_training_jobs": 57,
     "max_model_epochs": 5766,
-    "wall_seconds_this_controller": 15302.93284535408,
+    "wall_seconds_this_controller": 15533.030952215195,
     "test_used": false,
     "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
   }
