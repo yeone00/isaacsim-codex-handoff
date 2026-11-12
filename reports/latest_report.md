@@ -1,33 +1,55 @@
-# C 데이터 마스크 인코딩 복구 및 독립 HPO 재개 — 2026-11-12
+# C 생성 Replicator/NumPy 예외 — CPU 데이터 정합성 감사
 
-## 실제 상태와 기존 실패 보존
-C RGB-D 4410/4410, 210 production batches 모두 PASS_CAPTURE. 원본 capture/GT/기존 모델/USD/LOCKED 레시피는 수정하지 않았다. 기존 production controller는 08:44 QA 변환 실패로 종료했다. `dataset_QA_v01/result.json` HOLD_MASK_ENCODING와 production_jobs FAILED 기록은 그대로 보존한다.
+2026-11-12. 기존 C-HPO·Controller·Watchdog·GitHub 자동 동기화 프로세스와 학습 설정은 변경·중단하지 않았다. 신규 GPU 작업/렌더링/추론/물리 주행은 실행하지 않았다. 모든 검사와 그림 없는 텍스트 증거는 저장 파일을 읽는 CPU 감사다.
 
-원본 usable load instances 13986 중 1782개가 단일 lossless polygon으로 표현되지 않았다. 1689개는 다중 연결 성분, 177개는 구멍 포함(서로 중복 가능), 나머지 단일 성분 93개도 구멍으로 실패했다. 표현 중복 제외 scene ID 327개. 원본 GT를 연결하거나 구멍을 채우거나 인스턴스를 나누지 않았다.
+## 범위와 발생 시점
 
-## 별도 bitmap adapter
-`scripts/c_depletion_bitmap_adapter_20261112_v01.py` 및 QA worker 별도 구현. `C_BITMAP_PACKAGE_v01`에서 모든 usable instance의 원본 PNG를 직접 읽는다. .txt는 bbox bookkeeping이며 segmentation GT로 쓰지 않는다. Train/Val/Test=1050/210/210 per representation, 70 source families, HR/LR/CAD 공통 split/점유/카메라를 유지한다. 기존 pipeline의 single polygon encoding을 bitmap으로 바꾼 C-only 학습 계보이므로 기존 B1 polygon model과 모든 차이를 HPO 효과라고 주장하지 않는다.
+기존 본생성 210 로그의 `Replicator_instance_id_segmentation` 예외 **26,370회**를 전수 추출했다. 본생성 신규 관측 4,395건에서 각각 정확히 6회이며, 이전 파일럿 재사용 15건까지 포함한 전체 저장 관측은 4,410건이다. 26,370을 손상 이미지 수로 해석하면 안 된다.
 
-새 QA는 원본 4410건의 파일 SHA·float32 depth·캘리브레이션·벽돌수·cross-rep canonical masks exact 검사를 재실행하여 PASS. 결과는 `dataset_QA_bitmap_v01/result.json`. 구 geometry support 검사이며 동적 안정성/실제 현장 floor datum 인증이 아니다. 원본 1782 인코딩 실패가 사라진 것이 아니라 bitmap 경로에서는 polygon 변환 자체를 사용하지 않는다.
+UTC 초 단위 로그만으로 장면을 매칭하면 경계가 어긋났다. 별도 복원에서 각 로그의 UTC 초와 프로세스 경과 밀리초를 함께 사용해 시작시각의 가능한 구간을 교집합으로 계산했다. 최대 시각 불확실성 구간 폭 0.036초. 전체 예외가 불확실성까지 고려해 **각 장면의 empty 배경 RGB 파일 쓰기 이전**에 있었다. 예외 추정시각부터 empty 파일 쓰기까지 0.0585~0.9932초.
 
-CPU 회귀 32 seeds: 설치된 RandomPerspective의 image/난수 상태와 동일, 동일 행렬의 nearest mask 변환·flip·letterbox·구멍/분리 영역 보존·mask_ratio1 exact 검사 PASS. 실제 3표현 train/val loader 각 3샘플과 collate PASS. mask_ratio4 최종 cv2.resize는 설치된 polygon2mask의 최종 downsample과 동일 방식을 유지한다. augmentation 확률, PhotoDegrade 구현/RNG, optimizer/FP32 boxloss/AMP/batch64/img640는 변경하지 않았다.
+동결 capture v02의 순서는 장면 제거→reset(6 orchestrator steps 포함)→empty RGB 저장→실제 적재물 생성→reset→실제 RGB/Depth/ID mask 저장→canonical 대체→reset→canonical GT 저장이다. 따라서 확인된 예외는 적재물 생성 전 empty 구간에 위치한다. 적재물·canonical GT 저장 구간의 오류였다고 단정한 이전 초 단위 추정은 정밀 복원 결과로 대체한다. 원래 로그와 첫 추정 파일은 보존한다.
 
-기존 PhotoDegrade 삽입기가 class name Format을 검사하여 첫 CPU 통합 검사가 실패했다. 준비만 된 HPO root v01은 미실행 상태로 보존했다. 새 worker v03는 adapter Format class의 표시 이름을 맞추어 원래 삽입기를 그대로 사용한다. 실패한 CPU 시도는 qualification 기록에 명시한다. 새 HPO root는 **C_COMMON_HPO_v02**.
+## 원인과 출력 경로
 
-## 실제 독립 재개
-service `c-depletion-bitmap-continuation-20261112-v01.service`에서 C-HPO controller v03 실행. HR smoke 2 epochs PASS 후 LR smoke로 자동 전환 확인. 실제 checkpoint/Validation/FP32·AMP audit 검증 후 완료 판정. 후보12개, 최대57 train/5766 epochs, 기본과 B1 C05 포함, Train/Validation만 선택, fresh pretrained, 동일4파라미터 공간 유지. 최종3seed 및 cross-expression Validation 후 static occlusion qualification→Test perception→pose worker 자동 연결. `static_evaluation_capabilities_bitmap_v01.json`에 별도 source SHA 고정. 기존 B1 HPO 완료63+36 원본과 86.459% baseline vs86.308% C05 평균 개선 없음 기록을 유지한다.
+설치된 NVIDIA 원본 `OgnInstanceIdSegmentationLegacy.py`의 `compute()`에서 ID 버퍼를 `wp.array(...).numpy()`로 복사/변환하다가 예외가 발생한다. Warp `types.py`의 `numpy()`는 CPU 복사 후 `np.asarray(a)`를 호출한다. 예외는 legacy node가 `db.outputs.data`와 `idToLabels`를 갱신하기 전 발생한다. RGB annotator 또는 depth annotator 함수의 예외와 구분한다.
 
-기존 watch PID는 중단하지 않았으며 production_status에 포함된 새 C_HPO를 감시한다. 추가 publisher는 기존 Git lock/allowlist/secret scan/remote SHA 검증을 재사용한다. ntfy 기존 private config 유지; 새 인증·서비스 없음. 오래된 failed production service는 재부팅 시 구 실패 경로가 실행되지 않게 enable만 해제했고, 실행 중인 연구 프로세스는 중단하지 않았다. 새 continuation service enable. 재부팅 실제 검증은 미수행. 실패/중단 attempt는 자동 성공/무제한 재시도하지 않는다.
+빈 장면의 ID 버퍼/shape/stride 상태와 관련됐을 가능성은 **가설**이다. 실패 당시 pointer, shape, strides, dtype, 전체 uint32 ID buffer, render frame/generation ID가 저장되지 않아 정확한 내부 조건은 UNKNOWN이다. 실제 NumPy는 Isaac 환경 1.26.0이며 NumPy 2 호환성 문제로 임의 진단하지 않았다. CPU 검사만으로 누락된 live GPU 버퍼를 재현하지 않았다.
 
-## 기존 Replicator 로그 오류와 구분
-`mask_error_audit_v01/result.json`: production210 logs 모두 NumPy 변환 예외가 있으며 총26370 occurrence. 모든210 capture 결과/4410 source SHA·depth·cross-rep canonical 검사는 PASS. 단일 polygon의 표현 불가능성과 이 renderer 예외는 별개 문제이며, 인과관계/완전 무해함을 확인한 것이 아니다. renderer root cause는 미해결로 보존. 원본과 실패 로그를 지우거나 재렌더하지 않았다.
+## 기존 QA와 독립된 재검사
 
-## 상태·재개·다음 단계
+| 검사 | 범위 | 결과 및 한계 |
+|---|---:|---|
+| 실제 파일 SHA 재계산 | 전체 4,410 capture의 기록된 모든 RGB·Depth·camera·empty·actual/canonical mask | 원래 capture SHA와 일치 |
+| 이미지·배열 재디코딩 | 4,410 | RGB/empty 640×480×3 uint8, depth 480×640 float32 및 카메라 rigid transform 검사 통과 |
+| mask 이진성·픽셀 수·load 간 중복 | actual/canonical 13,986 instance pairs | 저장 metadata와 일치, load 소유 마스크 중복 없음 |
+| 독립 형상 투영 | 13,986 canonical instances | 보존된 Bundle5 잔여 슬롯으로 구성한 3D box를 저장 camera로 투영. 2px 경계 여유를 둔 지지 범위 밖 GT 픽셀 0. 이 경계 여유는 감사용이며 기존 QA나 성공 기준을 바꾼 것이 아님 |
+| RGB·empty·actual mask 재계산 | 기존 H1 통계 13,986개 | erosion2 픽셀 수와 stored tau 기준 visibility 수치 전체 일치. 원래 pallet ID mask 미보존으로 tau 자체는 재계산 불가 |
+
+H1 원래 분류는 OK 13,600 / LOW_SUPPORT 317 / WATCH 30 / FLAG_NUREC_OCCLUSION 39다. 이들은 원래 H1 분석용 표시이며 모두 그대로 보존한다. 이번 감사에서 표본을 제거하거나 증강·QA threshold를 완화하지 않았다. 알려진 NuRec visibility 제한을 새롭게 해결했다고 주장하지 않는다.
+
+첫 깊이 진단은 정수 pixel 좌표에서 광선을 복원해 585 instance에 5mm enclosure outlier를 기록했다. 이를 숨기지 않고 별도 재검토했다. 해당 585건에서 pixel center +0.5 convention을 사용하자 outlier 0이 되었고, 모든 instance 대상으로 같은 검사를 추가했다. 감사 광선 규약의 정정이며 현재 HPO·기존 위치추정 입력/알고리즘은 변경하지 않았다. 5mm는 감사용 enclosure 거리이고 운용 성공 판정 기준이 아니다.
+
+## 판정의 범위
+
+파일 손상·형상과 모순되는 GT·픽셀 수 불일치·RGB/mask 저장 통계 불일치는 확인되지 않았다. 시간상 예외는 empty 배경 구간에 국한됐다. 이 사실은 저장 데이터 손상으로 이어졌다는 근거를 지지하지 않지만, renderer 예외를 “완전히 무해한 경고”로 확정한 것은 아니다.
+
+원본 frame counter와 buffer generation ID가 없으므로 모든 RGB·Depth·GT가 정확히 동일 렌더 프레임에서 나온 사실을 사후 완전 증명할 수 없다. RGB와 canonical GT는 원래 설계상 actual→canonical 별도 렌더이며 동일 camera/점유 형상 대응이지 동일 raw frame이 아니다. RGB·actual depth·actual mask의 버퍼 신선도 역시 직접 frame-ID 증명은 UNKNOWN이다. 독립 투영·깊이·저장 통계는 공간 정합성 증거이며 이 UNKNOWN을 대체하지 않는다.
+
+확인된 데이터 결함에 근거한 추가 후속 평가 HOLD 조건은 현재 관찰되지 않았다. 기존 C-HPO 및 승인된 정적 평가 계획은 유지하고, 물리 pilot/300/별도150 HOLD는 그대로다. 향후 실제 저장 데이터 모순이 발견되면 후속 평가를 HOLD해야 하며 이번 부분 검증을 무조건 통과 증명으로 사용하면 안 된다.
+
+## 증거와 재현
+
 외부 root: `/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02`.
-상태: 상위 root의 `status.sh`, `execution_v02/production_status.json`, **`C_COMMON_HPO_v02/hpo_status.json`** 순으로 확인.
-재개: 상위 root `resume.sh`는 live service 중복 실행 없이 start. 중단 attempt는 검토 후 새 attempt가 필요하며 원본 상태를 지우지 않는다.
 
-후속 자동 범위는 C-HPO→최종 모델→가림 생성 QA→인식/pose 정적 평가까지다. 성공 기준 출처(.11m/7.34° vs.10m/5°)와 실제 support datum, ROBUST_A/안전 파일럿 검증 미확정으로 물리pilot/본300/별도O50150은 HOLD, 새 주행0. 성공률/분모를 혼합하지 않는다.
+- `replicator_output_audit_v01/`: 전체 SHA/배열/GT projection 검사, capture_checks.jsonl, 최초 초 단위 exception timeline. source `analysis/c_depletion_replicator_output_audit_20261112_v01.py`.
+- `replicator_exception_timing_v01/`: monotonic+UTC timing.jsonl, empty_background_phase.json, source_audit.json, HPO_preservation_check.json. source `analysis/c_depletion_exception_timing_20261112_v01.py`.
+- `replicator_rgb_mask_audit_v01/`: RGB/H1 재계산, H1_strata.csv. source `analysis/c_depletion_rgb_mask_consistency_20261112_v01.py`.
+- `replicator_depth_outlier_review_v01/` 및 `replicator_depth_center_audit_v02/`: 첫 진단과 pixel-center 전수 재검사 모두 보존.
+
+재현 시 이미 존재하는 출력 root에 실행하지 않는다. 새 버전/출력 경로를 사용하고 CPU affinity 1core, `nice -n 15`, `ionice -c 3`, `OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1`을 적용한다. 마지막 깊이 감사에서 BLAS thread 확장을 관찰해 해당 **감사 프로세스만** CPU47 한 코어로 제한했다. 기존 학습 프로세스·서비스 설정은 바꾸지 않았다.
+
+GitHub에는 이 보고서·감사 코드·작은 요약·SHA만 동기화한다. RGB-D, 마스크 원본, 대용량 timeline/instance evidence 및 NuRec 시각자료는 로컬에 보존한다.
 
 
-09:37 검증 추가: HR/LR/CAD smoke 각2epoch 모두 PASS/3 checkpoint SHA 및 모든 run checks 확인. 현재 screen_C00_HR_Scan_s42 60epoch 탐색으로 자동 진입. continuation PID106568, HPO PID106572, screen worker PID109027. HPO 소스 lock6개 현재 SHA 일치. 일부 정상 AMP overflow skip는 별도 기록했고 nonfinite forward0; 오류 은폐하지 않음. GPU smoke 증거 bitmap_qualification_v01/GPU_smoke_verified.json. GitHub 원격 검증 commit2776ce1e3fcc2e1e2620efb3dac090e37d2117e6, 추가본 다음 주기 동기화.
+최종 깊이 검사: 전체 **13,986 instance, 1,790,208개 결정적 표본 depth points**의 +0.5 pixel-center 광선을 재투영했을 때 5mm Bundle5 envelope 밖 점 **0**. 전수 픽셀 깊이의 무결성을 증명하는 것이 아니라 모든 instance에 대한 표본 공간 정합성 검사다. 기존 HPO PID106572와 continuation106568, Watchdog3805776, sync109541 모두 유지됐다.
