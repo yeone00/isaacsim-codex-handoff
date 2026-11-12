@@ -59,3 +59,4 @@
 {"time": 1794492093.3922412, "kind": "NTFY", "error": "RuntimeError", "summary": "RuntimeError"}
 {"time": 1794492245.0346806, "kind": "NTFY", "error": "RuntimeError", "summary": "RuntimeError"}
 {"time": 1794492245.6452053, "kind": "NTFY", "error": "RuntimeError", "summary": "RuntimeError"}
+{"time": 1794512530.8242455, "kind": "GITHUB", "error": "BlockingIOError", "summary": "[Errno 11] Resource temporarily unavailable"}
