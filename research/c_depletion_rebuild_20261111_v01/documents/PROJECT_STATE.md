@@ -1509,3 +1509,10 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 ## C dataset automated QA stage 2026-11-12 08:44:22
 
 - HOLD_MASK_ENCODING; reports/c_depletion_dataset_stage_results_20261111_v01.md; original results preserved, physical stages HOLD.
+
+
+## 2026-11-12 09:35 KST — C bitmap QA 복구 및 실제 C-HPO 재개
+
+- 보고서 `reports/c_depletion_bitmap_recovery_handoff_20261112_v01.md`. 원본4410/4410 생성완료; 기존 polygon QA 1782/13986 encoding 실패 HOLD 보존. 원본형태를 유지하는 새 bitmap QA PASS, CPU32seed 변환 및 6개 train/val loader 점검 PASS. PhotoDegrade Format-name CPU 실패는 보존/새 worker v03로 호환.
+- C_COMMON_HPO_v02 실제 RUNNING: systemd c-depletion-bitmap-continuation-20261112-v01.service, HPO PID106572, HR smoke2epoch PASS→LR 자동진입. 후보12/최대57train/5766epoch 유지. 기존 B1 HPO 불변. 데이터/증강/조건 사후완화0, bitmap 라벨방식 변경은 C-only 계보로 구분.
+- static 평가까지 독립자동연결, 원본 failed polygon controller/출력 보존. 실제 renderer legacy NumPy exception root cause 미해결; 새 mask topology 인코딩 문제와 구분. 물리pilot/main300/O50150은HOLD/실행0.

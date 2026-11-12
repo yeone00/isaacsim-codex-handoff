@@ -9,7 +9,7 @@
     "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/logs/C_COMMON_HPO_BITMAP_attempt_v01.log"
   },
   "reason": null,
-  "updated": 1794443698.4040694,
+  "updated": 1794443798.5095365,
   "generated_RGBD": 4410,
   "declared_RGBD": 4410,
   "completed_jobs": 210,
@@ -17,25 +17,25 @@
   "prior_failure_preserved": "C_DATASET_QA_PACKAGE",
   "physical_motion_authorized": false,
   "physical_runs_started": 0,
-  "elapsed_seconds": 10.002970457077026,
+  "elapsed_seconds": 110.10843777656555,
   "C_HPO": {
     "state": "RUNNING",
     "reason": null,
-    "updated": "2026-11-12T09:34:48.499253+09:00",
+    "updated": "2026-11-12T09:36:28.683503+09:00",
     "controller_pid": 106572,
     "session": "c_common_hpo_20261111_v01",
     "total_candidates": 12,
     "candidate_counts": {
       "COMPLETED": 0,
-      "RUNNING": 0,
-      "PENDING": 12,
+      "RUNNING": 1,
+      "PENDING": 11,
       "FAILED": 0
     },
     "current": {
-      "key": "smoke_C00_HR_Scan_s42",
-      "pid": 106580,
-      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/smoke_C00_HR_Scan_s42_a01",
-      "phase": "smoke",
+      "key": "screen_C00_HR_Scan_s42",
+      "pid": 109027,
+      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/runs/screen_C00_HR_Scan_s42_a01",
+      "phase": "screen",
       "candidate_id": 0,
       "rep": "HR_Scan",
       "seed": 42,
@@ -43,16 +43,16 @@
     },
     "best_candidate": null,
     "best_score_phase": "screen",
-    "completed_training_jobs": 0,
+    "completed_training_jobs": 3,
     "job_counts": {
-      "COMPLETED": 0,
+      "COMPLETED": 3,
       "RUNNING": 1,
       "FAILED": 0,
       "INTERRUPTED": 0
     },
     "max_training_jobs": 57,
     "max_model_epochs": 5766,
-    "wall_seconds_this_controller": 0.0719919204711914,
+    "wall_seconds_this_controller": 100.25625514984131,
     "test_used": false,
     "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
   }

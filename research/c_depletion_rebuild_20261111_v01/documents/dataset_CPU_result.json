@@ -1,0 +1,65 @@
+{
+  "state": "PASS",
+  "datasets": [
+    {
+      "rep": "HR_Scan",
+      "mode": "train",
+      "images": 1050,
+      "mask_shape": [
+        1,
+        160,
+        160
+      ]
+    },
+    {
+      "rep": "HR_Scan",
+      "mode": "val",
+      "images": 210,
+      "mask_shape": [
+        3,
+        128,
+        168
+      ]
+    },
+    {
+      "rep": "LR_Scan",
+      "mode": "train",
+      "images": 1050,
+      "mask_shape": [
+        1,
+        160,
+        160
+      ]
+    },
+    {
+      "rep": "LR_Scan",
+      "mode": "val",
+      "images": 210,
+      "mask_shape": [
+        3,
+        128,
+        168
+      ]
+    },
+    {
+      "rep": "GeoCAD",
+      "mode": "train",
+      "images": 1050,
+      "mask_shape": [
+        1,
+        160,
+        160
+      ]
+    },
+    {
+      "rep": "GeoCAD",
+      "mode": "val",
+      "images": 210,
+      "mask_shape": [
+        3,
+        128,
+        168
+      ]
+    }
+  ]
+}

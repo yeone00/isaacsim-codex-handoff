@@ -1,0 +1,122 @@
+[
+  {
+    "id": 0,
+    "params": {
+      "lr0": 0.001,
+      "weight_decay": 0.0005,
+      "lrf": 0.1,
+      "warmup_epochs": 3.0
+    },
+    "origin": "frozen_baseline"
+  },
+  {
+    "id": 1,
+    "params": {
+      "lr0": 0.0004324018443264278,
+      "weight_decay": 0.0007619289252991896,
+      "lrf": 0.20778843980644657,
+      "warmup_epochs": 2.325817027791736
+    },
+    "origin": "L-HPO full200 C05 parameters only; no trained weights"
+  },
+  {
+    "id": 2,
+    "params": {
+      "lr0": 0.0010519475193553167,
+      "weight_decay": 0.00010945271523411406,
+      "lrf": 0.1587492623170259,
+      "warmup_epochs": 2.328941627512769
+    },
+    "origin": "L-HPO full200 C10 parameters only; no trained weights"
+  },
+  {
+    "id": 3,
+    "params": {
+      "lr0": 0.00043798383222968054,
+      "weight_decay": 3.0866602912394806e-05,
+      "lrf": 0.18477397660525063,
+      "warmup_epochs": 3.01260651685287
+    },
+    "origin": "L-HPO full200 C07 parameters only; no trained weights"
+  },
+  {
+    "id": 4,
+    "params": {
+      "lr0": 0.00022207001159912847,
+      "weight_decay": 1.4821314115220098e-05,
+      "lrf": 0.08509489040160276,
+      "warmup_epochs": 2.8105453121309
+    },
+    "origin": "Optuna RandomSampler seed20261112; pre-generated before C performance"
+  },
+  {
+    "id": 5,
+    "params": {
+      "lr0": 0.00020262734797935384,
+      "weight_decay": 0.0019106847362494307,
+      "lrf": 0.10167537295217313,
+      "warmup_epochs": 3.4300382572996098
+    },
+    "origin": "Optuna RandomSampler seed20261112; pre-generated before C performance"
+  },
+  {
+    "id": 6,
+    "params": {
+      "lr0": 0.000888131352250591,
+      "weight_decay": 0.0008730658008775225,
+      "lrf": 0.13119036537141066,
+      "warmup_epochs": 4.486041867303101
+    },
+    "origin": "Optuna RandomSampler seed20261112; pre-generated before C performance"
+  },
+  {
+    "id": 7,
+    "params": {
+      "lr0": 0.00029839957921405256,
+      "weight_decay": 3.318461090451506e-05,
+      "lrf": 0.15040921758472164,
+      "warmup_epochs": 4.404567247324632
+    },
+    "origin": "Optuna RandomSampler seed20261112; pre-generated before C performance"
+  },
+  {
+    "id": 8,
+    "params": {
+      "lr0": 0.0005914803818153891,
+      "weight_decay": 4.553552365952043e-05,
+      "lrf": 0.10564693947436309,
+      "warmup_epochs": 4.730995369877836
+    },
+    "origin": "Optuna RandomSampler seed20261112; pre-generated before C performance"
+  },
+  {
+    "id": 9,
+    "params": {
+      "lr0": 0.0004091627158860361,
+      "weight_decay": 5.644379361119173e-05,
+      "lrf": 0.13240993787452904,
+      "warmup_epochs": 1.8249639357633178
+    },
+    "origin": "Optuna RandomSampler seed20261112; pre-generated before C performance"
+  },
+  {
+    "id": 10,
+    "params": {
+      "lr0": 0.0007818207060815836,
+      "weight_decay": 0.00027362343974490376,
+      "lrf": 0.06783893438096232,
+      "warmup_epochs": 4.226670987341921
+    },
+    "origin": "Optuna RandomSampler seed20261112; pre-generated before C performance"
+  },
+  {
+    "id": 11,
+    "params": {
+      "lr0": 0.0014298452696012518,
+      "weight_decay": 0.00027547457176407787,
+      "lrf": 0.1756564897119997,
+      "warmup_epochs": 2.3271118935094806
+    },
+    "origin": "Optuna RandomSampler seed20261112; pre-generated before C performance"
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "state": "PASS",
+  "seeds": 32,
+  "mask_holes_and_disconnected_components_exact": true,
+  "image_and_rng_match_installed_affine_flip": true,
+  "letterbox_exact": true,
+  "mask_ratio1_format_exact": true,
+  "photometric_original_unchanged": true,
+  "GPU_used": false
+}

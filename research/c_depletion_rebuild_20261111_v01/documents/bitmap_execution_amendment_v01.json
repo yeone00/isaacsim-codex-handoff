@@ -1,0 +1,21 @@
+{
+  "created": 1794443685.2582257,
+  "parent_production_authorization_sha256": "0b009ba7f6af029d597efd2e7aa7f1e48ef1f9e017d7e5271ba08974126b9985",
+  "prior_failure_result_sha256": "021dc59afd3e17cba8bc3802e5bc056520d1d555b300d516e7f5bb0af642f7ba",
+  "bitmap_QA_result_sha256": "540a80c7ca4a1b9bf47f901ab256070c2e21f2e049658070bfd8fd042a824e03",
+  "code_sha256": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_bitmap_adapter_20261112_v01.py": "8dd6f00730f0de9634831929eb18fe38d2df57a66423101c4f7aec4d23e2090d",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_continue_20261112_v01.py": "b87476f9f1a299f171fe181b4bc98f9029324cbfd6ab6939e4a5e7b31a71039f",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_dataset_QA_bitmap_20261112_v01.py": "de915459531f6dc96ad0d2ca0a663066dbe8f28195aa4030a9d4f342b20d135e",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_bitmap_qualification_20261112_v01.py": "a6f66bf5baddf92eec4141bacf4967d7b124adc68f7297f6014b4edf9731bb16",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_post_hpo_static_20261112_v02.py": "ddf917cfac393ca5d1f61057f8020bddd1585e9d9ccac19aacb6710ffd275980",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_common_hpo_train_20261112_v03.py": "532b402e3fd5bd3afee9cf112263c6aebcf71748e4b8e416bb0f249f89465f58",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_common_hpo_crossval_20261112_v03.py": "033f3e278253a7181a398d631d4323165b0cccff7841a5b875654c7a94dcebb8",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_common_hpo_prepare_20261112_v03.py": "d2fa681dc761f5741192733683002fe03e1cb138688d0645c82637f5d244349e",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_common_hpo_controller_20261112_v03.py": "429915f9773e3ecf9a147fe051dc112436819099ef3252990938c4064be2f425"
+  },
+  "physical_motion_authorized": false,
+  "scope": "resume approved data/training/static only; raw bitmap labels preserve all usable instances; v04 image parameters/RNG unchanged; original polygon failure retained",
+  "HPO_root": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02",
+  "preparation_v01_not_executed": "Format subclass-name compatibility identified by CPU test; v03 worker preserves original PhotoDegrade insertion"
+}

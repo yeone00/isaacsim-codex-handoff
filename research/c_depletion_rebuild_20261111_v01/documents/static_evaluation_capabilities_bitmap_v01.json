@@ -1,0 +1,30 @@
+{
+  "status": "LOCKED_STATIC_CAPABILITIES",
+  "created": 1794443685.246092,
+  "parent_production_authorization_sha256": "0b009ba7f6af029d597efd2e7aa7f1e48ef1f9e017d7e5271ba08974126b9985",
+  "physical_motion_authorized": false,
+  "code_sha256": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_rgbd_capture_20261111_v03.py": "677dca612fa934c19369d165c9ed0988dc319d736f8870ef2ccf7d5abe726d35",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_perception_eval_20261111_v01.py": "8e4501a8aa236042645ee1193d4e7b95292cb903fe5170ed860ce430ac1d1d05",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/analysis/c_depletion_pose_eval_20261111_v01.py": "5b85dcad8e33b7cbc963485015e5633fef2ac1130e8d5705b8f554c7241ad127",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/evaluation/c_depletion_robust_sensed_height_20261111_v01.py": "5e4d61c2b4f5b86e8ff45716b5b23ad532a4d0c6632124188fa795b5efd62b2e",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_post_hpo_static_20261112_v02.py": "ddf917cfac393ca5d1f61057f8020bddd1585e9d9ccac19aacb6710ffd275980"
+  },
+  "jobs": [],
+  "qualification": "after C immutable selection, train-only occlusion qualification before Test generation",
+  "pose_variants": [
+    "ORIG_v44",
+    "B1ADAPT_SENSEDTOP_NOMINAL4",
+    "B1ADAPT_PRIORTOP_NOMINAL4",
+    "ROBUST_A_FROZEN_NOMINAL4",
+    "C_ROBUST_SENSOR_HEIGHT_SITE_PRIOR_v01"
+  ],
+  "new_C_candidate_inputs": [
+    "sensor-selected mask",
+    "depth",
+    "camera metadata"
+  ],
+  "common_prior": "B1 design support top z=.144, not measured real floor; no actual C/slots/GT pose inputs",
+  "physical_stage_GATE": "HOLD regardless static completion until success criteria and physical qualification fixed",
+  "parent_static_capability_sha256": "bb630803a00f486db2f4fc9c5085ca4f22ae35a7eb99393c6fcd9fed8d268aec"
+}

@@ -1,0 +1,64 @@
+{
+  "status": "LOCKED",
+  "created": 1794443663.2183888,
+  "root": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02",
+  "python": "/home/user/anaconda3/envs/sdg_tools/bin/python",
+  "session": "c_common_hpo_20261111_v01",
+  "base_recipe_sha256": "c2659ab9594607ddec1080508b5916d56a6522a9dc887c46d2b539b626f22324",
+  "code_lock_sha256": "3630792bebe52a241f539dbd9dc89ab58d357dccd365ab8b80ea4bf81d0ea525",
+  "candidates_sha256": "720ec63b6f0eed82d0be7c4f0dca5704835a9a6a8e337ba45614ef22b5c2c067",
+  "train_val_inputs_sha256": "f7654b9ac72a759999c18ea9838ee34269bb50ebe4714bdfa26bf448f4f02748",
+  "sampler": "Optuna RandomSampler",
+  "sampler_seed": 20261112,
+  "training_seed_screen": 42,
+  "training_seeds_confirm": [
+    42,
+    43,
+    44
+  ],
+  "dataset_seed": "original frozen package scene membership; no resampling or new split",
+  "candidate_count": 12,
+  "space": {
+    "lr0": [
+      0.0002,
+      0.003,
+      true
+    ],
+    "weight_decay": [
+      1e-05,
+      0.002,
+      true
+    ],
+    "lrf": [
+      0.05,
+      0.25,
+      false
+    ],
+    "warmup_epochs": [
+      1.0,
+      5.0,
+      false
+    ]
+  },
+  "baseline": {
+    "lr0": 0.001,
+    "weight_decay": 0.0005,
+    "lrf": 0.1,
+    "warmup_epochs": 3.0
+  },
+  "screen_epochs": 60,
+  "schedule_epochs": 200,
+  "promote": "top3 new complete candidates + baseline; ties lowest id",
+  "final_seed42_checkpoint": "own Validation MASK mAP50-95 unrounded, strict greater; ties earliest epoch",
+  "max_training_jobs": 57,
+  "max_model_epochs": 5766,
+  "budget": "3 smoke*2 + 36 screen*60 + 12 full*200 + 6 selected seed-repeat*200; selected full seed42 reused; no automatic retries or added candidates",
+  "objective": "equal mean of all three own representation Val Mask mAP50-95; failed triplet ineligible",
+  "rng_policy": "UNCHANGED v04 locked PhotoDegrade implementation: Python global random seeded per Ultralytics worker; Gaussian noise uses numpy.default_rng(random.getrandbits(32)); NOT documented per-sample (seed,epoch,index) generator. Same workers=8 and fixed run seed. No RNG repair; fresh baseline controls share implementation. Exact bitwise cross-machine reproducibility not claimed.",
+  "test_access": false,
+  "realval_access": false,
+  "validation_policy": "B1 own Val200 Q1 best_val_maskmAP5095 checkpoint criterion retained; historical realval/combined checkpoints not HPO objectives and no extra realval inference; cross-rep Val secondary after immutable selection",
+  "resume_policy": "verify completed outputs; interrupted attempts require --resume-interrupted and restart from same pretrained in new attempt; preserve prior attempts; no silent retry; failed baseline or qualification halts",
+  "short_training_limit": "stop after60 with epochs=200 schedule; promoted runs fresh pretrained at200, not resume. Short ranking may miss late improvers.",
+  "resource_guard": "one GPU job; flock; existing driving and GPU owner check; 25GiB disk reserve"
+}
