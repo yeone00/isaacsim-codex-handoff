@@ -1532,3 +1532,9 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 보고서 `reports/c100_balance_b1_l4_reuse_and_hpo_plan_audit_20261112_v01.md`; 증거reports/c100_balance_reuse_audit_evidence_20261112_v02. B1 L4실제346/표현(244/51/51),총1038RGB SHA검증. 현재C공통70family×3=210:camera/canonicalGT모두exact,RGB/actual mask exact0;같은Test30depth exact0,calibrationexact. centered-C asset배치보정차이로추가직접호환RGBD0. GT참조재사용은새독립이미지아님. 첫GT소유경로가정실패v01보존/HR공통GT소유를따르는v02검증.
 - 최소DRAFT:C100350/표현=250/50/50,기존70유지+280/표현신규,total840;전체O05250(Train3750/Val750/Test750). C100만view다양화교란명시,anchor분석별도;더엄격한전C-view대응4200신규안별도. 새TrainVal에는제한적공통확인HPO4후보×3표현200seed42+선정43/44=최대18train/3600epoch제안,미실행.
 - O0만훈련선정/O25O50은Test계보대응평가유지. balancedTest각O750,총2250,가림1500/기존계획대비추가240. 기존V01 O04410과별도기술. 기존HPO/자동실행/원본변경0,새렌더학습주행0,물리 HOLD 유지. DRAFT 추가안 docs/c100_balance_and_occlusion_plan_amendment_DRAFT_20261112_v01.md는실행기에연결하지않음.
+
+
+## 2026-11-12 — 연구자 C-V01 유지/상태별 보고 결정
+
+- `reports/c_v01_retention_statewise_reporting_decision_20261112_v01.md`. C100보강/18학습재HPO대안은보류/미실행,현재4410O0/HPO/정적자동평가불변. B1L4합산0.
+- pooled AP와C5상태AP및동일가중1/5macro별도,실제GT/이미지분모·독립Test family10/C100Test10한계명시. 현재raw평가가상태별AP/family_id보존함을확인. 별도CPU후처리로정적완료후표생성하며학습/기존실행기제어없음. O0학습/O0O25O50Test구조·300+별도150물리HOLD유지.
