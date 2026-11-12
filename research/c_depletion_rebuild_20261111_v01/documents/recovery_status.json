@@ -1,5 +1,5 @@
 {
-  "state": "RUNNING",
+  "state": "HOLD",
   "stage": "C_STATIC_AFTER_VALIDATION_REPAIR",
   "current": {
     "job": "C_STATIC_AFTER_VALIDATION_REPAIR",
@@ -8,11 +8,11 @@
     "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01/post_static.log"
   },
   "controller_pid": 699911,
-  "updated": 1794478485.637699,
+  "updated": 1794478515.649112,
   "training_complete": 57,
   "original_crossval_failures": 24,
   "completed_evaluations": 36,
-  "reason": null,
+  "reason": "STATIC_EVALUATION_FAILED:/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01/post_static.log",
   "physical_motion_authorized": false,
   "physical_runs": 0
 }
