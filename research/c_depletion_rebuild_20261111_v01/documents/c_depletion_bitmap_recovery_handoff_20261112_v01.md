@@ -28,3 +28,6 @@ service `c-depletion-bitmap-continuation-20261112-v01.service`에서 C-HPO contr
 재개: 상위 root `resume.sh`는 live service 중복 실행 없이 start. 중단 attempt는 검토 후 새 attempt가 필요하며 원본 상태를 지우지 않는다.
 
 후속 자동 범위는 C-HPO→최종 모델→가림 생성 QA→인식/pose 정적 평가까지다. 성공 기준 출처(.11m/7.34° vs.10m/5°)와 실제 support datum, ROBUST_A/안전 파일럿 검증 미확정으로 물리pilot/본300/별도O50150은 HOLD, 새 주행0. 성공률/분모를 혼합하지 않는다.
+
+
+09:37 검증 추가: HR/LR/CAD smoke 각2epoch 모두 PASS/3 checkpoint SHA 및 모든 run checks 확인. 현재 screen_C00_HR_Scan_s42 60epoch 탐색으로 자동 진입. continuation PID106568, HPO PID106572, screen worker PID109027. HPO 소스 lock6개 현재 SHA 일치. 일부 정상 AMP overflow skip는 별도 기록했고 nonfinite forward0; 오류 은폐하지 않음. GPU smoke 증거 bitmap_qualification_v01/GPU_smoke_verified.json. GitHub 원격 검증 commit2776ce1e3fcc2e1e2620efb3dac090e37d2117e6, 추가본 다음 주기 동기화.
