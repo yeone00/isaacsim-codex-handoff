@@ -3,13 +3,13 @@
   "stage": "VALIDATION_REPAIR",
   "controller_pid": 699911,
   "current": {
-    "job": "smoke_HR_Scan_to_LR_Scan",
-    "pid": 700048,
-    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01/runs/smoke_HR_Scan_to_LR_Scan",
-    "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01/smoke_HR_Scan_to_LR_Scan.log"
+    "job": "repair_crossval_C00_HR_Scan_s42_to_GeoCAD",
+    "pid": 701682,
+    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01/runs/repair_crossval_C00_HR_Scan_s42_to_GeoCAD",
+    "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01/repair_crossval_C00_HR_Scan_s42_to_GeoCAD.log"
   },
   "reason": null,
-  "updated": 1794469949.7323077,
+  "updated": 1794470019.972058,
   "generated_RGBD": 4410,
   "declared_RGBD": 4410,
   "physical_motion_authorized": false,
@@ -17,14 +17,14 @@
   "C_HPO": {
     "state": "RUNNING",
     "current": {
-      "job": "smoke_HR_Scan_to_LR_Scan",
-      "pid": 700048,
-      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01/runs/smoke_HR_Scan_to_LR_Scan",
-      "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01/smoke_HR_Scan_to_LR_Scan.log"
+      "job": "repair_crossval_C00_HR_Scan_s42_to_GeoCAD",
+      "pid": 701682,
+      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01/runs/repair_crossval_C00_HR_Scan_s42_to_GeoCAD",
+      "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01/repair_crossval_C00_HR_Scan_s42_to_GeoCAD.log"
     },
     "completed_training_jobs": 57,
     "job_counts": {
-      "COMPLETED": 2,
+      "COMPLETED": 13,
       "FAILED": 0
     },
     "recovery_root": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01",
