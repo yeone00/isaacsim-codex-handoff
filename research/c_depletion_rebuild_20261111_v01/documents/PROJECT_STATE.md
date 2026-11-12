@@ -1525,3 +1525,10 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 보고서 `reports/c_depletion_replicator_numpy_data_integrity_audit_20261112_v01.md`. production210로그/26370예외=4395scene×6. UTC+경과ms 복원불확실성최대.036초; 전부실제적재물생성전empty RGB파일저장이전. 내부원인은legacy ID annotator warp.numpy→np.asarray; 실패rawbuffer/shape/framecounter미저장으로정확원인UNKNOWN,무해확정아님.
 - 전체4410파일SHA/decode/actual-canonical13986마스크px·중복 검사/잔여Bundle5 독립투영 범위 PASS. RGB-empty-mask H1통계13986개exact;OK13600/LOW_SUPPORT317/WATCH30/FLAG_NUREC39원래대로유지. 최초정수pixel광선진단585outlier는별도보존; +.5pixel-center 전체13986instance 표본깊이투영5mm밖0. 기존pose/HPO입력규약수정0.
 - 새데이터손상근거미발견으로추가정적평가HOLD유발없음. rawframe단위동기/버퍼신선도완전증명UNKNOWN. HPO/Controller/Watchdog/동기화서비스중단·설정변경0,물리pilot300/별도150HOLD. 감사CPU만저우선순위/최종1core제한,새GPU/렌더/학습0.
+
+
+## 2026-11-12 — C100 균형 보강/B1 L4 재사용 읽기전용 감사·계획
+
+- 보고서 `reports/c100_balance_b1_l4_reuse_and_hpo_plan_audit_20261112_v01.md`; 증거reports/c100_balance_reuse_audit_evidence_20261112_v02. B1 L4실제346/표현(244/51/51),총1038RGB SHA검증. 현재C공통70family×3=210:camera/canonicalGT모두exact,RGB/actual mask exact0;같은Test30depth exact0,calibrationexact. centered-C asset배치보정차이로추가직접호환RGBD0. GT참조재사용은새독립이미지아님. 첫GT소유경로가정실패v01보존/HR공통GT소유를따르는v02검증.
+- 최소DRAFT:C100350/표현=250/50/50,기존70유지+280/표현신규,total840;전체O05250(Train3750/Val750/Test750). C100만view다양화교란명시,anchor분석별도;더엄격한전C-view대응4200신규안별도. 새TrainVal에는제한적공통확인HPO4후보×3표현200seed42+선정43/44=최대18train/3600epoch제안,미실행.
+- O0만훈련선정/O25O50은Test계보대응평가유지. balancedTest각O750,총2250,가림1500/기존계획대비추가240. 기존V01 O04410과별도기술. 기존HPO/자동실행/원본변경0,새렌더학습주행0,物理HOLD유지. DRAFT追加案 docs/c100_balance_and_occlusion_plan_amendment_DRAFT_20261112_v01.md는실행기에연결하지않음.
