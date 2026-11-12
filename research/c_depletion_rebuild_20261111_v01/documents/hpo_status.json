@@ -1,7 +1,7 @@
 {
   "state": "RUNNING",
   "reason": null,
-  "updated": "2026-11-12T13:09:29.089623+09:00",
+  "updated": "2026-11-12T13:14:29.398097+09:00",
   "controller_pid": 106572,
   "session": "c_common_hpo_20261111_v01",
   "total_candidates": 12,
@@ -19,8 +19,8 @@
     "candidate_id": 6,
     "rep": "HR_Scan",
     "seed": 42,
-    "epoch": 48,
-    "latest_validation_mask_map5095": 0.9076628030450967
+    "epoch": 120,
+    "latest_validation_mask_map5095": 0.9428226306356432
   },
   "best_candidate": [
     0.9428732787943074,
@@ -36,7 +36,7 @@
   },
   "max_training_jobs": 57,
   "max_model_epochs": 5766,
-  "wall_seconds_this_controller": 12880.662405252457,
+  "wall_seconds_this_controller": 13180.970850944519,
   "test_used": false,
   "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
 }
