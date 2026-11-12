@@ -1,0 +1,5 @@
+{
+  "matched_existing_Test_RGBD_candidates": 30,
+  "depth_pixel_equal": 0,
+  "camera_max_abs_difference": 0.0
+}

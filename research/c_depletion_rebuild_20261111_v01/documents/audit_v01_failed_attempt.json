@@ -1,0 +1,1 @@
+{"state": "FAILED_ASSUMPTION_CANONICAL_OWNER", "source": "analysis/c100_b1_l4_reuse_audit_20261112_v01.py", "reason": "LR/CAD canonical masks shared from HR, not saved in each representation folder. v01 output folder remains preserved. v02 resolves canonical owner, no expected SHA changes."}

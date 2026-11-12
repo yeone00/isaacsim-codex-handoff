@@ -1,0 +1,66 @@
+{
+  "status": "DRAFT_PLAN_ONLY_NOT_EXECUTABLE",
+  "parent_dataset": "C-V01 O0 4410; unchanged",
+  "proposed_dataset": "C_BALANCED_V02; output path not allocated",
+  "source_families": {
+    "train": 50,
+    "val": 10,
+    "test": 10
+  },
+  "per_rep": {
+    "existing": {
+      "train": 1050,
+      "val": 210,
+      "test": 210
+    },
+    "C100_existing": {
+      "train": 50,
+      "val": 10,
+      "test": 10
+    },
+    "C100_additional": {
+      "train": 200,
+      "val": 40,
+      "test": 40
+    },
+    "C100_target": {
+      "train": 250,
+      "val": 50,
+      "test": 50
+    },
+    "all_C_target": {
+      "train": 1250,
+      "val": 250,
+      "test": 250
+    }
+  },
+  "representations": [
+    "HR_Scan",
+    "LR_Scan",
+    "GeoCAD"
+  ],
+  "new_O0_observations": 840,
+  "O0_target_observations": 5250,
+  "Test_per_occlusion": 750,
+  "Test_O25_O50_total": 1500,
+  "additional_occlusion_observations_over_current_plan": 240,
+  "new_observations_due_to_balance_including_additional_occlusion": 1080,
+  "train_occlusions": [
+    "O0"
+  ],
+  "selection_occlusions": [
+    "O0"
+  ],
+  "evaluation_occlusions": [
+    "O0",
+    "O25",
+    "O50"
+  ],
+  "evaluation_family_split": "test only",
+  "strict_B1_L4_additional_RGBD_reuse": 0,
+  "proposed_HPO_max_fresh_training_jobs": 18,
+  "proposed_HPO_max_model_epochs": 3600,
+  "requires_pre_execution_recipe_and_observation_lock": true,
+  "physical_motion_authorized": false,
+  "active_controller_changes": 0
+}

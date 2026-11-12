@@ -1,0 +1,45 @@
+{
+  "state": "AUDIT_COMPLETE_NO_DATA_OR_RUNTIME_CHANGE",
+  "B1_L4_scenarios": 346,
+  "B1_L4_split_counts": {
+    "train": 244,
+    "val": 51,
+    "test": 51
+  },
+  "B1_L4_observations": 1038,
+  "B1_L4_per_rep": {
+    "HR_Scan": 346,
+    "LR_Scan": 346,
+    "GeoCAD": 346
+  },
+  "B1_L4_same_existing_C_family_scenarios": 70,
+  "B1_L4_other_family_scenarios": 276,
+  "later_depth_observations": 153,
+  "paired_checks": {
+    "paired_observations": 210,
+    "manifest_shared_conditions_exact": 210,
+    "camera_equal_1e-8": 210,
+    "RGB_pixel_equal": 0,
+    "all_GT_masks_pixel_equal": 210,
+    "all_actual_masks_pixel_equal": 0
+  },
+  "strict_compatible_existing_RGBD_observations": 0,
+  "strict_additional_independent_reusable_RGB_observations": 0,
+  "assets_same": true,
+  "camera_optics_same": true,
+  "photometric_same": true,
+  "background_same": true,
+  "source_hashes": {
+    "/home/user/hh/isaac_cosmos/sdg_final/B1_RED_QUALITY_20261103_v01/red_only_plan_v03/red_only_manifest_1400_v03.csv": "56c8acbbe37ca8addc2c5da8261b43f6befe9a266b3b4bb5b3853180207d79e0",
+    "/home/user/hh/isaac_cosmos/sdg_final/B1_RED_YOLO_PACKAGE_20261108_v01/records.csv": "56d3f499a7de6336b7968369d8f6853e8d5df93fe0707c23d0b2ce15a7689271",
+    "/home/user/hh/isaac_cosmos/sdg_final/B1_RED_QUALITY_20261103_v01/red_only_plan_v03/red_only_config_v03.json": "c217a0483f28db8a24bf0c21d6a06e3fd6993b4f671669d1ef843afc0d0e4ca5",
+    "/home/user/hh/isaac_cosmos/sdg_final/B1_RED_QUALITY_20261103_v01/config.json": "4bb0fcc1da9d94101ff8fc8ef53620a0e8734a635f37d17f504a721b6235c89e",
+    "/home/user/step21_b2b_production_rgb_iso400_v02.py": "8eedc7899544ae4358153bd874bc875f64f4ce1f8bf92a8221e4d44496f42f88",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/b1_red_production_capture_20261105_v03.py": "edc7aabfe393fa33e1d7c1862b1cef89058def8234504c85b73abcd3202ee9c0",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_depletion_rgbd_capture_20261111_v02.py": "541ec5732622e940e0aba9c4057a13c0521a6bf8116a64e7f335ee6bed880df5",
+    "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/asset_anchor_audit_v01/asset_anchor_audit.json": "a80094f2aadebb53c38b74e7b03631cb0658492c1911e2b623d906ca456a0c5f"
+  },
+  "reuse_limit": "Potential equal canonical masks/calibration of paired existing70 families are supporting annotations for the already existing C100 observations, not new RGBD independent samples; uncorrected old RGB/depth not a strict centered-C capture. Nonselected families cannot silently be assigned to existing70 family ancestry.",
+  "augmentation_plan_only": true,
+  "new_render_train_motion": 0
+}
