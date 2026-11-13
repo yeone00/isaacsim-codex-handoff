@@ -183,25 +183,25 @@
   },
   "pipeline": {
     "state": "HOLD",
-    "controller_pid": 2735690,
+    "controller_pid": 2767221,
     "current": {
       "job": "C100_HR_Scan",
-      "pid": 2735695,
-      "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/logs/C100_HR_Scan_attempt04.log",
+      "pid": 2767226,
+      "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/logs/C100_HR_Scan_attempt05.log",
       "command": [
         "/home/user/anaconda3/envs/hh_isaac51/bin/python",
-        "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_drive540_physical_admission_20261113_v04.py",
+        "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_drive540_physical_admission_20261113_v05.py",
         "--row",
-        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt04/C100_HR_Scan.input.json",
+        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt05/C100_HR_Scan.input.json",
         "--output",
-        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt04/C100_HR_Scan"
+        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt05/C100_HR_Scan"
       ]
     },
     "completed_stationary_qualifications": [],
     "main_completed": 0,
     "main_planned": 540,
     "physical_gate": "HOLD",
-    "reason": "MISSING_QUALIFICATION_RESULT:C100_HR_Scan"
+    "reason": "QUALIFICATION_HOLD:C100_HR_Scan Traceback (most recent call last):\n  File \"/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_drive540_physical_admission_20261113_v05.py\", line 46, in <module>\n    wheels=[p for p in stage.Traverse() if p.HasAPI(UsdPhysics.CollisionAPI) and UsdPhysics.CollisionAPI(p).GetCollisionEnabledAttr().Get() is not False and 'wheel' in str(p.GetPath()).lower() and p.IsA(UsdGeom.Cylinder)];assert len(wheels)==6,('wheel_count',len(wheels))\n                                                                                                                                                                                                                                     ^^^^^^^^^^^^^^\nAssertionError: ('wheel_count', 0)\n"
   },
   "CPU_geometry_state": "PASS_CPU_GEOMETRY_ONLY",
   "CPU_conditions": [
