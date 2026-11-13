@@ -1605,3 +1605,10 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 축약basic metadata의raw/provenance누락+USDcamera scale[.124,.026,.029]혼입별도확인. 원본보존/정식E2E기존정규화와동일한offline-only adapterv02로9검출mask모두ROBA계산. 실제정식E2E는이미정상normalized metadata사용. HR무검출원인과분리.
 - 기술gate 개정: 작업SUCCESS불필요/정상모델·pose·경로실패는안전종료·증거검증후기술PASS;실이동/정지 별도필수. 8회귀테스트PASS. 기존HR실패재사용,대표15실제fullpilot 15/15기술PASS=FAIL_A5/FAIL_C10,taskSUCCESS0. 이는본5400회와별도.
 - 독립Controller2823783/technical_e2e_v03에서과거검증engineering route별도실이동중. PRE도달2.825mm/0.0182deg·정지인증PASS,FINAL/ROS종료검증대기. 모든gatePASS에만main자동진입. 원래36base/540manifest SHA불변. 새watchdog/Git/ntfy독립유지,모델추론경로에GT0.
+
+
+## 2026-11-13T18:36:38.100814+09:00 — 독립실제이동 PASS / main 저장권한대기
+
+- 실제engineering이동1.681m,maxspeed.027540<.03,maxsteer13.203<20deg,PRE2.825mm/.01822deg 및FINAL2.815mm/.01757deg stop인증PASS,collision0,영상611JPG/파생MP4 612frame decodePASS. E2E/540분모0 유지.
+- 본540capacity gate max실제저장량×540+25GiB=416999376520bytes에비해rootfree약108GB라HOLD. 기존empty8TBext4를ro로먼저확인:lost+found만/약6.9TiB여유. mountRW가능하지만root소유폴더생성은OS권한거부(sudo password/udisks NotAuthorized),소유권/format/data삭제0. 새연구전용폴더사용승인질문pending.
+- technical_e2e_v04 PID2869572가15기술/독립motion proof만재사용하며WAITING_STORAGE_AUTHORIZATION_AND_CAPACITY. 명시approvalfile+신규디렉터리권한+UUID+공간통과에만main자동진입. 사용자승인없이GPU시작0. E3부족HOLD원기록보존. 보고서/CSV/실제영상ZIP c_v02_drive540_diagnosis_technical_evidence_20261113_183637.zip CRC PASS;원자료불변.
