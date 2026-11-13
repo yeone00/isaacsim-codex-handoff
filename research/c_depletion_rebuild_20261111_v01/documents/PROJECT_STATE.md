@@ -1631,3 +1631,12 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 
 ### 2026-11-13 C-V02 실제 카메라 렌더 검증 + CAD C20 진단 (Claude)
 본실험0/540·로봇 주행 HOLD 유지; Codex Controller/Watchdog/저장 승인 접근0; 운영 카메라·모델·conf·protocol·manifest·학습데이터 변경0; 결과 전부 ENGINEERING_CAMERA_DIAGNOSTIC (분모0). 실제 RTX 정지캡처 18회 PASS(로봇 제어0, PhysX 안착만): VAL09(CDEP_B1R_VAL_000009, Test 독립·단 C06 선택에 쓰인 Val) + TST_B01 참조, E1 시작점, C100/C20×HR/LR/CAD, 카메라 A 운영(fx317,pitch-20.3)/B fx554/C fx554+pitch-5 + 노출 통제. 목표검출(conf.25 top1, brick-only instance GT IoU>=.5): A 6/12, B 9/12, C 10/12 (HR·LR C100 해결, CAD C20 미해결); 학습 노출(ISO25) 고정은 악화 0–2/12; C+ISO200 VAL09 6/6(CAD C20 conf .33). 검출 시 ROBUST_A 전부 계산·오차<=0.35cm·TC-S 통과. CAD C20: 가시성·팔레트선택·GT 오류 아님, C06 CAD 정적 Val C20 검출률1.00 → 현장 역광 밝기(39 vs 학습114)×CAD 표현 도메인 상호작용. 권고: C06 그대로 본실험 비권장; 로버 카메라 조건 합성 Train/Val을 세 표현 동일 보강·별도 버전 재학습(설계만, 미실행). 코드: evaluation/c_v02_camera_diag_scene_20261113_v01.py, scripts/c_v02_camera_diag_capture_20261113_v01/v02.py, analysis/c_v02_camera_real_diag_eval_20261113_v01/v02.py, analysis/c_v02_c20_training_domain_20261113_v01.py. 실패 run 2개(_FAILED_emptylabels, _FAILED_valfilter) 보존. 보고서: reports/c_v02_real_camera_diag_20261113_v01.md
+
+## 2026-11-14 — E1 technical drive pilot (GeoCAD C100, 1 run, not main)
+- Priority change by user: driving verification first. C-V03 retraining chain held before packaging; the render runner is paused with SIGSTOP (pid 3253698) and its data is preserved.
+- Preflight: all PASS. Code SHAs match the lock; Controller v04 and Watchdog v05 untouched; GPU free.
+- Run `sdg_final/C_V02_E1_DRIVE_PILOT_20261114_v01/runs/E1P_C2D_B01_C100_GeoCAD_O0`: SUCCESS.
+  - Detected at conf 0.335; ROBUST_A pose error 0.36 cm; TC-S k 0.016.
+  - Drove 1.795 m with 2 legs stop-certified; max 0.0293 m/s; no collision.
+  - Final error 0.49 cm.
+- counted=false. Main540 HOLD 0/540. Report: reports/c_v02_e1_drive_pilot_20261114_v01.md
