@@ -1625,3 +1625,6 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 
 ### 2026-11-13 v30 성공 vs C-V02 경로 거절 비교 (CPU 읽기전용, Claude)
 본실험0/540 HOLD 유지; Kit/GPU/추론/주행0, 기존 Controller/Watchdog/승인파일 접근0, 코드·모델·manifest·protocol 변경0, 기존 결과 재분류0. 계획기(TC-S ca15e21b)·곡률.363645·PRE정의·로버·현장은 v30과 동일, 차이는 시작자세 분포뿐(v30 횡0/90°/중심3.109m vs C-V02 횡±.06/±.18, 86/90/94°, 중심2.8/3.0/3.2m → PRE까지 0.6–1.0m). 원시작 TC-S 통과4/36; 균일후방 0.5/0.75/1.0/1.25m → 20/26/34/36; Base별 최소후방 0–1.2m. 관측조건 유지 최소안(횡오프셋 축소)과 단계적 후방안 제시, 미적용·연구자결정 대기. 보고서 reports/c_v02_drive540_v30_vs_cv02_path_rejection_20261113_v01.md
+
+### 2026-11-13 C-V02 공통 시작조건 검증: 카메라 요인 분리 + engineering 정지캡처12 (Claude)
+본실험0/540 HOLD; Codex Controller/Watchdog/승인 접근0; 운영코드·모델·conf·카메라·protocol·manifest 변경0; 로봇 이동0; 결과는 ENGINEERING/DIAGNOSTIC 분모0. B01 저장15장 단일요인: 원본10/15, 노출11, pitch10, FOV13, pitch+FOV14, 셋다15 → FOV(fx317 vs 554) 주원인. 무수정 v06 캡처로 E1(3.2m,0,90°)/E2(3.2m,−3cm,86°)×C100/C20×HR/LR/CAD 12/12 STATIONARY_PASS; 운영인식 E1 3/6, E2 2/6(HR·LR C100, CAD C20 실패), 검출 시 ROBUST_A 오차≈0.3cm·TC-S 전부 통과(B01은 전부 거절). 3.2m 후보 9/9 명목, 7/9 ±3cm 오차 유지. 결론: 시작격자 교체로 경로 해결, 인식 도메인(카메라 또는 사전고정 재투영) 결정 전 주행 비권장. 보고서 reports/c_v02_start_and_camera_validation_20261113_v01.md
