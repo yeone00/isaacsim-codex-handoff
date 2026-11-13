@@ -1,0 +1,7 @@
+case,result,phase,last_update,native_crash,result_file_exists,result_path,note
+A_empty,PASS_60_UPDATES,after_update,59,False,True,/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/crash_isolation_20261113_v01/A_empty/result.json,
+B_original_v30,RUNNING,before_update,0,True,False,/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/crash_isolation_20261113_v01/B_original_v30/result.json,
+C_Cstage_graphs_off,FAILED_PYTHON,bridge_enabled,,False,True,/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/crash_isolation_20261113_v01/C_Cstage_graphs_off/result.json,first graphs-off diagnostic has Python expired-prim error; exit0 was not PASS
+C_graphs_off_v02,RUNNING,before_update,0,True,False,/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/crash_isolation_20261113_v01/C_graphs_off_v02/result.json,
+D_bridge_empty_warmup,PASS_60_UPDATES,after_update,59,False,True,/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/crash_isolation_20261113_v01/D_bridge_empty_warmup/result.json,
+E_v30_warmup,PASS_60_UPDATES,after_update,59,False,True,/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/crash_isolation_20261113_v01/E_v30_warmup/result.json,
