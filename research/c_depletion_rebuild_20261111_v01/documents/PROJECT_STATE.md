@@ -1738,3 +1738,11 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - It requires changes to the governor phase, the F thresholds and the TC-S rate check. Not validated or applied.
 - Candidates: amendment v04 (097d4710…) and lock FINAL_v03 (05c6190f…). Runs 1–11 are marked PRELIMINARY.
 - Report: reports/c_v02_drive540_speed_guard_ab_validation_20261114_v01.md
+
+## 2026-11-14 03:55 — E1 main540 STARTED under amendment v05 (cruise 0.02 m/s, speed guard A+B)
+- Cruise candidates 0.035 and 0.03 FAILED on their first run. The locked v21 stop certificate requires PRE_FINAL-phase commands; the H_PRE cruise segment fails it. Automatic fallback to 0.02 (A+B validated).
+- Lock FINAL_v04 sha 93a6dacc…, approved per the researcher's final pre-approval. Dry-run 10/10 PASS.
+- Controller v06 runs as systemd unit c-v02-drive540-e1-main-v07 (PID 3712316). Output: E1_main_v04_protocol on the external volume.
+- Unattended reporter unit c-v02-drive540-main-reporter: GitHub reports at 30/100/180/270/360/450 and a final report at 540.
+- The 11 earlier v03 runs are PRELIMINARY and excluded from results.
+- Report: reports/c_v02_drive540_main_start_v05protocol_20261114_v01.md
