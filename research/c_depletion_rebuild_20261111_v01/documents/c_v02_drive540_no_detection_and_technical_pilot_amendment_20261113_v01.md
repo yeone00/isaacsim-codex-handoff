@@ -1,6 +1,6 @@
 # C-V02 HR 무검출 분석·기술 파일럿 판정 개정 및 독립 실행 현황
 
-갱신: 2026-11-13T18:29:54.918948+09:00
+갱신: 2026-11-13T18:35:11.439744+09:00
 
 ## 현재 실행 상태
 
@@ -79,6 +79,10 @@ Fullactual이동,원TC-S경로·곡률·조향·속도상한,PRE/FINAL5mm2deg+�
 
 본실험은15기술조건PASS +독립실제이동/정지PASS +필수증거/모델·프로토콜SHA/디스크25GiB및540회전망조건을모두통과해야자동진입. 그렇지않으면HOLD/ntfy. 540ID전체PENDING/RUNNING/과학적성공·실패/HOLD를분리하며이미완료된시도중복실행금지. Wilson은nominal이항가정과원천10family·36base반복구조의한계를별도보고하며비열등성마진을임의고정하지않음.
 
+독립engineering 실제측정요약: 총이동거리약1.681m,최고속도0.027540m/s<.03,최대조향각13.203deg<20,PRE오차2.825mm/0.01822deg,FINAL2.815mm/0.01757deg,두stop confirmed=True,collision/speed-guard=False. 실제physics126.9167초,원카메라JPEG611프레임보존. 별도MP4는실제프레임기반이며,CLI ffmpeg미설치로기존OpenCV mp4v 인코더를사용해612프레임decode검증PASS;패키지설치없음. 사진시간기준5fps source-frame hold이며원JPG수정없음. MP4는E2E성공영상이나540본실험영상이아닌engineering-control 영상이다.
+
+저장15진단(9검출/9계산)과새full15파일럿(10검출/계산후경로거절+5무검출)은서로다른시각에촬영된RGBD라동일입력재현성비교가아니다. 저장동일RGB에대한PIL/numpy경로일치는별도검증했다. 모든15full파일럿의기술적정상처리PASS,작업SUCCESS0은그대로보존. 본실험성공률로해석하지않음.
+
 ## 저장 공간 gate와 승인 대기
 
 실제제어시험으로완전원본저장량약722.5MB/이동trial을확인했고,최대pilot저장량×540+25GiB기준으로약417GB가필요하다. 기존root여유약108GB여서본실험시작전실제diskgate가HOLD했다. 오류를무시하거나원본로그를축소·삭제하지않음.
@@ -98,6 +102,10 @@ Fullactual이동,원TC-S경로·곡률·조향·속도상한,PRE/FINAL5mm2deg+�
 이명령은볼륨을포맷하거나기존데이터를삭제/이동하지않으며실험설정도바꾸지않는다. GPU실험은이미검증된gate와새용량gate를모두통과할때만시작.
 
 ## 시각자료·재현 자료
+
+- [실제engineering 로버카메라 MP4](/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/visual_evidence_v01/engineering_actual_robot_camera.mp4)
+- [실제trace로재구성한궤적·속도 PNG](/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/visual_evidence_v01/engineering_trajectory_and_speed.png) — 외부카메라촬영으로표현하지않음.
+
 
 - [밝기 조정 없는 실제 raw RGB 비교](/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/perception_diagnosis_20261113_v01/RAW_RGB_domain_comparison.png)
 - [실제 RGB/운용예측 비교 contact sheet](/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/perception_diagnosis_20261113_v01/RGB_operational_comparison_contact_sheet.png)
