@@ -1669,3 +1669,18 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 540-run estimate with V3: 26.9 h at 50% driving, 46.1 h at 100%. The 36 h budget holds if ≤ ~74% of runs reach driving.
 - Controller v05 and approval script are drafts and have not been started. Main540 is still HOLD.
 - Report: reports/c_v02_drive540_runtime_benchmark_20261114_v01.md
+
+## 2026-11-14 — V3 + leg-start pacing: final technical re-validation (4 runs, counted=false)
+- Session v04 / runner v05 add leg-start pacing: the first 0.5 s sim of each leg runs at ≥ 42 ms wall per tick. All checks are unchanged.
+- GeoCAD C100 E1 ×3: SUCCESS in 305.0, 306.0 and 303.9 s. Final error 0.4946 cm, the same as B0; trajectory deviation 0.0043 mm; 2,487 commands.
+  - First command reached the graph in 0.017 s sim (21–24 ms wall); readback check passed.
+- HR C100 E1: FAIL_A no detection, 51.1 s, technical PASS.
+- Gate v02 falsely flagged pacing for a no-motion run and was fixed in v03. All 4 runs pass the v03 gate.
+- Archives restore SHA-identical.
+- Detection conf over 9 identical GeoCAD runs: mean 0.317, SD 0.033, range 0.269–0.362.
+- Estimate: 27.0 h at 50% driving, 46.0 h at 100%; the 36 h budget holds if ≤ 73.6% of runs reach driving.
+- Prepared but not started:
+  - Controller v05 dry-run gates all PASS except the researcher authorization.
+  - Amendment v02 sha beb65638…; execution lock draft sha 9686f363….
+- Main540 not started; it needs researcher approval.
+- Report: reports/c_v02_drive540_v3_final_validation_20261114_v01.md
