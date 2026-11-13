@@ -1569,3 +1569,8 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - task_layer_policy_v01: C100/80/60/40/20=4/4/3/2/1을운영자제공occupied layer task prior로명시허용. 기존layer금지는C-V02이최신예외로대체,GTpose/mask/slot/footprintcenter/FINAL금지유지. 원데이터nominal layer_count4(카메라생성용)수정0,별도task schema/2250static task+450physicalDRAFT/sha잠금.
 - ROBUSTA code0b1e5f46702d…/cfg35cf0a78…변경0. 새CCLI1..4+finalmixedseed42 modelsha/taskregistrysha검증/initial-only. unit1..4 forwarding/NoDetection·8datum prefix·GTschema/read차단PASS. q99상층점<1%/바닥없음이면correctlayer4여도datum−.09m가능한구조위험단위진단기록;실C/O 성능은최종mask고정후추가CPUworker로6750/role 평가예정/아직미검증.
 - CPUv30/원NuReccomposition감사:원NuRec collisionAPI0,과거v30 rover13+이름미분류29/PhysicsScene1. 이름만으로floor없음확정안함/rolebinding·실제loadedstage/contact는미확인. 신규 C drive stage 미생성,physicalHOLD유지. Main .11m/7.341774°를최신명시성공기준으로기록,PRE_FINAL5mm/2°cert·.03speedstop과구분;나머지안전·물리gate유지.
+
+
+## 2026-11-13T14:26:18.471186+09:00 — 연구자 요청 결과 통합 추출
+
+- 보고서 reports/research_results_snapshot_20261113_142618.md 및 단일 ZIP research_results_snapshot_20261113_142618.zip. 기존 결과 읽기전용 스냅샷/45모델셀/39본학습+3smoke/epoch기록/20250인식원자료 포함. 학습39/39완료,75:25선정;위치추정 진행중으로 미완료표시. 실행기·모델·원본변경0,물리HOLD유지. ZIP CRC검증PASS.
