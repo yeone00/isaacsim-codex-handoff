@@ -1,0 +1,45 @@
+{
+  "scope": "offline diagnostics only; not production implementation",
+  "start_unchanged": true,
+  "nominal_goal_evaluation_only": true,
+  "radius_curvature_factors": [
+    1.0,
+    0.8,
+    0.6
+  ],
+  "CSC_turn_signs": [
+    [
+      1,
+      1
+    ],
+    [
+      -1,
+      -1
+    ],
+    [
+      1,
+      -1
+    ],
+    [
+      -1,
+      1
+    ]
+  ],
+  "smooth_curvature_slope_per_m2": 5.4823285132644735,
+  "solver_max_nfev": 180,
+  "solver_endpoint_tolerance_m": 1e-06,
+  "solver_heading_tolerance_rad": 1e-07,
+  "path_sampling_step_m": 0.02,
+  "alternative_start_backshift_grid_m": [
+    0.25,
+    0.5,
+    0.75,
+    1.0,
+    1.25
+  ],
+  "curve_limit": 0.3636453325850951,
+  "rate_limit_deg_s": 4.3976,
+  "nominal_speed_mps": 0.02,
+  "physical_execution": false,
+  "collision_or_control_PASS_authorized": false
+}

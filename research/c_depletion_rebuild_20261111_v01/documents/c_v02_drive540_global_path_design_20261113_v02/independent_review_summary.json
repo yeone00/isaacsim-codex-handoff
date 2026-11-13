@@ -1,0 +1,16 @@
+{
+  "bases": 36,
+  "independent_geometric_rate_PASS": 36,
+  "strict_frozen_local_policy_compatible": 6,
+  "overshoot_guard_conflicts": 30,
+  "timeout_conflicts": 30,
+  "minimum_time_range_s": [
+    50.089054592376236,
+    921.0747760556113
+  ],
+  "max_independent_integration_error_m": 3.5578631580364257e-12,
+  "max_rate_deg_s": 4.3916779362291765,
+  "all_collision_and_control_UNKNOWN": true,
+  "original_artifacts_changed": false,
+  "new_physics": 0
+}

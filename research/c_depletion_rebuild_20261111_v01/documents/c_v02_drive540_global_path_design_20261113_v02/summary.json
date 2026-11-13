@@ -1,0 +1,40 @@
+{
+  "bases": 36,
+  "baseline_admitted": 4,
+  "monotonic_waypoint_proven_impossible": 30,
+  "global_geometric_success": 36,
+  "global_length_range_m": [
+    0.9974221826890964,
+    18.292822210198864
+  ],
+  "start_redesign": [
+    {
+      "backshift_m": 0.25,
+      "passes": 10
+    },
+    {
+      "backshift_m": 0.5,
+      "passes": 20
+    },
+    {
+      "backshift_m": 0.75,
+      "passes": 26
+    },
+    {
+      "backshift_m": 1.0,
+      "passes": 34
+    },
+    {
+      "backshift_m": 1.25,
+      "passes": 36
+    }
+  ],
+  "manifest_sha_before": "92ba7c2909f78110d4fa985de17ce6863538b0110dfb3e42a7e7784f05ce19fc",
+  "manifest_sha_after": "92ba7c2909f78110d4fa985de17ce6863538b0110dfb3e42a7e7784f05ce19fc",
+  "protocol_sha_before": "fa5ef9a20d0d9172f48f25b20e7a72e3dcb2c953759eafb0a4da3e18af2630d2",
+  "protocol_sha_after": "fa5ef9a20d0d9172f48f25b20e7a72e3dcb2c953759eafb0a4da3e18af2630d2",
+  "planner_sha": "ca15e21b8b581cd03e545421861a86e8200628b06c96d03e73d090eed411fbe4",
+  "new_GPU_or_motion": 0,
+  "operational_planner_changed": false,
+  "elapsed_s": 30.97017192840576
+}
