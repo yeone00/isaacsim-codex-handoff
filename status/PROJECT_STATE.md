@@ -1651,3 +1651,12 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - C100 has only 2 load geometries.
 - Main540 blocker: Controller v04 would auto-start the OLD manifest if storage_authorization.json is created. Do not approve storage under v04.
 - Report: reports/c_v02_drive540_e1_readiness_20261114_v01.md
+
+## 2026-11-14 — Runtime bottleneck analysis for the 36 h target (no runs)
+- Measured from the stored E1 GeoCAD session_timing (7,818 ticks, mean 42.5 ms):
+  - app.update 24.5 ms (6 ms without contact events, ~24 ms with them; same-phase zero_stop contrast gives ~16 ms for the contact-report path).
+  - Graph fingerprint traversal 10.2 ms; per-tick fsync 2.9 ms.
+- The 389,343 PhysX warnings equal the wheel-cylinder contact points exactly. They are benign contact-report material lookups, not collisions.
+- Candidate optimizations O1–O4 are estimated at ~225 s per drive run (540 runs ≤ 33.8 h even at 100% driving). The estimate is unverified, and a 6-run benchmark plan is proposed.
+- Current code fits 36 h only if ≤ ~51% of runs reach driving. Fallback designs: 474 runs (C100 reduced) or 300 runs (20 bases).
+- Report: reports/c_v02_drive540_runtime_optimization_20261114_v01.md
