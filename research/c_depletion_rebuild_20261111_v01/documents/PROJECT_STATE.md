@@ -1622,3 +1622,6 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 ### 2026-11-13 C540 전역 경로/시작점 오프라인 설계 검토
 
 본실험0/540 HOLD,새Kit/GPU/주행0,운영코드/manifest/protocol 변경0(SHA전후동일). 기존36Base TC-S4통과. 시작점유지 free-space 곡률연속CSC36수학해,단30개17.874~18.293m우회로 현행forward/3m/overshoot/180s계약과충돌;충돌/제어전부UNKNOWN. 짧은해B11/B34추가해6기하호환. 별도미승인공통Y−1.25m시작점안은기존TC-S36통과이나카메라/접촉미검증. 새planner구현/파일럿미실행,연구자결정대기. 보고서 reports/c_v02_drive540_global_path_design_20261113_v01.md,권위수치CSV reports/c_v02_drive540_global_path_design_20261113_v02/base36_comparison_final.csv.
+
+### 2026-11-13 v30 성공 vs C-V02 경로 거절 비교 (CPU 읽기전용, Claude)
+본실험0/540 HOLD 유지; Kit/GPU/추론/주행0, 기존 Controller/Watchdog/승인파일 접근0, 코드·모델·manifest·protocol 변경0, 기존 결과 재분류0. 계획기(TC-S ca15e21b)·곡률.363645·PRE정의·로버·현장은 v30과 동일, 차이는 시작자세 분포뿐(v30 횡0/90°/중심3.109m vs C-V02 횡±.06/±.18, 86/90/94°, 중심2.8/3.0/3.2m → PRE까지 0.6–1.0m). 원시작 TC-S 통과4/36; 균일후방 0.5/0.75/1.0/1.25m → 20/26/34/36; Base별 최소후방 0–1.2m. 관측조건 유지 최소안(횡오프셋 축소)과 단계적 후방안 제시, 미적용·연구자결정 대기. 보고서 reports/c_v02_drive540_v30_vs_cv02_path_rejection_20261113_v01.md
