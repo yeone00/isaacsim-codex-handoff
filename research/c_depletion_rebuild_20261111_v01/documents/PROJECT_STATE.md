@@ -1640,3 +1640,14 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - Drove 1.795 m with 2 legs stop-certified; max 0.0293 m/s; no collision.
   - Final error 0.49 cm.
 - counted=false. Main540 HOLD 0/540. Report: reports/c_v02_e1_drive_pilot_20261114_v01.md
+
+## 2026-11-14 — Main540 readiness: timing, storage, HR/LR prep, E1 start grid (no runs)
+- Policy: ROBUST_A only; Correction B is dropped and not validated further. No drives were run; render and retraining stay paused/held.
+- Timing of the 424 s GeoCAD E1 pilot: 334 s (79%) is the drive. Wall-clock/physics ratio is about 2.66 at 60 Hz. runtime.log is 96% one repeated PhysX warning.
+- Storage: 751 MB per drive run, about 86 MB after zstd (lossless). A pre-motion failure costs about 8.5 MB and 50 s.
+- HR/LR C100 E1 pilots: read-only preflight PASS 11/11 each. Waiting for approval.
+- E1 grid: 7 of 9 starts admitted (−3/94 and +3/86 excluded at the ±3 cm robustness check).
+  - Manifest draft: `sdg_final/C_V02_DRIVE540_E1_20261114_v01/manifest_draft_v01` (sha 1ce636ce…). Locked manifest 92ba7c29… is unchanged.
+  - C100 has only 2 load geometries.
+- Main540 blocker: Controller v04 would auto-start the OLD manifest if storage_authorization.json is created. Do not approve storage under v04.
+- Report: reports/c_v02_drive540_e1_readiness_20261114_v01.md
