@@ -1,26 +1,20 @@
 {
   "status": {
-    "state": "RUNNING_ENGINEERING",
+    "state": "HOLD",
     "controller_pid": 2823783,
-    "current": {
-      "role": "engineering",
-      "attempt_id": "ENGINEERING_HISTORICAL_ROUTE_HR_C100",
-      "pid": 2850513,
-      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/engineering/ENGINEERING_HISTORICAL_ROUTE_HR_C100",
-      "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/engineering_ENGINEERING_HISTORICAL_ROUTE_HR_C100.log"
-    },
+    "current": {},
     "pilot_technical_pass": 15,
     "pilot_recorded": 15,
     "pilot_planned": 15,
     "pilot_task_success": 0,
-    "engineering_motion_certified": false,
+    "engineering_motion_certified": true,
     "main_completed": 0,
     "main_attempted": 0,
     "main_success": 0,
     "main_scientific_failure": 0,
     "main_planned": 540,
-    "physical_main_entry": "HOLD",
-    "reason": null
+    "physical_main_entry": "PASS",
+    "reason": "PROJECTED_MAIN_DISK_INSUFFICIENT:416999376520"
   },
   "technical_policy": {
     "schema": "C540_TECHNICAL_VS_SCIENTIFIC_AMENDMENT_v01",
@@ -375,5 +369,26 @@
         "GT_operational_input": false
       }
     }
-  ]
+  ],
+  "engineering_control_record": {
+    "role": "engineering",
+    "attempt_id": "ENGINEERING_HISTORICAL_ROUTE_HR_C100",
+    "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/engineering/ENGINEERING_HISTORICAL_ROUTE_HR_C100",
+    "reused_verified": false,
+    "result_sha256": "9d56bf9f6aaf123796bc1c5fa0f3bb349253c72358b2a08d21f0b1c9488dc299",
+    "assessment": {
+      "state": "PASS_TECHNICAL",
+      "technical_pass": true,
+      "task_success": false,
+      "scientific_outcome": "ENGINEERING_CONTROL_PASS",
+      "reason": "",
+      "normal_scientific_failure": false,
+      "actual_motion": true,
+      "control_motion_certified": true,
+      "engineering_only": true,
+      "issues": [],
+      "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/engineering/ENGINEERING_HISTORICAL_ROUTE_HR_C100",
+      "GT_operational_input": false
+    }
+  }
 }

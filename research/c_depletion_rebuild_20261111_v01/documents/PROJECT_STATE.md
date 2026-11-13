@@ -1597,3 +1597,11 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - reports/c_v02_drive540_native_crash_recovery_and_E2E_status_20261113_v01.md;빈Kit60PASS/v30no-warmup nativefail/원Stage4의extension후빈update5복원→v30graph그대로60PASS. 기본15조합actualKit RGBD/PhysX등록/접촉확인(짧은physics구간). C진단첫expiredprim error/exit0오판은정정·실패보존.
 - HR-C100 fullE2E파일럿 actual257step/4.2833s,ray2214/6wheel/support/graph/305collider/camera7checksPASS. 고정HRmodel conf.25후보0→NO_DETECTION,driver/nonzerocommand0,계획/주행미진입. 모델/조명/conf허용값변경0,실패보존,0/540HOLD.
 - E2E실행코드별도잠금,controller2783174HOLD종료;자동540전환실검증미완료. passive감시/ntfy/Git유지. 다음은관측분포/렌더계보의검출실패원인분리,새attempt재검증이며blindrerun금지.
+
+
+## 2026-11-13T18:21:05.337183+09:00 — C540 무검출진단·기술판정개정/실제제어시험
+
+- reports/c_v02_drive540_no_detection_and_technical_pilot_amendment_20261113_v01.md. 동일HR saved-input conf.25무검출재현/PIL_RGB=numpy_BGR일치/모델SHA정상. GT투영bbox172×72잘림0,ROI median1/255·82.84%<20,Depth11221점타깃box내. conf.001후보max.0168은타깃아래팔레트쪽;운용사용0. static3예시정상검출,도메인/역광차이유력이나단일원인확정아님. 카메라fx317vs554/pitch−19.95vs−4~−5.6차이기록. 모델/조명/threshold변경0.
+- 축약basic metadata의raw/provenance누락+USDcamera scale[.124,.026,.029]혼입별도확인. 원본보존/정식E2E기존정규화와동일한offline-only adapterv02로9검출mask모두ROBA계산. 실제정식E2E는이미정상normalized metadata사용. HR무검출원인과분리.
+- 기술gate 개정: 작업SUCCESS불필요/정상모델·pose·경로실패는안전종료·증거검증후기술PASS;실이동/정지 별도필수. 8회귀테스트PASS. 기존HR실패재사용,대표15실제fullpilot 15/15기술PASS=FAIL_A5/FAIL_C10,taskSUCCESS0. 이는본5400회와별도.
+- 독립Controller2823783/technical_e2e_v03에서과거검증engineering route별도실이동중. PRE도달2.825mm/0.0182deg·정지인증PASS,FINAL/ROS종료검증대기. 모든gatePASS에만main자동진입. 원래36base/540manifest SHA불변. 새watchdog/Git/ntfy독립유지,모델추론경로에GT0.

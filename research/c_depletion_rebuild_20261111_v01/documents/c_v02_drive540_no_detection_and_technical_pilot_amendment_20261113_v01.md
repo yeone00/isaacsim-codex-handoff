@@ -1,12 +1,12 @@
 # C-V02 HR 무검출 분석·기술 파일럿 판정 개정 및 독립 실행 현황
 
-갱신: 2026-11-13T18:14:59.108602+09:00
+갱신: 2026-11-13T18:21:05.360839+09:00
 
 ## 현재 실행 상태
 
-RUNNING_ENGINEERING; pilot기술통과=15/15; task성공=0; main=0/540
+HOLD; pilot기술통과=15/15; task성공=0; main=0/540
 
-Controller PID 2823783, 현재 {'role': 'engineering', 'attempt_id': 'ENGINEERING_HISTORICAL_ROUTE_HR_C100', 'pid': 2850513, 'output': '/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/engineering/ENGINEERING_HISTORICAL_ROUTE_HR_C100', 'log': '/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/engineering_ENGINEERING_HISTORICAL_ROUTE_HR_C100.log'}. 독립제어시험 RUNNING_ACTUAL_CONTROL_TEST. Main gate HOLD. HOLD 원인 None.
+Controller PID 2823783, 현재 {}. 독립제어시험 PASS_TECHNICAL / actual_motion=True. Main gate PASS. HOLD 원인 PROJECTED_MAIN_DISK_INSUFFICIENT:416999376520.
 
 기존540단일적재물/O0/36base/5C/3rep·C06·75:25·seed42·층수prior4/4/3/2/1·Main.11m/7.341774deg·도달5mm2deg·속도정지.03mps는변경없음. 학습/HPO/모델선정/정적Test 변경0. 기존HR무검출/4크래시/복구시험은보존. 이번작업은빈Kit/v30비교나기본15등록시험을다시실행하지않았다. 기존HR full파일럿은원본그대로새기술판정만적용하고재실행하지않았다.
 
@@ -73,7 +73,7 @@ CSV: `/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V0
 
 ## 실제 이동·정지 및 본실험 gate
 
-독립제어시험: RUNNING_ACTUAL_CONTROL_TEST. 고정된과거v30검증route의두goals와기존검증start를새engineering-only role로사용한다. 이좌표는현재Test GT/정답mask/신규pose를주입한운용E2E가아니라독립적인controller입출력시험. 새scope를engineering_reference_goals.json·sourceSHA·run_spec에명시하고**E2E성공/본540분모로집계하지않음**. 본540장면/시작조건을이engineering경로로대체하지않음.
+독립제어시험: PASS_TECHNICAL / actual_motion=True. 고정된과거v30검증route의두goals와기존검증start를새engineering-only role로사용한다. 이좌표는현재Test GT/정답mask/신규pose를주입한운용E2E가아니라독립적인controller입출력시험. 새scope를engineering_reference_goals.json·sourceSHA·run_spec에명시하고**E2E성공/본540분모로집계하지않음**. 본540장면/시작조건을이engineering경로로대체하지않음.
 
 Fullactual이동,원TC-S경로·곡률·조향·속도상한,PRE/FINAL5mm2deg+정지인증,ROScleanup/실측quiet/video/JPEG·원trace가PASS해야만control_motion_certified. source의메모리8GiB/GC/timeout도유지. 15개무검출처리PASS만으로이gate를대체불가.
 
