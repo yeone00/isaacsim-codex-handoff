@@ -1,0 +1,16 @@
+stage,start_s,end_s,wall_s,evidence_files
+runner_prep_code_snapshot_ros_probe,0.0,2.9,2.9,run_spec.json;domain_probe/domain_probe.json
+kit_launch,2.9,10.3,7.4,stage3_events.jsonl(kit_started)
+scene_load_construction_graph,10.3,25.6,15.3,C_scene_construction.json;initial_corridor.json;site_drive.usda;graph_admission.json
+physics_start_settle_start_validity,25.6,31.2,5.6,joint_io.json;start_validity.json
+collision_preflight_support,31.2,38.3,7.1,collision_preflight.json;stationary_PhysX_support.json;pause_barrier.json
+rgbd_capture,38.3,39.6,1.3,front_rgb.png;front_depth.npy;render_auto_admission.json
+yolo_inference,39.6,41.7,2.1,perception_command.json;detections.json;selected_mask.npy
+robust_a_pose,41.7,41.9,0.2,pose_ROBUST_A.json;predicted_pre_final.json
+tcs_plan_swept_collision_leg0,41.9,56.4,14.5,leg_0_swept.json;leg_0_path.json;observed_route_admission.json
+ros_isolation_discovery_driver_ready,56.4,57.3,0.9,isolation_check.json;discovery_result.json;driver_admitted.json
+drive_leg0_PRE_1.0m_incl_stop_cert,57.3,235.7,178.4,leg_0_stop.json(sim 4.5-71.9 s)
+tcs_plan_swept_collision_leg1,235.7,247.9,12.2,leg_1_swept.json;leg_1_path.json;next_leg_1.json
+drive_leg1_FINAL_0.8m_incl_stop_cert,247.9,403.9,156.0,leg_1_stop.json;stop_confirmed.json
+log_flush_ros_teardown_contacts_write,403.9,421.2,17.3,driver_endpoint_forensics.jsonl;steps.jsonl;contacts.json;session_timing_v18.json
+kit_close_summarize,421.2,424.3,3.1,runner_status.json;result.json

@@ -1,0 +1,177 @@
+{
+ "schema": "C540_E1_MANIFEST_DRAFT_QA_v01",
+ "locked_manifest": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/single_load_amendment_v01/attempt_manifest.csv",
+ "locked_manifest_sha256": "92ba7c2909f78110d4fa985de17ce6863538b0110dfb3e42a7e7784f05ce19fc",
+ "locked_manifest_unchanged": true,
+ "candidate_table": "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/c_v02_start_and_camera_validation_20261113_v01/start_candidates_tcs_robustness.csv",
+ "candidate_table_sha256": "6608ae5ceaa0c068c4199dfad0d366234527597e218e4459c64098e8c8438410",
+ "rows": 540,
+ "bases": 36,
+ "starts_admitted": [
+  {
+   "start_id": "S0",
+   "lateral_m": 0.0,
+   "heading_deg": 90.0,
+   "start_x_m": -25.888,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.0,
+   "curvature_margin_frac": 1.0,
+   "robust_lateral_err_range_cm": "-6..+6",
+   "robust_pm5cm": true
+  },
+  {
+   "start_id": "S1",
+   "lateral_m": -0.03,
+   "heading_deg": 86.0,
+   "start_x_m": -25.918,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.1837,
+   "curvature_margin_frac": 0.495,
+   "robust_lateral_err_range_cm": "-6..+3",
+   "robust_pm5cm": false
+  },
+  {
+   "start_id": "S2",
+   "lateral_m": -0.03,
+   "heading_deg": 90.0,
+   "start_x_m": -25.918,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.1258,
+   "curvature_margin_frac": 0.654,
+   "robust_lateral_err_range_cm": "-6..+4",
+   "robust_pm5cm": false
+  },
+  {
+   "start_id": "S3",
+   "lateral_m": 0.0,
+   "heading_deg": 86.0,
+   "start_x_m": -25.888,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.1519,
+   "curvature_margin_frac": 0.582,
+   "robust_lateral_err_range_cm": "-4..+6",
+   "robust_pm5cm": false
+  },
+  {
+   "start_id": "S4",
+   "lateral_m": 0.0,
+   "heading_deg": 94.0,
+   "start_x_m": -25.888,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.1519,
+   "curvature_margin_frac": 0.582,
+   "robust_lateral_err_range_cm": "-6..+4",
+   "robust_pm5cm": false
+  },
+  {
+   "start_id": "S5",
+   "lateral_m": 0.03,
+   "heading_deg": 90.0,
+   "start_x_m": -25.858,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.1258,
+   "curvature_margin_frac": 0.654,
+   "robust_lateral_err_range_cm": "-4..+6",
+   "robust_pm5cm": false
+  },
+  {
+   "start_id": "S6",
+   "lateral_m": 0.03,
+   "heading_deg": 94.0,
+   "start_x_m": -25.858,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.1837,
+   "curvature_margin_frac": 0.495,
+   "robust_lateral_err_range_cm": "-3..+6",
+   "robust_pm5cm": false
+  }
+ ],
+ "starts_excluded": [
+  {
+   "lateral_m": -0.03,
+   "heading_deg": 94.0,
+   "nominal_admitted": "True",
+   "robust_pm3cm": "False",
+   "curvature_margin_frac": 0.236,
+   "robust_lateral_err_range_cm": "-6..+1",
+   "reason": "TC-S not robust to +-3 cm pose error"
+  },
+  {
+   "lateral_m": 0.03,
+   "heading_deg": 86.0,
+   "nominal_admitted": "True",
+   "robust_pm3cm": "False",
+   "curvature_margin_frac": 0.236,
+   "robust_lateral_err_range_cm": "-1..+6",
+   "reason": "TC-S not robust to +-3 cm pose error"
+  }
+ ],
+ "bases_per_start": {
+  "S0": 6,
+  "S1": 5,
+  "S2": 5,
+  "S3": 5,
+  "S4": 5,
+  "S5": 5,
+  "S6": 5
+ },
+ "exact_duplicate_conditions": 0,
+ "duplicate_geometry_lighting_start_rep": 0,
+ "per_C": {
+  "C100": {
+   "rows": 108,
+   "distinct_scene_ids": 10,
+   "distinct_geometries": 2,
+   "distinct_lighting_families": 10,
+   "distinct_starts": 7
+  },
+  "C80": {
+   "rows": 108,
+   "distinct_scene_ids": 36,
+   "distinct_geometries": 36,
+   "distinct_lighting_families": 10,
+   "distinct_starts": 7
+  },
+  "C60": {
+   "rows": 108,
+   "distinct_scene_ids": 36,
+   "distinct_geometries": 36,
+   "distinct_lighting_families": 10,
+   "distinct_starts": 7
+  },
+  "C40": {
+   "rows": 108,
+   "distinct_scene_ids": 36,
+   "distinct_geometries": 36,
+   "distinct_lighting_families": 10,
+   "distinct_starts": 7
+  },
+  "C20": {
+   "rows": 108,
+   "distinct_scene_ids": 36,
+   "distinct_geometries": 36,
+   "distinct_lighting_families": 10,
+   "distinct_starts": 7
+  }
+ },
+ "start_shared_within_base": true,
+ "three_reps_per_base_C": true,
+ "correction_b": "off (G1 ROBUST_A only)",
+ "changed_fields": [
+  "attempt_id",
+  "start_x_m",
+  "start_y_m",
+  "start_yaw_deg",
+  "output"
+ ],
+ "added_fields": [
+  "start_id",
+  "start_lateral_m",
+  "group",
+  "pose_method",
+  "correction_b",
+  "source_attempt_id"
+ ],
+ "manifest_sha256": "1ce636ce56052f9a406a011004c5c0d9f401ec1a0e60965a0f160f120dc2bb71",
+ "status": "DRAFT_NOT_APPROVED_NOT_EXECUTABLE_BY_CONTROLLER_V04"
+}
