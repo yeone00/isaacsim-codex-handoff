@@ -1709,3 +1709,17 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - The per-tick speed spike at ~0.35 m on the E1 route is 0.0293 in every run, including pre-optimization B0, so it is not caused by the V3 options.
 - Awaiting researcher decision. Recommended: record guard-only safe aborts as failures and continue (needs amendment + controller v06 + re-approval). Nothing was changed.
 - Report: reports/c_v02_drive540_main_hold_speed_guard_20261114_v01.md
+
+## 2026-11-14 — Speed-guard analysis (CPU only; main540 remains in HOLD)
+- 0.03 m/s is not the command limit; the follower commands at most 0.02 m/s. It appears in three places:
+  - the driver governor's per-tick command cut;
+  - the session run-abort on a single-tick planar speed ≥ 0.03;
+  - the outcome rule, where any tick ≥ 0.03 means not SUCCESS.
+- Over 89 recorded drives only 2 ticks were ≥ 0.03, both single-tick spikes. The maximum 0.1 s mean was 0.0267.
+- Proposed filtered guard F (single tick ≥ 0.045, or 6-tick mean ≥ 0.03): 0 false trips on the 89 drives.
+  - Injected sustained over-speed is detected 100% for L ≥ 0.031, within ≤ 0.167 s (≤ 5 mm extra travel).
+  - The displacement rule (c) is excluded because of a computation defect.
+- Proposed B: send F-guard aborts through the existing zero-recovery path (driver exit, zero receipt, graph zero, physical quiet). Verified → FAIL_SAFETY_ABORT and continue; otherwise HOLD.
+- Drive time is unchanged; only HOLDs are removed. Recommended: restart main540 fresh under amendment v04 after 3 GPU validation runs.
+- Awaiting approval.
+- Report: reports/c_v02_drive540_speed_guard_analysis_20261114_v01.md
