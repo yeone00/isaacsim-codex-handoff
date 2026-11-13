@@ -1,0 +1,111 @@
+{
+ "chosen_cruise_m_s": 0.02,
+ "rule": "0.035 if PASS else 0.03 if PASS else 0.02 (A+B validated)",
+ "results": {
+  "0.035": [
+   {
+    "name": "E1_GeoCAD_C100",
+    "cruise": 0.035,
+    "checks": {
+     "technical_pass": false,
+     "success": false,
+     "no_F_trip": true,
+     "band_main": false,
+     "final_err_le_1cm": false,
+     "legs": false,
+     "H_PRE_mean6_margin": true,
+     "PRE_FINAL_mean6_margin": true
+    },
+    "PASS": false,
+    "outcome": "FAIL_D",
+    "reason": "LEGS_INCOMPLETE",
+    "wall_s": 156.25011203694157,
+    "drive_sim_s": 55.083336206153035,
+    "final_err_m": null,
+    "max_planar": 0.04070841321850827,
+    "mean6_max": {
+     "H_PRE": 0.03678072408580719,
+     "PRE_FINAL": 0.02085721170595183
+    },
+    "issues": [
+     "MOTION_LIFECYCLE_NOT_CERTIFIED",
+     "PRE_FINAL_REACH_STOP_CERTIFICATES_NOT_PASS",
+     "NOT_A_VALIDATED_SCIENTIFIC_FAILURE:FAIL_D"
+    ]
+   }
+  ],
+  "0.03": [
+   {
+    "name": "E1_GeoCAD_C100",
+    "cruise": 0.03,
+    "checks": {
+     "technical_pass": false,
+     "success": false,
+     "no_F_trip": true,
+     "band_main": false,
+     "final_err_le_1cm": false,
+     "legs": false,
+     "H_PRE_mean6_margin": true,
+     "PRE_FINAL_mean6_margin": true
+    },
+    "PASS": false,
+    "outcome": "FAIL_D",
+    "reason": "LEGS_INCOMPLETE",
+    "wall_s": 163.25454890797846,
+    "drive_sim_s": 59.65000311098993,
+    "final_err_m": null,
+    "max_planar": 0.03929170761203102,
+    "mean6_max": {
+     "H_PRE": 0.03264744463510166,
+     "PRE_FINAL": 0.020905739266692636
+    },
+    "issues": [
+     "MOTION_LIFECYCLE_NOT_CERTIFIED",
+     "PRE_FINAL_REACH_STOP_CERTIFICATES_NOT_PASS",
+     "NOT_A_VALIDATED_SCIENTIFIC_FAILURE:FAIL_D"
+    ]
+   }
+  ]
+ },
+ "tcs_offline": {
+  "0.02": {
+   "admitted": 63,
+   "total": 63,
+   "worst_ff_rate_at_v": 4.047,
+   "cap": 4.3976,
+   "fails": [],
+   "n_fail": 0
+  },
+  "0.03": {
+   "admitted": 62,
+   "total": 63,
+   "worst_ff_rate_at_v": 4.23,
+   "cap": 4.3976,
+   "fails": [
+    [
+     "S6",
+     -0.03,
+     -0.03,
+     "STEER_RATE_CAP"
+    ]
+   ],
+   "n_fail": 1
+  },
+  "0.035": {
+   "admitted": 62,
+   "total": 63,
+   "worst_ff_rate_at_v": 4.281,
+   "cap": 4.3976,
+   "fails": [
+    [
+     "S6",
+     -0.03,
+     -0.03,
+     "STEER_RATE_CAP"
+    ]
+   ],
+   "n_fail": 1
+  }
+ },
+ "time": 1794596121.6795025
+}
