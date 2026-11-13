@@ -1,5 +1,5 @@
 {
-  "updated": 1794551794.453474,
+  "updated": 1794552098.4824104,
   "files": {
     "policy.json": {
       "sha256": "58194180bd7c8b315361c43ca4c39ee6b77e6dc51bf9e2ce085a9f9df5d59847",
@@ -750,13 +750,13 @@
       }
     },
     "observer_status.json": {
-      "sha256": "75e9da7a51b7c7bf90ffb78e96d1b5e24e5f853339ecdb62f83f725ef7da6e71",
+      "sha256": "cfa01cb53e7e84cd1367b48cc13d026e38d14061eba5064823131867d200087d",
       "data": {
         "state": "RUNNING_TASK_PRIOR_RGBD_EVALUATION",
-        "role": "selected_mixture",
+        "role": "synthetic_baseline",
         "pid": 995698,
-        "worker_pid": 2595075,
-        "updated": 1794551788.7667968,
+        "worker_pid": 2604082,
+        "updated": 1794552089.5270708,
         "physical_motion": false
       }
     }
