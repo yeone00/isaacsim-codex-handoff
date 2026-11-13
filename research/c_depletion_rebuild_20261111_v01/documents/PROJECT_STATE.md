@@ -1590,3 +1590,10 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 
 - reports/c_v02_drive540_single_load_protocol_and_physics_hold_20261113_v01.md;새540manifest/단일load_count1,pallet_count1개정SHA잠금. CPU15조합 벽돌수/단일적재물/공통collider/중첩/명목지지PASS. 기존정적/모델변경0,선택정확도는본540주지표제외.
 - actualKit 정지물리진입4개분리진단에서초기update nativeOmniGraph core/image crash,정확원인UNKNOWN. 로그/덤프/SHA보존,actualPhysX/센서/파일럿 미검증,0/540 HOLD. 완성E2E/자동540실행기라고표시안함. 추가무조건재시도없음.
+
+
+## 2026-11-13T17:42:23.140269+09:00 — C540 Kit실행복구/실제파일럿NO_DETECTION HOLD
+
+- reports/c_v02_drive540_native_crash_recovery_and_E2E_status_20261113_v01.md;빈Kit60PASS/v30no-warmup nativefail/원Stage4의extension후빈update5복원→v30graph그대로60PASS. 기본15조합actualKit RGBD/PhysX등록/접촉확인(짧은physics구간). C진단첫expiredprim error/exit0오판은정정·실패보존.
+- HR-C100 fullE2E파일럿 actual257step/4.2833s,ray2214/6wheel/support/graph/305collider/camera7checksPASS. 고정HRmodel conf.25후보0→NO_DETECTION,driver/nonzerocommand0,계획/주행미진입. 모델/조명/conf허용값변경0,실패보존,0/540HOLD.
+- E2E실행코드별도잠금,controller2783174HOLD종료;자동540전환실검증미완료. passive감시/ntfy/Git유지. 다음은관측분포/렌더계보의검출실패원인분리,새attempt재검증이며blindrerun금지.
