@@ -1723,3 +1723,18 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - Drive time is unchanged; only HOLDs are removed. Recommended: restart main540 fresh under amendment v04 after 3 GPU validation runs.
 - Awaiting approval.
 - Report: reports/c_v02_drive540_speed_guard_analysis_20261114_v01.md
+
+## 2026-11-14 — Speed guard A+B implemented and validated (main540 still HOLD)
+- New files: guard F module, session v05, runner v06, outcome v03, gate v03, controller and approve v06. All earlier code is preserved.
+- GPU validation (counted=false):
+  - T1 GeoCAD C100 E1: SUCCESS, 0.4946 cm.
+  - T2 run-11 condition: the 0.03044 spike recurred, F did not trip, SUCCESS.
+  - T3 forced trip (instant 0.029): FAIL_SAFETY_ABORT with verified stop (receipt valid, quiet PASS), technical PASS.
+- Negative tests 12/12: every corrupted recovery-evidence case and the real run 11 → HOLD.
+- Controller v06 mock T1–T9 PASS, including 3 safety aborts that continued without HOLD.
+- Cruise-speed analysis:
+  - 0.02 m/s was chosen below the PRE_FINAL 0.03 cap.
+  - Going to 0.035 would cut ~16% per drive (about −3.7 h for 540 runs at 50% driving).
+  - It requires changes to the governor phase, the F thresholds and the TC-S rate check. Not validated or applied.
+- Candidates: amendment v04 (097d4710…) and lock FINAL_v03 (05c6190f…). Runs 1–11 are marked PRELIMINARY.
+- Report: reports/c_v02_drive540_speed_guard_ab_validation_20261114_v01.md
