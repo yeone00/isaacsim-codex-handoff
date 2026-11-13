@@ -1,0 +1,22 @@
+{
+  "protocol_sha256": "fa5ef9a20d0d9172f48f25b20e7a72e3dcb2c953759eafb0a4da3e18af2630d2",
+  "manifest_sha256": "92ba7c2909f78110d4fa985de17ce6863538b0110dfb3e42a7e7784f05ce19fc",
+  "code_sha256": {
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_drive540_recovery_e2e_controller_20261113_v01.py": "e1c1346397f57a64b364607a28c5ae7e4bf4a0688ca7de267266ca688fa678cb",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_drive540_e2e_runner_20261113_v02.py": "3e4c941ec491308c64aa2f7e9abbb91a7d310de68b357435d905cc947215611c",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_drive540_e2e_session_20261113_v01.py": "24a81463b18d5b8ee2eab50fd3b1073340f82e1f8581a3ac9cd02a3461470b4a",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/evaluation/c_v02_drive540_scene_20261113_v06.py": "ca1a86e26e1b7810594c3b06865131269540588008c705554006d6039f4d5a2a",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/evaluation/c_v02_drive540_physx_gate_20261113_v01.py": "4fe5fa6c0bd8bbaa161beb72749ca8cadb113e53162cd5644da93c342a2c7cde",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/evaluation/c_v02_drive540_outcome_20261113_v01.py": "3c9858e29cb47d48b7e94d5622a4463bf1627e73a04980f13dd654e63328a915",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/evaluation/c_v02_drive540_mount_admission_20261113_v01.py": "fec4a956c68bac6b3d10d19a4f1d96cbfbf94aa13261f97272bacb131c9e970d",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_stage4_perception_task_prior_20261112_v02.py": "404ff11579b76a8d412a733027d62bcd8ec4e3672232a65baf6ab53815144b65",
+    "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/evaluation/b5_robust_20261110_v01.py": "0b1e5f46702d4af0c4d4abc4b7d1c5fe9d29cc07c9f34b4a1592990ac296ae29"
+  },
+  "models_sha256": {
+    "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S075_R025_HR_Scan_s42/train/weights/best_balanced_HR_Scan.pt": "4dea6f0be90273194511b7dd4c667907aea9055941114bd3c16bbfdd929e991a",
+    "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S075_R025_LR_Scan_s42/train/weights/best_balanced_LR_Scan.pt": "caced04b190dcca2fa3b7f6a5e87a3b2b4a7aacb5606147c483d540becc0f17d",
+    "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S075_R025_GeoCAD_s42/train/weights/best_balanced_GeoCAD.pt": "33dd242f2b2ff1ab851ddfd2505b46a3a55eb77b5906783b378ff3b465523c1a"
+  },
+  "main_entry": "15 full E2E pilot successes + all safety/evidence gates + capacity, no relaxed threshold",
+  "startup_fix": "5 app updates after enabling extensions before attaching stage; matches validated Stage4"
+}

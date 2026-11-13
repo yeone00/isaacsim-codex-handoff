@@ -185,16 +185,16 @@
     "state": "RUNNING_STATIONARY_PHYSICS",
     "controller_pid": 2769830,
     "current": {
-      "job": "C40_GeoCAD",
-      "pid": 2782507,
-      "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/logs/C40_GeoCAD_attempt06.log",
+      "job": "C20_GeoCAD",
+      "pid": 2785666,
+      "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/logs/C20_GeoCAD_attempt06.log",
       "command": [
         "/home/user/anaconda3/envs/hh_isaac51/bin/python",
         "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_drive540_physical_admission_20261113_v06.py",
         "--row",
-        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt06/C40_GeoCAD.input.json",
+        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt06/C20_GeoCAD.input.json",
         "--output",
-        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt06/C40_GeoCAD"
+        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt06/C20_GeoCAD"
       ]
     },
     "completed_stationary_qualifications": [
@@ -208,7 +208,10 @@
       "C60_LR_Scan",
       "C60_GeoCAD",
       "C40_HR_Scan",
-      "C40_LR_Scan"
+      "C40_LR_Scan",
+      "C40_GeoCAD",
+      "C20_HR_Scan",
+      "C20_LR_Scan"
     ],
     "main_completed": 0,
     "main_planned": 540,
@@ -534,9 +537,22 @@
       "trace_area": "OmniGraph core/image native plugins; initial update after composed stage load"
     }
   ],
-  "actual_single_load_perception": "NOT_RUN",
-  "actual_PhysX": "HOLD_NATIVE_KIT_CRASH_UNRESOLVED",
+  "actual_single_load_perception": "PENDING full E2E pilot",
+  "actual_PhysX": "BASIC_KIT_RGBD_REGISTRATION_CONTACTS_RECOVERED; full motion gates remain",
   "main_completed": 0,
   "physical_main_entry": "HOLD",
-  "monitor_pid": 2740427
+  "monitor_pid": 2786284,
+  "recovery_e2e_status": {
+    "state": "WAITING_STATIONARY_QUALIFICATIONS",
+    "controller_pid": 2783174,
+    "current": {},
+    "pilot_completed": 0,
+    "pilot_planned": 15,
+    "main_completed": 0,
+    "main_planned": 540,
+    "main_success": 0,
+    "main_failure": 0,
+    "physical_main_entry": "HOLD",
+    "reason": null
+  }
 }
