@@ -1,0 +1,174 @@
+{
+  "schema": "C_V02_DRIVE540_SINGLE_LOAD_O0_amendment_v01",
+  "created": 1794557319.1143608,
+  "representations": [
+    "HR_Scan",
+    "LR_Scan",
+    "GeoCAD"
+  ],
+  "C": [
+    "C100",
+    "C80",
+    "C60",
+    "C40",
+    "C20"
+  ],
+  "occlusion": [
+    "O0"
+  ],
+  "attempts": 540,
+  "per_cell": 36,
+  "paired_base_ids": 36,
+  "source_Test_families": 10,
+  "physical_background_sites": 1,
+  "task_layer_count": {
+    "C100": 4,
+    "C80": 4,
+    "C60": 3,
+    "C40": 2,
+    "C20": 1
+  },
+  "model_seed": 42,
+  "model_selection_lock": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/MIX_C06_20261112_v01/selection_lock.json",
+  "model_selection_sha256": "60687449dd61c01def8c821200e73ef009f5aa5a6ad358ed591f32ba0c9ce26a",
+  "models": {
+    "HR_Scan": {
+      "rep": "HR_Scan",
+      "seed": 42,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S075_R025_HR_Scan_s42/train/weights/best_balanced_HR_Scan.pt",
+      "sha256": "4dea6f0be90273194511b7dd4c667907aea9055941114bd3c16bbfdd929e991a",
+      "combined_validation": 0.9512165083223791,
+      "synthetic_validation": 0.9254417987529194,
+      "real_validation": 0.976991217891839,
+      "best_epoch": 76,
+      "ratio": "S075_R025"
+    },
+    "LR_Scan": {
+      "rep": "LR_Scan",
+      "seed": 42,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S075_R025_LR_Scan_s42/train/weights/best_balanced_LR_Scan.pt",
+      "sha256": "caced04b190dcca2fa3b7f6a5e87a3b2b4a7aacb5606147c483d540becc0f17d",
+      "combined_validation": 0.9493447774708098,
+      "synthetic_validation": 0.9124711284405844,
+      "real_validation": 0.9862184265010352,
+      "best_epoch": 186,
+      "ratio": "S075_R025"
+    },
+    "GeoCAD": {
+      "rep": "GeoCAD",
+      "seed": 42,
+      "checkpoint": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S075_R025_GeoCAD_s42/train/weights/best_balanced_GeoCAD.pt",
+      "sha256": "33dd242f2b2ff1ab851ddfd2505b46a3a55eb77b5906783b378ff3b465523c1a",
+      "combined_validation": 0.9582399855459269,
+      "synthetic_validation": 0.9350037392077961,
+      "real_validation": 0.9814762318840579,
+      "best_epoch": 196,
+      "ratio": "S075_R025"
+    }
+  },
+  "perception": {
+    "imgsz": 640,
+    "confidence": 0.25,
+    "NMS_IoU": 0.7,
+    "max_det": 100,
+    "retina_masks": true
+  },
+  "pose": "unchanged frozen ROBUST_A + supplied occupied task-layer prior",
+  "GT_operational_input": false,
+  "success": {
+    "position_m": 0.11,
+    "yaw_deg": 7.341774,
+    "completed_physical_drive": true,
+    "no_collision": true,
+    "no_safety_violation": true
+  },
+  "arrival_certificate": {
+    "position_m": 0.005,
+    "yaw_deg": 2
+  },
+  "speed_safety_stop_mps": 0.03,
+  "physical_execution_authorized_by_researcher": true,
+  "gate_bypass_authorized": false,
+  "mandatory_gates": [
+    "actual_loaded_stage_inventory",
+    "registered_PhysX_colliders",
+    "wheel_support_and_stationary_contacts",
+    "actual_pallet_and_load_geometry",
+    "no_external_panel_prim",
+    "RGBD_and_model_SHA",
+    "path_and_control_safety",
+    "HR_C100_full_E2E_pilot",
+    "representative_all_C_all_rep_pilots",
+    "required_evidence_and_cleanup"
+  ],
+  "main_entry": "HOLD_UNTIL_SINGLE_LOAD_PHYSICS_SAFETY_AND_E2E_PILOTS_PASS",
+  "pilot_denominator": 0,
+  "retries": "no success-until-repeat; previous attempts preserved; safety or infrastructure unresolved => HOLD",
+  "supersedes_unexecuted": [
+    "300+150",
+    "360+180",
+    "3C_x_3O_x20"
+  ],
+  "static_O0_O25_O50_unchanged": true,
+  "D600_not_in_scope": true,
+  "estimated_main_hours": [
+    72,
+    81
+  ],
+  "statistics": {
+    "Wilson_95_per_cell": true,
+    "paired_base": true,
+    "family_cluster_uncertainty": true,
+    "noninferiority_margin": null
+  },
+  "scene_distribution": {
+    "start_lateral_offsets_m": [
+      -0.18,
+      -0.06,
+      0.06,
+      0.18
+    ],
+    "approach_distances_m": [
+      2.8,
+      3.0,
+      3.2
+    ],
+    "start_headings_deg": [
+      86,
+      90,
+      94
+    ],
+    "lighting": "source Test recipe intensity shared across representations",
+    "background": "prepared v30 common physical environment, not independent36environments",
+    "obstacles": "original physical site obstacles preserved; legacy load collider replaced separately with C geometry"
+  },
+  "inputs_sha256": {
+    "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/data_design_v01/scene_manifest.csv": "2be5f1abda7f42a8f7087cf44088fc598e8393820fe8ddacf3b14de14f1c1dbb",
+    "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/attempt_manifest.csv": "c20d0251562f70ac0de429bdd2baa1e227c969bcdacd912a9f3c7c99acd294a4",
+    "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/base_scenarios.csv": "fbf0d6cf9983de368cc7ff489d2653a41ffea5d8fe940b386f200e32783d2321",
+    "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/eval_gt_only/scene_construction.json": "5142859186d4c92085e5ff557add2bb6e876b39067746d430ebd26ebabe4c9b2"
+  },
+  "parent_protocol_sha256": "e4b672530b2e20c2545860c90f4ba143af7b80b3cf2101704284b8451a342ac5",
+  "parent_manifest_sha256": "c20d0251562f70ac0de429bdd2baa1e227c969bcdacd912a9f3c7c99acd294a4",
+  "load_count": 1,
+  "pallet_count": 1,
+  "target_instance": "Load_01",
+  "target_identity_definition": "sole scene-placed approach target; first generated ID is not nearest/selected object",
+  "primary_metrics": [
+    "single_load_detection",
+    "instance_mask_quality",
+    "RGBD_pose_computation_and_error",
+    "path_plan_success",
+    "physical_approach_alignment_success",
+    "final_XY_yaw_error",
+    "stage_failure_and_task_success"
+  ],
+  "excluded_primary_metrics": [
+    "multi_load_target_selection_accuracy"
+  ],
+  "prediction_mask_rule": "highest-confidence operational detection among duplicate/false masks; incorrect mask classified as detection/segmentation/pose failure",
+  "static_multi_load_results_unchanged": true,
+  "static_OTHER_LOAD_is_auxiliary_only": true,
+  "attempt_manifest": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/single_load_amendment_v01/attempt_manifest.csv",
+  "attempt_manifest_sha256": "92ba7c2909f78110d4fa985de17ce6863538b0110dfb3e42a7e7784f05ce19fc"
+}

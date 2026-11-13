@@ -1584,3 +1584,9 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 ## 2026-11-13T15:48:56.074321+09:00 — 연구자 요청 결과 통합 추출
 
 - 보고서 reports/research_results_completed_static_20261113_154856.md 및 단일 ZIP research_results_completed_static_20261113_154856.zip. 기존 결과 읽기전용 스냅샷/45모델셀/39본학습+3smoke/epoch기록/20250인식원자료 포함. 학습39/39완료,75:25선정;위치추정 진행중으로 미완료표시. 실행기·모델·원본변경0,물리HOLD유지. ZIP CRC검증PASS.
+
+
+## 2026-11-13T17:12:17.859551+09:00 — C-V02 O0 단일적재물540 물리진입HOLD
+
+- reports/c_v02_drive540_single_load_protocol_and_physics_hold_20261113_v01.md;새540manifest/단일load_count1,pallet_count1개정SHA잠금. CPU15조합 벽돌수/단일적재물/공통collider/중첩/명목지지PASS. 기존정적/모델변경0,선택정확도는본540주지표제외.
+- actualKit 정지물리진입4개분리진단에서초기update nativeOmniGraph core/image crash,정확원인UNKNOWN. 로그/덤프/SHA보존,actualPhysX/센서/파일럿 미검증,0/540 HOLD. 완성E2E/자동540실행기라고표시안함. 추가무조건재시도없음.
