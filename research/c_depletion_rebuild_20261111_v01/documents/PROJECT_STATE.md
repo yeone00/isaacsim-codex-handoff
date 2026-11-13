@@ -1660,3 +1660,12 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - Candidate optimizations O1–O4 are estimated at ~225 s per drive run (540 runs ≤ 33.8 h even at 100% driving). The estimate is unverified, and a 6-run benchmark plan is proposed.
 - Current code fits 36 h only if ≤ ~51% of runs reach driving. Fallback designs: 474 runs (C100 reduced) or 300 runs (20 bases).
 - Report: reports/c_v02_drive540_runtime_optimization_20261114_v01.md
+
+## 2026-11-14 — Runtime optimization benchmark (5 of 6 approved runs; stopped at a V3b gate failure)
+- B0 419.6 s, V1 419.1 s, V2 (O1) 395.1 s, V3a (O1+O3+O4) 305.0 s. All four are SUCCESS with identical pose, commands and final error (0.4946 cm); trajectory deviation ≤ 0.004 mm.
+- V3b failed with FAIL_U CONTROLLER_READBACK_MISSING before motion (safe stop). Cause: the 0.1 s sim readback window shrinks in wall time when ticks are fast, and the first ROS command was delayed. V3F was not run.
+- Offline checks PASS: O1 replay, O3 17-mutation equivalence test, O4 SIGKILL test. Archive restore is SHA-identical for B0 and V3a. O2 was not applied.
+- Detection conf varies 0.27–0.36 across identical runs.
+- 540-run estimate with V3: 26.9 h at 50% driving, 46.1 h at 100%. The 36 h budget holds if ≤ ~74% of runs reach driving.
+- Controller v05 and approval script are drafts and have not been started. Main540 is still HOLD.
+- Report: reports/c_v02_drive540_runtime_benchmark_20261114_v01.md
