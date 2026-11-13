@@ -1574,3 +1574,13 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 ## 2026-11-13T14:26:18.471186+09:00 — 연구자 요청 결과 통합 추출
 
 - 보고서 reports/research_results_snapshot_20261113_142618.md 및 단일 ZIP research_results_snapshot_20261113_142618.zip. 기존 결과 읽기전용 스냅샷/45모델셀/39본학습+3smoke/epoch기록/20250인식원자료 포함. 학습39/39완료,75:25선정;위치추정 진행중으로 미완료표시. 실행기·모델·원본변경0,물리HOLD유지. ZIP CRC검증PASS.
+
+
+## C-V02 혼합·정적 평가 자동 완료
+
+- reports/c_v02_final_mixing_perception_pose_integrated_20261112_v01.md; 물리실행0/HOLD.
+
+
+## 2026-11-13T15:48:56.074321+09:00 — 연구자 요청 결과 통합 추출
+
+- 보고서 reports/research_results_completed_static_20261113_154856.md 및 단일 ZIP research_results_completed_static_20261113_154856.zip. 기존 결과 읽기전용 스냅샷/45모델셀/39본학습+3smoke/epoch기록/20250인식원자료 포함. 학습39/39완료,75:25선정;위치추정 진행중으로 미완료표시. 실행기·모델·원본변경0,물리HOLD유지. ZIP CRC검증PASS.

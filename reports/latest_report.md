@@ -1,4 +1,4 @@
-# 연구 결과 통합 스냅샷 — 2026-11-13T14:26:18.471186+09:00
+# 연구 결과 통합 스냅샷 — 2026-11-13T15:48:56.074321+09:00
 
 현재 C-V02 결과와 이 저장소의 기존 연구 보고서·집계표를 한 ZIP에 보존한 읽기 전용 추출본입니다. 서로 다른 실험 버전과 분모를 합산하지 않습니다. 파일 작성 중에도 원래 실험은 계속 실행되므로 파일별 캡처 시점은 조금 다릅니다. 원본·학습·실행기 변경 없음.
 
@@ -8,8 +8,8 @@
 - C-V02 표현별 Train 1,250 / Validation 250 / Test 250, 각 C 상태 250/50/50. 기본 환경 계보 총70, Train50/Val10/Test10. 반복 관측은 독립 환경이 아님. C100만 추가 시점 관측이라는 교란 한계 유지.
 - C06 고정 본 학습39/39 완료, 별도 smoke3건. 45개 논리 모델 셀은 real-only3개 학습 궤적 공유를 포함하므로 45회 독립 학습이 아님. 모두 200epoch, 기존 HPO57건 재실행 아님.
 - 선정 공통 비율 S075_R025, Validation 점수 95.327405%. 합성/실사 Validation 동일 가중 및3표현×3seed 평균. Test 선정 사용 없음. 75:25와50:50의 작은 수치차는 통계적 우월성 증명이 아님.
-- 선정 모델 인식 평가20250/20250 model-images 완료(2250 프레임×9모델). 자기표현 위치추정 입력6750건. 현재 단계 {'state': 'RUNNING', 'job': 'selected_mixture_pose', 'pid': 2489543, 'updated': 1794547539.9433594, 'physical_motion': False}; 위치추정 완료로 표시하지 않음.
-- 합성 전용 baseline, 층수 prior ROBUST_A 후속 평가 및 전체 통합 결론은 완료 여부를 첨부 상태에서 확인. 물리 주행0회/HOLD.
+- 선정 모델 인식 평가20250/20250 model-images 완료(2250 프레임×9모델). 자기표현 위치추정 입력6750건. 현재 단계 {'state': 'RUNNING', 'job': 'V02_integrated_report', 'pid': 2593564, 'updated': 1794551494.054038, 'physical_motion': False}; 선정/합성baseline 각 위치추정6750입력×5방법=33750행 모두 완료.
+- 합성baseline 인식20250건 완료. task 층수 prior ROBUST_A 양역할 각6750=13500건 완료. 정적 통합 집계 완료, 물리 주행0회/HOLD. 평가 완료는 조건별 성능/물리 안전 gate 통과가 아님.
 
 ## 위치추정 이후 남은 순서
 
@@ -28,8 +28,42 @@ Main 성공허용값0.11m/7.341774도 및 충돌·안전 위반 없음. PRE/FINA
 - current/CSV: 45개 checkpoint/원래SHA/epoch/두 Validation 점수, 비율 및 표현별3seed 요약,39개 본학습+3smoke 실행정보, epoch별 상세 기록.
 - selected_mixture_eval_v01: 완료 인식평가 AP와20250행 대상별 원자료. AP의 all/target GT 분모와 attempted_images를 원본 그대로 보존. mAP값은0~1 단위.
 - derived/target_condition_summary.csv: seed/표현/가림/C별 파생 집계. 검출=운용confidence 통과 후보의 target IoU>=0.5, 전체시도 분모; eligible 수 별도. oracle IoU와Top1 IoU 구분. 이 평균에 실패가 포함되며 위치추정 조건부 오차와 혼동 금지.
-- snapshots: 프로토콜/선정lock/QA/상태/partial pose 산출물 중 존재하는 CSV·JSON. 미완료 pose 파일은 progress snapshot이며 완료 판정 근거 아님.
+- snapshots: 프로토콜/선정lock/QA/상태/partial pose 산출물 중 존재하는 CSV·JSON. progress 파일의 마지막 processed는10건 간격 기록이라 전체완료시 마지막9건이 빠져 보일 수 있음. result.json과 실제per_attempt 행수로 완료 검증.
 - historical_reports: 기존 연구 Markdown 및 CSV 표를 버전 그대로 포함. 과거 B1·C-V01·Stage1~4는 신규 C-V02 결과와 섞지 않음. historical 문서의 당시 상태는 현재 상태가 아님.
 - source_inventory.csv: 각 원본 절대경로, ZIP내 경로, 복사한 바이트의 SHA256. 대용량 RGBD/이미지/weights는 복사하지 않고 경로·SHA로 참조. 비공개 ntfy 설정은 포함하지 않음.
 
 실사 Test189는 과거 평가 이력이 있는 재사용 검증이며 신규 blind Test 아님. 알려진 원본 라벨 정책/제품 도메인 차이/v04 RNG 문서 불일치/Replicator 예외의 미해명 부분은 기존 감사 보고서 그대로 유지.
+
+## 최신 완료 결과（한국어 해석）
+
+### 혼합비율 Validation 선정
+
+|합성:실사|균형 Validation 점수|
+|---|---:|
+|S100_R000|60.488570%|
+|S075_R025|95.327405%|
+|S050_R050|95.301794%|
+|S025_R075|94.957912%|
+|S000_R100|49.435187%|
+
+75:25와50:50 차이는0.025611%p이며 통계적 우월성 확정이 아님. checkpoint는각학습의 합성/실사 균형Validation으로 고정했고 Test후선정변경 없음.
+
+### 최종 모델 자기표현 target Mask mAP50–95 (3seed 평균)
+
+|표현|O0|O25|O50|
+|---|---:|---:|---:|
+|HR_Scan|97.276%|96.130%|76.815%|
+|LR_Scan|97.517%|96.366%|75.335%|
+|GeoCAD|98.189%|95.610%|77.383%|
+
+위 AP는C전체 pooled 지표의 seed평균. C별동일가중macro 및anchor/교차표현 수치는별도 CSV 포함. AP가 높아도Top1다른적재물 선택이 발생할 수 있어 실제 목표선택/자세산출과분리.
+
+### 층수 prior ROBUST_A: 올바른 목표 선택 후 계산 산출
+
+|표현|O0|O25|O50|
+|---|---:|---:|---:|
+|HR_Scan|601/750 (80.13%)|596/750 (79.47%)|305/750 (40.67%)|
+|LR_Scan|645/750 (86.00%)|641/750 (85.47%)|205/750 (27.33%)|
+|GeoCAD|694/750 (92.53%)|670/750 (89.33%)|291/750 (38.80%)|
+
+각분모750은250대응관측×3seed이며10Test가족의 반복측정. 이비율은 정확도허용값 통과나 로봇작업성공률이 아님. 오차평균은원본의target_computed 조건에 따른값인지코드에서구분하며실패제외/분모명시. O50에서 AP대비Top1목표선택이낮은현상과부분형상/방향오차는추가실패분석대상. GTpose/mask/slots운용입력없음,작업층수prior만허용.
