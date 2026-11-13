@@ -185,16 +185,16 @@
     "state": "RUNNING_STATIONARY_PHYSICS",
     "controller_pid": 2769830,
     "current": {
-      "job": "C60_LR_Scan",
-      "pid": 2778108,
-      "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/logs/C60_LR_Scan_attempt06.log",
+      "job": "C40_GeoCAD",
+      "pid": 2782507,
+      "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/logs/C40_GeoCAD_attempt06.log",
       "command": [
         "/home/user/anaconda3/envs/hh_isaac51/bin/python",
         "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_drive540_physical_admission_20261113_v06.py",
         "--row",
-        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt06/C60_LR_Scan.input.json",
+        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt06/C40_GeoCAD.input.json",
         "--output",
-        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt06/C60_LR_Scan"
+        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt06/C40_GeoCAD"
       ]
     },
     "completed_stationary_qualifications": [
@@ -204,7 +204,11 @@
       "C80_HR_Scan",
       "C80_LR_Scan",
       "C80_GeoCAD",
-      "C60_HR_Scan"
+      "C60_HR_Scan",
+      "C60_LR_Scan",
+      "C60_GeoCAD",
+      "C40_HR_Scan",
+      "C40_LR_Scan"
     ],
     "main_completed": 0,
     "main_planned": 540,
