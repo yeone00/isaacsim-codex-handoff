@@ -1,0 +1,190 @@
+{
+  "status": {
+    "state": "RUNNING_PILOT",
+    "controller_pid": 2823783,
+    "current": {
+      "role": "pilot",
+      "attempt_id": "C2D_B01_C60_HR_Scan_O0",
+      "pid": 2833223,
+      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/pilot/C2D_B01_C60_HR_Scan_O0",
+      "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/pilot_C2D_B01_C60_HR_Scan_O0.log"
+    },
+    "pilot_technical_pass": 6,
+    "pilot_recorded": 6,
+    "pilot_planned": 15,
+    "pilot_task_success": 0,
+    "engineering_motion_certified": false,
+    "main_completed": 0,
+    "main_attempted": 0,
+    "main_success": 0,
+    "main_scientific_failure": 0,
+    "main_planned": 540,
+    "physical_main_entry": "HOLD",
+    "reason": null
+  },
+  "technical_policy": {
+    "schema": "C540_TECHNICAL_VS_SCIENTIFIC_AMENDMENT_v01",
+    "created": 1794560525.2160869,
+    "parent_scientific_protocol_sha256": "fa5ef9a20d0d9172f48f25b20e7a72e3dcb2c953759eafb0a4da3e18af2630d2",
+    "manifest_sha256": "92ba7c2909f78110d4fa985de17ce6863538b0110dfb3e42a7e7784f05ce19fc",
+    "design_unchanged": true,
+    "main_planned": 540,
+    "pilot_conditions": 15,
+    "require_all_technical_pass": true,
+    "require_all_task_success": false,
+    "normal_scientific_failures": [
+      "NO_DETECTION",
+      "valid-mask pose geometric rejection",
+      "safe pre-motion path rejection",
+      "completed safe physical drive outside Main position/yaw band"
+    ],
+    "HOLD_conditions": [
+      "sensor corruption",
+      "PIPELINE_ERROR or internal exception",
+      "missing evidence or SHA mismatch",
+      "native crash or worker/ROS lifecycle uncertainty",
+      "speed/steering/contact safety violation",
+      "uncertified stop or unknown control state"
+    ],
+    "engineering_actual_motion_required": true,
+    "engineering_goals_source": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_policy_amendment_v01/engineering_reference_targets.json",
+    "engineering_goals_sha256": "583c761c020e892b146ee69e24db210c7948a25e51e109c9b3e969f9fc42537d",
+    "engineering_is_not_E2E_and_not_main": true,
+    "reuse_original_failed_HR_pilot": true,
+    "model_and_threshold_changes": false,
+    "GT_operational_input": false,
+    "notes": "no-detection can prove safe failure handling but never actual driving/stop safety; retain every prior failure"
+  },
+  "execution_lock_sha256": "1a913843b932c49ac884abcbc6b62ef25276de6d08454dfb36e84ffb9e61e77e",
+  "watchdog_warnings": [],
+  "physical_main_criteria": "all15 technical handling PASS + separate actual motion/stop PASS + evidence and disk; task success is NOT required",
+  "raw_RGBD_checkpoints_published": false,
+  "pilot_records": [
+    {
+      "role": "pilot",
+      "attempt_id": "C2D_B01_C100_HR_Scan_O0",
+      "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/recovery_e2e_v01/pilot/C2D_B01_C100_HR_Scan_O0",
+      "reused_verified": true,
+      "result_sha256": "926ad8212e5c98cf49598763a88e8ef2d414e0755da7a42bfe6f23060ea6a513",
+      "assessment": {
+        "state": "PASS_TECHNICAL",
+        "technical_pass": true,
+        "task_success": false,
+        "scientific_outcome": "FAIL_A",
+        "reason": "PERCEPTION_NO_DETECTION:",
+        "normal_scientific_failure": true,
+        "actual_motion": false,
+        "control_motion_certified": false,
+        "engineering_only": false,
+        "issues": [],
+        "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/recovery_e2e_v01/pilot/C2D_B01_C100_HR_Scan_O0",
+        "GT_operational_input": false
+      }
+    },
+    {
+      "role": "pilot",
+      "attempt_id": "C2D_B01_C100_LR_Scan_O0",
+      "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/pilot/C2D_B01_C100_LR_Scan_O0",
+      "reused_verified": false,
+      "result_sha256": "c210d692eee8931676011b25b2a32148101cb8fd4ad5b55b75febdb9a804c4ad",
+      "assessment": {
+        "state": "PASS_TECHNICAL",
+        "technical_pass": true,
+        "task_success": false,
+        "scientific_outcome": "FAIL_C",
+        "reason": "PLAN_REJECTED:CURVATURE_INFEASIBLE",
+        "normal_scientific_failure": true,
+        "actual_motion": false,
+        "control_motion_certified": false,
+        "engineering_only": false,
+        "issues": [],
+        "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/pilot/C2D_B01_C100_LR_Scan_O0",
+        "GT_operational_input": false
+      }
+    },
+    {
+      "role": "pilot",
+      "attempt_id": "C2D_B01_C100_GeoCAD_O0",
+      "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/pilot/C2D_B01_C100_GeoCAD_O0",
+      "reused_verified": false,
+      "result_sha256": "10f22ca0a918d4cb20c9029d74d41bd3d56020e03b91b2358ed3a2d780d16513",
+      "assessment": {
+        "state": "PASS_TECHNICAL",
+        "technical_pass": true,
+        "task_success": false,
+        "scientific_outcome": "FAIL_C",
+        "reason": "PLAN_REJECTED:CURVATURE_INFEASIBLE",
+        "normal_scientific_failure": true,
+        "actual_motion": false,
+        "control_motion_certified": false,
+        "engineering_only": false,
+        "issues": [],
+        "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/pilot/C2D_B01_C100_GeoCAD_O0",
+        "GT_operational_input": false
+      }
+    },
+    {
+      "role": "pilot",
+      "attempt_id": "C2D_B01_C80_HR_Scan_O0",
+      "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/pilot/C2D_B01_C80_HR_Scan_O0",
+      "reused_verified": false,
+      "result_sha256": "1607599e90aacac45c5a8b3ff8bc11c6c9ef5dc7cf9ea2fd8ed7036a0cf5706a",
+      "assessment": {
+        "state": "PASS_TECHNICAL",
+        "technical_pass": true,
+        "task_success": false,
+        "scientific_outcome": "FAIL_A",
+        "reason": "PERCEPTION_NO_DETECTION:",
+        "normal_scientific_failure": true,
+        "actual_motion": false,
+        "control_motion_certified": false,
+        "engineering_only": false,
+        "issues": [],
+        "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/pilot/C2D_B01_C80_HR_Scan_O0",
+        "GT_operational_input": false
+      }
+    },
+    {
+      "role": "pilot",
+      "attempt_id": "C2D_B01_C80_LR_Scan_O0",
+      "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/pilot/C2D_B01_C80_LR_Scan_O0",
+      "reused_verified": false,
+      "result_sha256": "27cbd3d5e6fdc88042001c897b1e21c45f7abf06340d58912f6ed3d16b480324",
+      "assessment": {
+        "state": "PASS_TECHNICAL",
+        "technical_pass": true,
+        "task_success": false,
+        "scientific_outcome": "FAIL_C",
+        "reason": "PLAN_REJECTED:CURVATURE_INFEASIBLE",
+        "normal_scientific_failure": true,
+        "actual_motion": false,
+        "control_motion_certified": false,
+        "engineering_only": false,
+        "issues": [],
+        "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/pilot/C2D_B01_C80_LR_Scan_O0",
+        "GT_operational_input": false
+      }
+    },
+    {
+      "role": "pilot",
+      "attempt_id": "C2D_B01_C80_GeoCAD_O0",
+      "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/pilot/C2D_B01_C80_GeoCAD_O0",
+      "reused_verified": false,
+      "result_sha256": "fd43c1900687871555b97f5464345793e4347e5320c5eea37d50bf7e817e2147",
+      "assessment": {
+        "state": "PASS_TECHNICAL",
+        "technical_pass": true,
+        "task_success": false,
+        "scientific_outcome": "FAIL_C",
+        "reason": "PLAN_REJECTED:CURVATURE_INFEASIBLE",
+        "normal_scientific_failure": true,
+        "actual_motion": false,
+        "control_motion_certified": false,
+        "engineering_only": false,
+        "issues": [],
+        "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/pilot/C2D_B01_C80_GeoCAD_O0",
+        "GT_operational_input": false
+      }
+    }
+  ]
+}

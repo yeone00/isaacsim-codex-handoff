@@ -1,0 +1,33 @@
+{
+  "schema": "C540_TECHNICAL_VS_SCIENTIFIC_AMENDMENT_v01",
+  "created": 1794560525.2160869,
+  "parent_scientific_protocol_sha256": "fa5ef9a20d0d9172f48f25b20e7a72e3dcb2c953759eafb0a4da3e18af2630d2",
+  "manifest_sha256": "92ba7c2909f78110d4fa985de17ce6863538b0110dfb3e42a7e7784f05ce19fc",
+  "design_unchanged": true,
+  "main_planned": 540,
+  "pilot_conditions": 15,
+  "require_all_technical_pass": true,
+  "require_all_task_success": false,
+  "normal_scientific_failures": [
+    "NO_DETECTION",
+    "valid-mask pose geometric rejection",
+    "safe pre-motion path rejection",
+    "completed safe physical drive outside Main position/yaw band"
+  ],
+  "HOLD_conditions": [
+    "sensor corruption",
+    "PIPELINE_ERROR or internal exception",
+    "missing evidence or SHA mismatch",
+    "native crash or worker/ROS lifecycle uncertainty",
+    "speed/steering/contact safety violation",
+    "uncertified stop or unknown control state"
+  ],
+  "engineering_actual_motion_required": true,
+  "engineering_goals_source": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_policy_amendment_v01/engineering_reference_targets.json",
+  "engineering_goals_sha256": "583c761c020e892b146ee69e24db210c7948a25e51e109c9b3e969f9fc42537d",
+  "engineering_is_not_E2E_and_not_main": true,
+  "reuse_original_failed_HR_pilot": true,
+  "model_and_threshold_changes": false,
+  "GT_operational_input": false,
+  "notes": "no-detection can prove safe failure handling but never actual driving/stop safety; retain every prior failure"
+}
