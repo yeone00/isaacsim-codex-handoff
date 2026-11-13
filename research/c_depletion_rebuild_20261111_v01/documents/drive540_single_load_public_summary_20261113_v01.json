@@ -182,21 +182,9 @@
     "attempt_manifest_sha256": "92ba7c2909f78110d4fa985de17ce6863538b0110dfb3e42a7e7784f05ce19fc"
   },
   "pipeline": {
-    "state": "RUNNING_STATIONARY_PHYSICS",
+    "state": "HOLD_FULL_E2E_PILOT_REQUIRED",
     "controller_pid": 2769830,
-    "current": {
-      "job": "C20_GeoCAD",
-      "pid": 2785666,
-      "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/logs/C20_GeoCAD_attempt06.log",
-      "command": [
-        "/home/user/anaconda3/envs/hh_isaac51/bin/python",
-        "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_drive540_physical_admission_20261113_v06.py",
-        "--row",
-        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt06/C20_GeoCAD.input.json",
-        "--output",
-        "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/stationary_qualification_attempt06/C20_GeoCAD"
-      ]
-    },
+    "current": {},
     "completed_stationary_qualifications": [
       "C100_HR_Scan",
       "C100_LR_Scan",
@@ -211,12 +199,13 @@
       "C40_LR_Scan",
       "C40_GeoCAD",
       "C20_HR_Scan",
-      "C20_LR_Scan"
+      "C20_LR_Scan",
+      "C20_GeoCAD"
     ],
     "main_completed": 0,
     "main_planned": 540,
     "physical_gate": "HOLD",
-    "reason": null
+    "reason": "Stationary qualifications complete. Full E2E adapter/control/GT/video admission must be validated before main540."
   },
   "CPU_geometry_state": "PASS_CPU_GEOMETRY_ONLY",
   "CPU_conditions": [
@@ -543,9 +532,15 @@
   "physical_main_entry": "HOLD",
   "monitor_pid": 2786284,
   "recovery_e2e_status": {
-    "state": "WAITING_STATIONARY_QUALIFICATIONS",
+    "state": "RUNNING_PILOT",
     "controller_pid": 2783174,
-    "current": {},
+    "current": {
+      "role": "pilot",
+      "attempt_id": "C2D_B01_C100_HR_Scan_O0",
+      "pid": 2786833,
+      "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/recovery_e2e_v01/pilot/C2D_B01_C100_HR_Scan_O0",
+      "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/recovery_e2e_v01/pilot_C2D_B01_C100_HR_Scan_O0.log"
+    },
     "pilot_completed": 0,
     "pilot_planned": 15,
     "main_completed": 0,
