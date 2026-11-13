@@ -1,0 +1,132 @@
+{
+ "steps": {
+  "T1_no_authorization_holds": {
+   "PASS": true,
+   "rc": 2,
+   "reason": "START_GATES_FAILED:researcher_authorization",
+   "runs": 0,
+   "err": ""
+  },
+  "T2_stop_request_after_45_and_milestone30": {
+   "PASS": true,
+   "rc": 0,
+   "state": "STOPPED_BY_REQUEST",
+   "runs": 45,
+   "milestone30": {
+    "completed": 30,
+    "planned": 120,
+    "wall_since_first_start_h": 0.0009055808517667983,
+    "busy_run_time_h": 0.0005965380536185371,
+    "per_rep": {
+     "HR_Scan": {
+      "no_detection": 3,
+      "drove": 4,
+      "plan_rejected": 3
+     },
+     "LR_Scan": {
+      "plan_rejected": 2,
+      "no_detection": 4,
+      "drove": 3,
+      "safety_abort_verified_stop": 1
+     },
+     "GeoCAD": {
+      "drove": 3,
+      "plan_rejected": 4,
+      "no_detection": 3
+     }
+    },
+    "drive_ratio": 0.3333333333333333,
+    "recent30_s_per_run": 0.07158456643422445,
+    "remaining_h": 0.001789614160855611,
+    "eta_local": "2026-11-14 03:38",
+    "projected_total_h": 0.0023861522144741484,
+    "budget_h": 36.0,
+    "over_budget_risk": "LOW",
+    "technical_holds": 0,
+    "note": "report only: no condition is skipped or changed; schedule change or sample reduction needs separate researcher approval"
+   },
+   "err": ""
+  },
+  "T3_resume_then_technical_hold_at_70": {
+   "PASS": true,
+   "rc": 2,
+   "reason": "TECHNICAL_HOLD:C2E_B05_C40_LR_Scan_O0:['MOCK_TECHNICAL_FAILURE']",
+   "runs": 70,
+   "normal_failures_continued": 16
+  },
+  "T4_restart_without_resolution_refused": {
+   "PASS": true,
+   "rc": 2,
+   "reason": "START_GATES_FAILED:no_unresolved_hold",
+   "runs": 70
+  },
+  "T5_resume_then_crash_hold_at_85": {
+   "PASS": true,
+   "rc": 2,
+   "reason": "TECHNICAL_HOLD:C2E_B06_C40_GeoCAD_O0:['MOCK_RESULT_MISSING']",
+   "runs": 85
+  },
+  "T6_incomplete_dir_never_rerun": {
+   "PASS": true,
+   "rc": 2,
+   "reason": "INCOMPLETE_RUN_DIR:/media/user/1997fec1-5a55-49af-a41b-e2095924fd81/isaac_research/C_V02_DRIVE540_20261113_v01/MOCK_controller_v06_test_v01/C2E_B06_C40_GeoCAD_O0",
+   "runs": 85
+  },
+  "T7_complete_with_milestone100": {
+   "PASS": true,
+   "rc": 0,
+   "state": "MAIN_COMPLETE",
+   "runs_recorded": 121,
+   "milestone100": {
+    "completed": 100,
+    "planned": 120,
+    "wall_since_first_start_h": 0.003098607725567288,
+    "busy_run_time_h": 0.001997907294167413,
+    "per_rep": {
+     "HR_Scan": {
+      "no_detection": 12,
+      "drove": 10,
+      "plan_rejected": 11,
+      "safety_abort_verified_stop": 1
+     },
+     "LR_Scan": {
+      "plan_rejected": 9,
+      "no_detection": 10,
+      "drove": 11,
+      "safety_abort_verified_stop": 2,
+      "technical_hold": 1
+     },
+     "GeoCAD": {
+      "drove": 12,
+      "plan_rejected": 11,
+      "no_detection": 10,
+      "technical_hold": 1
+     }
+    },
+    "drive_ratio": 0.32673267326732675,
+    "recent30_s_per_run": 0.07097698052724202,
+    "remaining_h": 0.00039431655848467785,
+    "eta_local": "2026-11-14 03:39",
+    "projected_total_h": 0.0023922238526520906,
+    "budget_h": 36.0,
+    "over_budget_risk": "LOW",
+    "technical_holds": 2,
+    "note": "report only: no condition is skipped or changed; schedule change or sample reduction needs separate researcher approval"
+   }
+  },
+  "T8_archives_verified": {
+   "PASS": true,
+   "archives": 119,
+   "note": "120 rows minus TECH_FAIL row 70 (held before archiving); quarantined CRASH row 85 re-ran and was archived"
+  },
+  "T9_notifications_logged_not_sent": {
+   "PASS": true,
+   "notify_lines": 9
+  }
+ },
+ "PASS": true,
+ "lock": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE540_E1_20261114_v01/controller_v06_mock_test_v01/mock_lock.json",
+ "state_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE540_E1_20261114_v01/controller_v06_mock_test_v01/state",
+ "output": "/media/user/1997fec1-5a55-49af-a41b-e2095924fd81/isaac_research/C_V02_DRIVE540_20261113_v01/MOCK_controller_v06_test_v01",
+ "created": 1794595142.0122836
+}

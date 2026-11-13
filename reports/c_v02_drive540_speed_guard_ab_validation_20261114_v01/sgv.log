@@ -1,0 +1,13 @@
+
+2026-11-14T03:26:49+09:00 START T1 GeoCAD -25.888,27.309,90.0 
+2026-11-14T03:31:43+09:00 END T1 {"cell_id": "SGV_T1", "outcome": "SUCCESS", "category": null, "reason": null, "final_err_m": 0.004946071635839721, "pose_err_xy_m": 0.0036455127225484244, "b_decision": "NOT_APPLICABLE", "executed_motion": true}
+2026-11-14T03:31:43+09:00 GATE T1 technical_pass True []
+
+2026-11-14T03:31:43+09:00 START T2 LR_Scan -25.888,27.309,90.0 
+2026-11-14T03:36:29+09:00 END T2 {"cell_id": "SGV_T2", "outcome": "SUCCESS", "category": null, "reason": null, "final_err_m": 0.004703879869417104, "pose_err_xy_m": 0.0034864539227906347, "b_decision": "NOT_APPLICABLE", "executed_motion": true}
+2026-11-14T03:36:29+09:00 GATE T2 technical_pass True []
+
+2026-11-14T03:36:29+09:00 START T3 GeoCAD -25.888,27.309,90.0 --test-guard-instant 0.029
+2026-11-14T03:38:07+09:00 END T3 {"cell_id": "SGV_T3", "outcome": "FAIL_SAFETY_ABORT", "category": "S", "reason": "SPEED_GUARD_ABORT_VERIFIED_STOP", "final_err_m": null, "pose_err_xy_m": 0.0036455127225484244, "b_decision": "NOT_APPLICABLE", "executed_motion": true}
+2026-11-14T03:38:07+09:00 GATE T3 technical_pass True []
+2026-11-14T03:38:07+09:00 ALL DONE

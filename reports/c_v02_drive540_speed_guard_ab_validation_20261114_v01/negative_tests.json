@@ -1,0 +1,157 @@
+{
+ "source": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_SPEED_GUARD_VALID_20261114_v01/runs/T3",
+ "cases": [
+  {
+   "case": "C0_control_unmodified",
+   "outcome": "FAIL_SAFETY_ABORT",
+   "reason": "SPEED_GUARD_ABORT_VERIFIED_STOP",
+   "technical_pass": true,
+   "issues": [],
+   "expected_technical_pass": true,
+   "PASS": true
+  },
+  {
+   "case": "N1_postfault_quiet_FAIL",
+   "outcome": "HOLD_SAFETY",
+   "reason": "SPEED_GUARD_ABORT_STOP_NOT_VERIFIED",
+   "technical_pass": false,
+   "issues": [
+    "SPEED_OR_DRIVER_GUARD_FAULT",
+    "MOTION_LIFECYCLE_NOT_CERTIFIED",
+    "PRE_FINAL_REACH_STOP_CERTIFICATES_NOT_PASS"
+   ],
+   "expected_technical_pass": false,
+   "PASS": true
+  },
+  {
+   "case": "N2_postfault_NOT_READY_no_recovery",
+   "outcome": "HOLD_SAFETY",
+   "reason": "SPEED_GUARD_ABORT_STOP_NOT_VERIFIED",
+   "technical_pass": false,
+   "issues": [
+    "SPEED_OR_DRIVER_GUARD_FAULT",
+    "MOTION_LIFECYCLE_NOT_CERTIFIED",
+    "PRE_FINAL_REACH_STOP_CERTIFICATES_NOT_PASS"
+   ],
+   "expected_technical_pass": false,
+   "PASS": true
+  },
+  {
+   "case": "N3_zero_receipt_invalid",
+   "outcome": "HOLD_SAFETY",
+   "reason": "SPEED_GUARD_ABORT_STOP_NOT_VERIFIED",
+   "technical_pass": false,
+   "issues": [
+    "SPEED_OR_DRIVER_GUARD_FAULT",
+    "MOTION_LIFECYCLE_NOT_CERTIFIED",
+    "PRE_FINAL_REACH_STOP_CERTIFICATES_NOT_PASS"
+   ],
+   "expected_technical_pass": false,
+   "PASS": true
+  },
+  {
+   "case": "N4_driver_exit_nonzero",
+   "outcome": "HOLD_SAFETY",
+   "reason": "SPEED_GUARD_ABORT_STOP_NOT_VERIFIED",
+   "technical_pass": false,
+   "issues": [
+    "SPEED_OR_DRIVER_GUARD_FAULT",
+    "MOTION_LIFECYCLE_NOT_CERTIFIED",
+    "PRE_FINAL_REACH_STOP_CERTIFICATES_NOT_PASS"
+   ],
+   "expected_technical_pass": false,
+   "PASS": true
+  },
+  {
+   "case": "N5_observer_exit_nonzero",
+   "outcome": "HOLD_SAFETY",
+   "reason": "SPEED_GUARD_ABORT_STOP_NOT_VERIFIED",
+   "technical_pass": false,
+   "issues": [
+    "OBSERVER_NOT_CLEANLY_EXITED",
+    "SPEED_OR_DRIVER_GUARD_FAULT",
+    "MOTION_LIFECYCLE_NOT_CERTIFIED"
+   ],
+   "expected_technical_pass": false,
+   "PASS": true
+  },
+  {
+   "case": "N6_collision_reason",
+   "outcome": "FAIL_F",
+   "reason": "COLLISION:UNEXPECTED_CONTACT",
+   "technical_pass": false,
+   "issues": [
+    "SPEED_OR_DRIVER_GUARD_FAULT",
+    "SAFETY_OR_STATE_FAULT:COLLISION:UNEXPECTED_CONTACT",
+    "MOTION_LIFECYCLE_NOT_CERTIFIED"
+   ],
+   "expected_technical_pass": false,
+   "PASS": true
+  },
+  {
+   "case": "N7_guard_evidence_missing",
+   "outcome": "FAIL_SAFETY_ABORT",
+   "reason": "SPEED_GUARD_ABORT_VERIFIED_STOP",
+   "technical_pass": false,
+   "issues": [
+    "SAFETY_ABORT_NOT_VALIDATED:session_guard_abort",
+    "SPEED_OR_DRIVER_GUARD_FAULT",
+    "MOTION_LIFECYCLE_NOT_CERTIFIED"
+   ],
+   "expected_technical_pass": false,
+   "PASS": true
+  },
+  {
+   "case": "N8_required_evidence_missing",
+   "outcome": "FAIL_SAFETY_ABORT",
+   "reason": "SPEED_GUARD_ABORT_VERIFIED_STOP",
+   "technical_pass": false,
+   "issues": [
+    "SAFETY_ABORT_NOT_VALIDATED:only_expected_issues,no_forbidden_issue",
+    "EVIDENCE_MISSING:contacts.json",
+    "SPEED_OR_DRIVER_GUARD_FAULT"
+   ],
+   "expected_technical_pass": false,
+   "PASS": true
+  },
+  {
+   "case": "N9_runner_watchdog_forced",
+   "outcome": "FAIL_SAFETY_ABORT",
+   "reason": "SPEED_GUARD_ABORT_VERIFIED_STOP",
+   "technical_pass": false,
+   "issues": [
+    "SAFETY_ABORT_NOT_VALIDATED:runner_clean,only_expected_issues,no_forbidden_issue",
+    "RUNNER_INFRASTRUCTURE_FAULT",
+    "SPEED_OR_DRIVER_GUARD_FAULT"
+   ],
+   "expected_technical_pass": false,
+   "PASS": true
+  },
+  {
+   "case": "N10_postfault_mode_not_zero_only",
+   "outcome": "HOLD_SAFETY",
+   "reason": "SPEED_GUARD_ABORT_STOP_NOT_VERIFIED",
+   "technical_pass": false,
+   "issues": [
+    "SPEED_OR_DRIVER_GUARD_FAULT",
+    "MOTION_LIFECYCLE_NOT_CERTIFIED",
+    "PRE_FINAL_REACH_STOP_CERTIFICATES_NOT_PASS"
+   ],
+   "expected_technical_pass": false,
+   "PASS": true
+  },
+  {
+   "case": "R11_real_main_run11_v04_no_recovery",
+   "outcome": "FAIL_D",
+   "technical_pass": false,
+   "issues": [
+    "SPEED_OR_DRIVER_GUARD_FAULT",
+    "MOTION_LIFECYCLE_NOT_CERTIFIED",
+    "PRE_FINAL_REACH_STOP_CERTIFICATES_NOT_PASS"
+   ],
+   "expected_technical_pass": false,
+   "PASS": true
+  }
+ ],
+ "PASS": true
+}

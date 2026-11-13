@@ -1,0 +1,144 @@
+{
+  "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_SPEED_GUARD_VALID_20261114_v01/runs/T2",
+  "cell_id": "SGV_T2",
+  "role": "pilot",
+  "scene_id": "CDEP_B1R_TST_000001_T01_C40",
+  "representation": "LR_Scan",
+  "load": "C40",
+  "occlusion": "O0",
+  "group": "G1",
+  "pose_method": "ROBUST_A",
+  "correction_b": "off",
+  "trial": 1,
+  "start_xy_yaw_deg": [
+    -25.888,
+    27.309,
+    90.0
+  ],
+  "target_source": "PREDICTED",
+  "counted": false,
+  "runner_status": {
+    "exit_code": 0,
+    "forced_termination": null,
+    "timed_out": null,
+    "wall_s": 285.3896135201212,
+    "reason": null,
+    "watchdog": null
+  },
+  "session_status": "DRIVE_COMPLETED",
+  "failure_reason": null,
+  "failure_stage": null,
+  "lifecycle_eligible": true,
+  "perception_status": "DETECTED",
+  "detection_conf": 0.7681803703308105,
+  "mask_area_px": 4749,
+  "pose_status": "B5_COMPUTED",
+  "pose_reason": "B5_ROBUST_V01_COMPUTED",
+  "init_pose": {
+    "ORIG_v44": {
+      "status": "DATUM_REJECTED",
+      "reason": "NO_CONNECTED_PALLET_SURFACE_PASSED_UNCHANGED_PLANE_GATES"
+    },
+    "ROBUST_A": {
+      "status": "B5_COMPUTED",
+      "center": [
+        -25.891280319921695,
+        30.510181042830336
+      ],
+      "err_lat_m": -0.0032803199216928647,
+      "err_long_m": 0.001181042830335599,
+      "err_xy_m": 0.0034864539227906347
+    }
+  },
+  "pred_center_x": -25.891280319921695,
+  "pred_center_y": 30.510181042830336,
+  "pose_err_lat_m": -0.0032803199216928647,
+  "pose_err_long_m": 0.001181042830335599,
+  "pose_err_xy_m": 0.0034864539227906347,
+  "b_decision": "NOT_APPLICABLE",
+  "reobs_pose": null,
+  "measured_occlusion_eval_only": null,
+  "panel_removed_before_motion": true,
+  "plan_rejections": {},
+  "plan_admitted_leg0": true,
+  "plan_peak_k_leg0": 0.015429789947117007,
+  "plan_ff_steer_rate_deg_s_leg0": 0.17684290129602354,
+  "executed_motion": true,
+  "max_displacement_m": 1.7946470636200162,
+  "drive_sim_s": 125.81667322851717,
+  "drive_distance_m": 1.7955799872236167,
+  "pulse_records": 7549,
+  "max_pulse_planar_m_s": 0.03044422519201655,
+  "speed_guard_trip": false,
+  "speed_guard_trip_at": null,
+  "n_legs": 2,
+  "leg_reached": [
+    true,
+    true
+  ],
+  "stop_certificates": [
+    true,
+    true
+  ],
+  "leg_kinds": [
+    "PRE",
+    "FINAL"
+  ],
+  "pre_err_m": 0.004234780713043636,
+  "pre_err_lat_m": -0.003971588134763948,
+  "quiet": "PASS",
+  "final_x": -25.89246940612793,
+  "final_y": 29.103788375854492,
+  "final_yaw_deg": 90.04370799109871,
+  "final_err_m": 0.004703879869417104,
+  "final_err_lat_m": -0.004469406127928011,
+  "final_err_long_m": -0.0014665928847321652,
+  "final_heading_err_deg": 0.043707991098699495,
+  "band_strict": true,
+  "band_main": true,
+  "band_relaxed": true,
+  "collision": false,
+  "wall_s": 285.3896135201212,
+  "physics_sim_s": 131.0000068321824,
+  "robotcam_recording": {
+    "frames": 629,
+    "errors": 0,
+    "seconds": 1.7905490449629724,
+    "max_s": 0.004202140960842371,
+    "enabled": true,
+    "every_ticks": 12
+  },
+  "funnel": {
+    "perception": true,
+    "pose": true,
+    "plan": true,
+    "move": true
+  },
+  "outcome": "SUCCESS",
+  "category": null,
+  "reason": null,
+  "stage": "done",
+  "C": "C40",
+  "load_count": 1,
+  "pallet_count": 1,
+  "model_seed": 42,
+  "target_selection_accuracy_primary": false,
+  "task_layer_count": 2,
+  "base_id": "C2D_B01",
+  "source_family": "CDEP_B1R_TST_000001",
+  "raw_single_tick_ge_0p03": {
+    "sim_s": 24.13333459198475,
+    "planar_m_s": 0.03044422519201655,
+    "step": 1446
+  },
+  "speed_guard_rule": "F(instant>=0.045 or mean6>=0.03)",
+  "session_guard_thresholds": {
+    "instant": 0.045,
+    "mean": 0.03,
+    "n": 6
+  },
+  "session_guard_test_override": false,
+  "session_guard_trip": null,
+  "main_position_limit_m": 0.11,
+  "main_yaw_limit_deg": 7.341774
+}

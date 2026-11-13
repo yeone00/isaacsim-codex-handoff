@@ -1,0 +1,163 @@
+{
+  "run_dir": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_SPEED_GUARD_VALID_20261114_v01/runs/T3",
+  "cell_id": "SGV_T3",
+  "role": "pilot",
+  "scene_id": "CDEP_B1R_TST_000001_FULL_C100",
+  "representation": "GeoCAD",
+  "load": "C100",
+  "occlusion": "O0",
+  "group": "G1",
+  "pose_method": "ROBUST_A",
+  "correction_b": "off",
+  "trial": 1,
+  "start_xy_yaw_deg": [
+    -25.888,
+    27.309,
+    90.0
+  ],
+  "target_source": "PREDICTED",
+  "counted": false,
+  "runner_status": {
+    "exit_code": 0,
+    "forced_termination": null,
+    "timed_out": null,
+    "wall_s": 97.64559752889909,
+    "reason": null,
+    "watchdog": null
+  },
+  "session_status": "NOT_READY",
+  "failure_reason": "SPEED_GUARD_ABORT:INSTANT:0.02932",
+  "failure_stage": "drive_leg_0",
+  "lifecycle_eligible": false,
+  "perception_status": "DETECTED",
+  "detection_conf": 0.35192298889160156,
+  "mask_area_px": 8323,
+  "pose_status": "B5_COMPUTED",
+  "pose_reason": "B5_ROBUST_V01_COMPUTED",
+  "init_pose": {
+    "ORIG_v44": {
+      "status": "DATUM_REJECTED",
+      "reason": "NO_CONNECTED_PALLET_SURFACE_PASSED_UNCHANGED_PLANE_GATES"
+    },
+    "ROBUST_A": {
+      "status": "B5_COMPUTED",
+      "center": [
+        -25.891448905035393,
+        30.510181023736898
+      ],
+      "err_lat_m": -0.003448905035391192,
+      "err_long_m": 0.0011810237368976573,
+      "err_xy_m": 0.0036455127225484244
+    }
+  },
+  "pred_center_x": -25.891448905035393,
+  "pred_center_y": 30.510181023736898,
+  "pose_err_lat_m": -0.003448905035391192,
+  "pose_err_long_m": 0.0011810237368976573,
+  "pose_err_xy_m": 0.0036455127225484244,
+  "b_decision": "NOT_APPLICABLE",
+  "reobs_pose": null,
+  "measured_occlusion_eval_only": null,
+  "panel_removed_before_motion": true,
+  "plan_rejections": {},
+  "plan_admitted_leg0": true,
+  "plan_peak_k_leg0": 0.016218160008267354,
+  "plan_ff_steer_rate_deg_s_leg0": 0.18590136688428577,
+  "executed_motion": true,
+  "max_displacement_m": 0.359000080563236,
+  "drive_sim_s": 19.583334354683757,
+  "drive_distance_m": 0.35901094521345794,
+  "pulse_records": 1176,
+  "max_pulse_planar_m_s": 0.02932158696835825,
+  "speed_guard_trip": false,
+  "speed_guard_trip_at": null,
+  "n_legs": 2,
+  "leg_reached": [],
+  "stop_certificates": [],
+  "leg_kinds": [],
+  "quiet": "PASS",
+  "collision": false,
+  "wall_s": 97.64559752889909,
+  "physics_sim_s": 25.750001342967153,
+  "robotcam_recording": {
+    "frames": 98,
+    "errors": 0,
+    "seconds": 0.27281105890870094,
+    "max_s": 0.0038820558693259954,
+    "enabled": true,
+    "every_ticks": 12
+  },
+  "funnel": {
+    "perception": true,
+    "pose": true,
+    "plan": true,
+    "move": true
+  },
+  "outcome": "FAIL_SAFETY_ABORT",
+  "category": "S",
+  "reason": "SPEED_GUARD_ABORT_VERIFIED_STOP",
+  "stage": "drive_leg_0",
+  "C": "C100",
+  "load_count": 1,
+  "pallet_count": 1,
+  "model_seed": 42,
+  "target_selection_accuracy_primary": false,
+  "task_layer_count": 4,
+  "base_id": "C2D_B01",
+  "source_family": "CDEP_B1R_TST_000001",
+  "raw_single_tick_ge_0p03": null,
+  "speed_guard_rule": "F(instant>=0.045 or mean6>=0.03)",
+  "session_guard_thresholds": {
+    "instant": 0.029,
+    "mean": 0.03,
+    "n": 6
+  },
+  "session_guard_test_override": true,
+  "session_guard_trip": {
+    "rule": "INSTANT",
+    "planar_m_s": 0.02932158696835825,
+    "mean6_m_s": 0.021653183827569557,
+    "sim_s": 24.700001288205385,
+    "step": 1480,
+    "thresholds": {
+      "instant": 0.029,
+      "mean": 0.03,
+      "n": 6
+    },
+    "wall_s": 1794595080.6730862,
+    "pose": [
+      -25.890167236328125,
+      27.668148040771484,
+      -0.01017356663942337,
+      1.575451805188677
+    ]
+  },
+  "safety_abort": {
+    "session_trip": {
+      "rule": "INSTANT",
+      "planar_m_s": 0.02932158696835825,
+      "mean6_m_s": 0.021653183827569557,
+      "sim_s": 24.700001288205385,
+      "step": 1480,
+      "thresholds": {
+        "instant": 0.029,
+        "mean": 0.03,
+        "n": 6
+      },
+      "wall_s": 1794595080.6730862,
+      "pose": [
+        -25.890167236328125,
+        27.668148040771484,
+        -0.01017356663942337,
+        1.575451805188677
+      ]
+    },
+    "postfault_quiet": "PASS",
+    "receipt_valid": true,
+    "owners_exit_0": true,
+    "no_collision": true,
+    "stop_verified": true
+  },
+  "main_position_limit_m": 0.11,
+  "main_yaw_limit_deg": 7.341774
+}
