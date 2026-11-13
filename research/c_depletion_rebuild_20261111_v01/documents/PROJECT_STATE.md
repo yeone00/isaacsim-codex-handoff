@@ -1699,3 +1699,13 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - v04 Controller and Watchdog are idle systemd user services. Graceful stop procedure is documented (watchdog first); nothing was stopped.
 - External volume verified: UUID, rw, 7.54 TB free.
 - Report: reports/c_v02_drive540_main_readiness_final_20261114_v01.md
+
+## 2026-11-14 — E1 main540 STARTED, then TECHNICAL HOLD at run 11
+- v04 Controller and Watchdog stopped gracefully (watchdog disabled). The v04 storage authorization was never created.
+- Researcher approval: lock f10c380f…. Dry-run all PASS. Controller v05 started at 02:39 via systemd-run (PID 3611051).
+- Runs 1–10: 4 SUCCESS and 6 FAIL_A (normal); all technical PASS and archives verified.
+- Run 11 (C2E_B01_C40_LR_Scan_O0): speed guard tripped at 0.03044 m/s after 0.347 m (guard 0.03), no collision.
+  - Classified as FAIL_D / technical HOLD; the controller stopped as designed.
+  - The per-tick speed spike at ~0.35 m on the E1 route is 0.0293 in every run, including pre-optimization B0, so it is not caused by the V3 options.
+- Awaiting researcher decision. Recommended: record guard-only safe aborts as failures and continue (needs amendment + controller v06 + re-approval). Nothing was changed.
+- Report: reports/c_v02_drive540_main_hold_speed_guard_20261114_v01.md
