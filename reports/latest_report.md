@@ -1,143 +1,179 @@
-# V3 최적화 최종 검증과 540회 본실험 실행 계획 (승인 요청) — 2026-11-14 v01
+# 540회 본실험 최종 준비 점검과 시작 절차 — 2026-11-14 v01
 
-이번 작업은 승인 범위만 진행했습니다. V3에 구간 시작 0.5초 pacing을 넣었고, 기술 재검증 4회를 했습니다. 모두 counted=false이며 자동 재시도는 없었습니다. 540회 본실험은 시작하지 않았고, Controller v04의 승인 파일도 만들지 않았습니다. 렌더와 재학습은 보류 상태 그대로입니다.
+승인받은 범위만 진행했습니다. S1·S6 기술 파일럿 2회(모두 counted=false)와 Controller v05 모의 검증입니다.
 
-## 결론
-- **재검증 4회 모두 기술 판정 PASS입니다.**
-  - GeoCAD C100 3회는 모두 SUCCESS입니다. 실행 시간은 305.0 / 306.0 / 303.9초였고, 최종 오차는 모두 0.4946 cm로 B0와 같습니다.
-  - HR C100 1회는 정상적인 무검출(FAIL_A)로 51.1초에 끝났습니다.
-- **V3b 실패(`CONTROLLER_READBACK_MISSING`)는 재발하지 않았습니다.** 두 구간 모두에서 첫 명령이 sim 0.017초(약 23 ms) 안에 그래프에 반영됐습니다. 안전검사 한계는 0.1초입니다.
-- **최종 V3 실행 시간 (GeoCAD 주행 4회: V3a, V4a, V4b, V4c):** 평균 305.0초, 최대 306.0초
-- **540회 예상:** 주행까지 가는 비율이 50%면 27.0시간, 70%면 34.6시간, 100%면 46.0시간입니다. 36시간 안에 끝나려면 그 비율이 73.6% 이하여야 합니다.
-- **본실험 승인에 필요한 것:** 개정안 v02, manifest, 실행 잠금 파일에 대한 승인과 v05 승인 스크립트 실행입니다. 승인 전 모든 사전점검은 PASS입니다.
+다음은 하지 않았습니다.
+- 540회 본실험 시작
+- Controller v04 승인 파일 생성
+- v04 / Watchdog 종료
+- 렌더·재학습 재개, 보정 B 사용
 
-## 1. V3b 문제 해결 (방식 (a), 구간 시작 pacing)
-- **새 코드:** `scripts/c_v02_drive540_e2e_session_20261114_v04.py`, `scripts/c_v02_drive540_e2e_runner_20261114_v05.py`. 기존 v03과 v04는 수정하지 않았습니다.
-- **바꾼 것은 하나뿐입니다.** 각 구간이 시작한 뒤 시뮬레이션 0.5초 동안(30스텝)은 스텝마다 실제 시간을 최소 42 ms(B0 실측)로 맞춥니다. 그 뒤로는 기존 최적화 모드(최소 16.7 ms)로 돌아갑니다.
-- **바꾸지 않은 것:** 물리 timestep, 로봇 속도, ROS 명령 계산, `CONTROLLER_READBACK_MISSING` 검사와 그 기준(0.1초 sim), 그 밖의 모든 안전 판정
-- **구간 시작 기록** (`leg_start_pacing.json`과 판정 결과)
+## 결론: 최종 준비 5개 항목 모두 PASS
 
-| 실행 | 1구간: 첫 명령 → 그래프 반영 | 2구간 | pacing된 스텝 수 | 안전검사 |
-|---|---|---|---|---|
-| V4a | sim 0.017초 / 23 ms | 0.000초* | 29 / 29 | 통과 |
-| V4b | 0.017초 / 24 ms | 0.000초* | 29 / 29 | 통과 |
-| V4c | 0.017초 / 21 ms | 0.000초* | 29 / 29 | 통과 |
-| (참고) V3b, pacing 없음 | sim 0.083초 동안 미반영 → 실패 | — | — | 실패 |
-
-\* 2구간은 앞 구간의 정지 명령(0)이 그래프에 이미 들어 있어서, 첫 명령과 같은 스텝에 반영된 것으로 기록됩니다.
-
-**재발하지 않는다는 근거와 한계**
-- pacing 구간에서 0.1초(sim)는 실제 시간으로 약 250 ms입니다. B0와 같은 여유를 되찾은 것입니다.
-- 이번 4회(구간 6개)에서 실측 지연은 21–24 ms로, 여유가 10배 이상입니다.
-- 다만 4회는 작은 표본이므로 "발생 확률 0"을 증명한 것은 아닙니다. 본실험에서 이 검사에 걸리면 기술 HOLD로 처리하며, 우회하지 않습니다.
-
-## 2. 기술 재검증 4회
-
-| 실행 | 결과 | 시간 | 검출 conf | 위치오차 | 최종 오차 | 궤적 차이 (B0 대비 최대) | 명령 수 | 최대 속도 | 충돌 | 정지 인증 | 기술 판정 |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| V4a GeoCAD | SUCCESS | 305.0초 | 0.290 | 0.365 cm | 0.4946 cm | 0.0043 mm | 2,487 (B0 2,487) | 0.0293 | 없음 | 2/2 | PASS |
-| V4b GeoCAD | SUCCESS | 306.0초 | 0.279 | 0.365 | 0.4946 | 0.0043 mm | 2,487 | 0.0293 | 없음 | 2/2 | PASS |
-| V4c GeoCAD | SUCCESS | 303.9초 | 0.340 | 0.365 | 0.4946 | 0.0043 mm | 2,487 | 0.0293 | 없음 | 2/2 | PASS |
-| V4F HR | FAIL_A (무검출) | 51.1초 | — | — | — | — | 0 (주행 없음) | — | 없음 | — | PASS |
-
-- 그래프 검사 대조(전체 순회와 비교)에서 불일치는 0건입니다. GeoCAD 3회 모두 PhysX 경고 수가 바퀴 접촉점 수와 같았습니다.
-- **판정 스크립트 결함과 수정**
-  - 처음 쓴 판정 v02는 V4F를 `TECH_FAIL:pacing_applied_each_leg`로 표시했습니다. 주행 구간이 하나도 없는 실행에서도 pacing 기록을 요구했기 때문입니다. 실제 기술 판정(technical gate)은 PASS였습니다.
-  - v03으로 고쳤습니다. 이제 시작된 구간에만 pacing을 요구하고, 성공 실행은 2구간을 요구합니다. 그 뒤 4회 모두 다시 판정해 4/4 PASS였습니다.
-  - V4F가 마지막 실행이었으므로 이 결함 때문에 건너뛴 실행은 없습니다. 원래 판정 파일도 보존했습니다.
-- **검출 confidence의 자연 변동** (GeoCAD C100 E1, 같은 조건 9회: 첫 파일럿, B0, V1, V2, V3a, V3b, V4a–c)
-  - 평균 0.317, 표준편차 0.033, 범위 0.269–0.362입니다. 9회 모두 기준 0.25를 넘었습니다.
-  - 같은 조건에서도 렌더 노이즈로 conf가 달라집니다. 반면 검출된 경우 ROBUST_A 위치는 9회 모두 같았습니다.
-  - 기준에 가까운 조건에서는 같은 입력이어도 검출 여부가 확률적으로 바뀔 수 있습니다. 본실험 결과를 해석할 때 이 점을 명시해야 합니다. 임계값과 모델은 바꾸지 않았습니다.
-
-## 3. 최적화 확정 내용
-
-| 항목 | 내용 |
+| 항목 | 결과 |
 |---|---|
-| 적용 | O1 (바퀴 접촉 기록 압축, 주행 단계만), O3 (그래프 변경 감지 + 60스텝마다와 단계 전환 때 전체 순회 대조), O4 (fsync 15건마다, write+flush는 매번), 구간 시작 pacing 0.5초 |
-| 제외 | O2 (경고 억제), O5 (렌더 생략) |
-| 실행 시간 (GeoCAD 주행) | 평균 305.0초, 최대 306.0초 (n=4). 무검출 실패 51.1초 |
-| 스텝당 시간 | 27.7–28.0 ms (B0 41.8 ms) |
-| 기술·안전 기준 | 기존 technical gate, 충돌·외피·속도 가드·정지 인증·결과 판정 코드 모두 같음. 주행 코드는 실행 잠금 파일에 SHA로 고정(31개 파일) |
-| 원본과 압축본 | V4a 539 MB → 65.6 MB, V4F 8.5 MB → 2.8 MB. 압축을 풀어 복원한 결과 모든 파일(766개, 102개)의 SHA-256이 원본과 같음 |
-| 오프라인 검증 (앞선 보고서) | O1 재생, O3 17가지 변경 시험, O4 강제종료 시험 모두 PASS |
+| 1. S1·S6 기술 파일럿 | **PASS.** 두 시작점 모두 SUCCESS, 기술 판정 PASS |
+| 2. Controller v05 모의 검증 | **PASS (T1–T9 9/9).** 검증 과정에서 Controller 결함 2건을 찾아 고친 뒤 처음부터 다시 검증함 |
+| 3. v04 / Watchdog 전환 준비 | **준비 완료.** 둘 다 대기 상태, 실행 중인 작업 없음, 승인 파일 없음. 종료 절차와 명령 정리 (실행은 연구자) |
+| 4. 프로토콜·manifest·잠금 확정본 | **확정본 작성.** 아래 SHA 참고 |
+| 5. 외장 볼륨 | **PASS.** UUID 일치, ext4 읽기·쓰기 가능, 여유 7.54 TB, 쓰기 시험 통과 |
 
-## 4. 540회 예상 소요시간
+## 1. S1·S6 기술 파일럿 (GeoCAD C100, ROBUST_A만, 모델과 임계값 동일, V3 최적화 적용)
 
-1회당 시간은 주행 305초, 주행 전 실패 51.1초, 실행 사이 대기와 압축 2초로 잡았습니다.
+| 시작점 | 위치 | 결과 | 시간 | 검출 conf | 위치 오차 | 경로 최대 곡률 (한계 0.364) | 주행 거리 | 최종 오차 | 방향 오차 | 최대 속도 | 충돌 | 정지 인증 | 명령 반영 지연 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| S1 | −3 cm, 86° | SUCCESS | 309.0초 | 0.809 | 0.35 cm | 0.172 | 1.797 m | **0.335 cm** | 0.000° | 0.0261 | 없음 | 2/2 | sim 0.017초 / 25 ms |
+| S6 | +3 cm, 94° | SUCCESS | 303.4초 | 0.817 | 0.31 cm | 0.199 | 1.797 m | **0.338 cm** | 0.004° | 0.0261 | 없음 | 2/2 | sim 0.017초 / 21 ms |
 
-| 주행 도달 비율 | 30% | 50% | 70% | 100% |
+- 그래프 검사 대조 불일치 0건, 구간 시작 pacing 적용(각 29스텝), 기존 technical gate PASS
+- **새로 확인한 점:** 비스듬한 시작점(S1, S6)에서는 GeoCAD C100 검출 conf가 약 0.81로, E1 정면(0.27–0.36)보다 훨씬 높았습니다. 같은 적재물이라도 시점에 따라 인식 여유가 크게 다릅니다.
+- **운영상 기록:** 첫 실행 시도에서 경쟁 프로세스 검사가 제 셸 명령의 텍스트 자체에 걸려 HOLD로 멈췄습니다. 이때 주행은 실행되지 않았고, 로그(`grid_attempt0_false_hold.log`)를 보존했습니다. 실행 파일 이름 기준으로 검사하도록 고친 뒤 다시 실행했습니다.
+
+## 2. Controller v05 모의 검증 (Isaac·ROS·GPU 없음)
+
+**시험 방법**
+- 실제 v05 코드에 가짜 runner와 가짜 판정기를 넣었습니다(`evaluation/c_v05_controller_mock_20261114_v01.py`).
+- E1 manifest의 앞 120행을 썼고, 보고 시점은 30회와 100회입니다.
+- 알림은 로그에만 남기고 실제로 보내지 않았습니다.
+- 출력은 실제 외장 볼륨의 `MOCK_controller_v05_test_v03`입니다.
+
+| 시험 | 기대 동작 | 결과 |
+|---|---|---|
+| T1 승인 파일 없음 | 실행 0회, HOLD (`START_GATES_FAILED:researcher_authorization`) | PASS |
+| T2 45번째 실행 후 정지 요청 | 45회 후 `STOPPED_BY_REQUEST`, 30회 보고 파일 생성 | PASS |
+| T3 재시작 | 46회부터 이어서 실행. 정상 실패 16건은 기록하고 계속 진행. 70번째 기술 실패에서 HOLD | PASS |
+| T4 해제 파일 없이 재시작 | 실행 0회, HOLD (`no_unresolved_hold`) | PASS |
+| T5 해제 후 재시작 | 71회부터 이어서 실행. 85번째에서 결과 파일 없이 종료되자 HOLD | PASS |
+| T6 해제 후 재시작 | 결과 없는 기존 폴더를 **자동으로 다시 실행하지 않고** HOLD (`INCOMPLETE_RUN_DIR`) | PASS |
+| T7 연구자가 해당 폴더를 격리한 뒤 재시작 | 끝까지 완료, 100회 보고 파일 생성, `MAIN_COMPLETE` | PASS |
+| T8 압축 | 압축본 119개 모두 복원 후 전 파일 SHA-256 일치 | PASS |
+| T9 알림 | 알림 9건이 로그에 기록됨 (모의 시험이라 발송은 안 함) | PASS |
+
+**100회 보고 예시 (모의)**
+- 표현별 집계: 무검출, 주행, 경로 거절, 기술 HOLD 횟수
+- 주행 비율, 최근 30회 평균 시간, 남은 시간, 완료 예상 시각, 총 예상 시간, 36시간 초과 위험
+
+**검증 중 발견해 고친 Controller 결함 2건** (각각 고친 뒤 새 폴더에서 처음부터 다시 검증)
+1. **로그 이름 충돌 (모의 v01의 T7):** 격리한 행을 다시 실행할 때 이전 runner 로그 이름과 겹쳐 Controller가 예외로 종료됐습니다. 이제 이전 로그는 그대로 두고 새 로그 이름에 시각을 붙입니다.
+2. **보고서 분류 오류 (모의 v02 점검 중):** 기술 HOLD 실행이 보고서에서 "기타 정상 실패"로 분류됐습니다. 이제 `technical_hold`로 따로 세고, 보고서에 `technical_holds` 건수를 표시합니다.
+
+**HOLD 종류**
+- **기술 HOLD** (`TECHNICAL_HOLD`, `INCOMPLETE_RUN_DIR`, `ARCHIVE_VERIFY_FAILED`): `hold_resolution_<attempt>.json`(연구자 결정)이 있어야 재시작할 수 있습니다. 그 실행은 기록에 남습니다.
+- **조건 HOLD** (승인 없음, 경쟁 프로세스, 볼륨 문제): 원인을 해결하고 재시작하면 다시 점검합니다.
+- **정상 정지:** `STOP_REQUEST` 파일을 만들면 다음 실행 전에 멈추고, 재시작하면 이어서 실행합니다.
+
+## 3. v04 / Watchdog 상태와 종료 절차 (실행은 연구자)
+
+**상태**
+
+| 서비스 | PID | 상태 | 재시작 정책 | 부팅 시 자동 시작 |
 |---|---|---|---|---|
-| 예상 시간 | 19.4 h | **27.0 h** | 34.6 h | 46.0 h |
+| `c-v02-drive540-technical-20261113-v04.service` (Controller v04) | 2869572 | `WAITING_STORAGE_AUTHORIZATION_AND_CAPACITY`, 실행 중인 작업 없음, 30초마다 대기 확인 | `Restart=no` | disabled |
+| `c-v02-drive540-technical-watchdog-20261113-v01.service` (Watchdog v05) | 2881294 | 감시만 함 | `Restart=on-failure` | **enabled** |
 
-- 36시간 안에 끝나려면 주행 비율이 73.6% 이하여야 합니다.
-- E1 진단(6건 중 3건 검출)과 conf 변동을 보면, 예상 범위는 약 50–70%(27–35시간)입니다.
+- 두 서비스 모두 systemd 사용자 서비스이며, 소유자는 user입니다.
+- v04 승인 파일(`storage_authorization.json`)은 없는 상태 그대로입니다.
+- 같은 사용자 서비스 중 `c-depletion-controller`(HOLD, GPU 작업 시작 0건), `c-depletion-watchdog`, `c-depletion-bitmap-sync`, `c-v02-drive540-monitor`(Controller 생존을 확인하지 않음)는 v05와 충돌하지 않습니다.
+- **종료 순서 주의:** Watchdog은 v04 상태가 HOLD가 아닐 때 Controller가 사라지면 `CONTROLLER_LOST` 경고를 보냅니다. 그래서 **Watchdog을 먼저** 멈춥니다.
+- 종료하지 않고 그대로 두어도 v05는 실행 직전마다 v04 승인 파일이 없음을 확인하므로 옛 manifest가 실행될 수 없습니다. 다만 혼선을 줄이려면 종료를 권장합니다.
 
-## 5. 본실험 실행 계획 (승인 요청)
+**정상 종료 절차** (모두 정상 stop이고 강제 종료가 아니며, 로그 파일은 보존됨)
 
-**구성**
-- E1 개정 manifest 540행: HR/LR/CAD × C100–C20 × base 36개. 시작점 7개는 base 단위로 배정합니다.
-- 보정은 ROBUST_A만 씁니다. 모델은 C06 s42, conf는 0.25입니다.
-- manifest sha는 1ce636ce…이고, 기존 manifest(92ba7c29…)는 수정하지 않았습니다.
+```bash
+# 0) 확인: v04가 작업 없이 대기 중이고, 승인 파일이 없는지
+python3 -c "import json;s=json.load(open('/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/drive540_technical_execution_summary_20261113_v01.json'))['status'];print(s['state'],s['current'])"
+ls /home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_policy_amendment_v01/storage_authorization.json   # "No such file" 이어야 함
+# 1) Watchdog 먼저 정지 + 부팅 시 자동 시작 해제
+systemctl --user stop c-v02-drive540-technical-watchdog-20261113-v01.service
+systemctl --user disable c-v02-drive540-technical-watchdog-20261113-v01.service
+# 2) v04 Controller 정지 (Restart=no 이므로 다시 뜨지 않음)
+systemctl --user stop c-v02-drive540-technical-20261113-v04.service
+# 3) 확인
+systemctl --user is-active c-v02-drive540-technical-20261113-v04.service c-v02-drive540-technical-watchdog-20261113-v01.service   # inactive, inactive
+```
 
-**승인 대상 파일** (모두 `/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE540_E1_20261114_v01/`)
-- `protocol_amendment_E1_draft_v02.json` (sha beb65638…): v01 내용(E1 격자, ROBUST_A만 사용, Test 계보 공개)에 실행 최적화 내용을 더한 것
-- `manifest_draft_v01/attempt_manifest_E1_draft.csv` (sha 1ce636ce…)
-- `main_execution_lock_DRAFT_v01.json` (sha 9686f363…)
-  - 개정안 sha, manifest sha, 코드 31개 sha, 실행 옵션
-  - 출력 위치: 외장 볼륨 `isaac_research/C_V02_DRIVE540_20261113_v01/E1_main_v01` (UUID 1997fec1…)
-  - 최소 여유 공간 600 GiB, 보고 시점(milestone)
+## 4. 확정본 (승인 대상)
 
-**Controller v05** (`scripts/c_v02_drive540_e1_main_controller_20261114_v05.py`)
+모두 `/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE540_E1_20261114_v01/` 아래에 있습니다.
 
-실행 전 점검(dry-run)을 2026-11-14에 돌렸고, 아직 받지 않은 연구자 승인을 빼면 모두 PASS입니다.
+| 파일 | SHA-256 | 내용 |
+|---|---|---|
+| `protocol_amendment_E1_FINAL_v03.json` | be4a2c70d4045c3a… | 아래 표 참고 |
+| `manifest_draft_v01/attempt_manifest_E1_draft.csv` | 1ce636ce56052f9a… | 540행. HR/LR/CAD × C100–C20 × base 36개, 시작점 7개(base 단위). 기존 manifest 92ba7c29…는 수정하지 않음 |
+| `main_execution_lock_FINAL_v02.json` | **f10c380fc79714aa1236cc06f8cd4cca8bffcaa0dd49cc4c882a8c5cd79cc2b4** | 아래 표 참고 |
 
-| 점검 항목 | 결과 |
-|---|---|
-| manifest / 개정안 / 코드 SHA | PASS |
-| v04 승인 파일 없음 | PASS |
-| 경쟁 프로세스 없음 | PASS (렌더 러너는 일시정지 상태라 제외) |
-| 외장 볼륨 UUID / 여유 공간 | PASS |
-| **연구자 승인** | 아직 없음 (승인 대기) |
+**개정안 v03 내용**
+- 시작점: E1 격자 7개
+- 보정: ROBUST_A만 사용, 보정 B 사용 안 함
+- 실행 최적화: O1·O3·O4와 구간 시작 pacing
+- 기술 파일럿 기록: E1 GeoCAD 9회, HR 무검출 1회, S1·S6
+- **Test 계보 base(C2D_B01)에서 기술 파일럿을 본 뒤 시작점을 개정했다는 사실 명시**
+- 일정 규칙: 보고만 하고, 생략·변경은 별도 승인
 
-- **실행 방식:** 실행 직전마다 위 점검을 모두 다시 하고, 실패하면 HOLD합니다. 한 번에 하나씩 순차로 실행하고 재시도는 없습니다. 중단 후 재개할 수 있습니다.
-- **판정**
-  - 기술 HOLD: technical gate 불합격, 그래프 대조 불일치, 결과 누락, 압축 검증 실패. 이때는 전체를 정지합니다.
-  - 정상적인 과학적 실패(무검출, 위치 거절, 경로 거절, 범위 밖 정지)는 기록하고 계속 진행합니다.
-- **저장:** 실행마다 원본을 보존하고, tar.zst 압축본과 SHA를 만든 뒤 복원 검증까지 합니다.
-- **시간 관리 보고:** 30, 100, 180, 270, 360, 450회 시점에 `milestone_NNN.json`을 남기고 휴대폰 알림을 보냅니다. 내용은 다음과 같습니다.
-  - 누적 횟수와 실제 경과 시간
-  - 표현별 인식 실패 / 위치 거절 / 경로 거절 / 주행 횟수
-  - 주행 도달 비율
-  - 최근 30회 기준 1회 평균 시간과 남은 예상 시간
-  - 완료 예상 시각, 총 예상 시간, 36시간 초과 위험(LOW / MEDIUM / HIGH)
-  - 36시간을 넘을 것으로 보여도 자동으로 생략하거나 조건을 바꾸지 않습니다. 일정 변경이나 표본 축소는 따로 승인을 받습니다.
+**실행 잠금 v02 내용**
+- manifest·개정안 SHA, 코드 32개 SHA
+- 실행 옵션: `--opt-contact-compact --opt-graph-cache --opt-fsync-batch 15 --opt-leg-start-pacing-s 0.5 --pace-period-s 0.042 --profile-steps`
+- 출력 위치: 외장 볼륨 `.../isaac_research/C_V02_DRIVE540_20261113_v01/E1_main_v01`
+- 최소 여유 공간 600 GiB, 보고 시점 30/100/180/270/360/450, 기준 36시간, 상태 폴더 `main_controller_v05_state`
+- 모의 검증 결과 SHA
 
-**v04에서 넘어가는 절차**
-1. v04의 `storage_authorization.json`은 계속 만들지 않습니다. v04는 대기 상태로 남고, 옛 manifest는 실행될 수 없습니다.
-2. v05는 실행 직전마다 v04 승인 파일이 없는지 확인합니다. 파일이 있으면 HOLD합니다.
-3. (선택) 연구자가 v04 Controller(PID 2869572)와 Watchdog(PID 2881294)를 직접 종료합니다. 저는 종료하지 않습니다.
-4. 연구자가 위 승인 대상 파일을 확인한 뒤 다음 명령을 실행합니다.
+**v05 사전점검 (확정 잠금 기준)**
+- manifest, 개정안, 코드, v04 승인 파일 없음, 경쟁 프로세스 없음, UUID, 여유 공간, 쓰기 권한, 미해결 HOLD 없음: **모두 PASS**
+- 연구자 승인만 남았습니다.
 
-   ```
-   /home/user/anaconda3/envs/sdg_tools/bin/python scripts/c_v02_drive540_e1_main_approve_20261114_v05.py --approve-e1-main540 --lock /home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE540_E1_20261114_v01/main_execution_lock_DRAFT_v01.json
-   ```
+이전 잠금(`main_execution_lock_FINAL_v01_SUPERSEDED_controller_fix.json`)과 초안들은 이력으로 보존했습니다.
 
-5. 그다음 v05를 백그라운드로 시작합니다. 시작은 연구자 승인 후 별도 지시가 있을 때만 합니다.
+## 5. 외장 볼륨과 저장 정책
 
-## 6. 남은 위험과 미해결 사항
-- **36시간 초과 가능성:** 주행 비율이 74%를 넘으면 36시간을 넘습니다. 진행 중 보고 시점마다 판단하시면 됩니다.
-- **readback 여유:** 표본 4회(구간 6개)에서는 재발하지 않았습니다. 본실험 중 재발하면 기술 HOLD로 처리합니다.
-- **검출 conf 변동:** 같은 조건에서도 표준편차가 약 0.03입니다. 기준 근처 조건에서는 결과 해석에 확률적 변동을 반영해야 합니다.
-- **E1 격자의 다른 시작점:** 86°/94°와 ±3 cm 시작점은 아직 실제 주행 기록이 없습니다(오프라인 경로 분석만 있음). 본실험 첫 30회 안에 S0–S6이 섞여 있으므로, 30회 보고 시점에 확인할 수 있습니다.
-- **v05 미시험 부분:** milestone 보고 함수는 실제 실행으로 시험하지 않았습니다. dry-run은 점검까지만 실행합니다.
+**볼륨 상태**
+- `/dev/nvme0n1p1`, ext4, rw, UUID 1997fec1-5a55-49af-a41b-e2095924fd81
+- 대상 폴더 소유자 user, 권한 750, 여유 7.54 TB
+- 쓰기 시험 파일은 만들고 SHA를 확인한 뒤 삭제했습니다.
+
+**저장 정책**
+- 원본 run 폴더는 그대로 보존합니다.
+- 실행마다 `<run>.tar.zst`(zstd -3, 무손실)와 SHA-256을 만듭니다.
+- 압축을 풀어 전 파일 SHA가 원본과 같은지 확인합니다. 다르면 기술 HOLD입니다.
+- 예상 용량: 원본 약 300 GB 이하, 압축본 약 36 GB
+
+## 6. 본실험 시작 절차 (연구자 승인 후)
+
+```bash
+cd /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013
+# (선택, 권장) 3절의 v04/Watchdog 정상 종료
+# 1) 확정본 3개 확인 후 승인 (이 잠금 SHA에만 유효)
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/c_v02_drive540_e1_main_approve_20261114_v05.py --approve-e1-main540 \
+  --lock /home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE540_E1_20261114_v01/main_execution_lock_FINAL_v02.json
+# 2) 사전점검 (모든 항목 true 확인)
+/home/user/anaconda3/envs/sdg_tools/bin/python scripts/c_v02_drive540_e1_main_controller_20261114_v05.py \
+  --lock /home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE540_E1_20261114_v01/main_execution_lock_FINAL_v02.json --dry-run
+# 3) 시작 (systemd 사용자 서비스로 실행. 터미널을 닫아도 계속 돌고, 실패해도 자동 재시작하지 않음)
+systemd-run --user --unit=c-v02-drive540-e1-main-v05 -p Restart=no \
+  --working-directory=/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013 \
+  /home/user/anaconda3/envs/sdg_tools/bin/python -u scripts/c_v02_drive540_e1_main_controller_20261114_v05.py \
+  --lock /home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE540_E1_20261114_v01/main_execution_lock_FINAL_v02.json
+```
+
+**운영**
+- 상태 확인: `cat .../main_controller_v05_state/status.json`
+- 보고 파일: `.../main_controller_v05_state/milestone_NNN.json`
+- 정상 정지: `touch .../main_controller_v05_state/STOP_REQUEST`. 실행 중인 1회가 끝난 뒤 멈추고, 재시작하면 이어서 실행합니다.
+
+1–3단계를 직접 실행하셔도 되고, "본실험 시작 승인"이라고 명시해 지시해 주시면 제가 2–3단계를 실행합니다. 승인 스크립트(1단계)는 연구자의 명시적 승인 행위이므로 직접 실행하시는 것을 권장합니다.
+
+## 7. 남은 위험
+- **36시간 초과 위험:** 주행 비율이 약 74%를 넘으면 36시간을 넘습니다. 비스듬한 시작점에서 검출 conf가 높았던 점(S1·S6 약 0.81)으로 보면 주행 비율이 E1 진단 때보다 높을 수 있습니다. 보고 시점에 판단하시면 됩니다.
+- **검출 결과의 확률적 변동:** 같은 조건이라도 검출 conf가 렌더 노이즈로 변하므로, 결과를 해석할 때 반영해야 합니다.
+- **명령 반영 지연 (readback):** 지금까지 구간 10개에서 재발하지 않았습니다. 재발하면 기술 HOLD로 처리하고 우회하지 않습니다.
+- **모의 검증의 한계:** 실제 Isaac 실행과 Controller의 결합은 runner v05로만 확인했습니다(재검증 4회, S1·S6 2회). v05 Controller로 Isaac을 직접 돌린 것은 아직 없으므로, 본실험의 첫 1–3회를 주의해서 지켜봐야 합니다.
 
 ## 산출물
 - **새 코드:**
-  - `scripts/c_v02_drive540_e2e_session_20261114_v04.py`
-  - `scripts/c_v02_drive540_e2e_runner_20261114_v05.py`
-  - `analysis/c_v03_drive_bench_gate_20261114_v02.py`, `_v03.py`
-  - `scripts/c_v02_drive540_e1_main_controller_20261114_v05.py`
-  - `scripts/c_v02_drive540_e1_main_approve_20261114_v05.py`
-- **재검증 기록:** `/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE_OPT_VALID_20261114_v01/` (runs, gate_V4*.json, gate_v03_*.json, valid.log, archive_test)
-- **보고서 첨부:** `reports/c_v02_drive540_v3_final_validation_20261114_v01/`
+  - `scripts/c_v02_drive540_e1_main_controller_20261114_v05.py` (확정)
+  - `scripts/c_v02_drive540_e1_main_approve_20261114_v05.py` (FINAL 잠금만 허용, 모의 시험용 키가 있으면 거부)
+  - `evaluation/c_v05_controller_mock_20261114_v01.py`
+  - `analysis/c_v05_controller_mock_test_20261114_v01.py`, `_v02.py`, `_v03.py`
+  - `sdg_final/C_V02_E1_GRID_PILOT_20261114_v01/check_competing.py`
+- **파일럿 기록:** `/home/user/hh/isaac_cosmos/sdg_final/C_V02_E1_GRID_PILOT_20261114_v01/`
+- **모의 시험 기록:** `.../C_V02_DRIVE540_E1_20261114_v01/controller_v05_mock_test_v01|v02|v03/`, 외장 볼륨 `MOCK_controller_v05_test_v01|v02|v03(+_quarantine)`
+- **보고서 첨부:** `reports/c_v02_drive540_main_readiness_final_20261114_v01/`
