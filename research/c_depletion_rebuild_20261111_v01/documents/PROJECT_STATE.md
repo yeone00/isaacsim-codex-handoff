@@ -1684,3 +1684,18 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
   - Amendment v02 sha beb65638…; execution lock draft sha 9686f363….
 - Main540 not started; it needs researcher approval.
 - Report: reports/c_v02_drive540_v3_final_validation_20261114_v01.md
+
+## 2026-11-14 — Main540 final readiness (S1/S6 pilots and controller v05 mock validation; main NOT started)
+- E1 grid pilots, GeoCAD C100, counted=false:
+  - S1 (−3 cm, 86°): SUCCESS, 309 s, final error 0.335 cm, conf 0.81.
+  - S6 (+3 cm, 94°): SUCCESS, 303 s, final error 0.338 cm, conf 0.82.
+  - Both technical PASS. The first launch attempt falsely held on a self-matching process check; no run happened, and the check was fixed.
+- Controller v05 mock test v03 (mock runner/assess, 120 rows): T1–T9 PASS.
+  - Covers gates, STOP_REQUEST/resume, technical HOLD plus resolution, no automatic re-run of incomplete dirs, milestones 30/100, archive SHA restore.
+  - Mock v01 found a runner-log collision on re-run and v02 review found technical holds misclassified in milestones; both fixed.
+- Final package for approval:
+  - protocol_amendment_E1_FINAL_v03 (be4a2c70…), manifest 1ce636ce…, main_execution_lock_FINAL_v02 (f10c380f…).
+  - Dry-run: all gates PASS except researcher authorization.
+- v04 Controller and Watchdog are idle systemd user services. Graceful stop procedure is documented (watchdog first); nothing was stopped.
+- External volume verified: UUID, rw, 7.54 TB free.
+- Report: reports/c_v02_drive540_main_readiness_final_20261114_v01.md
