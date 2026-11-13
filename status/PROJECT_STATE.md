@@ -1584,3 +1584,44 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 ## 2026-11-13T15:48:56.074321+09:00 — 연구자 요청 결과 통합 추출
 
 - 보고서 reports/research_results_completed_static_20261113_154856.md 및 단일 ZIP research_results_completed_static_20261113_154856.zip. 기존 결과 읽기전용 스냅샷/45모델셀/39본학습+3smoke/epoch기록/20250인식원자료 포함. 학습39/39완료,75:25선정;위치추정 진행중으로 미완료표시. 실행기·모델·원본변경0,물리HOLD유지. ZIP CRC검증PASS.
+
+
+## 2026-11-13T17:12:17.859551+09:00 — C-V02 O0 단일적재물540 물리진입HOLD
+
+- reports/c_v02_drive540_single_load_protocol_and_physics_hold_20261113_v01.md;새540manifest/단일load_count1,pallet_count1개정SHA잠금. CPU15조합 벽돌수/단일적재물/공통collider/중첩/명목지지PASS. 기존정적/모델변경0,선택정확도는본540주지표제외.
+- actualKit 정지물리진입4개분리진단에서초기update nativeOmniGraph core/image crash,정확원인UNKNOWN. 로그/덤프/SHA보존,actualPhysX/센서/파일럿 미검증,0/540 HOLD. 완성E2E/자동540실행기라고표시안함. 추가무조건재시도없음.
+
+
+## 2026-11-13T17:42:23.140269+09:00 — C540 Kit실행복구/실제파일럿NO_DETECTION HOLD
+
+- reports/c_v02_drive540_native_crash_recovery_and_E2E_status_20261113_v01.md;빈Kit60PASS/v30no-warmup nativefail/원Stage4의extension후빈update5복원→v30graph그대로60PASS. 기본15조합actualKit RGBD/PhysX등록/접촉확인(짧은physics구간). C진단첫expiredprim error/exit0오판은정정·실패보존.
+- HR-C100 fullE2E파일럿 actual257step/4.2833s,ray2214/6wheel/support/graph/305collider/camera7checksPASS. 고정HRmodel conf.25후보0→NO_DETECTION,driver/nonzerocommand0,계획/주행미진입. 모델/조명/conf허용값변경0,실패보존,0/540HOLD.
+- E2E실행코드별도잠금,controller2783174HOLD종료;자동540전환실검증미완료. passive감시/ntfy/Git유지. 다음은관측분포/렌더계보의검출실패원인분리,새attempt재검증이며blindrerun금지.
+
+
+## 2026-11-13T18:21:05.337183+09:00 — C540 무검출진단·기술판정개정/실제제어시험
+
+- reports/c_v02_drive540_no_detection_and_technical_pilot_amendment_20261113_v01.md. 동일HR saved-input conf.25무검출재현/PIL_RGB=numpy_BGR일치/모델SHA정상. GT투영bbox172×72잘림0,ROI median1/255·82.84%<20,Depth11221점타깃box내. conf.001후보max.0168은타깃아래팔레트쪽;운용사용0. static3예시정상검출,도메인/역광차이유력이나단일원인확정아님. 카메라fx317vs554/pitch−19.95vs−4~−5.6차이기록. 모델/조명/threshold변경0.
+- 축약basic metadata의raw/provenance누락+USDcamera scale[.124,.026,.029]혼입별도확인. 원본보존/정식E2E기존정규화와동일한offline-only adapterv02로9검출mask모두ROBA계산. 실제정식E2E는이미정상normalized metadata사용. HR무검출원인과분리.
+- 기술gate 개정: 작업SUCCESS불필요/정상모델·pose·경로실패는안전종료·증거검증후기술PASS;실이동/정지 별도필수. 8회귀테스트PASS. 기존HR실패재사용,대표15실제fullpilot 15/15기술PASS=FAIL_A5/FAIL_C10,taskSUCCESS0. 이는본5400회와별도.
+- 독립Controller2823783/technical_e2e_v03에서과거검증engineering route별도실이동중. PRE도달2.825mm/0.0182deg·정지인증PASS,FINAL/ROS종료검증대기. 모든gatePASS에만main자동진입. 원래36base/540manifest SHA불변. 새watchdog/Git/ntfy독립유지,모델추론경로에GT0.
+
+
+## 2026-11-13T18:36:38.100814+09:00 — 독립실제이동 PASS / main 저장권한대기
+
+- 실제engineering이동1.681m,maxspeed.027540<.03,maxsteer13.203<20deg,PRE2.825mm/.01822deg 및FINAL2.815mm/.01757deg stop인증PASS,collision0,영상611JPG/파생MP4 612frame decodePASS. E2E/540분모0 유지.
+- 본540capacity gate max실제저장량×540+25GiB=416999376520bytes에비해rootfree약108GB라HOLD. 기존empty8TBext4를ro로먼저확인:lost+found만/약6.9TiB여유. mountRW가능하지만root소유폴더생성은OS권한거부(sudo password/udisks NotAuthorized),소유권/format/data삭제0. 새연구전용폴더사용승인질문pending.
+- technical_e2e_v04 PID2869572가15기술/독립motion proof만재사용하며WAITING_STORAGE_AUTHORIZATION_AND_CAPACITY. 명시approvalfile+신규디렉터리권한+UUID+공간통과에만main자동진입. 사용자승인없이GPU시작0. E3부족HOLD원기록보존. 보고서/CSV/실제영상ZIP c_v02_drive540_diagnosis_technical_evidence_20261113_183637.zip CRC PASS;원자료불변.
+
+
+### 2026-11-13 C-V02 저장량·곡률 CPU 감사 (추가 기록)
+
+본실험0/540 HOLD 유지. 새 실제 실행0. engineering722,510,798bytes는 접촉/제어 로그 중심이며417GB는540동일이동+25GiB 조건부 예산. 무손실 RAM gzip round-trip은81.323MB까지 가능하나 기존 파일/검증기 변경 미적용. 실제 곡률거절10건 모두 비평행 전진 필요곡률≥1.819398/m로 허용0.363645/m 초과; 기준목표 진단에서도 유지. 명목36Base 중 필요조건위반30, 현행 TC-S 미허용32(실제 미래 실패율 아님). 저장권한 및 경로설계 검토 미해결. 원본/모델/manifest/안전기준 불변. 보고서: reports/c_v02_drive540_storage_and_curvature_audit_20261113_v01.md; 상세 CSV는 동명 storage_curvature_audit 폴더. 기존 Controller/Watchdog 변경 없음.
+
+
+### 2026-11-13 C540 전역 경로/시작점 오프라인 설계 검토
+
+본실험0/540 HOLD,새Kit/GPU/주행0,운영코드/manifest/protocol 변경0(SHA전후동일). 기존36Base TC-S4통과. 시작점유지 free-space 곡률연속CSC36수학해,단30개17.874~18.293m우회로 현행forward/3m/overshoot/180s계약과충돌;충돌/제어전부UNKNOWN. 짧은해B11/B34추가해6기하호환. 별도미승인공통Y−1.25m시작점안은기존TC-S36통과이나카메라/접촉미검증. 새planner구현/파일럿미실행,연구자결정대기. 보고서 reports/c_v02_drive540_global_path_design_20261113_v01.md,권위수치CSV reports/c_v02_drive540_global_path_design_20261113_v02/base36_comparison_final.csv.
+
+### 2026-11-13 v30 성공 vs C-V02 경로 거절 비교 (CPU 읽기전용, Claude)
+본실험0/540 HOLD 유지; Kit/GPU/추론/주행0, 기존 Controller/Watchdog/승인파일 접근0, 코드·모델·manifest·protocol 변경0, 기존 결과 재분류0. 계획기(TC-S ca15e21b)·곡률.363645·PRE정의·로버·현장은 v30과 동일, 차이는 시작자세 분포뿐(v30 횡0/90°/중심3.109m vs C-V02 횡±.06/±.18, 86/90/94°, 중심2.8/3.0/3.2m → PRE까지 0.6–1.0m). 원시작 TC-S 통과4/36; 균일후방 0.5/0.75/1.0/1.25m → 20/26/34/36; Base별 최소후방 0–1.2m. 관측조건 유지 최소안(횡오프셋 축소)과 단계적 후방안 제시, 미적용·연구자결정 대기. 보고서 reports/c_v02_drive540_v30_vs_cv02_path_rejection_20261113_v01.md
