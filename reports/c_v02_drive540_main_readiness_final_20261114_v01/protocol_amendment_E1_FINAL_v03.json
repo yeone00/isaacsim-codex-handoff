@@ -1,0 +1,202 @@
+{
+ "schema": "C540_E1_START_ROBUST_A_RUNTIME_AMENDMENT_FINAL_v03",
+ "created": "2026-11-14",
+ "status": "FINAL_CANDIDATE_PENDING_RESEARCHER_APPROVAL",
+ "parent_protocol": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/single_load_amendment_v01/protocol.json",
+ "parent_protocol_sha256": "fa5ef9a20d0d9172f48f25b20e7a72e3dcb2c953759eafb0a4da3e18af2630d2",
+ "parent_manifest_sha256": "92ba7c2909f78110d4fa985de17ce6863538b0110dfb3e42a7e7784f05ce19fc",
+ "parent_manifest_unchanged": true,
+ "changes": {
+  "start_pose": "36 per-base starts (lateral -18..+18 cm, 2.8-3.2 m, 86/90/94 deg) replaced by E1 grid: 3.2 m, lateral {0,+-3 cm} x {86,90,94} deg minus 2 combos not robust to +-3 cm pose error -> 7 starts, assigned per base (base_index mod 7)",
+  "correction": "ROBUST_A only (group G1); Correction B (re-observation/replanning) not used and not further validated"
+ },
+ "unchanged": [
+  "36 paired base scenarios, 5 C x 3 reps, load scenes, lighting, task registry",
+  "C06 s42 checkpoints (protocol models) and conf 0.25",
+  "ROBUST_A frozen config",
+  "TC-S v01 planner and curvature limit",
+  "controller v19 + v21 stop certificate, 0.03 m/s speed guard",
+  "runner v03 / session v02 code (execution lock SHA)",
+  "success bands (main 0.11 m / 7.34 deg)"
+ ],
+ "disclosure": "Start redesign was made AFTER observing technical pilots on Test-lineage base C2D_B01 (15 locked-start pilots, E1 static captures, 1 E1 drive). The start grid is derived from offline TC-S geometry, not from task-success counts; this must be stated in the paper as a post-pilot design amendment.",
+ "starts": [
+  {
+   "start_id": "S0",
+   "lateral_m": 0.0,
+   "heading_deg": 90.0,
+   "start_x_m": -25.888,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.0,
+   "curvature_margin_frac": 1.0,
+   "robust_lateral_err_range_cm": "-6..+6",
+   "robust_pm5cm": true
+  },
+  {
+   "start_id": "S1",
+   "lateral_m": -0.03,
+   "heading_deg": 86.0,
+   "start_x_m": -25.918,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.1837,
+   "curvature_margin_frac": 0.495,
+   "robust_lateral_err_range_cm": "-6..+3",
+   "robust_pm5cm": false
+  },
+  {
+   "start_id": "S2",
+   "lateral_m": -0.03,
+   "heading_deg": 90.0,
+   "start_x_m": -25.918,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.1258,
+   "curvature_margin_frac": 0.654,
+   "robust_lateral_err_range_cm": "-6..+4",
+   "robust_pm5cm": false
+  },
+  {
+   "start_id": "S3",
+   "lateral_m": 0.0,
+   "heading_deg": 86.0,
+   "start_x_m": -25.888,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.1519,
+   "curvature_margin_frac": 0.582,
+   "robust_lateral_err_range_cm": "-4..+6",
+   "robust_pm5cm": false
+  },
+  {
+   "start_id": "S4",
+   "lateral_m": 0.0,
+   "heading_deg": 94.0,
+   "start_x_m": -25.888,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.1519,
+   "curvature_margin_frac": 0.582,
+   "robust_lateral_err_range_cm": "-6..+4",
+   "robust_pm5cm": false
+  },
+  {
+   "start_id": "S5",
+   "lateral_m": 0.03,
+   "heading_deg": 90.0,
+   "start_x_m": -25.858,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.1258,
+   "curvature_margin_frac": 0.654,
+   "robust_lateral_err_range_cm": "-4..+6",
+   "robust_pm5cm": false
+  },
+  {
+   "start_id": "S6",
+   "lateral_m": 0.03,
+   "heading_deg": 94.0,
+   "start_x_m": -25.858,
+   "start_y_m": 27.309,
+   "nominal_peak_k": 0.1837,
+   "curvature_margin_frac": 0.495,
+   "robust_lateral_err_range_cm": "-3..+6",
+   "robust_pm5cm": false
+  }
+ ],
+ "excluded_starts": [
+  {
+   "lateral_m": -0.03,
+   "heading_deg": 94.0,
+   "nominal_admitted": "True",
+   "robust_pm3cm": "False",
+   "curvature_margin_frac": 0.236,
+   "robust_lateral_err_range_cm": "-6..+1",
+   "reason": "TC-S not robust to +-3 cm pose error"
+  },
+  {
+   "lateral_m": 0.03,
+   "heading_deg": 86.0,
+   "nominal_admitted": "True",
+   "robust_pm3cm": "False",
+   "curvature_margin_frac": 0.236,
+   "robust_lateral_err_range_cm": "-1..+6",
+   "reason": "TC-S not robust to +-3 cm pose error"
+  }
+ ],
+ "manifest_draft": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE540_E1_20261114_v01/manifest_draft_v01/attempt_manifest_E1_draft.csv",
+ "manifest_draft_sha256": "1ce636ce56052f9a406a011004c5c0d9f401ec1a0e60965a0f160f120dc2bb71",
+ "replication_review": {
+  "independent_units": "36 paired base scenarios (10 Test families); per cell 36",
+  "C100_note": "C100 has only 2 distinct load geometries across the 10 families; variation comes from family lighting (10) and start (7). No exact duplicate condition rows exist (QA exact_duplicate_conditions=0). Analyse with base/family as clustering unit; do not treat 108 C100 runs as 108 independent geometries.",
+  "determinism": "run-to-run repeatability of an identical condition is unmeasured; if PhysX/RTX is deterministic, exact repeats add no information, so none are planned."
+ },
+ "execution_requirement": "Codex technical controller v04 is bound to the OLD manifest sha; it must NOT be given storage_authorization.json for this amendment. Main540 requires a new controller version bound to this amendment after approval.",
+ "supersedes_draft": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE540_E1_20261114_v01/protocol_amendment_E1_draft_v02.json",
+ "supersedes_draft_sha256": "beb656382ed502ac504deae6d19e8fe8d713eae2a9602027f6bd45ca812bede9",
+ "runtime_execution": {
+  "runner": "scripts/c_v02_drive540_e2e_runner_20261114_v05.py",
+  "session": "scripts/c_v02_drive540_e2e_session_20261114_v04.py",
+  "options": [
+   "O1 compact drive-phase wheel contact payload (float32, lossless)",
+   "O3 notice-driven graph signature cache with full-traversal shadow every 60 ticks and at every phase change (mismatch = HOLD)",
+   "O4 forensic fsync every 15 records (write+flush every record)",
+   "leg-start pacing: first 0.5 s sim of each leg at >= 42 ms wall per tick (B0 rate)"
+  ],
+  "excluded": [
+   "O2 warning suppression",
+   "O5 render skipping"
+  ],
+  "unchanged": [
+   "physics dt 1/60",
+   "0.03 m/s guard",
+   "CONTROLLER_READBACK_MISSING check (0.1 s sim)",
+   "collision/shell checks",
+   "stop certificate",
+   "TC-S",
+   "ROBUST_A",
+   "conf 0.25",
+   "outcome rules"
+  ],
+  "validation": "C_V02_DRIVE_OPT_BENCH_20261114_v01 + C_V02_DRIVE_OPT_VALID_20261114_v01"
+ },
+ "correction": "ROBUST_A only (group G1); Correction B not used",
+ "technical_pilots_before_main": {
+  "E1_S0": "GeoCAD C100 x9 SUCCESS (pilot, B0-V3a, V4a-c), HR C100 FAIL_A (normal)",
+  "S1_S6": {
+   "S1": {
+    "outcome": "SUCCESS",
+    "final_err_m": 0.003354475334041663,
+    "plan_peak_k_leg0": 0.1721845117531325,
+    "detection_conf": 0.8088043332099915,
+    "wall_s": 308.9660850020591,
+    "collision": false,
+    "result_sha256": "36d190ab47ba707ac3176240bc072e6f446e335afb8873bc755fd563fb1c7802"
+   },
+   "S6": {
+    "outcome": "SUCCESS",
+    "final_err_m": 0.003375120909955256,
+    "plan_peak_k_leg0": 0.19880045497616644,
+    "detection_conf": 0.8167295455932617,
+    "wall_s": 303.4156008739956,
+    "collision": false,
+    "result_sha256": "eb541917c6f53238af79812f373ca82f5a7b831d53832615c6c2742ea60fd3f5"
+   }
+  },
+  "all_counted": false,
+  "note": "all pilots on Test-lineage base C2D_B01; start grid fixed from offline TC-S geometry before these drives"
+ },
+ "main": {
+  "runs": 540,
+  "representations": [
+   "HR_Scan",
+   "LR_Scan",
+   "GeoCAD"
+  ],
+  "C": [
+   "C100",
+   "C80",
+   "C60",
+   "C40",
+   "C20"
+  ],
+  "paired_bases": 36,
+  "starts": 7,
+  "schedule_rule": "36 h target; milestones 30/100/180/270/360/450 report only; no skipping/condition change/sample reduction without separate approval; normal scientific failures are kept"
+ }
+}

@@ -1,0 +1,9 @@
+
+2026-11-14T01:59:00+09:00 START S1 start=-25.918,27.309,86.0
+2026-11-14T02:04:09+09:00 END S1 {"cell_id": "E1G_S1_C2D_B01_C100_GeoCAD_O0", "outcome": "SUCCESS", "category": null, "reason": null, "final_err_m": 0.003354475334041663, "pose_err_xy_m": 0.0034764245002576618, "b_decision": "NOT_APPLICABLE", "executed_motion": true}
+2026-11-14T02:04:11+09:00 GATE S1 TECH_OK
+
+2026-11-14T02:04:11+09:00 START S6 start=-25.858,27.309,94.0
+2026-11-14T02:09:15+09:00 END S6 {"cell_id": "E1G_S6_C2D_B01_C100_GeoCAD_O0", "outcome": "SUCCESS", "category": null, "reason": null, "final_err_m": 0.003375120909955256, "pose_err_xy_m": 0.003054888012179668, "b_decision": "NOT_APPLICABLE", "executed_motion": true}
+2026-11-14T02:09:16+09:00 GATE S6 TECH_OK
+2026-11-14T02:09:17+09:00 ALL DONE

@@ -1,0 +1,108 @@
+{
+ "run": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_E1_GRID_PILOT_20261114_v01/runs/S6",
+ "kind": "nodetect",
+ "checks": {
+  "runner_exit0_no_watchdog": true,
+  "no_internal_error": true,
+  "technical_assessment_pass": true,
+  "no_collision": true,
+  "speed_guard_not_tripped": true,
+  "outcome_normal_failure_or_success": true,
+  "pacing_applied_each_leg": true,
+  "readback_check_not_failed": true,
+  "graph_shadow_no_mismatch": true
+ },
+ "info": {
+  "technical_issues": [],
+  "outcome": "SUCCESS",
+  "reason": null,
+  "detection_conf": 0.8167295455932617,
+  "pose_err_xy_m": 0.003054888012179668,
+  "plan_peak_k_leg0": 0.19880045497616644,
+  "final_err_m": 0.003375120909955256,
+  "final_heading_err_deg": 0.0037869165075221645,
+  "drive_distance_m": 1.797207777990214,
+  "drive_sim_s": 123.43333977088332,
+  "max_pulse_planar_m_s": 0.02607719256561815,
+  "wall_s": 303.4156008739956,
+  "physics_sim_s": 128.23334002122283,
+  "leg_start_readback": [
+   {
+    "leg": 0,
+    "first_cmd_sim": 4.783333582803607,
+    "first_cmd_wall": 1794589512.3732066,
+    "first_full_readback_sim": 4.800000250339508,
+    "latency_sim_s": 0.01666666753590107,
+    "latency_wall_ms": 21.101713180541992
+   },
+   {
+    "leg": 1,
+    "first_cmd_sim": 70.73333702236414,
+    "first_cmd_wall": 1794589644.0468364,
+    "first_full_readback_sim": 70.73333702236414,
+    "latency_sim_s": 0.0,
+    "latency_wall_ms": -4.17637825012207
+   }
+  ],
+  "pacing": {
+   "window_s": 0.5,
+   "period_s": 0.042,
+   "legs": [
+    {
+     "leg_start_sim": 4.783333582803607,
+     "leg_start_wall": 1794589512.368244,
+     "paced_ticks": 29
+    },
+    {
+     "leg_start_sim": 70.66667035222054,
+     "leg_start_wall": 1794589643.8849177,
+     "paced_ticks": 29
+    }
+   ]
+  },
+  "opt_stats": {
+   "profile_steps": true,
+   "contact_compact": true,
+   "graph_cache": true,
+   "fsync_batch": 15,
+   "wheel_compact": {
+    "points": 383649,
+    "records": 43998,
+    "dtype": "float32",
+    "file": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_E1_GRID_PILOT_20261114_v01/runs/S6/attempt_0001/contacts_wheel_compact.npz"
+   },
+   "graph_cache_stats": {
+    "rebuilds": 5,
+    "prim_checks": 117719,
+    "shadow_checks": 132,
+    "shadow_mismatch": 0,
+    "shadow_every": 60
+   },
+   "fsync": {
+    "calls": 7453,
+    "synced": 496,
+    "skipped": 6957,
+    "every": 15
+   },
+   "forensic_final_fsync": true,
+   "profiled_physx_steps": 7694,
+   "leg_start_pacing": {
+    "window_s": 0.5,
+    "period_s": 0.042,
+    "legs": [
+     {
+      "leg_start_sim": 4.783333582803607,
+      "leg_start_wall": 1794589512.368244,
+      "paced_ticks": 29
+     },
+     {
+      "leg_start_sim": 70.66667035222054,
+      "leg_start_wall": 1794589643.8849177,
+      "paced_ticks": 29
+     }
+    ]
+   }
+  }
+ },
+ "PASS": true
+}

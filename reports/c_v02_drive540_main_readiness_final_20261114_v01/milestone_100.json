@@ -1,0 +1,34 @@
+{
+ "completed": 100,
+ "planned": 120,
+ "wall_since_first_start_h": 0.0030865340762668185,
+ "busy_run_time_h": 0.0019926976495318943,
+ "per_rep": {
+  "HR_Scan": {
+   "no_detection": 12,
+   "drove": 11,
+   "plan_rejected": 11
+  },
+  "LR_Scan": {
+   "plan_rejected": 11,
+   "no_detection": 10,
+   "drove": 11,
+   "technical_hold": 1
+  },
+  "GeoCAD": {
+   "drove": 12,
+   "plan_rejected": 11,
+   "no_detection": 10,
+   "technical_hold": 1
+  }
+ },
+ "drive_ratio": 0.33663366336633666,
+ "recent30_s_per_run": 0.07095262209574381,
+ "remaining_h": 0.00039418123386524337,
+ "eta_local": "2026-11-14 02:11",
+ "projected_total_h": 0.002386878883397138,
+ "budget_h": 36.0,
+ "over_budget_risk": "LOW",
+ "technical_holds": 2,
+ "note": "report only: no condition is skipped or changed; schedule change or sample reduction needs separate researcher approval"
+}
