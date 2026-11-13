@@ -1,10 +1,10 @@
 {
-  "updated": 1794540292.6661642,
+  "updated": 1794540896.8036907,
   "current_version": "C-V02",
   "physical_motion_authorized": false,
   "files": {
     "pipeline_status.json": {
-      "sha256": "8566ed5c4370ef00d0aa91449a6111ef73b46e192a5c9c3a0c39d2d4ce3aea1c",
+      "sha256": "cf758af4a8dc7494e7744bad318bdc24cba1a834955d25fa340e7675978bce4d",
       "content": {
         "state": "RUNNING",
         "stage": "V02_mixing_execute",
@@ -15,7 +15,7 @@
           "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01"
         },
         "controller_pid": 966660,
-        "updated": 1794540288.0778155,
+        "updated": 1794540894.1035159,
         "total_RGBD": 5250,
         "verified_RGBD": 5250,
         "new_C100_RGBD": 840,
@@ -24,10 +24,10 @@
       }
     },
     "watchdog_status.json": {
-      "sha256": "c1e8b3845b76fad9919189013b2e44fcddb59bf521c5fb15dbaf05e21042c1ef",
+      "sha256": "e78ccb4610f12d64b2ea961e5f7f61cbf392d6ee908e672905363c04b49d0185",
       "content": {
         "pid": 966658,
-        "updated": 1794540287.18917,
+        "updated": 1794540889.7839448,
         "pipeline": {
           "state": "RUNNING",
           "stage": "V02_mixing_execute",
@@ -38,7 +38,7 @@
             "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01"
           },
           "controller_pid": 966660,
-          "updated": 1794540283.0576186,
+          "updated": 1794540889.1008,
           "total_RGBD": 5250,
           "verified_RGBD": 5250,
           "new_C100_RGBD": 840,
@@ -54,17 +54,17 @@
             "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S000_R100_HR_Scan_s43"
           },
           "controller_pid": 1121430,
-          "updated": 1794540280.5352654,
-          "elapsed_seconds": 54051.72087740898,
+          "updated": 1794540880.9779382,
+          "elapsed_seconds": 54652.163549661636,
           "training_complete": 37,
           "training_planned": 39,
           "physical_motion": false,
           "reason": null
         },
-        "current_epoch": 166,
+        "current_epoch": 199,
         "current_static": {},
-        "GPU": "0, 12152, 32607",
-        "free_disk_bytes": 110637649920,
+        "GPU": "66, 12154, 32607",
+        "free_disk_bytes": 110636220416,
         "ntfy_pending": 0,
         "physical_motion": false,
         "warnings": []
@@ -421,7 +421,7 @@
       }
     },
     "mixing_execution_v01/status.json": {
-      "sha256": "dbc24659f73fb3188eaa510663ec33b531fc848f8ff56331ddbcf41720a2090b",
+      "sha256": "1d1ac5bb873e72e65fcf3cf764e4f536e1ea94d6b7e7f022d6446a253da00a79",
       "content": {
         "state": "RUNNING",
         "current": {
@@ -431,7 +431,7 @@
           "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S000_R100_HR_Scan_s43"
         },
         "controller_pid": 1121430,
-        "updated": 1794540290.5371692,
+        "updated": 1794540890.9800906,
         "jobs": {
           "SMOKE_S100_R000_HR_Scan_s42": {
             "state": "COMPLETED",
@@ -1174,7 +1174,7 @@
             "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/mixing_execution_v01/runs/S000_R100_HR_Scan_s43"
           }
         },
-        "elapsed_seconds": 54061.7227807045,
+        "elapsed_seconds": 54662.16570210457,
         "training_complete": 37,
         "training_planned": 39,
         "physical_motion": false,
