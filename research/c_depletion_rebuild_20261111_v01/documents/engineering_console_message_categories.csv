@@ -1,0 +1,4 @@
+message,lines,approx_bytes,all_lines
+OTHER,8069,49795,399012
+legacy_disabled_cameraPrim_out_of_reference_warning,7624,7081264,399012
+PhysX_PxShape_getMaterialFromInternalFaceIndex_warning,383319,93471888,399012

@@ -1,0 +1,41 @@
+{
+  "state": "READ_ONLY_STORAGE_AUDIT_COMPLETED",
+  "created": "2026-11-13T19:20:51.459629+09:00",
+  "files": 2241,
+  "engineering_bytes": 722510798,
+  "engineering_MB_decimal": 722.510798,
+  "engineering_MiB": 689.0399913787842,
+  "no_detection_mean_bytes": 8294473.8,
+  "path_reject_mean_bytes": 8603570.6,
+  "old_projection_bytes": 416999376520,
+  "old_projection_GB_decimal": 416.99937652,
+  "old_projection_GiB": 388.3609329536557,
+  "engineer_unique_inode_bytes": 722510798,
+  "exact_duplicates_all_16_avoidable_bytes": 41390489,
+  "gzip_engineering": [
+    {
+      "level": 1,
+      "bytes": 102122585,
+      "saved_bytes": 620388213,
+      "CPU_seconds": 3.4246624964289367,
+      "all540_with_25GiB_GB": 81.9897415
+    },
+    {
+      "level": 6,
+      "bytes": 81323148,
+      "saved_bytes": 641187650,
+      "CPU_seconds": 6.377257944550365,
+      "all540_with_25GiB_GB": 70.75804552
+    }
+  ],
+  "logical_overlap": {
+    "feedback_exactly_equals_final_step": true,
+    "note": "latest snapshot duplicates one record, not the entire time history; both live consumers and offline validators use these paths"
+  },
+  "sources_modified": false,
+  "source_file_hashes_and_mtime_checked": true,
+  "compression_applied": false,
+  "GPU_execution": 0,
+  "new_motion": 0,
+  "elapsed_seconds": 10.779191970825195
+}

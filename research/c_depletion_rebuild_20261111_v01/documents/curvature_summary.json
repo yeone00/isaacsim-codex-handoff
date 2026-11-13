@@ -1,0 +1,48 @@
+{
+  "actual_cases": 10,
+  "all_actual_bound_exceeds": true,
+  "actual_minimum_k_range": [
+    1.8193982653809522,
+    1.820994256754172
+  ],
+  "actual_TC_peak_range": [
+    2.050059535745447,
+    2.0517028928265133
+  ],
+  "nominal_center_error_range_m": [
+    0.003144682294589027,
+    0.0033258485263100326
+  ],
+  "base36_bound_infeasible": 30,
+  "base36_TC_admitted": 4,
+  "base36_TC_rejected": 32,
+  "limit": 0.3636453325850951,
+  "checks": [
+    {
+      "test": "analytic_envelope_vs_numeric",
+      "X": 0.6,
+      "delta": 0.07,
+      "error": 2.0089502977826967e-12
+    },
+    {
+      "test": "analytic_envelope_vs_numeric",
+      "X": 1.0,
+      "delta": 0.0,
+      "error": 3.1358249330537546e-13
+    },
+    {
+      "test": "analytic_envelope_vs_numeric",
+      "X": 1.0,
+      "delta": -0.07,
+      "error": 4.884079252143181e-12
+    },
+    {
+      "test": "parallel_closed_form",
+      "error": 3.969685691274094e-12
+    }
+  ],
+  "planner_sha256": "ca15e21b8b581cd03e545421861a86e8200628b06c96d03e73d090eed411fbe4",
+  "GPU_runs": 0,
+  "new_motion": 0,
+  "source_modified": false
+}

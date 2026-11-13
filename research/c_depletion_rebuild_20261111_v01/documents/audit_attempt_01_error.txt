@@ -1,0 +1,1 @@
+CPU audit initialization failed before output: installed NumPy has no np.trapz. Changed only new audit numeric integration check to np.trapezoid; no research source or data changed.

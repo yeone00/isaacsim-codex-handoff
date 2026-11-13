@@ -1,0 +1,7 @@
+directory,files,bytes,MB_decimal
+attempt_0001,94,593907350,593.90735
+.,7,100650971,100.650971
+attempt_0001/rec_robotcam,611,27676584,27.676584
+executed_code,27,274865,0.274865
+attempt_0001/eval_gt_only,1,826,0.000826
+domain_probe,1,202,0.000202

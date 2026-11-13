@@ -1,0 +1,7 @@
+version,scope,finding,pool_with_current
+v44,"972 static RGB-D inputs / paired324, old perception and B5",Historical pose/occlusion calibration; not C-V02 physical trials,False
+v45,Historical cross-representation mixed-target audit,Different model/data/scene selection task; no pooled count,False
+v46,319 computed old B5 poses × pred/design × two planners =1276 CPU calls,Design targets still rejected219/319; pred-fail/design-pass89 old or71 smooth,False
+v47,"Same old219 cases, frame and geometric audit",Old quintic:52 local-distance +3 forward-goal +164 curvature; frame consistency~1e-14,False
+v48,Only historical handoff instructions found,No locally verified completed v48 result; did not execute instructions,False
+current_CV02,10 actual Base01 premotion rejections plus36 nominal CPU diagnostics,Frozen TC-S; nonparallel necessary bound and all24 rho examined,False

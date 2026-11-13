@@ -1,0 +1,5 @@
+outcome,measured_n,mean_bytes,min_bytes,max_bytes,evidence
+NO_DETECTION,5,8294473.8,7909781,8680553,"actual full pilots, one shared Base01"
+PATH_REJECT,10,8603570.6,8212505,8989726,"actual full pilots, one shared Base01"
+SUCCESSFUL_FULL_E2E,0,,,,NOT_OBSERVED; engineering control storage surrogate 722510798 bytes
+MOTION_FAILURE,0,,,,NOT_OBSERVED; duration scenarios only

@@ -1612,3 +1612,8 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 실제engineering이동1.681m,maxspeed.027540<.03,maxsteer13.203<20deg,PRE2.825mm/.01822deg 및FINAL2.815mm/.01757deg stop인증PASS,collision0,영상611JPG/파생MP4 612frame decodePASS. E2E/540분모0 유지.
 - 본540capacity gate max실제저장량×540+25GiB=416999376520bytes에비해rootfree약108GB라HOLD. 기존empty8TBext4를ro로먼저확인:lost+found만/약6.9TiB여유. mountRW가능하지만root소유폴더생성은OS권한거부(sudo password/udisks NotAuthorized),소유권/format/data삭제0. 새연구전용폴더사용승인질문pending.
 - technical_e2e_v04 PID2869572가15기술/독립motion proof만재사용하며WAITING_STORAGE_AUTHORIZATION_AND_CAPACITY. 명시approvalfile+신규디렉터리권한+UUID+공간통과에만main자동진입. 사용자승인없이GPU시작0. E3부족HOLD원기록보존. 보고서/CSV/실제영상ZIP c_v02_drive540_diagnosis_technical_evidence_20261113_183637.zip CRC PASS;원자료불변.
+
+
+### 2026-11-13 C-V02 저장량·곡률 CPU 감사 (추가 기록)
+
+본실험0/540 HOLD 유지. 새 실제 실행0. engineering722,510,798bytes는 접촉/제어 로그 중심이며417GB는540동일이동+25GiB 조건부 예산. 무손실 RAM gzip round-trip은81.323MB까지 가능하나 기존 파일/검증기 변경 미적용. 실제 곡률거절10건 모두 비평행 전진 필요곡률≥1.819398/m로 허용0.363645/m 초과; 기준목표 진단에서도 유지. 명목36Base 중 필요조건위반30, 현행 TC-S 미허용32(실제 미래 실패율 아님). 저장권한 및 경로설계 검토 미해결. 원본/모델/manifest/안전기준 불변. 보고서: reports/c_v02_drive540_storage_and_curvature_audit_20261113_v01.md; 상세 CSV는 동명 storage_curvature_audit 폴더. 기존 Controller/Watchdog 변경 없음.
