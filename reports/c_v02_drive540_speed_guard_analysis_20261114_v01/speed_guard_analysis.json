@@ -1,0 +1,150 @@
+{
+ "drives": 89,
+ "sources": [
+  "C2E_B01_C100_GeoCAD_O0",
+  "C2E_B01_C40_HR_Scan_O0",
+  "C2E_B01_C40_LR_Scan_O0",
+  "C2E_B01_C60_HR_Scan_O0",
+  "C2E_B01_C80_GeoCAD_O0",
+  "C_V02_DRIVE_OPT_BENCH_20261114_v01",
+  "C_V02_DRIVE_OPT_VALID_20261114_v01",
+  "C_V02_E1_DRIVE_PILOT_20261114_v01",
+  "C_V02_E1_GRID_PILOT_20261114_v01",
+  "STAGE4_ABLATION_20261110_v01_pilot",
+  "STAGE4_ABLATION_20261110_v01_run01",
+  "STAGE4_ABLATION_20261110_v01_run02"
+ ],
+ "raw_guard_trips": [
+  "/STAGE4_ABLATION_20261110_v01_run02/main_S3_L4_O25_HR_Scan_G1_t1",
+  "MAIN/C2E_B01_C40_LR_Scan_O0"
+ ],
+ "filtered_guard_trips": [],
+ "max_mean6": 0.02666,
+ "max_mean15": 0.02458,
+ "max_disp025": 0,
+ "max_longest_run_ge_0p025_ticks": 5,
+ "total_ticks_ge_0p03": 2,
+ "raw_max_over_all": 0.03057,
+ "detection_injection": {
+  "0.031": {
+   "R_current": {
+    "cases": 445,
+    "detected": 445,
+    "rate": 1.0,
+    "latency_ticks_median": 0.0,
+    "latency_ticks_max": 4,
+    "latency_s_max": 0.067,
+    "extra_travel_mm_at_L_max": 2.07
+   },
+   "F_filtered": {
+    "cases": 445,
+    "detected": 445,
+    "rate": 1.0,
+    "latency_ticks_median": 5.0,
+    "latency_ticks_max": 10,
+    "latency_s_max": 0.167,
+    "extra_travel_mm_at_L_max": 5.17
+   }
+  },
+  "0.033": {
+   "R_current": {
+    "cases": 445,
+    "detected": 445,
+    "rate": 1.0,
+    "latency_ticks_median": 0.0,
+    "latency_ticks_max": 1,
+    "latency_s_max": 0.017,
+    "extra_travel_mm_at_L_max": 0.55
+   },
+   "F_filtered": {
+    "cases": 445,
+    "detected": 445,
+    "rate": 1.0,
+    "latency_ticks_median": 5.0,
+    "latency_ticks_max": 5,
+    "latency_s_max": 0.083,
+    "extra_travel_mm_at_L_max": 2.75
+   }
+  },
+  "0.036": {
+   "R_current": {
+    "cases": 445,
+    "detected": 445,
+    "rate": 1.0,
+    "latency_ticks_median": 0.0,
+    "latency_ticks_max": 1,
+    "latency_s_max": 0.017,
+    "extra_travel_mm_at_L_max": 0.6
+   },
+   "F_filtered": {
+    "cases": 445,
+    "detected": 445,
+    "rate": 1.0,
+    "latency_ticks_median": 5.0,
+    "latency_ticks_max": 5,
+    "latency_s_max": 0.083,
+    "extra_travel_mm_at_L_max": 3.0
+   }
+  },
+  "0.04": {
+   "R_current": {
+    "cases": 445,
+    "detected": 445,
+    "rate": 1.0,
+    "latency_ticks_median": 0.0,
+    "latency_ticks_max": 0,
+    "latency_s_max": 0.0,
+    "extra_travel_mm_at_L_max": 0.0
+   },
+   "F_filtered": {
+    "cases": 445,
+    "detected": 445,
+    "rate": 1.0,
+    "latency_ticks_median": 5.0,
+    "latency_ticks_max": 5,
+    "latency_s_max": 0.083,
+    "extra_travel_mm_at_L_max": 3.33
+   }
+  },
+  "0.06": {
+   "R_current": {
+    "cases": 445,
+    "detected": 445,
+    "rate": 1.0,
+    "latency_ticks_median": 0.0,
+    "latency_ticks_max": 0,
+    "latency_s_max": 0.0,
+    "extra_travel_mm_at_L_max": 0.0
+   },
+   "F_filtered": {
+    "cases": 445,
+    "detected": 445,
+    "rate": 1.0,
+    "latency_ticks_median": 0.0,
+    "latency_ticks_max": 0,
+    "latency_s_max": 0.0,
+    "extra_travel_mm_at_L_max": 0.0
+   }
+  },
+  "0.2": {
+   "R_current": {
+    "cases": 445,
+    "detected": 445,
+    "rate": 1.0,
+    "latency_ticks_median": 0.0,
+    "latency_ticks_max": 0,
+    "latency_s_max": 0.0,
+    "extra_travel_mm_at_L_max": 0.0
+   },
+   "F_filtered": {
+    "cases": 445,
+    "detected": 445,
+    "rate": 1.0,
+    "latency_ticks_median": 0.0,
+    "latency_ticks_max": 0,
+    "latency_s_max": 0.0,
+    "extra_travel_mm_at_L_max": 0.0
+   }
+  }
+ }
+}
