@@ -1,0 +1,123 @@
+{
+ "run": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE_OPT_VALID_20261114_v01/runs/V4b",
+ "kind": "success",
+ "checks": {
+  "runner_exit0_no_watchdog": true,
+  "no_internal_error": true,
+  "technical_assessment_pass": true,
+  "no_collision": true,
+  "speed_guard_not_tripped": true,
+  "outcome_SUCCESS": true,
+  "stop_certificates_all": true,
+  "pose_within_0p5cm_of_ref": true,
+  "final_err_within_0p5cm_of_ref": true,
+  "bands_main": true,
+  "pacing_applied_each_leg": true,
+  "readback_check_not_failed": true,
+  "readback_latency_le_0p1_sim": true,
+  "graph_shadow_no_mismatch": true,
+  "warnings_equal_wheel_points": true
+ },
+ "info": {
+  "technical_issues": [],
+  "outcome": "SUCCESS",
+  "reason": null,
+  "detection_conf": 0.27923673391342163,
+  "pose_err_xy_m": 0.0036455127225484244,
+  "plan_peak_k_leg0": 0.016218160008267354,
+  "final_err_m": 0.004946071635839721,
+  "final_heading_err_deg": 0.05983696751707157,
+  "drive_distance_m": 1.7955126625878985,
+  "drive_sim_s": 126.2500065844506,
+  "max_pulse_planar_m_s": 0.02932158696835825,
+  "wall_s": 306.02574080997147,
+  "physics_sim_s": 131.0333401672542,
+  "delta_vs_ref": {
+   "conf": -0.055289655923843384,
+   "pred_center_m": 0.0,
+   "final_xy_m": 9.171154235970541e-05,
+   "final_err_m": 1.6209298308832165e-06,
+   "drive_sim_s": 0.5666666962206364,
+   "peak_k": 0.0
+  },
+  "leg_start_readback": [
+   {
+    "leg": 0,
+    "first_cmd_sim": 4.766666915267706,
+    "first_cmd_wall": 1794588130.2515466,
+    "first_full_readback_sim": 4.783333582803607,
+    "latency_sim_s": 0.01666666753590107,
+    "latency_wall_ms": 23.60391616821289
+   },
+   {
+    "leg": 1,
+    "first_cmd_sim": 72.06667042523623,
+    "first_cmd_wall": 1794588263.8411407,
+    "first_full_readback_sim": 72.06667042523623,
+    "latency_sim_s": 0.0,
+    "latency_wall_ms": -4.721879959106445
+   }
+  ],
+  "pacing": {
+   "window_s": 0.5,
+   "period_s": 0.042,
+   "legs": [
+    {
+     "leg_start_sim": 4.766666915267706,
+     "leg_start_wall": 1794588130.2494085,
+     "paced_ticks": 29
+    },
+    {
+     "leg_start_sim": 72.00000375509262,
+     "leg_start_wall": 1794588263.6687021,
+     "paced_ticks": 29
+    }
+   ]
+  },
+  "opt_stats": {
+   "profile_steps": true,
+   "contact_compact": true,
+   "graph_cache": true,
+   "fsync_batch": 15,
+   "wheel_compact": {
+    "points": 388935,
+    "records": 45006,
+    "dtype": "float32",
+    "file": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE_OPT_VALID_20261114_v01/runs/V4b/attempt_0001/contacts_wheel_compact.npz"
+   },
+   "graph_cache_stats": {
+    "rebuilds": 5,
+    "prim_checks": 120407,
+    "shadow_checks": 134,
+    "shadow_mismatch": 0,
+    "shadow_every": 60
+   },
+   "fsync": {
+    "calls": 7620,
+    "synced": 508,
+    "skipped": 7112,
+    "every": 15
+   },
+   "forensic_final_fsync": true,
+   "profiled_physx_steps": 7862,
+   "leg_start_pacing": {
+    "window_s": 0.5,
+    "period_s": 0.042,
+    "legs": [
+     {
+      "leg_start_sim": 4.766666915267706,
+      "leg_start_wall": 1794588130.2494085,
+      "paced_ticks": 29
+     },
+     {
+      "leg_start_sim": 72.00000375509262,
+      "leg_start_wall": 1794588263.6687021,
+      "paced_ticks": 29
+     }
+    ]
+   }
+  },
+  "warnings": 390274
+ },
+ "PASS": true
+}

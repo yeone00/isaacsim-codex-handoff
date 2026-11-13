@@ -1,0 +1,69 @@
+{
+ "run": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE_OPT_VALID_20261114_v01/runs/V4F",
+ "kind": "nodetect",
+ "checks": {
+  "runner_exit0_no_watchdog": true,
+  "no_internal_error": true,
+  "technical_assessment_pass": true,
+  "no_collision": true,
+  "speed_guard_not_tripped": true,
+  "outcome_normal_failure_or_success": true,
+  "pacing_applied_each_leg": false,
+  "readback_check_not_failed": true,
+  "graph_shadow_no_mismatch": true
+ },
+ "info": {
+  "technical_issues": [],
+  "outcome": "FAIL_A",
+  "reason": "PERCEPTION_NO_DETECTION:",
+  "detection_conf": null,
+  "pose_err_xy_m": null,
+  "plan_peak_k_leg0": null,
+  "final_err_m": null,
+  "final_heading_err_deg": null,
+  "drive_distance_m": 0.0,
+  "drive_sim_s": null,
+  "max_pulse_planar_m_s": 0.0,
+  "wall_s": 51.07859546714462,
+  "physics_sim_s": 4.283333556726575,
+  "leg_start_readback": [],
+  "pacing": {
+   "window_s": 0.5,
+   "period_s": 0.042,
+   "legs": []
+  },
+  "opt_stats": {
+   "profile_steps": true,
+   "contact_compact": true,
+   "graph_cache": true,
+   "fsync_batch": 15,
+   "wheel_compact": {
+    "points": 0,
+    "records": 0,
+    "dtype": "float32",
+    "file": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE_OPT_VALID_20261114_v01/runs/V4F/attempt_0001/contacts_wheel_compact.npz"
+   },
+   "graph_cache_stats": {
+    "rebuilds": 4,
+    "prim_checks": 300,
+    "shadow_checks": 5,
+    "shadow_mismatch": 0,
+    "shadow_every": 60
+   },
+   "fsync": {
+    "calls": 0,
+    "synced": 0,
+    "skipped": 0,
+    "every": 15
+   },
+   "forensic_final_fsync": false,
+   "profiled_physx_steps": 257,
+   "leg_start_pacing": {
+    "window_s": 0.5,
+    "period_s": 0.042,
+    "legs": []
+   }
+  }
+ },
+ "PASS": false
+}
