@@ -1,12 +1,12 @@
 # C-V02 HR 무검출 분석·기술 파일럿 판정 개정 및 독립 실행 현황
 
-갱신: 2026-11-13T18:21:05.360839+09:00
+갱신: 2026-11-13T18:29:54.918948+09:00
 
 ## 현재 실행 상태
 
-HOLD; pilot기술통과=15/15; task성공=0; main=0/540
+WAITING_STORAGE_AUTHORIZATION_AND_CAPACITY; pilot기술통과=15/15; task성공=0; main=0/540
 
-Controller PID 2823783, 현재 {}. 독립제어시험 PASS_TECHNICAL / actual_motion=True. Main gate PASS. HOLD 원인 PROJECTED_MAIN_DISK_INSUFFICIENT:416999376520.
+Controller PID 2869572, 현재 {}. 독립제어시험 PASS_TECHNICAL / actual_motion=True. Main gate HOLD. HOLD 원인 Technical and actual-motion gates PASS; needs explicit storage approval, writable dedicated directory and correct volume UUID..
 
 기존540단일적재물/O0/36base/5C/3rep·C06·75:25·seed42·층수prior4/4/3/2/1·Main.11m/7.341774deg·도달5mm2deg·속도정지.03mps는변경없음. 학습/HPO/모델선정/정적Test 변경0. 기존HR무검출/4크래시/복구시험은보존. 이번작업은빈Kit/v30비교나기본15등록시험을다시실행하지않았다. 기존HR full파일럿은원본그대로새기술판정만적용하고재실행하지않았다.
 
@@ -47,7 +47,7 @@ Controller PID 2823783, 현재 {}. 독립제어시험 PASS_TECHNICAL / actual_mo
 
 원본HR파일럿결과FAIL_A는그대로두고새assessment에서PASS_TECHNICAL/task_success=False로기록. `/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_policy_amendment_v01/validator_regression_v01/result.json`의8안전회귀시험PASS: 정상무검출수용,무이동으로제어인증불가,속도guard/보정/PIPELINE_ERROR/모델SHA/비제로명령/필수증거누락HOLD. 실패/중단출력은덮어쓰거나완료로간주하지않고재개시그결과/기술상태를재검증한다.
 
-독립실행기는 `/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03`. 단일GPUlock,동일사전등록Base01 15대표조건(기존HR재사용/나머지14freshE2E),immutable SHA,정상실패후안전종료→다음조건구조. 성공시키기위한쉬운base교체없음. 기존첫base의일부경로가CURVATURE_INFEASIBLE로거절되는것도정상연구실패이지controller상한을완화할근거가아님.
+독립실행기는 `/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v04`. 단일GPUlock,동일사전등록Base01 15대표조건(기존HR재사용/나머지14freshE2E),immutable SHA,정상실패후안전종료→다음조건구조. 성공시키기위한쉬운base교체없음. 기존첫base의일부경로가CURVATURE_INFEASIBLE로거절되는것도정상연구실패이지controller상한을완화할근거가아님.
 
 ## 실제 대표15조건 상태
 
@@ -79,14 +79,33 @@ Fullactual이동,원TC-S경로·곡률·조향·속도상한,PRE/FINAL5mm2deg+�
 
 본실험은15기술조건PASS +독립실제이동/정지PASS +필수증거/모델·프로토콜SHA/디스크25GiB및540회전망조건을모두통과해야자동진입. 그렇지않으면HOLD/ntfy. 540ID전체PENDING/RUNNING/과학적성공·실패/HOLD를분리하며이미완료된시도중복실행금지. Wilson은nominal이항가정과원천10family·36base반복구조의한계를별도보고하며비열등성마진을임의고정하지않음.
 
+## 저장 공간 gate와 승인 대기
+
+실제제어시험으로완전원본저장량약722.5MB/이동trial을확인했고,최대pilot저장량×540+25GiB기준으로약417GB가필요하다. 기존root여유약108GB여서본실험시작전실제diskgate가HOLD했다. 오류를무시하거나원본로그를축소·삭제하지않음.
+
+기존8TB ext4파티션(UUID1997fec1-5a55-49af-a41b-e2095924fd81)을읽기전용으로먼저확인했고lost+found만존재/여유약6.9TiB. 기존filesystem포맷/삭제없음. 현재mount되어있지만root소유라연구폴더생성은OS관리자권한필요. sudo비대화식은password요구,udisks소유권요청도NotAuthorized로거부되어소유권변경은일어나지않았다. 폴더사용승인은연구자에게별도질문한상태이며묵시승인하지않음.
+
+15기술pilot·독립실이동검증은모두재사용하는controller v04를별도root에구성했다. **storage_authorization.json 명시승인 +새폴더쓰기권한+실제mount UUID+충분한공간**이확인되기전에는GPU작업이시작되지않는다. 과학manifest·시나리오·분모·모델·안전값변경0,신규결과의물리저장경로만별도runtime mapping으로기록한다. root디스크로잘못fallback하지않도록매시행UUID를재검사한다. 기존결과는이동하거나지우지않음.
+
+관리자가새연구폴더만생성하는명령(현재미실행):
+
+`sudo install -d -o user -g user -m 0750 /media/user/1997fec1-5a55-49af-a41b-e2095924fd81/isaac_research/C_V02_DRIVE540_20261113_v01`
+
+연구자가명시승인후폴더가준비되면,수동승인명령으로Codex없이대기중독립실행기가자동진입할수있다:
+
+`python3 /home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/scripts/c_v02_drive540_approve_storage_20261113_v01.py --approve-storage-for-c540`
+
+이명령은볼륨을포맷하거나기존데이터를삭제/이동하지않으며실험설정도바꾸지않는다. GPU실험은이미검증된gate와새용량gate를모두통과할때만시작.
+
 ## 시각자료·재현 자료
 
+- [밝기 조정 없는 실제 raw RGB 비교](/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/perception_diagnosis_20261113_v01/RAW_RGB_domain_comparison.png)
 - [실제 RGB/운용예측 비교 contact sheet](/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/perception_diagnosis_20261113_v01/RGB_operational_comparison_contact_sheet.png)
 - [HR 투영bbox 진단](/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/perception_diagnosis_20261113_v01/HR_pilot_eval_bbox_DIAGNOSTIC_ONLY.png)
 - 낮은confidence진단각PNG/JSON은같은diagnosis디렉터리. raw이미지는공개GitHub에올리지않음.
 - 카메라도메인CSV/축약metadata수정전후/대표15오프라인poseCSV/실제15기술결과CSV/원본모델·배열SHA보존.
-- 소스/입력잠금 `/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v03/execution_lock.json`, 과학프로토콜·540manifestSHA불변. 기술판정개정SHA별도.
-- 상태: `bash /home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/status.sh`. Controller service c-v02-drive540-technical-20261113-v03, watchdog service c-v02-drive540-technical-watchdog-20261113-v01. Codex호출은실행필수의존성이아님.
+- 소스/입력잠금 `/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/technical_e2e_v04/execution_lock.json`, 과학프로토콜·540manifestSHA불변. 기술판정개정SHA별도.
+- 상태: `bash /home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/status.sh`. Controller service c-v02-drive540-technical-20261113-v04, watchdog service c-v02-drive540-technical-watchdog-20261113-v01. Codex호출은실행필수의존성이아님.
 - 재개는같은controller service의수동start로완료artifact기술검증/중복방지하되HOLD/부분출력은자동덮어쓰지않음. 중단작업은새버전/attempt계획검토필요. 서비스Restart=no이며실패를성공까지반복하지않음.
 
 현재성공률0%라고해석할수없음: main실제완료 0/540. 기술파일럿성능과main분모별도. 본문갱신전버전은report_history에보존.
