@@ -1,59 +1,35 @@
-# C-HPO 평가 파이프라인 복구 — 학습/가중치 불변
+# 연구 결과 통합 스냅샷 — 2026-11-13T14:26:18.471186+09:00
 
-2026-11-12. 학습57/57은 모두 PASS이며 재학습0. 원래교차Validation은14건이최종수가아니라24/24가실패했다. 원본명령/traceback/checkpoint SHA를 `validation_repair_v01/original_failure_audit.csv` 및 `failed_original_jobs.json`에기록했다. 원본HPO jobs/status/실패로그를덮어쓰지않았다.
+현재 C-V02 결과와 이 저장소의 기존 연구 보고서·집계표를 한 ZIP에 보존한 읽기 전용 추출본입니다. 서로 다른 실험 버전과 분모를 합산하지 않습니다. 파일 작성 중에도 원래 실험은 계속 실행되므로 파일별 캡처 시점은 조금 다릅니다. 원본·학습·실행기 변경 없음.
 
-## 정확한 실패 원인
+## 현재 완료와 미완료
 
-Ultralytics Model.load는 checkpoint training args 중imgsz/data/task/single_cls만 overrides로보존한다. 별도Model.val 호출이bitmap필수kwargs를명시하지않아defaults mosaic=1,overlap_mask=True를받았다. bitmap build_transforms의고정계약(혼합증강0/비중첩)에걸려AssertionError가발생했다. mask_ratio default4는이미같았으며문제의원인이아니다. augment=False이므로실제로mosaic augmentation을수행하다실패한것이아니라,평가loader생성시정적config계약충돌이었다. rect는Model.val 기본True로이미참이었다.
+- C-V01 4,410장 보존, C-V02 추가 C100 840장 및 전체 5,250장 검증 완료.
+- C-V02 표현별 Train 1,250 / Validation 250 / Test 250, 각 C 상태 250/50/50. 기본 환경 계보 총70, Train50/Val10/Test10. 반복 관측은 독립 환경이 아님. C100만 추가 시점 관측이라는 교란 한계 유지.
+- C06 고정 본 학습39/39 완료, 별도 smoke3건. 45개 논리 모델 셀은 real-only3개 학습 궤적 공유를 포함하므로 45회 독립 학습이 아님. 모두 200epoch, 기존 HPO57건 재실행 아님.
+- 선정 공통 비율 S075_R025, Validation 점수 95.327405%. 합성/실사 Validation 동일 가중 및3표현×3seed 평균. Test 선정 사용 없음. 75:25와50:50의 작은 수치차는 통계적 우월성 증명이 아님.
+- 선정 모델 인식 평가20250/20250 model-images 완료(2250 프레임×9모델). 자기표현 위치추정 입력6750건. 현재 단계 {'state': 'RUNNING', 'job': 'selected_mixture_pose', 'pid': 2489543, 'updated': 1794547539.9433594, 'physical_motion': False}; 위치추정 완료로 표시하지 않음.
+- 합성 전용 baseline, 층수 prior ROBUST_A 후속 평가 및 전체 통합 결론은 완료 여부를 첨부 상태에서 확인. 물리 주행0회/HOLD.
 
-설정 assertion을제거하거나GT를polygon으로우회하지않았다. 학습source/weights/분할/선정규칙/후보값/마스크를수정하지않았다.
+## 위치추정 이후 남은 순서
 
-## 새 evaluator의 경로
+1. 선정 모델 위치추정 완료 및 실패/조건부 오차 집계, 합성 전용 baseline 인식·위치추정 대응 비교.
+2. task_layer_count(C100/80/60/40/20=4/4/3/2/1)만 허용하는 ROBUST_A 별도 평가. 층수는 운영자 작업 prior이며 GT pose/mask/slot/FINAL 입력 금지. 기존 nominal-layer 방법과 구분.
+3. 적재율×가림×표현의 오차 전파·실패 분해·통계 불확실성·최종 정적 보고서. 10개 Test 기본환경의 반복관측 구조 유지.
+4. 신규 실제 loaded stage collider/바닥/팔레트/적재물/로버 구성, PhysX 접촉, 경로·조향·속도·정지 안전 검증.
+5. 진입 조건/승인 충족 후 기술 파일럿. 현재 HOLD이며 이 파일은 실행 승인이 아님.
+6. 별도 본실험 O0/O25 300회, O50 강건성150회. 분모·통계 별도, 실패 보존, 450개 독립 장면 주장 금지.
+7. 실패/오차 전파/구축 부담 분석 및 논문3·4장 결과 통합.
 
-원래bitmap module을그대로사용한다. Val는augment=False,mask_ratio4,overlap_mask=False,rectTrue. train전용mosaic/mixup/cutmix/copy_paste는0. 학습중Validation의실제batch는training64의2배인128이므로새평가도128을사용한다. 학습batch를변경한것이아니다. conf.001/NMS IoU.7/maxdet300와설치된SegmentationValidator의mAP/GT matching 로직을유지한다.
+Main 성공허용값0.11m/7.341774도 및 충돌·안전 위반 없음. PRE/FINAL5mm/2도 도달인증과0.03m/s 안전정지는 별도. 현재 물리 gate와 승인/HOLD 유지.
 
-학습Validation은FP32 EMA 모델에autocast16을사용한다. 별도AutoBackend의fuse/FP16 weights변환차이를피하기위해읽기전용trainer-shaped validation context로같은native validator를호출한다. optimizer/backward/model.train 호출없음. 지표에필요없는validation loss만빈작업으로대체했다. GT 원본bitmap/인스턴스소유권은그대로이고mask_ratio4의동일최종downsample만수행한다. 원본GT를연결하거나구멍을채우지않는다.
+## ZIP 내용과 지표 해석
 
-## 검증 및 재현성 한계
+- current/CSV: 45개 checkpoint/원래SHA/epoch/두 Validation 점수, 비율 및 표현별3seed 요약,39개 본학습+3smoke 실행정보, epoch별 상세 기록.
+- selected_mixture_eval_v01: 완료 인식평가 AP와20250행 대상별 원자료. AP의 all/target GT 분모와 attempted_images를 원본 그대로 보존. mAP값은0~1 단위.
+- derived/target_condition_summary.csv: seed/표현/가림/C별 파생 집계. 검출=운용confidence 통과 후보의 target IoU>=0.5, 전체시도 분모; eligible 수 별도. oracle IoU와Top1 IoU 구분. 이 평균에 실패가 포함되며 위치추정 조건부 오차와 혼동 금지.
+- snapshots: 프로토콜/선정lock/QA/상태/partial pose 산출물 중 존재하는 CSV·JSON. 미완료 pose 파일은 progress snapshot이며 완료 판정 근거 아님.
+- historical_reports: 기존 연구 Markdown 및 CSV 표를 버전 그대로 포함. 과거 B1·C-V01·Stage1~4는 신규 C-V02 결과와 섞지 않음. historical 문서의 당시 상태는 현재 상태가 아님.
+- source_inventory.csv: 각 원본 절대경로, ZIP내 경로, 복사한 바이트의 SHA256. 대용량 RGBD/이미지/weights는 복사하지 않고 경로·SHA로 참조. 비공개 ntfy 설정은 포함하지 않음.
 
-3표현각12개Val의own평가2회,순환cross평가1회:9개소규모작업. 동일checkpoint/동일입력/설정의mask 및box mAP 반복값이정확히일치했다. full own-Val210장×3표현도별도수행했다. 입력audit에각RGB/bitmap SHA와픽셀수/인스턴스목록을저장했다. worker는Val view만연결하며Test RGB/GT 배열접근없음.
-
-학습중epoch 원래EMA는FP32였으나동결checkpoint저장시EMA가FP16으로반올림된다. 실제saved_EMA_precision_audit.json에서세표현saved dtype float16 및원래epoch EMA 절대합fingerprint차이를확인했다. 따라서원래학습epoch unrounded mAP를비트단위복원할수있다고주장하지않는다. **동일checkpoint반복은exact**,학습당시FP32EMA와savedcheckpoint지표차이는다음과같이보존한다. 이차이를맞추기위해threshold/선정/모델을수정하지않았다.
-
-| 표현 | 학습 epoch Mask mAP | saved checkpoint 재평가 | 차이(%p) |
-|---|---:|---:|---:|
-|HR_Scan|94.282263%|94.299684%|+0.017421|
-|LR_Scan|93.184880%|93.186714%|+0.001834|
-|GeoCAD|95.522348%|95.405081%|-0.117268|
-
-## 선정과 완료 판정
-
-원래selection_lock의candidate C06을보존한다. objective는seed42,200epoch own-Val Mask mAP의HR/LR/CAD동일가중평균이다. cross-Val는잠금상보조지표이며복구결과로후보를다시선정하지않는다. Test성능미사용. C06의원래full score94.329830%,baseline94.287328%,차이+0.042503%p. 이는seed42선정비교이며3seed일반화개선확정이아니다. baseline43/44는이번57학습예산에없으므로baseline3seed개선이라고주장하지않는다.
-
-공통설정:lr0=.000888131352250591,weight_decay=.0008730658008775225,lrf=.13119036537141066,warmup_epochs=4.486041867303101. optimizer/기타동결조건불변.
-
-원래24attempt 실패는영구보존한다. 복구24건과checkpoint SHA를검증한뒤에만새 `validation_repair_v01/HPO_recovered_status.json`을COMPLETED로기록한다. 원래 `C_COMMON_HPO_v02/hpo_status.json`의COMPLETED_WITH_FAILURES는그실행기록이므로덮어쓰지않는다. 현재운용상태는상위production_status와새recovered status를본다.
-
-## 독립 후속 실행 및 알림
-
-평가전용service `c-hpo-validation-repair-20261112-v01.service`;controller가GPU전역lock으로worker를하나씩실행하고완료artifact/체크포인트불변성을확인한다. 원래Controller는이미실패종료한상태를보존했고기존Watchdog/ntfy/GitHub서비스는중단하지않았다. 학습재개명령없음. resume.sh는현재복구service를중복없이start한다. interrupted attempt를무조건성공/재시도로처리하지않는다.
-
-복구성공후별도source `c_depletion_post_hpo_static_20261112_v03.py`가훈련용가림구현점검→Test가림생성→인식/pose정적평가로이어진다. 모델계보/원래Test/판정기준/GT운용입력제한은불변. 새capability파일에SHA를기록했고완료판정을원래실패status대신복구검증결과에연결했다. pooled/상태별/macro CPU보고관찰자도recovered정적완료root를기다리는별도service로등록했으며기존보고프로세스를중단하지않았다. 물리pilot/본300/별도150은HOLD유지.
-
-첫실패ntfy서버전송은16:43경HTTP200로그가있으나handset수신UNKNOWN. 기존경고가이전C_COMMON_HPO_v01경로를가리킨결함을확인했다. 이번복구중정확한v02로그경로를포함한고우선순위알림을기존hook으로전송해HTTP200을확인했고receipt를보존했다. 신규오류는복구controller가정확한로그경로로즉시notify하고HOLD event를기존watchdog의재시도queue에도보낸다. 새서버/topic/인증생성없음. AI가실행중이아닌시간의이채팅선제메시지는불가능하며로컬ntfy가담당한다. 서버전송과휴대폰수신을구분한다.
-
-## 코드·원본 식별
-
-- 수정 전 evaluator SHA256 `033f3e278253a7181a398d631d4323165b0cccff7841a5b875654c7a94dcebb8`
-- 새 evaluator SHA256 `a622913f13d2385e50914928f186590da28278ec7730f70aa0baa134d07a59d0`
-- 기존bitmap loader SHA256 `8dd6f00730f0de9634831929eb18fe38d2df57a66423101c4f7aec4d23e2090d`
-- 원래selection lock SHA256 `8b1df58783bb693ee2f3a4c36a186a6d05ddc74da246b532f091875e562f4fdf`
-- 57개 checkpoint 경로·SHA: `validation_repair_v01/training_inventory_before.json`;복구완료후모두재검증. 재사용모델C00 seed42×3및C06 seed42/43/44×3의자기표현외24평가. 모든GT원본·학습결과불변.
-
-
-## 16:58 최종 복구 확인
-
-- 학습57개checkpoint SHA 전부불변. 원본cross실패24건유지. 복구cross24/24 COMPLETED,총5040 model-image/16632 GT instances,각run Val210/GT693. small9+ownfull3+cross24=36평가artifact/resultSHA/inputRGB/bitmapSHA 및Val계보검사PASS/Test수치데이터접근0.
-- 새HPO_recovered_status COMPLETED/C06선정불변. standalone복구controller PID699911,후속static PID707458,첫HR가림구현qualification worker PID707461 실제시작. 기존statics source runner의완료조건검증후Test평가진행예정. 물리pilot/300/150HOLD.
-
-- 후속HR가림구현qualification 5/5 scene PASS_CAPTURE 확인(O25/O50포함). 이는Test성능결과가아니며다음표현으로자동진행중. 반복되는legacy empty-ID NumPy로그는기존CPU감사와구분해보존하며새오류를무해확정하지않음.
+실사 Test189는 과거 평가 이력이 있는 재사용 검증이며 신규 blind Test 아님. 알려진 원본 라벨 정책/제품 도메인 차이/v04 RNG 문서 불일치/Replicator 예외의 미해명 부분은 기존 감사 보고서 그대로 유지.

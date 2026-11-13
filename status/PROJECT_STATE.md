@@ -1552,3 +1552,25 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - ntfy16:43경serverHTTP200이력있으나handsetUNKNOWN/이전로그경로결함확인,정확경로고우선재알림HTTP200확인. 기존watchdog/동기화중단0,복구에러는즉시notify+HOLD기존queue.
 
 - 평가복구최종:24/24 crossVal,5040model-images/16632 GT instances 검증PASS. 36개검증실행artifact/inputSHA/Val계보확인/57checkpoint불변/원본24실패보존. 새HPO_recovered_status COMPLETED,기존C06선정유지. 후속static HR가림qualification 실제진입(PID707461),controller699911/static707458. 물리HOLD.
+
+
+## 2026-11-12 — 최종 승인 C-V02 보강/혼합 선행 자동 실행 시작
+
+- 보고서 `reports/c_v02_c100_mixing_pipeline_launch_handoff_20261112_v01.md`; doc lock c_v02_balanced_mixing_execution_protocol_LOCKED_20261112_v01.json. 기존4410/57학습/24복구Val/C06 SHA 보존. 이전보강보류는최신명시승인으로대체하되기록보존.
+- 기존가림30/30 PASS 및1890frameQA후GPU경계예약→기존perception미진입HOLD→새C100generation전환실증. kill/중복GPU없음. V02root SDG/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01,controller910996. 신규840RGBD추가목표/전체5250. Train-derived동일distance_bin4새camera관측,70family/split/형상/조명원본보존. C100만view다양화교란/anchor분석명시.
+- Real352/48/189 class0/계보hash중복0,기존LOCKEDv03 target-only원본정책유지/제품도메인차이공개/미승인보완라벨안씀. bitmap양성·음성·다중해상도6CPU시험PASS. 전체V02QA전모델학습없음.
+- C06fullprecision고정39본학습(9synthetic+27partialmixed+3sharedreal trajectories)/7800epochs,별도3×2epoch smoke. 각비율1250slots(1250:0/938:312/625:625/312:938/0:1250). 동일pretrained새학습/HPOrerun0. dualVal동일가중checkpoint,공통비율9score평균/동점높은합성/epoch동점최초. zero-real훈련3공유하지만표현별bestepoch차이기록.
+- sourcecapSHA고정/QA→학습→모델잠금→기존Test재사용+신규C100Test가림240→selected/baseline정적→pose→통합보고까지독립연결. 이후물리300+별도150은성공/센서datum/안전/파일럿gate미확정HOLD. 학습GPU검증은QA후예정이며아직통과주장하지않음. 기존watch/ntfy/Git 유지+V02관찰자/상태명령추가.
+
+
+## 2026-11-12 — 작업 층수 prior 최신승인/C-V02 오탐수정 재개
+
+- C100 180/840후worker정상종료전환을추가watch가즉시missingPID로오판해GPUboundary HOLD된기록보존. watcher v03에120초동일PID전환유예추가,원래연구watch3805776/실험설정유지. 180개재생성없이gen v02 PID966660으로재개,이후200/220/240/260묶음연속완료.
+- task_layer_policy_v01: C100/80/60/40/20=4/4/3/2/1을운영자제공occupied layer task prior로명시허용. 기존layer금지는C-V02이최신예외로대체,GTpose/mask/slot/footprintcenter/FINAL금지유지. 원데이터nominal layer_count4(카메라생성용)수정0,별도task schema/2250static task+450physicalDRAFT/sha잠금.
+- ROBUSTA code0b1e5f46702d…/cfg35cf0a78…변경0. 새CCLI1..4+finalmixedseed42 modelsha/taskregistrysha검증/initial-only. unit1..4 forwarding/NoDetection·8datum prefix·GTschema/read차단PASS. q99상층점<1%/바닥없음이면correctlayer4여도datum−.09m가능한구조위험단위진단기록;실C/O 성능은최종mask고정후추가CPUworker로6750/role 평가예정/아직미검증.
+- CPUv30/원NuReccomposition감사:원NuRec collisionAPI0,과거v30 rover13+이름미분류29/PhysicsScene1. 이름만으로floor없음확정안함/rolebinding·실제loadedstage/contact는미확인. 신규 C drive stage 미생성,physicalHOLD유지. Main .11m/7.341774°를최신명시성공기준으로기록,PRE_FINAL5mm/2°cert·.03speedstop과구분;나머지안전·물리gate유지.
+
+
+## 2026-11-13T14:26:18.471186+09:00 — 연구자 요청 결과 통합 추출
+
+- 보고서 reports/research_results_snapshot_20261113_142618.md 및 단일 ZIP research_results_snapshot_20261113_142618.zip. 기존 결과 읽기전용 스냅샷/45모델셀/39본학습+3smoke/epoch기록/20250인식원자료 포함. 학습39/39완료,75:25선정;위치추정 진행중으로 미완료표시. 실행기·모델·원본변경0,물리HOLD유지. ZIP CRC검증PASS.
