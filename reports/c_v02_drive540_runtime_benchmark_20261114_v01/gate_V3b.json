@@ -1,0 +1,36 @@
+{
+ "run": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE_OPT_BENCH_20261114_v01/runs/V3b",
+ "kind": "success",
+ "checks": {
+  "runner_exit0_no_watchdog": true,
+  "no_internal_error": true,
+  "technical_assessment_pass": false,
+  "no_collision": true,
+  "speed_guard_not_tripped": true,
+  "outcome_SUCCESS": false,
+  "stop_certificates_all": false,
+  "pose_within_0p5cm_of_ref": true,
+  "gate_readable": false
+ },
+ "info": {
+  "technical_issues": [
+   "SPEED_OR_DRIVER_GUARD_FAULT",
+   "UNCLASSIFIED_OR_PARTIAL_MOTION_TERMINATION:CONTROLLER_READBACK_MISSING",
+   "NOT_A_VALIDATED_SCIENTIFIC_FAILURE:FAIL_U"
+  ],
+  "outcome": "FAIL_U",
+  "reason": "CONTROLLER_READBACK_MISSING",
+  "detection_conf": 0.26937299966812134,
+  "pose_err_xy_m": 0.0036455127225484244,
+  "plan_peak_k_leg0": 0.016218160008267354,
+  "final_err_m": null,
+  "final_heading_err_deg": null,
+  "drive_distance_m": 0.0,
+  "drive_sim_s": 0.06666667014360428,
+  "max_pulse_planar_m_s": 0.00020410965664187042,
+  "wall_s": 64.091853430029,
+  "physics_sim_s": 5.333333611488342,
+  "error": "KeyError('final_err_m')"
+ },
+ "PASS": false
+}

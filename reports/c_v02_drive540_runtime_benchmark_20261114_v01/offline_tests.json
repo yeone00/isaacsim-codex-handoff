@@ -1,0 +1,77 @@
+{
+ "baseline_run": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_E1_DRIVE_PILOT_20261114_v01/runs/E1P_C2D_B01_C100_GeoCAD_O0",
+ "T_O1": {
+  "records": 52493,
+  "compacted_records": 44850,
+  "compacted_points": 388004,
+  "float32_roundtrip_exact": true,
+  "decisions_identical": true,
+  "collision_violations_baseline": 0,
+  "shell_violations_baseline": 0,
+  "shell_records_checked": 7475,
+  "physx_warning_lines": 389343,
+  "wheel_points_all_phases": 389343,
+  "warning_equals_wheel_points": true,
+  "contacts_json_bytes_est": {
+   "original": 117710602,
+   "compact_plus_raw_float32": 46173504
+  },
+  "PASS": true
+ },
+ "T_O4": {
+  "cases": [
+   {
+    "k": 1,
+    "killed_by_sigkill": true,
+    "lines": 1,
+    "complete": true
+   },
+   {
+    "k": 7,
+    "killed_by_sigkill": true,
+    "lines": 7,
+    "complete": true
+   },
+   {
+    "k": 14,
+    "killed_by_sigkill": true,
+    "lines": 14,
+    "complete": true
+   },
+   {
+    "k": 15,
+    "killed_by_sigkill": true,
+    "lines": 15,
+    "complete": true
+   },
+   {
+    "k": 16,
+    "killed_by_sigkill": true,
+    "lines": 16,
+    "complete": true
+   },
+   {
+    "k": 29,
+    "killed_by_sigkill": true,
+    "lines": 29,
+    "complete": true
+   },
+   {
+    "k": 100,
+    "killed_by_sigkill": true,
+    "lines": 100,
+    "complete": true
+   },
+   {
+    "k": 257,
+    "killed_by_sigkill": true,
+    "lines": 257,
+    "complete": true
+   }
+  ],
+  "note": "SIGKILL after k checks with fsync every 15; flushed records must all survive process death",
+  "PASS": true
+ },
+ "created": 1794585602.9972095,
+ "PASS": true
+}

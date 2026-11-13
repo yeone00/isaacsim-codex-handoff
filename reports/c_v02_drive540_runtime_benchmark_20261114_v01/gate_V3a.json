@@ -1,0 +1,70 @@
+{
+ "run": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE_OPT_BENCH_20261114_v01/runs/V3a",
+ "kind": "success",
+ "checks": {
+  "runner_exit0_no_watchdog": true,
+  "no_internal_error": true,
+  "technical_assessment_pass": true,
+  "no_collision": true,
+  "speed_guard_not_tripped": true,
+  "outcome_SUCCESS": true,
+  "stop_certificates_all": true,
+  "pose_within_0p5cm_of_ref": true,
+  "final_err_within_0p5cm_of_ref": true,
+  "bands_main": true,
+  "graph_shadow_no_mismatch": true,
+  "warnings_equal_wheel_points": true
+ },
+ "info": {
+  "technical_issues": [],
+  "outcome": "SUCCESS",
+  "reason": null,
+  "detection_conf": 0.3042924702167511,
+  "pose_err_xy_m": 0.0036455127225484244,
+  "plan_peak_k_leg0": 0.016218160008267354,
+  "final_err_m": 0.004946071635839721,
+  "final_heading_err_deg": 0.05983696751707157,
+  "drive_distance_m": 1.7955126625878985,
+  "drive_sim_s": 126.2500065844506,
+  "max_pulse_planar_m_s": 0.02932158696835825,
+  "wall_s": 304.9583842898719,
+  "physics_sim_s": 131.0166734997183,
+  "delta_vs_ref": {
+   "conf": -0.030233919620513916,
+   "pred_center_m": 0.0,
+   "final_xy_m": 9.171154235970541e-05,
+   "final_err_m": 1.6209298308832165e-06,
+   "drive_sim_s": 0.5666666962206364,
+   "peak_k": 0.0
+  },
+  "opt_stats": {
+   "profile_steps": true,
+   "contact_compact": true,
+   "graph_cache": true,
+   "fsync_batch": 15,
+   "wheel_compact": {
+    "points": 388935,
+    "records": 45006,
+    "dtype": "float32",
+    "file": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_DRIVE_OPT_BENCH_20261114_v01/runs/V3a/attempt_0001/contacts_wheel_compact.npz"
+   },
+   "graph_cache_stats": {
+    "rebuilds": 5,
+    "prim_checks": 120406,
+    "shadow_checks": 133,
+    "shadow_mismatch": 0,
+    "shadow_every": 60
+   },
+   "fsync": {
+    "calls": 7618,
+    "synced": 507,
+    "skipped": 7111,
+    "every": 15
+   },
+   "forensic_final_fsync": true,
+   "profiled_physx_steps": 7861
+  },
+  "warnings": 390274
+ },
+ "PASS": true
+}

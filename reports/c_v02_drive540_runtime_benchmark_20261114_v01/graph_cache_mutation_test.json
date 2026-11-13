@@ -1,0 +1,205 @@
+{
+ "source": "/home/user/hh/isaac_cosmos/sdg_final/C_V02_E1_DRIVE_PILOT_20261114_v01/runs/E1P_C2D_B01_C100_GeoCAD_O0/attempt_0001/site_drive.usda",
+ "cases": [
+  {
+   "case": "M01_set_input_value",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": true,
+   "reference_check_graph_raises": true,
+   "cache_check_graph_raises": true,
+   "incremental_ms": 12.30263989418745,
+   "expect_change": true,
+   "PASS": true
+  },
+  {
+   "case": "M02_restore_input_value",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": false,
+   "reference_check_graph_raises": false,
+   "cache_check_graph_raises": false,
+   "incremental_ms": 0.08033495396375656,
+   "expect_change": false,
+   "PASS": true
+  },
+  {
+   "case": "M03_add_connection",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": true,
+   "reference_check_graph_raises": true,
+   "cache_check_graph_raises": true,
+   "incremental_ms": 0.06573204882442951,
+   "expect_change": true,
+   "PASS": true
+  },
+  {
+   "case": "M04_remove_connection",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": false,
+   "reference_check_graph_raises": false,
+   "cache_check_graph_raises": false,
+   "incremental_ms": 0.07474585436284542,
+   "expect_change": false,
+   "PASS": true
+  },
+  {
+   "case": "M05_add_node_prim",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": true,
+   "reference_check_graph_raises": true,
+   "cache_check_graph_raises": true,
+   "incremental_ms": 11.392496060580015,
+   "expect_change": true,
+   "PASS": true
+  },
+  {
+   "case": "M06_remove_node_prim",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": false,
+   "reference_check_graph_raises": false,
+   "cache_check_graph_raises": false,
+   "incremental_ms": 12.261014897376299,
+   "expect_change": false,
+   "PASS": true
+  },
+  {
+   "case": "M07_deactivate_node",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": true,
+   "reference_check_graph_raises": true,
+   "cache_check_graph_raises": true,
+   "incremental_ms": 10.73479512706399,
+   "expect_change": true,
+   "PASS": true
+  },
+  {
+   "case": "M08_reactivate_node",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": false,
+   "reference_check_graph_raises": false,
+   "cache_check_graph_raises": false,
+   "incremental_ms": 10.988469002768397,
+   "expect_change": false,
+   "PASS": true
+  },
+  {
+   "case": "M09_retarget_relationship",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": true,
+   "reference_check_graph_raises": true,
+   "cache_check_graph_raises": true,
+   "incremental_ms": 11.603313032537699,
+   "expect_change": true,
+   "PASS": true
+  },
+  {
+   "case": "M10_restore_relationship",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": false,
+   "reference_check_graph_raises": false,
+   "cache_check_graph_raises": false,
+   "incremental_ms": 0.1332771498709917,
+   "expect_change": false,
+   "PASS": true
+  },
+  {
+   "case": "M11_sdf_changeblock_edit",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": true,
+   "reference_check_graph_raises": true,
+   "cache_check_graph_raises": true,
+   "incremental_ms": 0.07171113975346088,
+   "expect_change": true,
+   "PASS": true
+  },
+  {
+   "case": "M12_restore_via_usd",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": false,
+   "reference_check_graph_raises": false,
+   "cache_check_graph_raises": false,
+   "incremental_ms": 0.07191183976829052,
+   "expect_change": false,
+   "PASS": true
+  },
+  {
+   "case": "M13_session_layer_edit",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": true,
+   "reference_check_graph_raises": true,
+   "cache_check_graph_raises": true,
+   "incremental_ms": 13.003407046198845,
+   "expect_change": true,
+   "PASS": true
+  },
+  {
+   "case": "M14_session_layer_clear",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": false,
+   "reference_check_graph_raises": false,
+   "cache_check_graph_raises": false,
+   "incremental_ms": 12.6540451310575,
+   "expect_change": false,
+   "PASS": true
+  },
+  {
+   "case": "M15_change_node_type",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": true,
+   "reference_check_graph_raises": true,
+   "cache_check_graph_raises": true,
+   "incremental_ms": 12.060743989422917,
+   "expect_change": true,
+   "PASS": true
+  },
+  {
+   "case": "M16_restore_node_type",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": false,
+   "reference_check_graph_raises": false,
+   "cache_check_graph_raises": false,
+   "incremental_ms": 0.08107488974928856,
+   "expect_change": false,
+   "PASS": true
+  },
+  {
+   "case": "M17_non_graph_prim_edit",
+   "mutation_error": null,
+   "cache_equals_full": true,
+   "reference_changed": false,
+   "reference_check_graph_raises": false,
+   "cache_check_graph_raises": false,
+   "incremental_ms": 11.634502094238997,
+   "expect_change": false,
+   "PASS": true
+  }
+ ],
+ "graph_nodes": 21,
+ "timing_ms": {
+  "full_traversal": 13.631260953843594,
+  "incremental_noop": 0.0017440109513700008
+ },
+ "cache_stats": {
+  "rebuilds": 11,
+  "prim_checks": 7,
+  "shadow_checks": 0,
+  "shadow_mismatch": 0,
+  "shadow_every": 60
+ },
+ "PASS": true
+}

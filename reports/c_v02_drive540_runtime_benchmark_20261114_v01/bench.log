@@ -1,0 +1,15 @@
+2026-11-14T01:02:00+09:00 START B0 GeoCAD 
+2026-11-14T01:09:00+09:00 END B0 wall_outer_s=419.9 {"cell_id": "BENCH_B0_C2D_B01_C100_GeoCAD_O0", "outcome": "SUCCESS", "category": null, "reason": null, "final_err_m": 0.004946071635839721, "pose_err_xy_m": 0.0036455127225484244, "b_decision": "NOT_APPLICABLE", "executed_motion": true}
+2026-11-14T01:09:00+09:00 GATE B0 PASS
+2026-11-14T01:09:00+09:00 START V1 GeoCAD --profile-steps
+2026-11-14T01:16:00+09:00 END V1 wall_outer_s=419.4 {"cell_id": "BENCH_V1_C2D_B01_C100_GeoCAD_O0", "outcome": "SUCCESS", "category": null, "reason": null, "final_err_m": 0.004946071635839721, "pose_err_xy_m": 0.0036455127225484244, "b_decision": "NOT_APPLICABLE", "executed_motion": true}
+2026-11-14T01:16:00+09:00 GATE V1 PASS
+2026-11-14T01:16:01+09:00 START V2 GeoCAD --profile-steps --opt-contact-compact
+2026-11-14T01:22:36+09:00 END V2 wall_outer_s=395.3 {"cell_id": "BENCH_V2_C2D_B01_C100_GeoCAD_O0", "outcome": "SUCCESS", "category": null, "reason": null, "final_err_m": 0.004946071635839721, "pose_err_xy_m": 0.0036455127225484244, "b_decision": "NOT_APPLICABLE", "executed_motion": true}
+2026-11-14T01:22:37+09:00 GATE V2 PASS
+2026-11-14T01:22:37+09:00 START V3a GeoCAD --profile-steps --opt-contact-compact --opt-graph-cache --opt-fsync-batch 15
+2026-11-14T01:27:42+09:00 END V3a wall_outer_s=305.2 {"cell_id": "BENCH_V3a_C2D_B01_C100_GeoCAD_O0", "outcome": "SUCCESS", "category": null, "reason": null, "final_err_m": 0.004946071635839721, "pose_err_xy_m": 0.0036455127225484244, "b_decision": "NOT_APPLICABLE", "executed_motion": true}
+2026-11-14T01:27:43+09:00 GATE V3a PASS
+2026-11-14T01:27:44+09:00 START V3b GeoCAD --profile-steps --opt-contact-compact --opt-graph-cache --opt-fsync-batch 15
+2026-11-14T01:28:48+09:00 END V3b wall_outer_s=64.1 {"cell_id": "BENCH_V3b_C2D_B01_C100_GeoCAD_O0", "outcome": "FAIL_U", "category": "U", "reason": "CONTROLLER_READBACK_MISSING", "final_err_m": null, "pose_err_xy_m": 0.0036455127225484244, "b_decision": "NOT_APPLICABLE", "executed_motion": false}
+2026-11-14T01:28:48+09:00 GATE V3b FAIL
