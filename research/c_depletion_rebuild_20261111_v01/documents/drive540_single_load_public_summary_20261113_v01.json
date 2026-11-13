@@ -532,7 +532,7 @@
   "physical_main_entry": "HOLD",
   "monitor_pid": 2786284,
   "recovery_e2e_status": {
-    "state": "RUNNING_PILOT",
+    "state": "HOLD",
     "controller_pid": 2783174,
     "current": {
       "role": "pilot",
@@ -548,6 +548,6 @@
     "main_success": 0,
     "main_failure": 0,
     "physical_main_entry": "HOLD",
-    "reason": null
+    "reason": "TECHNICAL_PILOT_NOT_PASS:/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/DRIVE540_20261113_v01/recovery_e2e_v01/pilot/C2D_B01_C100_HR_Scan_O0 PERCEPTION_NO_DETECTION:"
   }
 }
