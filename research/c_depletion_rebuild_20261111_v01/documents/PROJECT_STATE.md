@@ -1617,3 +1617,8 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 ### 2026-11-13 C-V02 저장량·곡률 CPU 감사 (추가 기록)
 
 본실험0/540 HOLD 유지. 새 실제 실행0. engineering722,510,798bytes는 접촉/제어 로그 중심이며417GB는540동일이동+25GiB 조건부 예산. 무손실 RAM gzip round-trip은81.323MB까지 가능하나 기존 파일/검증기 변경 미적용. 실제 곡률거절10건 모두 비평행 전진 필요곡률≥1.819398/m로 허용0.363645/m 초과; 기준목표 진단에서도 유지. 명목36Base 중 필요조건위반30, 현행 TC-S 미허용32(실제 미래 실패율 아님). 저장권한 및 경로설계 검토 미해결. 원본/모델/manifest/안전기준 불변. 보고서: reports/c_v02_drive540_storage_and_curvature_audit_20261113_v01.md; 상세 CSV는 동명 storage_curvature_audit 폴더. 기존 Controller/Watchdog 변경 없음.
+
+
+### 2026-11-13 C540 전역 경로/시작점 오프라인 설계 검토
+
+본실험0/540 HOLD,새Kit/GPU/주행0,운영코드/manifest/protocol 변경0(SHA전후동일). 기존36Base TC-S4통과. 시작점유지 free-space 곡률연속CSC36수학해,단30개17.874~18.293m우회로 현행forward/3m/overshoot/180s계약과충돌;충돌/제어전부UNKNOWN. 짧은해B11/B34추가해6기하호환. 별도미승인공통Y−1.25m시작점안은기존TC-S36통과이나카메라/접촉미검증. 새planner구현/파일럿미실행,연구자결정대기. 보고서 reports/c_v02_drive540_global_path_design_20261113_v01.md,권위수치CSV reports/c_v02_drive540_global_path_design_20261113_v02/base36_comparison_final.csv.
