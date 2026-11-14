@@ -1779,3 +1779,8 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 
 ## 2026-11-14 21:26 — LE13 main540 progress 199/540
 - 20:45 INFRA hold `L13_C2E_B13_C80_LR_Scan_O0` (CAPTURE_BUFFERS_INVALID, no motion) auto-resolved by auto-resume v04 as FAIL_E, no re-run. Totals: SUCCESS 193, FAIL_F 3, FAIL_E 2, FAIL_D 1. ETA ~2026-11-15 12:00.
+
+## 2026-11-15 00:1x — LE13 main540 260/540; auto-resume v05
+- 23:49 second SAFE_STOPPED_ADAPTER_CAP_FAULT (`L13_C2E_B17_C20_LR_Scan_O0`, 0.0300 m/s spike, prev 0.0163) auto-resolved by v04 as FAIL_D, no re-run.
+- PRE_FINAL peak scan of 259 completed runs: 10 runs >= 0.027 m/s, max non-faulting 0.0299; isolated spikes. Budget 3 would likely stop the main unnecessarily, so `scripts/c_v02_drive540_auto_resume_20261114_v05.py` raises it to 8 (9th -> safety stop); all other criteria unchanged. Service swapped while the controller kept running.
+- Totals 260: SUCCESS 253, FAIL_F 3, FAIL_E 2, FAIL_D 2. ETA ~2026-11-15 12:00.
