@@ -1761,3 +1761,13 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - Finding: the v19 final taper takes ~21 s of a ~27 s phased leg. Above ~0.3–0.5 m/s, the 1 m legs and the demonstrated 4.3976 deg/s steer-rate cap limit the speed more than v_nav does. Physical accel, lateral-accel and steering-response limits remain UNKNOWN.
 - Next: write session v07 per the plan, then Isaac pilots per candidate (checklist in the report). Nothing is applied to main540.
 - Report: reports/c_v02_speed_phase_design_20261114_v01.md
+
+## 2026-11-14 11:47–12:45 — E1 main stopped at 54; relocation to L_E13 + multi-view + phased speed; new main540 started
+- E1 main (amendment v05) stopped by researcher-ordered STOP_REQUEST at 54 runs (11:49:47); E1 auto-resume v02 and reporter stopped. 54 runs preserved, not pooled.
+- Cause of 30/51 no-detections: systematic appearance (HR/LR bricks near-black at E1); undetected max conf mostly <0.1 (analysis/c_v02_e1_nodetect_lowconf_probe_20261114_v02.py; v01 probe INVALID: three YOLO models in one process cross-contaminated).
+- Multi-view render study (scripts/c_v02_multiview_render_study_20261114_v01.py, analysis/c_v02_multiview_study_score_20261114_v01.py): failure cases detected at forward 1.0 m 6/6, 0.6 m 5/6. Perception v03 task-region gate: 53/53 unchanged on E1 captures (analysis/c_v02_perception_v03_gate_replay_20261114_v01.py).
+- Speed redesign (subagent): reports/c_v02_speed_phase_design_20261114_v01.md; offline 95/95 PASS; certificate v22, guard F v03, driver v03 (pause-file TOCTOU fix).
+- ROI R1_NORTH_2/R5_WEST/R4_EAST belong to B1_CLOSED_EV.usdz (training background) -> not used. Site location study (scripts/c_v02_site_location_study_20261114_v01.py, analysis/c_v02_site_location_score_20261114_v01.py): start-view detection E1 3/15 ... L_E13 15/15 (conf .88) -> L_E13 selected.
+- New: scene v07, session v07, runner v08, outcome v05 (E1 54-run regression 0 differences), gate v04 (E1 states unchanged), controller v07, auto-resume v03, reporter LE13 v01, multiview policy v01, manifest LE13 v01 (sha 87fe2ff9…), amendment LE13 v06 FINAL, lock LE13_FINAL_v05 (sha 1d3a4756…).
+- L_E13 pilots (sdg_final/C_V02_LE13_PILOT_20261114_v01): 4/4 PASS_TECHNICAL (v_nav .5 TAPER 196 s; forced MV K2 194 s; SQRT 149 s; forced MV no-detect -> verified controlled stop FAIL_A). Selected PHASED v_nav .5 + SQRT.
+- Main540 L_E13 started 12:44:39 (unit c-v02-drive540-le13-main-v07); run 1 SUCCESS 151 s. Report: reports/c_v02_le13_main_start_20261114_v01.md.
