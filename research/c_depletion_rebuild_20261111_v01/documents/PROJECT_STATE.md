@@ -1746,3 +1746,7 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - Unattended reporter unit c-v02-drive540-main-reporter: GitHub reports at 30/100/180/270/360/450 and a final report at 540.
 - The 11 earlier v03 runs are PRELIMINARY and excluded from results.
 - Report: reports/c_v02_drive540_main_start_v05protocol_20261114_v01.md
+
+## 2026-11-14 10:59 — main540 technical HOLD at C2E_B03_C80_HR_Scan_O0 resolved by researcher, resumed
+- HOLD 05:15:53: CAPTURE_BUFFERS_INVALID (empty render buffer at initial capture, before perception/driver; 0.0 m motion, no collision, observer exit 0, no GPU error; first occurrence). 33 prior runs technical PASS (13 SUCCESS, 20 FAIL_A no detection).
+- Researcher instructed `bash ~/resume_main540.sh` (sdg_final/C_V02_DRIVE540_E1_20261114_v01/resolve_hold_run33_and_resume.sh): hold_resolution_C2E_B03_C80_HR_Scan_O0.json = RECORD_AS_FAIL_E_INFRA_AND_CONTINUE_NO_RERUN; dry-run gates 10/10 true; same lock FINAL_v04 (sha 93a6dacc…); unit c-v02-drive540-e1-main-v07 restarted, next run C2E_B03_C80_LR_Scan_O0 started 10:59:45; reporter restarted. ~5 h 44 min idle.
