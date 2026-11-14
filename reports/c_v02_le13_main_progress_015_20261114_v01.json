@@ -1,0 +1,532 @@
+{
+ "site": "L_E13",
+ "speed": {
+  "mode": "PHASED",
+  "v_nav": 0.5,
+  "final_law": "SQRT"
+ },
+ "completed": 15,
+ "planned": 540,
+ "per_representation": {
+  "HR_Scan": {
+   "n": 5,
+   "success": 5,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 5,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0038
+   },
+   "causes": {
+    "success": 5
+   }
+  },
+  "LR_Scan": {
+   "n": 5,
+   "success": 5,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 5,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0038
+   },
+   "causes": {
+    "success": 5
+   }
+  },
+  "GeoCAD": {
+   "n": 5,
+   "success": 5,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 5,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 5
+   }
+  }
+ },
+ "per_C": {
+  "C100": {
+   "n": 3,
+   "success": 3,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 3,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 3
+   }
+  },
+  "C80": {
+   "n": 3,
+   "success": 3,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 3,
+    "mean": 0.0037,
+    "median": 0.0038,
+    "max": 0.0038
+   },
+   "causes": {
+    "success": 3
+   }
+  },
+  "C60": {
+   "n": 3,
+   "success": 3,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 3,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 3
+   }
+  },
+  "C40": {
+   "n": 3,
+   "success": 3,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 3,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 3
+   }
+  },
+  "C20": {
+   "n": 3,
+   "success": 3,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 3,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 3
+   }
+  }
+ },
+ "per_rep_C": {
+  "HR_Scan_C100": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "HR_Scan_C80": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0038,
+    "median": 0.0038,
+    "max": 0.0038
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "HR_Scan_C60": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "HR_Scan_C40": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "HR_Scan_C20": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "LR_Scan_C100": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "LR_Scan_C80": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0038,
+    "median": 0.0038,
+    "max": 0.0038
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "LR_Scan_C60": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "LR_Scan_C40": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "LR_Scan_C20": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "GeoCAD_C100": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "GeoCAD_C80": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "GeoCAD_C60": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "GeoCAD_C40": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0037,
+    "median": 0.0037,
+    "max": 0.0037
+   },
+   "causes": {
+    "success": 1
+   }
+  },
+  "GeoCAD_C20": {
+   "n": 1,
+   "success": 1,
+   "success_rate": 1.0,
+   "initial_detection_rate": 1.0,
+   "multiview_triggered": 0,
+   "multiview_additional_detections": 0,
+   "final_detection_rate": 1.0,
+   "drive_success_rate": 1.0,
+   "pose_err_xy_m": {
+    "n": 1,
+    "mean": 0.0036,
+    "median": 0.0036,
+    "max": 0.0036
+   },
+   "causes": {
+    "success": 1
+   }
+  }
+ },
+ "overall": {
+  "n": 15,
+  "success": 15,
+  "success_rate": 1.0,
+  "initial_detection_rate": 1.0,
+  "multiview_triggered": 0,
+  "multiview_additional_detections": 0,
+  "final_detection_rate": 1.0,
+  "drive_success_rate": 1.0,
+  "pose_err_xy_m": {
+   "n": 15,
+   "mean": 0.0037,
+   "median": 0.0037,
+   "max": 0.0038
+  },
+  "causes": {
+   "success": 15
+  }
+ },
+ "multiview": {
+  "triggered": 0,
+  "detected_K2": 0,
+  "detected_K3": 0,
+  "mean_captures": 1,
+  "extra_time_s": null
+ },
+ "motion": {
+  "moved": 15,
+  "distance_m": {
+   "n": 15,
+   "mean": 1.7953,
+   "median": 1.7954,
+   "max": 1.7955
+  },
+  "peak_planar_m_s": {
+   "n": 15,
+   "mean": 0.4363,
+   "median": 0.4365,
+   "max": 0.4395
+  },
+  "final_position_error_m": {
+   "n": 15,
+   "mean": 0.0047,
+   "median": 0.0047,
+   "max": 0.0049
+  },
+  "final_heading_error_deg": {
+   "n": 15,
+   "mean": 0.0288,
+   "median": 0.0278,
+   "max": 0.0391
+  }
+ },
+ "run_time_s": {
+  "all": {
+   "n": 15,
+   "mean": 148.1696,
+   "median": 148.291,
+   "max": 151.3463
+  },
+  "drove": {
+   "n": 15,
+   "mean": 148.1696,
+   "median": 148.291,
+   "max": 151.3463
+  }
+ },
+ "time": {
+  "elapsed_h": 0.63,
+  "recent30_s_per_run": 148.2,
+  "remaining_h": 21.61,
+  "eta": "2026-11-15 10:58"
+ },
+ "storage": {
+  "archives": 15,
+  "verified": 15,
+  "volume_free_TB": 7.52
+ },
+ "note": "L_E13 main (amendment v06); E1 54 runs and pilots excluded"
+}
