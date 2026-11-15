@@ -1,0 +1,1082 @@
+{
+ "IPR_F01_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F01_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F01_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F01_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F01_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F01_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F01_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F01_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F01_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F01_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F02_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F02_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F02_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F02_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F02_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F02_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F02_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F02_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F02_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F02_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F03_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F03_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F03_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F03_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F03_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F03_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F03_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F03_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F03_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F03_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F04_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F04_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F04_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F04_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F04_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F04_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F04_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F04_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F04_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F04_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F05_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F05_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F05_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F05_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F05_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F05_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F05_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F05_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F05_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F05_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F06_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F06_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F06_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F06_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F06_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F06_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F06_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F06_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F06_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F06_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F07_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F07_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F07_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F07_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F07_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F07_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F07_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F07_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F07_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F07_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F08_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F08_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F08_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F08_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F08_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F08_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F08_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F08_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F08_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F08_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F09_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F09_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F09_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F09_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F09_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F09_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F09_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F09_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F09_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F09_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F10_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F10_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F10_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F10_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F10_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F10_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F10_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F10_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F10_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F10_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F11_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F11_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F11_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F11_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F11_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F11_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F11_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F11_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F11_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F11_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F12_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F12_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F12_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F12_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F12_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F12_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F12_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F12_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F12_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F12_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F13_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F13_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F13_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F13_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F13_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F13_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F13_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F13_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F13_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F13_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F14_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F14_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F14_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F14_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F14_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F14_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F14_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F14_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F14_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F14_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F15_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F15_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F15_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F15_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F15_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F15_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F15_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F15_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F15_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F15_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F16_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F16_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F16_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F16_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F16_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F16_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F16_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F16_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F16_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F16_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F17_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F17_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F17_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F17_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F17_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F17_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F17_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F17_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F17_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F17_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F18_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F18_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F18_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F18_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F18_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F18_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F18_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F18_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F18_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F18_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F19_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F19_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F19_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F19_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F19_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F19_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F19_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F19_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F19_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F19_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F20_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F20_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F20_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F20_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F20_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F20_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F20_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F20_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F20_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F20_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F21_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F21_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F21_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F21_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F21_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F21_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F21_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F21_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F21_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F21_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F22_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F22_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F22_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F22_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F22_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F22_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F22_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F22_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F22_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F22_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F23_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F23_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F23_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F23_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F23_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F23_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F23_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F23_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F23_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F23_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F24_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F24_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F24_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F24_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F24_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F24_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F24_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F24_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F24_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F24_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F25_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F25_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F25_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F25_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F25_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F25_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F25_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F25_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F25_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F25_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F26_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F26_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F26_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F26_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F26_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F26_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F26_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F26_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F26_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F26_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F27_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F27_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F27_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F27_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F27_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F27_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F27_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F27_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F27_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F27_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F28_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F28_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F28_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F28_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F28_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F28_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F28_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F28_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F28_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F28_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F29_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F29_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F29_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F29_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F29_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F29_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F29_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F29_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F29_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F29_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F30_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F30_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F30_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F30_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F30_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F30_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F30_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F30_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F30_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F30_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F31_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F31_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F31_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F31_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F31_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F31_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F31_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F31_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F31_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F31_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F32_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F32_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F32_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F32_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F32_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F32_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F32_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F32_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F32_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F32_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F33_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F33_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F33_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F33_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F33_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F33_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F33_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F33_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F33_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F33_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F34_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F34_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F34_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F34_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F34_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F34_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F34_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F34_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F34_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F34_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F35_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F35_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F35_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F35_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F35_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F35_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F35_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F35_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F35_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F35_C80",
+  "task_layer_count": 4
+ },
+ "IPR_F36_C100": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F36_C100",
+  "task_layer_count": 4
+ },
+ "IPR_F36_C20": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F36_C20",
+  "task_layer_count": 1
+ },
+ "IPR_F36_C40": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F36_C40",
+  "task_layer_count": 2
+ },
+ "IPR_F36_C60": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F36_C60",
+  "task_layer_count": 3
+ },
+ "IPR_F36_C80": {
+  "provider": "operator_or_task_management_system",
+  "schema": "C_V02_TASK_LAYER_PRIOR_v01",
+  "task_id": "IPR_F36_C80",
+  "task_layer_count": 4
+ }
+}

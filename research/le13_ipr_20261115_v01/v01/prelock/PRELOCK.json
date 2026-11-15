@@ -1,0 +1,49 @@
+{
+ "state": "PRELOCK_PASS",
+ "created": "2026-11-15",
+ "protocol": "docs/LE13_independent_pose_precision_replication_protocol_20261115_v01.md (handoff repo)",
+ "candidates": 51,
+ "eligible": 41,
+ "selected": 36,
+ "selection_rule": "eligible sorted ascending, first 36",
+ "excluded_C_V02_families": [
+  "B1R_TST_000001",
+  "B1R_TST_000005",
+  "B1R_TST_000010",
+  "B1R_TST_000013",
+  "B1R_TST_000022",
+  "B1R_TST_000024",
+  "B1R_TST_000026",
+  "B1R_TST_000045",
+  "B1R_TST_000051",
+  "B1R_TST_000058"
+ ],
+ "families_per_start": {
+  "S0": 6,
+  "S1": 5,
+  "S2": 5,
+  "S3": 5,
+  "S4": 5,
+  "S5": 5,
+  "S6": 5
+ },
+ "captures": 540,
+ "files": {
+  "source_audit.csv": "3e7a3d234e2893e06d865a3df51afc35a67420f67fc706951053ff4d4ed67d2d",
+  "family_selection.csv": "643ac6cc3deb435a4390605abf16aa53beeb67827ee71cc03f64c21e2b91037c",
+  "capture_manifest.csv": "1709ed65bf8f5527a0db4e14477ceca83fce87796a30ecd7c62aa3f87dca8d50",
+  "task_registry.json": "36ee00ca31ca6b4286163f1528d671e0705bf626e4928ec4965d1d741526ee8c",
+  "start_cameras.json": "5c54161ca0c6999520c21b5f4642f41f882b22458ea9239b7d940d7c5a3d5a04"
+ },
+ "analysis_plan": "/home/user/hh/IsaacSim_Codex_Starter_20261013/isaacsim_asset_representation_20261013/reports/le13_ipr_analysis_plan_LOCK_20261115_v01.md",
+ "analysis_plan_sha256": "06cc85ad4a44800d035c031b14be2b5d240500652684606462799a4ad27135bf",
+ "code_sha256": "4b23f0f195ee1ffeb07952b2491d76a515bf7f5b9e6bca9cafbb566f31a842c3",
+ "frozen": {
+  "model_lock": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/MIX_C06_20261112_v01/selection_lock.json",
+  "model_lock_sha256": "60687449dd61c01def8c821200e73ef009f5aa5a6ad358ed591f32ba0c9ce26a",
+  "perception": "scripts/c_v02_stage4_perception_task_prior_20261114_v03.py",
+  "perception_sha256": "31779e45134761ed41e56a8102581d36ad3c602cef8bfffc4f9b95008b03f67f",
+  "robust_code_sha256": "0b1e5f46702d4af0c4d4abc4b7d1c5fe9d29cc07c9f34b4a1592990ac296ae29",
+  "robust_config_sha256": "35cf0a78d4c73919ab2a03378341fb90433aeaeeab306a605d064d98a0cfc529"
+ }
+}
