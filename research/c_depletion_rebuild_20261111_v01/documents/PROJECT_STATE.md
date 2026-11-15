@@ -1829,3 +1829,6 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - Deviation: v01 double-mapped dome (8420-8640); v02 (amendment A1, decided before v02 capture) uses red dome as-is = primary. v01 preserved/reported.
 - v02 primary: matched triplets 130/180; K1 detection HR 89.4% LR 98.9% GeoCAD 80.0% (GeoCAD C20 11/36 valid). HR-LR +0.0015 mm (CI -0.013..0.016) Holm p=0.842; HR-GeoCAD -2.20 mm (CI -6.6..2.2) Holm p=0.634 (one 316 mm MIDPOINT fallback outlier kept). HR superior to both: NOT replicated. v01: HR-GeoCAD -0.030 mm Holm p=0.023 -> unstable.
 - Data: sdg_final/LE13_IPR_20261115_v0{1,2}/ (captures 1.9 GB each). Report reports/le13_ipr_results_20261115_v01.md. GitHub: research/le13_ipr_20261115_v01/ (commit dc218dde, pushed).
+
+## 2026-11-15 22:0x — LE13 IPR v01 detailed report
+- reports/le13_ipr_v01_detailed_20261115_v01.md (pushed to research/le13_ipr_20261115_v01/). v01 HR-GeoCAD -0.030 mm Holm p 0.023 (sign test/median null; ~0.22 mm step imbalance); HR-LR null; HR-superior-to-both not met; v02 remains primary.
