@@ -1822,3 +1822,10 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 
 ## 2026-11-15 20:05 — D600 drive-site images (LE13 scene)
 - Researcher request: same 9 conditions x 3 reps x 5 C in the drive scene/location. prepared_site_drive.usda (Constructionsite), drive-builder prims disabled + Rover disabled, load at LE13 (20.5,13.5), camera along +y approach, load yaw 90+rel, site lights (dome 9600 + work light), Kit default exposure. 135/135 PASS_CAPTURE (3 Isaac runs 19:51-20:01), no load clipping, vis min 0.865. Brick brightness HR 14-21 / LR 12-14 / CAD 42-45 (matches LE13 drive captures). Report reports/d600_drive_site_images_20261115_v01.md. Not training data (test environment).
+
+## 2026-11-15 21:50 — LE13 independent pose-precision replication (IPR) DONE
+- Protocol docs/LE13_independent_pose_precision_replication_protocol_20261115_v01.md (handoff repo). Analysis plan locked before capture: reports/le13_ipr_analysis_plan_LOCK_20261115_v01.md (sha 06cc85ad).
+- Source audit: 51 B1 red test L4 scenes; 10 = C-V02/drive families excluded; 41 unused in C-V02/depletion/drive/C-V03/pilots; first 36 selected. 36 x 5 C x 3 reps = 540 static K1 captures in the LE13 drive scene with the exact drive K1 camera per start (verified <1e-4), frozen C-V02 seed42 models + perception v03 gate + ROBUST_A; one model per process; K1 only.
+- Deviation: v01 double-mapped dome (8420-8640); v02 (amendment A1, decided before v02 capture) uses red dome as-is = primary. v01 preserved/reported.
+- v02 primary: matched triplets 130/180; K1 detection HR 89.4% LR 98.9% GeoCAD 80.0% (GeoCAD C20 11/36 valid). HR-LR +0.0015 mm (CI -0.013..0.016) Holm p=0.842; HR-GeoCAD -2.20 mm (CI -6.6..2.2) Holm p=0.634 (one 316 mm MIDPOINT fallback outlier kept). HR superior to both: NOT replicated. v01: HR-GeoCAD -0.030 mm Holm p=0.023 -> unstable.
+- Data: sdg_final/LE13_IPR_20261115_v0{1,2}/ (captures 1.9 GB each). Report reports/le13_ipr_results_20261115_v01.md. GitHub: research/le13_ipr_20261115_v01/ (commit dc218dde, pushed).
