@@ -1816,3 +1816,6 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - Pilot: HR C100 12/12 PASS_CAPTURE (Isaac 1 run, 116 s), C-V02 dataset camera (18.14756 mm, h0.6) in B1 R5_WEST; 3 distances x 3 views + cam h 1.0 + LG1/LG5. vis 1.00 all; 1.6 m clips pallet bottom. Contact sheet + condition table under pilot_hr_c100_v01/review_v01/.
 - Discrepancy recorded: instruction says C-V02 drives O0/O25 300 + O50 150; locked protocol actually ran O0 540 (no O25/O50 drives).
 - HOLD: LR/CAD and C80-C20 await researcher pilot-ID selection; full dataset/training/robot pilot not authorized. Report reports/d600_hr_c100_pilot_20261115_v01.md (includes D600_RGBD_HEIGHT_POSE design).
+
+## 2026-11-15 19:50 — D600 expansion of researcher-selected pilot IDs
+- Selection "1,2,3,4,5,6,7,8,10" -> P01-P08,P10. 126 new renders (HR 4 C levels, LR/GeoCAD 5) + 9 reused HR C100 = 135/135 PASS_CAPTURE (3 Isaac runs 19:29-19:46). vis min 0.999, no load clipping (pallet bottom clipped only at 1.6 m P01-P03), canonical px identical across reps per cell. GeoCAD brick ~110 vs HR ~46 / LR ~38 brightness. Sheets expand_v01/review_v01/compare_Pxx.png. Report reports/d600_expand_selected_20261115_v01.md. HOLD for full-dataset approval.
