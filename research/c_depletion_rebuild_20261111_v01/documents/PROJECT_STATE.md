@@ -1838,3 +1838,6 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - v02: detection HR 89.4% / LR 98.9% / GeoCAD 80.0%; IoU(miss=0) 0.847/0.946/0.766; conditional IoU ~0.95 all. All 6 family-level paired t (Holm) significant (LR>HR>GeoCAD); HR-GeoCAD IoU Wilcoxon 0.074 (weakest). Misses concentrated at C40/C20 (GeoCAD C20 47%).
 - v01: LR>HR and LR>GeoCAD significant; HR vs GeoCAD not.
 - Report reports/le13_ipr_yolo_accuracy_results_20261115_v01.md; GitHub research/le13_ipr_20261115_v01/yolo_accuracy/.
+
+## 2026-11-15 22:15 — D600 drive-site images re-rendered brighter (site_le13_v02)
+- Researcher: site_le13_v01 too dark. Brightness test on P04 (dome x1.0/1.5/2.0/3.0) -> x2.0 chosen (dome 9600 -> 19200; clipped px 1.9->2.5%). Same scripts (d600_site_capture_20261115_v02.py), all else identical. 135/135 PASS_CAPTURE (22:04-22:14); mean brick lum HR 16->30, LR 12->23, CAD 43->71; no load clipping, vis min 0.88. site_le13_v01 preserved. Sheets site_le13_v02/review_v01/compare_Pxx.png; CHANGE_NOTE.json.
