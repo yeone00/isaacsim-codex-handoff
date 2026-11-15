@@ -1808,3 +1808,11 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 
 ## 2026-11-15 18:43 — C-V03 rover-domain render COMPLETE
 - 18:42:54 RENDER_ALL_DONE; 6/6 runs PASS_CAPTURE, each 310/310 declared scenes (1,860 images total; physics_play 0, robot_motion 0). Render runner exited normally. Post-render package/training pipeline NOT started (PIPELINE_HOLD_USER_20261114; waiter not running) - awaiting researcher go-ahead.
+
+## 2026-11-15 19:xx — D600 started: geometry QA PASS + HR C100 pilot 12 images (await researcher selection)
+- Researcher D600 instruction (8 layers x 15 Bundle5 x 5 = 600 bricks; C100..C20 = 120/96/72/48/24 bundles). Namespace `/home/user/hh/isaac_cosmos/sdg_final/D600_20261115_v01/` (D600_STATUS.json with SHA256). No C-V02 file modified.
+- Code: evaluation/d600_geometry_20261115_v01.py (reuses audited pure functions, N_LAYERS=8, master seed 600151), analysis/d600_geometry_qa_20261115_v01.py, scripts/d600_pilot_manifest_20261115_v01.py, scripts/d600_pilot_capture_20261115_v01.py, analysis/d600_pilot_contact_sheet_20261115_v01.py, scripts/d600_expand_manifest_20261115_v01.py.
+- Geometry QA PASS: 100 trajectories, overlap 0, <50% support 0, inside pallet, residual structure matches the instruction table; 28 cross-seed duplicate shapes (non-C100) recorded; height 0.864 m; nominal 900 kg (payload/stability NOT verified).
+- Pilot: HR C100 12/12 PASS_CAPTURE (Isaac 1 run, 116 s), C-V02 dataset camera (18.14756 mm, h0.6) in B1 R5_WEST; 3 distances x 3 views + cam h 1.0 + LG1/LG5. vis 1.00 all; 1.6 m clips pallet bottom. Contact sheet + condition table under pilot_hr_c100_v01/review_v01/.
+- Discrepancy recorded: instruction says C-V02 drives O0/O25 300 + O50 150; locked protocol actually ran O0 540 (no O25/O50 drives).
+- HOLD: LR/CAD and C80-C20 await researcher pilot-ID selection; full dataset/training/robot pilot not authorized. Report reports/d600_hr_c100_pilot_20261115_v01.md (includes D600_RGBD_HEIGHT_POSE design).
