@@ -1841,3 +1841,6 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 
 ## 2026-11-15 22:15 — D600 drive-site images re-rendered brighter (site_le13_v02)
 - Researcher: site_le13_v01 too dark. Brightness test on P04 (dome x1.0/1.5/2.0/3.0) -> x2.0 chosen (dome 9600 -> 19200; clipped px 1.9->2.5%). Same scripts (d600_site_capture_20261115_v02.py), all else identical. 135/135 PASS_CAPTURE (22:04-22:14); mean brick lum HR 16->30, LR 12->23, CAD 43->71; no load clipping, vis min 0.88. site_le13_v01 preserved. Sheets site_le13_v02/review_v01/compare_Pxx.png; CHANGE_NOTE.json.
+
+## 2026-11-15 22:26 — D600 drive-site images at dome x3.0 (site_le13_v03)
+- Researcher asked for brighter. dome 9600 -> 28800, all else identical. 135/135 PASS_CAPTURE (22:15-22:25). Mean brick lum HR 16/30/40, LR 12/23/32, CAD 43/71/89 for v01/v02/v03; clipped px ~4.2%; no load clipping, vis min 0.89. v01/v02 preserved.
