@@ -1790,3 +1790,7 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - `scripts/c_v02_drive540_auto_resume_20261114_v06.py`: class SAFE_STOPPED_PUBLISHER_NAME_RACE (no new gid, stop verified; budget 5). Resolved 11:56, controller resumed at run 420.
 - `scripts/c_v02_drive540_auto_resume_20261114_v07.py` (running): general fallback SAFE_STOPPED_OTHER - any post-motion fault with verified stop (collision false, quiet PASS, ROS zero verified, exits 0, no guard trip) recorded as-is and continued, budget 10. Real safety = collision or unverified stop -> still stops. Classifier regression on 4 past holds unchanged.
 - Totals 419: SUCCESS 411, FAIL_F 3, FAIL_E 2, FAIL_D 2, FAIL_U 1.
+
+## 2026-11-15 12:1x — C-V03 render auto-resume armed after main540
+- Researcher request: resume the paused C-V03 rover-domain render right after LE13 main540 completes. Unit `c-v03-render-resume-after-main540` runs `scripts/c_v03_render_resume_after_main540_20261115_v01.sh`: on status MAIN_COMPLETE + controller inactive + no session process, waits 60 s then `kill -CONT 3253698`.
+- Remaining render runs: LR_Scan 5F_CLOSED_EV, GeoCAD B1_CLOSED_EV, GeoCAD 5F_CLOSED_EV (~1.5 h). LR B1 already PASS_CAPTURE (zombie child reaped on resume). Post-render package/training pipeline remains HELD.
