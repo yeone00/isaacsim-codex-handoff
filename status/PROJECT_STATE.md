@@ -1771,3 +1771,34 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - New: scene v07, session v07, runner v08, outcome v05 (E1 54-run regression 0 differences), gate v04 (E1 states unchanged), controller v07, auto-resume v03, reporter LE13 v01, multiview policy v01, manifest LE13 v01 (sha 87fe2ff9…), amendment LE13 v06 FINAL, lock LE13_FINAL_v05 (sha 1d3a4756…).
 - L_E13 pilots (sdg_final/C_V02_LE13_PILOT_20261114_v01): 4/4 PASS_TECHNICAL (v_nav .5 TAPER 196 s; forced MV K2 194 s; SQRT 149 s; forced MV no-detect -> verified controlled stop FAIL_A). Selected PHASED v_nav .5 + SQRT.
 - Main540 L_E13 started 12:44:39 (unit c-v02-drive540-le13-main-v07); run 1 SUCCESS 151 s. Report: reports/c_v02_le13_main_start_20261114_v01.md.
+
+## 2026-11-14 20:35 — LE13 main540: adapter cap-fault hold auto-resolved; auto-resume v04
+- 20:32 HOLD on `L13_C2E_B12_C20_GeoCAD_O0` (FAIL_D LEGS_INCOMPLETE). Evidence (adapter_commands.jsonl): stopping adapter v22 latched MEASURED_PHASE_CAP_EXCEEDED in PRE_FINAL on a single-tick measured-speed spike 0.0307 m/s (previous tick 0.0193; ceiling 0.030 unchanged; commanded wheel 0.012). Rover zeroed within one tick; stop_quiet QUIET PASS, cleanup VERIFIED_ROS_ZERO, observer/driver exit 0, collision false; 0.16 m short of PRE.
+- New `scripts/c_v02_drive540_auto_resume_20261114_v04.py` = v03 + narrow class SAFE_STOPPED_ADAPTER_CAP_FAULT (single fault, H_PRE/PRE_FINAL, spike <= 1.25x ceiling, previous tick below ceiling, all stop checks; max 3 per main, 4th -> safety stop). Recorded as-is (FAIL_D counted as failure), no re-run, thresholds unchanged. Service swapped; controller resumed 20:35 at run 181.
+- Status at 180/540: SUCCESS 175, FAIL_F 3 (B10 C20, all three reps, pose error ~0.20-0.21 m -> scene-specific, to be analysed in final report), FAIL_E 1 (18:53 ROS discovery timeout, no motion), FAIL_D 1 (above). ETA ~2026-11-15 12:00.
+
+## 2026-11-14 21:26 — LE13 main540 progress 199/540
+- 20:45 INFRA hold `L13_C2E_B13_C80_LR_Scan_O0` (CAPTURE_BUFFERS_INVALID, no motion) auto-resolved by auto-resume v04 as FAIL_E, no re-run. Totals: SUCCESS 193, FAIL_F 3, FAIL_E 2, FAIL_D 1. ETA ~2026-11-15 12:00.
+
+## 2026-11-15 00:1x — LE13 main540 260/540; auto-resume v05
+- 23:49 second SAFE_STOPPED_ADAPTER_CAP_FAULT (`L13_C2E_B17_C20_LR_Scan_O0`, 0.0300 m/s spike, prev 0.0163) auto-resolved by v04 as FAIL_D, no re-run.
+- PRE_FINAL peak scan of 259 completed runs: 10 runs >= 0.027 m/s, max non-faulting 0.0299; isolated spikes. Budget 3 would likely stop the main unnecessarily, so `scripts/c_v02_drive540_auto_resume_20261114_v05.py` raises it to 8 (9th -> safety stop); all other criteria unchanged. Service swapped while the controller kept running.
+- Totals 260: SUCCESS 253, FAIL_F 3, FAIL_E 2, FAIL_D 2. ETA ~2026-11-15 12:00.
+
+## 2026-11-15 12:00 — LE13 main540 stalled 06:55-11:56 (5 h); auto-resume v06/v07
+- HOLD 06:55 `L13_C2E_B28_C20_GeoCAD_O0` FAIL_U PUBLISHER_SET: after the rover stopped (2 mm from leg-1 goal, quiet PASS, VERIFIED_ROS_ZERO, no collision, exits 0) the last endpoint snapshot showed the driver publisher (same DDS gid) as _NODE_NAME_UNKNOWN_ -> ROS graph name race. Auto-resume v05 classified it SAFETY, so the main sat idle ~5 h (researcher objected).
+- `scripts/c_v02_drive540_auto_resume_20261114_v06.py`: class SAFE_STOPPED_PUBLISHER_NAME_RACE (no new gid, stop verified; budget 5). Resolved 11:56, controller resumed at run 420.
+- `scripts/c_v02_drive540_auto_resume_20261114_v07.py` (running): general fallback SAFE_STOPPED_OTHER - any post-motion fault with verified stop (collision false, quiet PASS, ROS zero verified, exits 0, no guard trip) recorded as-is and continued, budget 10. Real safety = collision or unverified stop -> still stops. Classifier regression on 4 past holds unchanged.
+- Totals 419: SUCCESS 411, FAIL_F 3, FAIL_E 2, FAIL_D 2, FAIL_U 1.
+
+## 2026-11-15 12:1x — C-V03 render auto-resume armed after main540
+- Researcher request: resume the paused C-V03 rover-domain render right after LE13 main540 completes. Unit `c-v03-render-resume-after-main540` runs `scripts/c_v03_render_resume_after_main540_20261115_v01.sh`: on status MAIN_COMPLETE + controller inactive + no session process, waits 60 s then `kill -CONT 3253698`.
+- Remaining render runs: LR_Scan 5F_CLOSED_EV, GeoCAD B1_CLOSED_EV, GeoCAD 5F_CLOSED_EV (~1.5 h). LR B1 already PASS_CAPTURE (zombie child reaped on resume). Post-render package/training pipeline remains HELD.
+
+## 2026-11-15 18:4x — LE13 main540 COMPLETE + final analysis; C-V03 render resumed
+- MAIN_COMPLETE 17:09 (540/540). SUCCESS 532/540 = 98.5% (Wilson 97.1-99.3). HR 178/180, LR 177/180, GeoCAD 177/180; C100/C60/C40 100%, C80 98.1%, C20 94.4%. Collisions 0, speed-guard trips 0. Multi-view 10x (all HR C100, all recovered at K2, +3.2 s).
+- Failures: B10 C20 x3 reps FAIL_F (ROBUST_A fell back to MIDPOINT|MIDPOINT axis mode only in these 3 of 540 runs -> +0.21 m centre error, scene-specific); FAIL_D x2 adapter cap spikes; FAIL_U x1 publisher name race; FAIL_E x2 pre-motion infra.
+- Paired pose error (base x C x start, excl. outliers): HR-LR -0.08 mm, HR-GeoCAD -0.11 mm, LR-GeoCAD -0.03 mm; no equivalence claim (no margin). Fixed bias lat -3.36 / long +1.16 mm; long bias varies with start yaw (86/90/94 -> 1.39/1.16/0.93 mm = 3.4 mm x sin4deg) -> robot-frame offset (camera extrinsic / base reference) most likely; GT centre verified. HR conf 0.70 at C100 vs LR 0.88 at similar brightness; mask area and pose error equal -> score calibration/appearance gap hypothesis.
+- Run time 154.7 s/run vs ~305 s (E1 v03), -49%.
+- New: `analysis/c_v02_le13_main_final_analysis_20261115_v01.py`, `reports/c_v02_le13_main_final_analysis_20261115_v01.md/.json`.
+- C-V03 render auto-resumed 17:10 by `c-v03-render-resume-after-main540`; 5/6 runs PASS_CAPTURE, GeoCAD 5F in progress (154/310 at 18:40). Training pipeline still HELD.
