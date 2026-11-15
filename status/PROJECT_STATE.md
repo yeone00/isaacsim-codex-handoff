@@ -1802,3 +1802,6 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - Run time 154.7 s/run vs ~305 s (E1 v03), -49%.
 - New: `analysis/c_v02_le13_main_final_analysis_20261115_v01.py`, `reports/c_v02_le13_main_final_analysis_20261115_v01.md/.json`.
 - C-V03 render auto-resumed 17:10 by `c-v03-render-resume-after-main540`; 5/6 runs PASS_CAPTURE, GeoCAD 5F in progress (154/310 at 18:40). Training pipeline still HELD.
+
+## 2026-11-15 18:5x — LE13 main540 numeric export
+- `reports/c_v02_le13_main540_results_20261115_v01.xlsx` (11 sheets incl. 540-row per-run) and `reports/c_v02_le13_main540_runs_20261115_v01.csv` via `analysis/c_v02_le13_main_results_export_20261115_v01.py` (base anaconda python for openpyxl; no install). Verified sheet shapes, 540 rows, 8 failures with auto-resolution labels; brick brightness missing for 1 run (pre-capture infra failure).
