@@ -1832,3 +1832,9 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 
 ## 2026-11-15 22:0x — LE13 IPR v01 detailed report
 - reports/le13_ipr_v01_detailed_20261115_v01.md (pushed to research/le13_ipr_20261115_v01/). v01 HR-GeoCAD -0.030 mm Holm p 0.023 (sign test/median null; ~0.22 mm step imbalance); HR-LR null; HR-superior-to-both not met; v02 remains primary.
+
+## 2026-11-15 22:2x — LE13 IPR YOLO recognition-accuracy analysis
+- Plan locked before IoU computation (reports/le13_ipr_yolo_accuracy_plan_LOCK_20261115_v01.md, sha 2e59597c; detection rates already seen -> disclosed post hoc). analysis/le13_ipr_yolo_accuracy_20261115_v01.py.
+- v02: detection HR 89.4% / LR 98.9% / GeoCAD 80.0%; IoU(miss=0) 0.847/0.946/0.766; conditional IoU ~0.95 all. All 6 family-level paired t (Holm) significant (LR>HR>GeoCAD); HR-GeoCAD IoU Wilcoxon 0.074 (weakest). Misses concentrated at C40/C20 (GeoCAD C20 47%).
+- v01: LR>HR and LR>GeoCAD significant; HR vs GeoCAD not.
+- Report reports/le13_ipr_yolo_accuracy_results_20261115_v01.md; GitHub research/le13_ipr_20261115_v01/yolo_accuracy/.
