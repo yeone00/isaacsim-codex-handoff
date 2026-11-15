@@ -1,0 +1,7 @@
+{
+ "state": "LOCKED_BEFORE_IOU_COMPUTATION",
+ "time": "2026-11-15T21:50:40",
+ "plan": "reports/le13_ipr_yolo_accuracy_plan_LOCK_20261115_v01.md",
+ "plan_sha256": "2e59597cd8c591b1e8354cfbf3555e9bcb80d8a8e3377d8482d8f6226d4ed5e5",
+ "disclosure": "K1 detection rates already seen in the pose-precision report; IoU/FP/confidence comparisons not yet computed"
+}
