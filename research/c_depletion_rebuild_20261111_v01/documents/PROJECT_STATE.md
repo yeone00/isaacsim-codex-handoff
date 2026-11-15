@@ -1794,3 +1794,11 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 ## 2026-11-15 12:1x — C-V03 render auto-resume armed after main540
 - Researcher request: resume the paused C-V03 rover-domain render right after LE13 main540 completes. Unit `c-v03-render-resume-after-main540` runs `scripts/c_v03_render_resume_after_main540_20261115_v01.sh`: on status MAIN_COMPLETE + controller inactive + no session process, waits 60 s then `kill -CONT 3253698`.
 - Remaining render runs: LR_Scan 5F_CLOSED_EV, GeoCAD B1_CLOSED_EV, GeoCAD 5F_CLOSED_EV (~1.5 h). LR B1 already PASS_CAPTURE (zombie child reaped on resume). Post-render package/training pipeline remains HELD.
+
+## 2026-11-15 18:4x — LE13 main540 COMPLETE + final analysis; C-V03 render resumed
+- MAIN_COMPLETE 17:09 (540/540). SUCCESS 532/540 = 98.5% (Wilson 97.1-99.3). HR 178/180, LR 177/180, GeoCAD 177/180; C100/C60/C40 100%, C80 98.1%, C20 94.4%. Collisions 0, speed-guard trips 0. Multi-view 10x (all HR C100, all recovered at K2, +3.2 s).
+- Failures: B10 C20 x3 reps FAIL_F (ROBUST_A fell back to MIDPOINT|MIDPOINT axis mode only in these 3 of 540 runs -> +0.21 m centre error, scene-specific); FAIL_D x2 adapter cap spikes; FAIL_U x1 publisher name race; FAIL_E x2 pre-motion infra.
+- Paired pose error (base x C x start, excl. outliers): HR-LR -0.08 mm, HR-GeoCAD -0.11 mm, LR-GeoCAD -0.03 mm; no equivalence claim (no margin). Fixed bias lat -3.36 / long +1.16 mm; long bias varies with start yaw (86/90/94 -> 1.39/1.16/0.93 mm = 3.4 mm x sin4deg) -> robot-frame offset (camera extrinsic / base reference) most likely; GT centre verified. HR conf 0.70 at C100 vs LR 0.88 at similar brightness; mask area and pose error equal -> score calibration/appearance gap hypothesis.
+- Run time 154.7 s/run vs ~305 s (E1 v03), -49%.
+- New: `analysis/c_v02_le13_main_final_analysis_20261115_v01.py`, `reports/c_v02_le13_main_final_analysis_20261115_v01.md/.json`.
+- C-V03 render auto-resumed 17:10 by `c-v03-render-resume-after-main540`; 5/6 runs PASS_CAPTURE, GeoCAD 5F in progress (154/310 at 18:40). Training pipeline still HELD.
