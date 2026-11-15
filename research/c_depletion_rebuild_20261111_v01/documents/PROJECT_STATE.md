@@ -1784,3 +1784,9 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 - 23:49 second SAFE_STOPPED_ADAPTER_CAP_FAULT (`L13_C2E_B17_C20_LR_Scan_O0`, 0.0300 m/s spike, prev 0.0163) auto-resolved by v04 as FAIL_D, no re-run.
 - PRE_FINAL peak scan of 259 completed runs: 10 runs >= 0.027 m/s, max non-faulting 0.0299; isolated spikes. Budget 3 would likely stop the main unnecessarily, so `scripts/c_v02_drive540_auto_resume_20261114_v05.py` raises it to 8 (9th -> safety stop); all other criteria unchanged. Service swapped while the controller kept running.
 - Totals 260: SUCCESS 253, FAIL_F 3, FAIL_E 2, FAIL_D 2. ETA ~2026-11-15 12:00.
+
+## 2026-11-15 12:00 — LE13 main540 stalled 06:55-11:56 (5 h); auto-resume v06/v07
+- HOLD 06:55 `L13_C2E_B28_C20_GeoCAD_O0` FAIL_U PUBLISHER_SET: after the rover stopped (2 mm from leg-1 goal, quiet PASS, VERIFIED_ROS_ZERO, no collision, exits 0) the last endpoint snapshot showed the driver publisher (same DDS gid) as _NODE_NAME_UNKNOWN_ -> ROS graph name race. Auto-resume v05 classified it SAFETY, so the main sat idle ~5 h (researcher objected).
+- `scripts/c_v02_drive540_auto_resume_20261114_v06.py`: class SAFE_STOPPED_PUBLISHER_NAME_RACE (no new gid, stop verified; budget 5). Resolved 11:56, controller resumed at run 420.
+- `scripts/c_v02_drive540_auto_resume_20261114_v07.py` (running): general fallback SAFE_STOPPED_OTHER - any post-motion fault with verified stop (collision false, quiet PASS, ROS zero verified, exits 0, no guard trip) recorded as-is and continued, budget 10. Real safety = collision or unverified stop -> still stops. Classifier regression on 4 past holds unchanged.
+- Totals 419: SUCCESS 411, FAIL_F 3, FAIL_E 2, FAIL_D 2, FAIL_U 1.
