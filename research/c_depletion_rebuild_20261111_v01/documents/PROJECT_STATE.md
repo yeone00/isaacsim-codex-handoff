@@ -1819,3 +1819,6 @@ HUMAN_REVIEW_GATE=PENDING/POSITION_ESTIMATES=EXPLORATORY_UNVALIDATED/v44절차FA
 
 ## 2026-11-15 19:50 — D600 expansion of researcher-selected pilot IDs
 - Selection "1,2,3,4,5,6,7,8,10" -> P01-P08,P10. 126 new renders (HR 4 C levels, LR/GeoCAD 5) + 9 reused HR C100 = 135/135 PASS_CAPTURE (3 Isaac runs 19:29-19:46). vis min 0.999, no load clipping (pallet bottom clipped only at 1.6 m P01-P03), canonical px identical across reps per cell. GeoCAD brick ~110 vs HR ~46 / LR ~38 brightness. Sheets expand_v01/review_v01/compare_Pxx.png. Report reports/d600_expand_selected_20261115_v01.md. HOLD for full-dataset approval.
+
+## 2026-11-15 20:05 — D600 drive-site images (LE13 scene)
+- Researcher request: same 9 conditions x 3 reps x 5 C in the drive scene/location. prepared_site_drive.usda (Constructionsite), drive-builder prims disabled + Rover disabled, load at LE13 (20.5,13.5), camera along +y approach, load yaw 90+rel, site lights (dome 9600 + work light), Kit default exposure. 135/135 PASS_CAPTURE (3 Isaac runs 19:51-20:01), no load clipping, vis min 0.865. Brick brightness HR 14-21 / LR 12-14 / CAD 42-45 (matches LE13 drive captures). Report reports/d600_drive_site_images_20261115_v01.md. Not training data (test environment).
