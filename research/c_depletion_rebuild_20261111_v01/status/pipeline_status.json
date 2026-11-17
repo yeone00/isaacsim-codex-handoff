@@ -1,6 +1,6 @@
 {
   "state": "HOLD",
-  "updated": 1794939444.4801216,
+  "updated": 1794939684.594361,
   "controller_pid": 3509437,
   "watchdog_pid": 3805776,
   "current": null,
@@ -20,5 +20,5 @@
   "new_gpu_jobs_started": 0,
   "soft_budget_hours": 48,
   "stop_at_budget": false,
-  "elapsed_seconds": 549988.577703476
+  "elapsed_seconds": 550228.6918442249
 }
