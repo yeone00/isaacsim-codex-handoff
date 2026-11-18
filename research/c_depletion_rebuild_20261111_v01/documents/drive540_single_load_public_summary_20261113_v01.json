@@ -530,7 +530,7 @@
   "actual_PhysX": "HR strict pre-drive admission PASS; remaining full motion gates NOT_RUN",
   "main_completed": 0,
   "physical_main_entry": "HOLD",
-  "monitor_pid": 2797259,
+  "monitor_pid": 2019,
   "recovery_e2e_status": {
     "state": "HOLD",
     "controller_pid": 2783174,

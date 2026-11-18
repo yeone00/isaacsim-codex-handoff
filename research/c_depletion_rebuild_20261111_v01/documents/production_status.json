@@ -1,40 +1,48 @@
 {
   "state": "HOLD",
-  "stage": "C_STATIC_AFTER_VALIDATION_REPAIR",
-  "controller_pid": 699911,
-  "current": {
-    "job": "C_STATIC_AFTER_VALIDATION_REPAIR",
-    "pid": 707458,
-    "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/post_hpo_static_recovered_v01",
-    "log": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01/post_static.log"
-  },
-  "reason": "STATIC_EVALUATION_FAILED:/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01/post_static.log",
-  "updated": 1794478515.651841,
+  "stage": "BITMAP_CONTINUATION",
+  "controller_pid": 2001,
+  "current": {},
+  "reason": "INTERRUPTED_ATTEMPT_REVIEW_REQUIRED",
+  "updated": 1794989828.715101,
   "generated_RGBD": 4410,
   "declared_RGBD": 4410,
+  "completed_jobs": 210,
+  "failed_jobs": 1,
+  "prior_failure_preserved": "C_DATASET_QA_PACKAGE",
   "physical_motion_authorized": false,
   "physical_runs_started": 0,
+  "elapsed_seconds": 0.0031545162200927734,
   "C_HPO": {
-    "state": "COMPLETED",
-    "controller_pid": 699911,
-    "completed_training_jobs": 57,
-    "crossval_completed": 24,
-    "current": {},
-    "recovery_root": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/validation_repair_v01",
-    "original_failed_attempts_preserved": 24,
-    "selection": {
-      "candidate_id": 6,
-      "params": {
-        "lr0": 0.000888131352250591,
-        "weight_decay": 0.0008730658008775225,
-        "lrf": 0.13119036537141066,
-        "warmup_epochs": 4.486041867303101
-      },
-      "score": 0.9432983046074382,
-      "rule": "200epoch own-validation mask-only mean; ties lowest candidate id; no Test",
-      "protocol_sha256": "e29a63be4eb45d6acc7bee602270920cacfa8f0fa528f67026008633457efa08"
+    "state": "COMPLETED_WITH_FAILURES",
+    "reason": null,
+    "updated": "2026-11-12T16:47:01.330936+09:00",
+    "controller_pid": 106572,
+    "session": "c_common_hpo_20261111_v01",
+    "total_candidates": 12,
+    "candidate_counts": {
+      "COMPLETED": 12,
+      "RUNNING": 0,
+      "PENDING": 0,
+      "FAILED": 0
     },
-    "updated": 1794470246.3051014
-  },
-  "original_HPO_status_preserved": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/execution_v02/C_COMMON_HPO_v02/hpo_status.json"
+    "current": {},
+    "best_candidate": [
+      0.9432983046074382,
+      6
+    ],
+    "best_score_phase": "full",
+    "completed_training_jobs": 57,
+    "job_counts": {
+      "COMPLETED": 57,
+      "RUNNING": 0,
+      "FAILED": 24,
+      "INTERRUPTED": 0
+    },
+    "max_training_jobs": 57,
+    "max_model_epochs": 5766,
+    "wall_seconds_this_controller": 25932.90368294716,
+    "test_used": false,
+    "recovery": "--resume-interrupted explicitly restarts interrupted attempts from pretrained in a new attempt directory; completed verified jobs skipped"
+  }
 }

@@ -1,6 +1,6 @@
 {
   "stage0_existing_evidence": {
-    "state": "COMPLETED",
+    "state": "SKIPPED_VERIFIED",
     "pid": 3509453,
     "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/jobs/stage0_existing_evidence_a01",
     "command": [
@@ -19,7 +19,7 @@
     "ended": 1794389460.0244672
   },
   "preparation_document_gates": {
-    "state": "COMPLETED",
+    "state": "SKIPPED_VERIFIED",
     "pid": 3509552,
     "output": "/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/jobs/preparation_document_gates_a01",
     "command": [
