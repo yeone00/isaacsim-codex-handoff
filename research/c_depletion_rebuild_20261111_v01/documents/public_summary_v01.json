@@ -1,5 +1,5 @@
 {
-  "updated": 1794989829.0034196,
+  "updated": 1794990729.0234683,
   "files": {
     "policy.json": {
       "sha256": "58194180bd7c8b315361c43ca4c39ee6b77e6dc51bf9e2ce085a9f9df5d59847",
@@ -750,11 +750,11 @@
       }
     },
     "observer_status.json": {
-      "sha256": "f8f1a057b7ba04102d909190e6da88b067d9a0aff9649c87b87674e8c9a36ced",
+      "sha256": "5259a9e841680acd6e7844138ed3fb436de1aafdd80b6146eafab170a776b023",
       "data": {
-        "state": "COMPLETED_PHYSICAL_HOLD",
-        "pid": 995698,
-        "updated": 1794552330.9499068
+        "state": "HOLD",
+        "reason": "[Errno 17] File exists: '/home/user/hh/isaac_cosmos/sdg_final/C_DEPLETION_REBUILD_20261111_v01/C_V02_20261112_v01/task_layer_policy_v01/RGBD_task_prior_per_attempt.csv'",
+        "updated": 1794989830.1657152
       }
     },
     "RGBD_task_prior_result.json": {
