@@ -1,5 +1,5 @@
 {
-  "updated": 1795506103.7246156,
+  "updated": 1795506408.4410326,
   "current_version": "C-V02",
   "physical_motion_authorized": false,
   "files": {
@@ -19,10 +19,10 @@
       }
     },
     "watchdog_status.json": {
-      "sha256": "11b967e02c9ec0d924743b93079c2688c3d0f7162329d627f27e7ff7f1bb1523",
+      "sha256": "e2bc5030995b6a35c08c817ba4cf68985c5a46e245f7440c62aff2c2e450721f",
       "content": {
         "pid": 2025,
-        "updated": 1795506074.9640026,
+        "updated": 1795506407.062179,
         "pipeline": {
           "state": "HOLD_PHYSICAL_STAGES",
           "stage": "APPROVED_STATIC_STAGES_COMPLETED",
@@ -58,8 +58,8 @@
           "updated": 1794551494.054038,
           "physical_motion": false
         },
-        "GPU": "0, 16707, 32607",
-        "free_disk_bytes": 84415365120,
+        "GPU": "10, 16707, 32607",
+        "free_disk_bytes": 84415086592,
         "ntfy_pending": 0,
         "physical_motion": false,
         "warnings": []
